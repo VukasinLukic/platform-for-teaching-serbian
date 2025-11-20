@@ -4,7 +4,16 @@
       "Bash(npm install)",
       "Bash(npm install:*)",
       "Bash(npx tailwindcss:*)",
-      "Bash(git add:*)"
+      "Bash(git add:*)",
+      "Bash(npm run dev:*)",
+      "Bash(timeout /t 5 /nobreak)",
+      "Bash(npm run build:*)",
+      "Bash(del tailwind.config.js)",
+      "Bash(firebase deploy:*)",
+      "Bash(npx firebase-tools:*)",
+      "Bash(timeout:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(mkdir:*)"
     ],
     "deny": [],
     "ask": []
