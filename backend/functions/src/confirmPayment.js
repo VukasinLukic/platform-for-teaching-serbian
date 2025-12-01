@@ -5,10 +5,6 @@
 
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
-import {
-  sendPaymentConfirmationEmail,
-  sendPaymentRejectionEmail,
-} from './sendEmail.js';
 
 /**
  * Confirm a pending payment and grant course access
@@ -69,26 +65,8 @@ export const confirmPayment = onCall(async (request) => {
       { merge: true }
     );
 
-    // Send email notification to user
-    try {
-      const userDoc = await db.collection('users').doc(userId).get();
-      const courseDoc = await db.collection('courses').doc(courseId).get();
-
-      if (userDoc.exists && courseDoc.exists) {
-        const user = userDoc.data();
-        const course = courseDoc.data();
-
-        await sendPaymentConfirmationEmail(
-          user.email,
-          user.ime || user.email.split('@')[0], // Fallback to email username if name not set
-          course.title,
-          transactionId
-        );
-      }
-    } catch (emailError) {
-      // Log email error but don't fail the payment confirmation
-      console.error('Failed to send confirmation email:', emailError);
-    }
+    // NOTE: Email notification is now handled on the frontend using EmailJS
+    // to avoid backend SendGrid dependency (which requires a custom domain).
 
     return {
       success: true,
@@ -150,26 +128,7 @@ export const rejectPayment = onCall(async (request) => {
       rejection_reason: reason || 'Nevalidna uplata',
     });
 
-    // Send email notification to user about rejection
-    try {
-      const userDoc = await db.collection('users').doc(transaction.user_id).get();
-      const courseDoc = await db.collection('courses').doc(transaction.course_id).get();
-
-      if (userDoc.exists && courseDoc.exists) {
-        const user = userDoc.data();
-        const course = courseDoc.data();
-
-        await sendPaymentRejectionEmail(
-          user.email,
-          user.ime || user.email.split('@')[0],
-          course.title,
-          reason || 'Nevalidna uplata. Molimo kontaktirajte administratora za više informacija.'
-        );
-      }
-    } catch (emailError) {
-      // Log email error but don't fail the rejection
-      console.error('Failed to send rejection email:', emailError);
-    }
+    // NOTE: Email notification is now handled on the frontend using EmailJS.
 
     return {
       success: true,

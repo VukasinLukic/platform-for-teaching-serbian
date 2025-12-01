@@ -28,7 +28,7 @@ export const storage = getStorage(app);
 export const functions = getFunctions(app, 'europe-west1');
 
 // Connect to emulators in development (optional)
-const USE_EMULATORS = false; // Set to true when using Firebase Emulator Suite
+const USE_EMULATORS = import.meta.env.VITE_USE_EMULATORS === 'true';
 
 if (USE_EMULATORS && import.meta.env.DEV) {
   connectAuthEmulator(auth, 'http://localhost:9099');

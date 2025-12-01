@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
-import { db, functions } from '../../services/firebase';
-import { httpsCallable } from 'firebase/functions';
-import { CheckCircle, XCircle, Loader2, ExternalLink, User, BookOpen, Calendar } from 'lucide-react';
+import { db } from '../../services/firebase';
+import { verifyPayment } from '../../services/admin.service';
+import { CheckCircle, XCircle, Loader2, ExternalLink, User, BookOpen } from 'lucide-react';
 import { formatPrice, formatDate } from '../../utils/helpers';
+import { sendPaymentConfirmationEmail, sendPaymentRejectionEmail } from '../../services/email.service';
 
 export default function PaymentVerifier() {
   const [pendingPayments, setPendingPayments] = useState([]);
@@ -26,12 +27,18 @@ export default function PaymentVerifier() {
           const transaction = docSnap.data();
 
           // Load user data
-          const userDoc = await getDoc(doc(db, 'users', transaction.user_id));
-          const user = userDoc.exists() ? userDoc.data() : null;
+          let user = null;
+          if (transaction.user_id) {
+            const userDoc = await getDoc(doc(db, 'users', transaction.user_id));
+            user = userDoc.exists() ? userDoc.data() : null;
+          }
 
           // Load course data
-          const courseDoc = await getDoc(doc(db, 'courses', transaction.course_id));
-          const course = courseDoc.exists() ? courseDoc.data() : null;
+          let course = null;
+          if (transaction.course_id) {
+            const courseDoc = await getDoc(doc(db, 'courses', transaction.course_id));
+            course = courseDoc.exists() ? courseDoc.data() : null;
+          }
 
           return {
             id: docSnap.id,
@@ -50,25 +57,35 @@ export default function PaymentVerifier() {
     }
   };
 
-  const confirmPayment = async (transactionId, userId, courseId) => {
+  const confirmPayment = async (payment) => {
     if (!confirm('Da li ste sigurni da želite da potvrdite ovu uplatu?')) {
       return;
     }
 
-    setProcessingId(transactionId);
+    setProcessingId(payment.id);
 
     try {
-      // Call Cloud Function to confirm payment
-      const confirmPaymentFn = httpsCallable(functions, 'confirmPayment');
-      await confirmPaymentFn({
-        transactionId,
-        userId,
-        courseId,
-      });
+      // Use direct service instead of Cloud Function
+      await verifyPayment(payment.id, true);
+
+      // Send email via EmailJS (Frontend)
+      if (payment.user && payment.course) {
+        try {
+             await sendPaymentConfirmationEmail(
+                payment.user.email,
+                payment.user.ime || 'Korisnik',
+                payment.course.title,
+                payment.id
+             );
+             console.log('Confirmation email sent');
+        } catch (emailError) {
+            console.error('Failed to send confirmation email (non-critical):', emailError);
+        }
+      }
 
       // Reload payments
       await loadPendingPayments();
-      alert('Uplata uspešno potvrđena!');
+      alert('Uplata uspešno potvrđena! Kurs je aktiviran za korisnika.');
     } catch (error) {
       console.error('Error confirming payment:', error);
       alert('Greška pri potvrđivanju uplate: ' + (error.message || 'Pokušajte ponovo'));
@@ -77,19 +94,35 @@ export default function PaymentVerifier() {
     }
   };
 
-  const rejectPayment = async (transactionId) => {
+  const rejectPayment = async (payment) => {
     if (!confirm('Da li ste sigurni da želite da odbijete ovu uplatu?')) {
       return;
     }
 
-    setProcessingId(transactionId);
+    setProcessingId(payment.id);
+    const reason = prompt('Unesite razlog odbijanja (opciono):');
 
     try {
-      const rejectPaymentFn = httpsCallable(functions, 'rejectPayment');
-      await rejectPaymentFn({ transactionId });
+      // Use direct service instead of Cloud Function
+      await verifyPayment(payment.id, false);
+
+       // Send email via EmailJS (Frontend)
+       if (payment.user && payment.course) {
+        try {
+             await sendPaymentRejectionEmail(
+                payment.user.email,
+                payment.user.ime || 'Korisnik',
+                payment.course.title,
+                reason || 'Nevalidna uplata'
+             );
+             console.log('Rejection email sent');
+        } catch (emailError) {
+            console.error('Failed to send rejection email (non-critical):', emailError);
+        }
+      }
 
       await loadPendingPayments();
-      alert('Uplata odbijena');
+      alert('Uplata odbijena.');
     } catch (error) {
       console.error('Error rejecting payment:', error);
       alert('Greška pri odbijanju uplate: ' + (error.message || 'Pokušajte ponovo'));
@@ -101,7 +134,7 @@ export default function PaymentVerifier() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#003366]" />
       </div>
     );
   }
@@ -109,20 +142,20 @@ export default function PaymentVerifier() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Verifikacija uplata</h2>
+        <h2 className="text-2xl font-bold text-[#003366]">Verifikacija uplata</h2>
         <button
           onClick={loadPendingPayments}
-          className="btn-secondary"
+          className="px-4 py-2 rounded-lg bg-[#F5F3EF] text-[#003366] font-medium hover:bg-[#BFECC9] transition-colors"
         >
           Osveži
         </button>
       </div>
 
       {pendingPayments.length === 0 ? (
-        <div className="glass-card rounded-2xl p-12 text-center">
-          <CheckCircle className="h-16 w-16 text-primary mx-auto mb-4" />
-          <p className="text-muted-foreground text-lg">Nema uplata na čekanju</p>
-          <p className="text-sm text-muted-foreground mt-2">
+        <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-gray-100">
+          <CheckCircle className="h-16 w-16 text-[#BFECC9] mx-auto mb-4" />
+          <p className="text-gray-600 text-lg">Nema uplata na čekanju</p>
+          <p className="text-sm text-gray-400 mt-2">
             Sve uplate su verifikovane
           </p>
         </div>
@@ -131,15 +164,15 @@ export default function PaymentVerifier() {
           {pendingPayments.map((payment) => (
             <div
               key={payment.id}
-              className="glass-card rounded-2xl p-8 border-primary/20"
+              className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100"
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <h3 className="text-xl font-bold mb-1">
+                  <h3 className="text-xl font-bold text-[#003366] mb-1">
                     {formatPrice(payment.amount)}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-gray-500">
                     ID: {payment.id}
                   </p>
                 </div>
@@ -147,7 +180,7 @@ export default function PaymentVerifier() {
                   <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-bold">
                     Na čekanju
                   </div>
-                  <p className="text-xs text-muted-foreground mt-2">
+                  <p className="text-xs text-gray-400 mt-2">
                     {payment.created_at && formatDate(payment.created_at)}
                   </p>
                 </div>
@@ -156,56 +189,56 @@ export default function PaymentVerifier() {
               {/* User & Course Info Grid */}
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 {/* User Info */}
-                <div className="bg-muted/30 rounded-xl p-4">
+                <div className="bg-[#F5F3EF] rounded-xl p-4">
                   <div className="flex items-center space-x-2 mb-3">
-                    <User className="h-5 w-5 text-primary" />
-                    <h4 className="font-bold">Korisnik</h4>
+                    <User className="h-5 w-5 text-[#003366]" />
+                    <h4 className="font-bold text-[#003366]">Korisnik</h4>
                   </div>
                   {payment.user ? (
-                    <div className="space-y-1 text-sm">
+                    <div className="space-y-1 text-sm text-gray-600">
                       <p className="font-semibold">{payment.user.ime}</p>
-                      <p className="text-muted-foreground">{payment.user.email}</p>
+                      <p className="text-gray-500">{payment.user.email}</p>
                       {payment.user.telefon && (
-                        <p className="text-muted-foreground">{payment.user.telefon}</p>
+                        <p className="text-gray-500">{payment.user.telefon}</p>
                       )}
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground">Nepoznat korisnik</p>
+                    <p className="text-sm text-gray-500">Nepoznat korisnik</p>
                   )}
                 </div>
 
                 {/* Course Info */}
-                <div className="bg-muted/30 rounded-xl p-4">
+                <div className="bg-[#F5F3EF] rounded-xl p-4">
                   <div className="flex items-center space-x-2 mb-3">
-                    <BookOpen className="h-5 w-5 text-primary" />
-                    <h4 className="font-bold">Kurs</h4>
+                    <BookOpen className="h-5 w-5 text-[#003366]" />
+                    <h4 className="font-bold text-[#003366]">Kurs</h4>
                   </div>
                   {payment.course ? (
-                    <div className="space-y-1 text-sm">
+                    <div className="space-y-1 text-sm text-gray-600">
                       <p className="font-semibold">{payment.course.title}</p>
-                      <p className="text-muted-foreground line-clamp-2">
+                      <p className="text-gray-500 line-clamp-2">
                         {payment.course.description}
                       </p>
                     </div>
                   ) : (
-                    <p className="text-sm text-muted-foreground">Nepoznat kurs</p>
+                    <p className="text-sm text-gray-500">Nepoznat kurs</p>
                   )}
                 </div>
               </div>
 
               {/* Payment Reference */}
-              <div className="bg-secondary/5 rounded-xl p-4 mb-6">
+              <div className="bg-blue-50/50 rounded-xl p-4 mb-6">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-sm text-muted-foreground mb-1">Poziv na broj</p>
-                    <p className="font-mono font-bold text-lg">{payment.payment_ref}</p>
+                    <p className="text-sm text-gray-500 mb-1">Poziv na broj</p>
+                    <p className="font-mono font-bold text-lg text-[#003366]">{payment.payment_ref}</p>
                   </div>
                   {payment.invoice_url && (
                     <a
                       href={payment.invoice_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn-secondary py-2"
+                      className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 flex items-center"
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Uplatnica
@@ -216,11 +249,11 @@ export default function PaymentVerifier() {
 
               {/* Confirmation Document */}
               {payment.confirmation_url ? (
-                <div className="bg-primary/10 rounded-xl p-4 mb-6">
+                <div className="bg-green-50 rounded-xl p-4 mb-6 border border-green-100">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold mb-1">✓ Potvrda o uplati primljena</p>
-                      <p className="text-sm text-muted-foreground">
+                      <p className="font-semibold text-green-800 mb-1">✓ Potvrda o uplati primljena</p>
+                      <p className="text-sm text-green-600">
                         Korisnik je upload-ovao potvrdu
                       </p>
                     </div>
@@ -228,7 +261,7 @@ export default function PaymentVerifier() {
                       href={payment.confirmation_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="btn-primary py-2"
+                      className="px-4 py-2 bg-white text-green-700 border border-green-200 rounded-lg text-sm font-medium hover:bg-green-50 flex items-center shadow-sm"
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
                       Pogledaj potvrdu
@@ -246,9 +279,9 @@ export default function PaymentVerifier() {
               {/* Action Buttons */}
               <div className="flex space-x-4">
                 <button
-                  onClick={() => confirmPayment(payment.id, payment.user_id, payment.course_id)}
+                  onClick={() => confirmPayment(payment)}
                   disabled={processingId === payment.id}
-                  className="btn-primary flex-1 bg-green-600 hover:bg-green-700 disabled:opacity-50"
+                  className="flex-1 bg-green-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-700 disabled:opacity-50 flex items-center justify-center transition-colors"
                 >
                   {processingId === payment.id ? (
                     <>
@@ -263,9 +296,9 @@ export default function PaymentVerifier() {
                   )}
                 </button>
                 <button
-                  onClick={() => rejectPayment(payment.id)}
+                  onClick={() => rejectPayment(payment)}
                   disabled={processingId === payment.id}
-                  className="btn-secondary flex-1 bg-red-100 hover:bg-red-200 text-red-700 disabled:opacity-50"
+                  className="flex-1 bg-red-100 text-red-700 px-6 py-3 rounded-xl font-bold hover:bg-red-200 disabled:opacity-50 flex items-center justify-center transition-colors"
                 >
                   {processingId === payment.id ? (
                     <>

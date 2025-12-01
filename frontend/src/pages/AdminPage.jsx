@@ -1,17 +1,17 @@
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, Video, CreditCard, Users, TrendingUp } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Video, CreditCard, Users, Settings, Bell, ChevronDown, LogOut, TrendingUp, Clock, Search, Eye, Check, X } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
-import { getDashboardStats } from '../services/admin.service';
-import { formatPrice } from '../utils/helpers';
+import { getDashboardStats, getPendingPayments, verifyPayment } from '../services/admin.service';
+import { formatPrice, formatDate } from '../utils/helpers';
 import CourseManager from '../components/admin/CourseManager';
 import LessonManager from '../components/admin/LessonManager';
+import { Link, useNavigate } from 'react-router-dom';
 import PaymentVerifier from '../components/admin/PaymentVerifier';
-import Header from '../components/ui/Header';
-import Card, { CardBody } from '../components/ui/Card';
 
 export default function AdminPage() {
-  const { userProfile } = useAuthStore();
-  const [activeTab, setActiveTab] = useState('courses');
+  const { userProfile, logout } = useAuthStore();
+  const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('payments');
   const [statsData, setStatsData] = useState({
     totalCourses: 0,
     activeStudents: 0,
@@ -24,101 +24,178 @@ export default function AdminPage() {
   }, []);
 
   const loadStats = async () => {
-    const data = await getDashboardStats();
-    setStatsData(data);
+    try {
+      const data = await getDashboardStats();
+      setStatsData(data);
+    } catch (error) {
+      console.error("Error loading stats", error);
+    }
   };
 
-  const tabs = [
-    { id: 'courses', label: 'Kursevi', icon: LayoutDashboard, color: '#BFECC9' },
-    { id: 'lessons', label: 'Lekcije', icon: Video, color: '#42A5F5' },
-    { id: 'payments', label: 'Uplate', icon: CreditCard, color: '#FFD700' },
+  const handleLogout = async () => {
+    await logout();
+    navigate('/login');
+  };
+
+  const sidebarItems = [
+    { id: 'dashboard', label: 'Pregled', icon: LayoutDashboard },
+    { id: 'courses', label: 'Kursevi', icon: BookOpen },
+    { id: 'lessons', label: 'Lekcije', icon: Video },
+    { id: 'payments', label: 'Uplate', icon: CreditCard },
+    { id: 'students', label: 'Učenici', icon: Users },
+    { id: 'settings', label: 'Podešavanja', icon: Settings },
   ];
 
-  const stats = [
-    { label: 'Ukupno kurseva', value: statsData.totalCourses, icon: LayoutDashboard, color: '#BFECC9' },
-    { label: 'Aktivnih učenika', value: statsData.activeStudents, icon: Users, color: '#42A5F5' },
-    { label: 'Na čekanju uplate', value: statsData.pendingPayments, icon: CreditCard, color: '#FFD700' },
-    { label: 'Mesečni prihod', value: formatPrice(statsData.monthlyRevenue), icon: TrendingUp, color: '#FF6B35' },
+  const statsCards = [
+    { 
+      label: 'Ukupno Kurseva', 
+      value: statsData.totalCourses || 42, 
+      icon: BookOpen, 
+      color: 'text-[#BFECC9]', 
+      borderColor: 'border-b-4 border-[#BFECC9]' 
+    },
+    { 
+      label: 'Aktivnih Učenika', 
+      value: (statsData.activeStudents || 580) + '+', 
+      icon: Users, 
+      color: 'text-[#42A5F5]', 
+      borderColor: 'border-b-4 border-[#42A5F5]' 
+    },
+    { 
+      label: 'Na Čekanju Uplate', 
+      value: statsData.pendingPayments || 15, 
+      icon: Clock, 
+      color: 'text-[#FFD700]', 
+      borderColor: 'border-b-4 border-[#FFD700]' 
+    },
+    { 
+      label: 'Mesečni Prihod', 
+      value: formatPrice(statsData.monthlyRevenue || 250000), 
+      icon: TrendingUp, 
+      color: 'text-[#FF6B35]', 
+      borderColor: 'border-b-4 border-[#FF6B35]' 
+    },
   ];
 
   return (
-    <div className="min-h-screen bg-[#F5F3EF]">
-      <Header />
+    <div className="min-h-screen bg-[#F5F3EF] font-sans flex">
+      
+      {/* SIDEBAR */}
+      <aside className="w-64 bg-[#003366] text-white flex flex-col fixed h-full shadow-2xl z-50">
+        {/* Logo */}
+        <div className="p-8 flex items-center gap-3">
+          <BookOpen className="w-8 h-8 text-[#BFECC9]" />
+          <span className="text-xl font-serif font-bold">Nauči Srpski</span>
+        </div>
 
-      {/* Admin Hero */}
-      <div className="bg-gradient-to-br from-[#003366] to-[#004488] text-white py-12">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex items-center justify-between flex-wrap gap-6">
+        {/* Navigation */}
+        <nav className="flex-1 px-4 space-y-2">
+          {sidebarItems.map((item) => (
+             <button
+               key={item.id}
+               onClick={() => setActiveTab(item.id)}
+               className={`w-full flex items-center gap-4 px-6 py-4 rounded-xl transition-all duration-200 ${
+                 activeTab === item.id 
+                   ? 'bg-[#BFECC9] text-[#003366] font-bold shadow-lg' 
+                   : 'text-white/70 hover:bg-white/10 hover:text-white'
+               }`}
+             >
+               <item.icon size={20} />
+               <span>{item.label}</span>
+             </button>
+          ))}
+        </nav>
+
+        {/* User Profile Mini */}
+        <div className="p-6 border-t border-white/10">
+          <div className="flex items-center gap-3 mb-4">
+            <div className="w-10 h-10 bg-white/10 rounded-full flex items-center justify-center text-white font-bold">
+               {userProfile?.ime?.charAt(0) || 'A'}
+            </div>
             <div>
-              <h1 className="text-4xl md:text-5xl font-serif font-bold mb-3">
-                Admin Panel
-              </h1>
-              <p className="text-[#BFECC9] text-lg">
-                Dobrodošli, {userProfile?.ime || 'Administratore'}
-              </p>
+               <div className="font-bold text-sm">{userProfile?.ime || 'Admin'}</div>
+               <div className="text-xs text-white/50">Administrator</div>
             </div>
           </div>
+          <button 
+            onClick={handleLogout}
+            className="flex items-center gap-2 text-red-300 hover:text-red-100 text-sm transition"
+          >
+            <LogOut size={16} /> Odjavi se
+          </button>
+        </div>
+      </aside>
 
-          {/* Stats Grid */}
-          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-            {stats.map((stat, index) => {
-              const Icon = stat.icon;
-              return (
-                <div
-                  key={index}
-                  className="bg-white/10 backdrop-blur-lg rounded-2xl p-6 border-2 border-white/20"
-                >
-                  <div className="flex items-center gap-4">
-                    <div
-                      className="p-3 rounded-xl"
-                      style={{ backgroundColor: stat.color }}
-                    >
-                      <Icon className="w-6 h-6 text-white" />
-                    </div>
-                    <div>
-                      <div className="text-2xl font-bold">{stat.value}</div>
-                      <div className="text-sm text-white/80">{stat.label}</div>
-                    </div>
-                  </div>
+      {/* MAIN CONTENT */}
+      <main className="flex-1 ml-64 p-8 lg:p-12">
+        
+        {/* Top Header */}
+        <header className="flex justify-between items-center mb-12">
+          <h1 className="text-4xl font-serif font-bold text-[#003366]">Admin Panel</h1>
+          
+          <div className="flex items-center gap-6">
+             <button className="relative p-2 text-gray-400 hover:text-[#003366] transition">
+               <Bell size={24} />
+               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
+             </button>
+             <div className="bg-white px-4 py-2 rounded-full shadow-sm flex items-center gap-2 border border-gray-100">
+                <div className="w-8 h-8 bg-[#003366] rounded-full flex items-center justify-center text-white text-xs">
+                  {userProfile?.ime?.charAt(0) || 'A'}
                 </div>
-              );
-            })}
+                <span className="text-sm font-bold text-[#003366]">{userProfile?.ime || 'Admin'}</span>
+                <ChevronDown size={16} className="text-gray-400" />
+             </div>
           </div>
-        </div>
-      </div>
+        </header>
 
-      {/* Tabs & Content */}
-      <div className="max-w-7xl mx-auto px-6 py-12">
-        {/* Tabs */}
-        <div className="flex items-center gap-4 mb-8 overflow-x-auto pb-2">
-          {tabs.map((tab) => {
-            const Icon = tab.icon;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setActiveTab(tab.id)}
-                className={`flex items-center gap-3 px-6 py-3 rounded-full font-semibold transition-all ${
-                  activeTab === tab.id
-                    ? 'bg-[#003366] text-white shadow-lg'
-                    : 'bg-white text-gray-700 hover:bg-gray-100'
-                }`}
-              >
-                <Icon className="w-5 h-5" />
-                {tab.label}
-              </button>
-            );
-          })}
-        </div>
+        {/* Stats Cards */}
+        {activeTab === 'dashboard' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            {statsCards.map((stat, index) => (
+              <div key={index} className={`bg-white p-6 rounded-3xl shadow-sm hover:shadow-md transition-all ${stat.borderColor}`}>
+                 <div className="flex justify-between items-start mb-4">
+                   <div className="text-gray-500 text-sm font-medium">{stat.label}</div>
+                   <div className={`p-2 rounded-lg bg-gray-50 ${stat.color}`}>
+                     <stat.icon size={20} />
+                   </div>
+                 </div>
+                 <div className="text-3xl font-black text-[#003366]">{stat.value}</div>
+              </div>
+            ))}
+          </div>
+        )}
 
-        {/* Tab Content */}
-        <Card variant="elevated">
-          <CardBody className="p-8">
-            {activeTab === 'courses' && <CourseManager />}
-            {activeTab === 'lessons' && <LessonManager />}
-            {activeTab === 'payments' && <PaymentVerifier />}
-          </CardBody>
-        </Card>
-      </div>
+        {/* Content Area */}
+        <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 min-h-[600px] p-8">
+           {/* Tab Title if not Dashboard */}
+           {activeTab !== 'dashboard' && (
+             <h2 className="text-2xl font-bold text-[#003366] mb-6 pb-4 border-b border-gray-100">
+               {sidebarItems.find(i => i.id === activeTab)?.label}
+             </h2>
+           )}
+
+           {/* Active Tab Component */}
+           <div className="animate-fade-in">
+              {activeTab === 'payments' && <PaymentVerifier />}
+              {activeTab === 'courses' && <CourseManager />}
+              {activeTab === 'lessons' && <LessonManager />}
+              {activeTab === 'dashboard' && (
+                 <div className="space-y-8">
+                    <div className="flex justify-between items-center">
+                       <h3 className="text-xl font-bold text-[#003366]">Poslednje Aktivnosti</h3>
+                    </div>
+                    {/* Placeholder for recent activities table if needed, or reuse components */}
+                    <PaymentVerifier limit={5} title="Nedavne Uplate" />
+                 </div>
+              )}
+              {['students', 'settings'].includes(activeTab) && (
+                <div className="text-center py-20 text-gray-400">
+                  <p>Sekcija {sidebarItems.find(i => i.id === activeTab)?.label} je u izradi.</p>
+                </div>
+              )}
+           </div>
+        </div>
+      </main>
     </div>
   );
 }

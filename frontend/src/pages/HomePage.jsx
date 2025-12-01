@@ -3,21 +3,17 @@ import { Link } from 'react-router-dom';
 import {
   Book,
   Video,
-  GraduationCap,
-  Star,
   CheckCircle,
   ArrowRight,
   Users,
   Award,
-  MessageCircle,
-  Play,
-  BookOpen,
-  Lightbulb,
+  Star,
   Trophy,
-  FileText,
-  Calendar,
+  Play,
+  Clock,
   Target,
-  Sparkles,
+  Shield,
+  Zap
 } from 'lucide-react';
 import { getAllCourses } from '../services/course.service';
 import { useAuthStore } from '../store/authStore';
@@ -27,7 +23,7 @@ import Header from '../components/ui/Header';
 export default function HomePage() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
-  const { user, logout } = useAuthStore();
+  const { user } = useAuthStore();
 
   useEffect(() => {
     loadCourses();
@@ -44,434 +40,159 @@ export default function HomePage() {
     }
   };
 
+  const benefits = [
+    {
+      icon: Video,
+      title: 'Video lekcije 24/7',
+      description: 'Pristupite gradivu bilo kada. Preko 100 sati video materijala visoke rezolucije spremnog za učenje.',
+    },
+    {
+      icon: Users,
+      title: 'Individualan pristup',
+      description: 'Svaki učenik dobija pažnju koju zaslužuje kroz prilagođene planove i direktnu komunikaciju.',
+    },
+    {
+      icon: Shield,
+      title: 'Proverena metoda',
+      description: 'Naša metodologija je razvijana 15 godina i garantuje uspeh na prijemnom ispitu.',
+    },
+  ];
+
+  const stats = [
+    { number: '500+', label: 'Učenika' },
+    { number: '98%', label: 'Prolaznost' },
+    { number: '15', label: 'Godina iskustva' },
+  ];
+
+  const testimonials = [
+    {
+      text: '"Najbolja iskustva sa najboljim rezultatima! Profesorka Marina je sjajna."',
+      author: 'Marko P.',
+      role: 'Učenik',
+      rating: 5,
+    },
+    {
+      text: '"Nisam verovala da online priprema može biti ovako efikasna. Sve preporuke!"',
+      author: 'Jelena M.',
+      role: 'Roditelj',
+      rating: 5,
+    },
+    {
+      text: '"Upisao sam željenu gimnaziju zahvaljujući ovom kursu. Hvala vam puno!"',
+      author: 'Stefan K.',
+      role: 'Učenik',
+      rating: 5,
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#F5F3EF]">
-      {/* Header */}
+    <div className="min-h-screen bg-[#F5F3EF] font-sans text-[#003366]">
       <Header />
 
-      {/* Hero Section */}
-      <section className="max-w-7xl mx-auto px-6 py-16 relative overflow-hidden">
-        {/* Decorative Elements */}
-        <div className="absolute top-0 left-12">
-          <svg width="60" height="80" viewBox="0 0 60 80" className="opacity-30">
-            <path d="M 30,20 Q 20,10 10,20 L 30,50 L 50,20 Q 40,10 30,20" fill="#BFECC9" />
-            <line x1="30" y1="50" x2="30" y2="75" stroke="#003366" strokeWidth="2" />
-          </svg>
-        </div>
-
-        <div className="absolute top-0 right-12">
-          <div className="relative">
-            <Lightbulb className="w-12 h-12 text-[#FFD700]" fill="#FFD700" />
-            <Sparkles className="w-6 h-6 text-[#BFECC9] absolute -top-2 -right-2" fill="#BFECC9" />
-          </div>
-        </div>
-
-        <div className="text-center mb-12">
-          <h1 className="text-5xl md:text-6xl font-serif font-bold mb-6 leading-tight">
-            Online priprema za malu maturu uz{' '}
-            <span className="text-[#FF6B35]">proverene rezultate</span>
-          </h1>
-
-          <div className="flex items-center justify-center gap-8 text-sm mb-8 flex-wrap">
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-[#BFECC9]" />
-              <span>Bez kreditne kartice</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-[#BFECC9]" />
-              <span>Probni period 7 dana</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-[#BFECC9]" />
-              <span>Besplatno za prvi čas</span>
-            </div>
-          </div>
-
-          <Link to="#kursevi">
-            <button className="bg-[#FF6B35] text-white px-10 py-4 rounded-full hover:bg-[#E55A28] transition text-lg font-semibold shadow-lg inline-flex items-center gap-2 mb-8">
-              Započni učenje <ArrowRight className="w-5 h-5" />
-            </button>
-          </Link>
-
-          <p className="text-gray-700 max-w-2xl mx-auto leading-relaxed">
-            Profesorka Marina Lukić — 15 godina iskustva, preko 500 uspešnih učenika i 98% prolaznosti na
-            prijemnom.
-            <br />
-            <strong className="text-[#003366]">
-              ➡️ Dajte svom detetu sigurnost, znanje i rezultat.
-            </strong>
-          </p>
-        </div>
-
-        {/* Hero Images Section */}
-        <div className="flex items-center justify-center gap-12 mb-16 flex-wrap lg:flex-nowrap">
-          {/* Left Student */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-[#BFECC9] rounded-[40%_60%_70%_30%] transform rotate-6 w-56 h-64"></div>
-            <img
-              src="/slika2.jpeg"
-              alt="Profesorka Marina Lukić"
-              className="relative w-56 h-64 object-cover rounded-[40%_60%_70%_30%] shadow-xl"
-            />
-            <div className="absolute -left-6 top-1/2 bg-white p-3 rounded-full shadow-lg">
-              <Trophy className="w-8 h-8 text-[#FF6B35]" />
-            </div>
-          </div>
-
-          {/* Center Illustration */}
-          <div className="mx-8 hidden lg:block">
-            <svg width="150" height="150" viewBox="0 0 150 150">
-              <g transform="translate(75, 75)">
-                {/* Glava */}
-                <ellipse cx="0" cy="-25" rx="35" ry="40" fill="white" stroke="#003366" strokeWidth="3" />
-                {/* Oči */}
-                <circle cx="-12" cy="-30" r="5" fill="#003366" />
-                <circle cx="12" cy="-30" r="5" fill="#003366" />
-                {/* Osmeh */}
-                <path d="M -15,-15 Q 0,-10 15,-15" stroke="#003366" strokeWidth="3" fill="none" />
-                {/* Knjiga */}
-                <rect x="-20" y="0" width="40" height="28" rx="4" fill="#BFECC9" stroke="#003366" strokeWidth="3" />
-                <line x1="0" y1="0" x2="0" y2="28" stroke="#003366" strokeWidth="2" />
-                {/* Dekoracije */}
-                <circle cx="-50" cy="-40" r="6" fill="#FFD700" />
-                <circle cx="50" cy="-35" r="5" fill="#FF6B35" />
-                <path d="M 45,15 L 55,10 M 50,20 L 58,18" stroke="#BFECC9" strokeWidth="3" />
-                <path d="M -45,15 L -55,10" stroke="#FF6B35" strokeWidth="3" />
-              </g>
-            </svg>
-          </div>
-
-          {/* Right Student */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-[#FFD700] rounded-[30%_70%_60%_40%] w-56 h-64"></div>
-            <img
-              src="/slika3.jpeg"
-              alt="Profesorka Marina Lukić"
-              className="relative w-56 h-64 object-cover rounded-[30%_70%_60%_40%] shadow-xl"
-            />
-            <div className="absolute -right-6 bottom-12 bg-white p-3 rounded-full shadow-lg">
-              <Star className="w-8 h-8 text-[#FFD700]" fill="#FFD700" />
-            </div>
-          </div>
-        </div>
-
-        {/* Stats Bar */}
-        <div className="bg-[#003366] rounded-2xl p-12 grid md:grid-cols-3 gap-8 text-white shadow-2xl">
-          <div className="flex items-start gap-4">
-            <div className="bg-[#FF6B35] p-3 rounded-lg flex-shrink-0">
-              <Users className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <div className="text-4xl font-bold mb-1">500+</div>
-              <div className="text-gray-300 text-sm">
-                Pripremljeno učenika
-                <br />
-                širom Srbije
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4">
-            <div className="bg-[#BFECC9] p-3 rounded-lg flex-shrink-0">
-              <Trophy className="w-6 h-6 text-[#003366]" />
-            </div>
-            <div>
-              <div className="text-4xl font-bold mb-1">98%</div>
-              <div className="text-gray-300 text-sm">
-                Uspešnosti na
-                <br />
-                prijemnom ispitu
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-4">
-            <div className="bg-[#FFD700] p-3 rounded-lg flex-shrink-0">
-              <Video className="w-6 h-6 text-[#003366]" />
-            </div>
-            <div>
-              <div className="text-4xl font-bold mb-1">100+</div>
-              <div className="text-gray-300 text-sm">
-                Video lekcija
-                <br />
-                dostupno 24/7
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Why Choose Us Section */}
-      <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="flex justify-between items-start mb-12 flex-wrap gap-8">
-          <div className="max-w-2xl">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold leading-tight">
-              Zašto roditelji biraju baš{' '}
-              <span className="text-[#FF6B35]">našu online pripremu?</span>
-            </h2>
-          </div>
-          <div className="text-left lg:text-right">
-            <p className="text-gray-700 mb-4 max-w-md">
-              Učimo pametno, korak po korak.
-              <br />
-              Jedna lekcija u isto vreme!
-            </p>
-            <Link to="/register">
-              <button className="border-2 border-[#003366] px-6 py-2 rounded-md hover:bg-[#003366] hover:text-white transition inline-flex items-center gap-2">
-                Prijavite se sada <ArrowRight className="w-4 h-4" />
-              </button>
-            </Link>
-          </div>
-        </div>
-
-        <div className="grid md:grid-cols-3 gap-6">
-          {/* Card 1 */}
-          <div className="bg-[#FF6B35] rounded-3xl p-8 relative overflow-hidden min-h-[400px]">
-            <svg className="absolute top-8 left-8 opacity-20" width="80" height="80" viewBox="0 0 80 80">
-              <circle cx="40" cy="30" r="25" stroke="white" strokeWidth="4" fill="none" />
-              <path d="M 40,55 L 40,75" stroke="white" strokeWidth="4" />
-            </svg>
-            <div className="absolute bottom-0 right-0 w-3/4 h-3/4 rounded-tl-[100px] overflow-hidden">
-              <div className="w-full h-full bg-gradient-to-br from-white/20 to-transparent"></div>
-            </div>
-            <div className="relative z-10">
-              <Video className="w-12 h-12 text-white mb-4" />
-              <h3 className="text-white text-2xl font-serif font-bold mb-2">
-                Video lekcije
-                <br />
-                na zahtev
-              </h3>
-              <p className="text-white/90 text-sm mt-4">
-                Pristupite lekcijama bilo kada, sa neograničenim ponavljanjem i HD kvalitetom.
-              </p>
-            </div>
-          </div>
-
-          {/* Card 2 */}
-          <div className="bg-[#BFECC9] rounded-3xl p-8 relative overflow-hidden min-h-[400px]">
-            <svg className="absolute top-8 left-8" width="60" height="60" viewBox="0 0 60 60">
-              <circle cx="20" cy="20" r="18" stroke="#003366" strokeWidth="3" fill="none" />
-              <path d="M 35,15 Q 45,20 40,35" stroke="#003366" strokeWidth="3" fill="none" />
-            </svg>
-            <div className="absolute bottom-0 right-0 w-3/4 h-3/4 rounded-tl-[100px] overflow-hidden">
-              <div className="w-full h-full bg-gradient-to-br from-white/30 to-transparent"></div>
-            </div>
-            <div className="relative z-10">
-              <Users className="w-12 h-12 text-[#003366] mb-4" />
-              <h3 className="text-[#003366] text-2xl font-serif font-bold mb-2">
-                Uživo časovi
-                <br />
-                nedeljno
-              </h3>
-              <p className="text-gray-700 text-sm mt-4">
-                Interaktivni časovi sa profesorkom preko video-chata uz mogućnost postavljanja pitanja.
-              </p>
-            </div>
-          </div>
-
-          {/* Card 3 */}
-          <div className="bg-[#42A5F5] rounded-3xl p-8 relative overflow-hidden min-h-[400px]">
-            <svg className="absolute top-8 right-8" width="40" height="40" viewBox="0 0 40 40">
-              <path d="M 5,25 Q 10,5 25,10 Q 35,15 30,30" stroke="white" strokeWidth="3" fill="none" />
-            </svg>
-            <div className="absolute bottom-0 right-0 w-3/4 h-3/4 rounded-tl-[100px] overflow-hidden">
-              <div className="w-full h-full bg-gradient-to-br from-white/20 to-transparent"></div>
-            </div>
-            <div className="relative z-10">
-              <GraduationCap className="w-12 h-12 text-white mb-4" />
-              <h3 className="text-white text-2xl font-serif font-bold mb-2">
-                Priprema
-                <br />
-                za maturu
-              </h3>
-              <p className="text-white/90 text-sm mt-4">
-                Sveobuhvatna priprema sa testovima, materijalima i simulacijama ispita.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* What Students Get Section */}
-      <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="text-center mb-12">
-          <p className="text-gray-600 mb-4">Fokusiramo se na jedan važan koncept u isto vreme</p>
-          <h2 className="text-4xl md:text-5xl font-serif font-bold">
-            Šta Vaše dete <span className="text-[#FF6B35]">dobija?</span>
-          </h2>
-        </div>
-
-        <div className="bg-white rounded-3xl p-12 shadow-xl border-2 border-gray-100">
-          <div className="grid md:grid-cols-2 gap-8">
-            {[
-              'Sistematsku pripremu za malu maturu',
-              '100+ video lekcija koje može da ponavlja neograničeno',
-              'Nedeljne online časove putem video poziva',
-              'Testove i simulacije ispita',
-              'Sve materijale za štampu (PDF)',
-              'Praćenje napretka i rezultata',
-              'Podršku profesorke tokom cele pripreme',
-              'Potpuno bezbednu i proverenu platformu',
-            ].map((benefit, index) => (
-              <div key={index} className="flex items-start gap-4">
-                <CheckCircle className="w-6 h-6 text-[#BFECC9] flex-shrink-0 mt-1" />
-                <span className="text-lg font-medium text-gray-800">{benefit}</span>
-              </div>
-            ))}
-          </div>
-          <div className="text-center mt-12">
-            <Link to="/benefits">
-              <button className="bg-[#FF6B35] text-white px-10 py-4 rounded-full hover:bg-[#E55A28] transition text-lg font-semibold shadow-lg inline-flex items-center gap-2">
-                Pogledajte sve pogodnosti <ArrowRight className="w-5 h-5" />
-              </button>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* Professor Section */}
-      <section id="profesor" className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Image */}
-          <div className="relative">
-            <div className="absolute inset-0 bg-gradient-to-br from-[#BFECC9]/30 to-[#FF6B35]/30 rounded-3xl blur-3xl"></div>
-            <div className="relative bg-white rounded-3xl p-3 shadow-2xl">
-              <div className="grid grid-cols-2 gap-3">
-                <img
-                  src="/slika2.jpeg"
-                  alt="Profesorka Marina Lukić"
-                  className="w-full h-64 object-cover rounded-2xl"
-                />
-                <img
-                  src="/slika3.jpeg"
-                  alt="Profesorka Marina Lukić"
-                  className="w-full h-64 object-cover rounded-2xl"
-                />
-              </div>
-            </div>
-            <div className="absolute -top-6 -right-6 bg-[#FFD700] rounded-full p-4 shadow-xl">
-              <Star className="w-8 h-8 text-[#003366]" fill="#003366" />
-            </div>
-          </div>
-
-          {/* Content */}
-          <div className="space-y-6">
-            <div className="inline-block bg-[#BFECC9] px-4 py-2 rounded-full">
-              <span className="text-sm font-semibold text-[#003366]">Vaš mentor</span>
-            </div>
-
-            <h2 className="text-5xl lg:text-6xl font-black font-serif text-[#003366]">
-              Marina Lukić
-            </h2>
-
-            <div className="space-y-2">
-              <p className="text-lg text-gray-700">Profesor srpskog jezika i književnosti</p>
-              <p className="text-lg text-gray-700">15+ godina iskustva</p>
-              <p className="text-lg text-[#003366] font-bold">Specijalista za pripremu osmaka</p>
-            </div>
-
-            <div className="space-y-3 pt-4">
-              <div className="flex items-start gap-2">
-                <CheckCircle className="w-5 h-5 text-[#BFECC9] flex-shrink-0 mt-0.5" />
-                <p className="text-gray-700">Preko 500 učenika pripremila za malu maturu</p>
-              </div>
-              <div className="flex items-start gap-2">
-                <CheckCircle className="w-5 h-5 text-[#BFECC9] flex-shrink-0 mt-0.5" />
-                <p className="text-gray-700">98% njih upisalo željenu srednju školu</p>
-              </div>
-              <div className="flex items-start gap-2">
-                <CheckCircle className="w-5 h-5 text-[#BFECC9] flex-shrink-0 mt-0.5" />
-                <p className="text-gray-700">Roditelji je ocenjuju prosečnom ocenom 4.9/5</p>
-              </div>
-            </div>
-
-            <div className="grid sm:grid-cols-3 gap-4 pt-6">
-              <div className="bg-gradient-to-br from-[#BFECC9]/20 to-transparent p-4 rounded-xl border-2 border-[#BFECC9]/30">
-                <Award className="w-8 h-8 text-[#FF6B35] mb-2" />
-                <h4 className="font-bold text-sm mb-1">Stručnost</h4>
-                <p className="text-xs text-gray-600">Magistar filologije</p>
-              </div>
-
-              <div className="bg-gradient-to-br from-[#BFECC9]/20 to-transparent p-4 rounded-xl border-2 border-[#BFECC9]/30">
-                <Users className="w-8 h-8 text-[#FF6B35] mb-2" />
-                <h4 className="font-bold text-sm mb-1">Iskustvo</h4>
-                <p className="text-xs text-gray-600">500+ učenika</p>
-              </div>
-
-              <div className="bg-gradient-to-br from-[#BFECC9]/20 to-transparent p-4 rounded-xl border-2 border-[#BFECC9]/30">
-                <MessageCircle className="w-8 h-8 text-[#FF6B35] mb-2" />
-                <h4 className="font-bold text-sm mb-1">Pristup</h4>
-                <p className="text-xs text-gray-600">Personalizovan</p>
-              </div>
-            </div>
-
-            <div className="pt-6 flex flex-col sm:flex-row gap-4">
-              <Link
-                to="/contact"
-                className="bg-[#FF6B35] text-white px-8 py-3 rounded-full hover:bg-[#E55A28] transition text-center font-semibold shadow-lg"
-              >
-                Kontaktiraj profesorku
-              </Link>
-              <a
-                href="#kursevi"
-                className="border-2 border-[#003366] text-[#003366] px-8 py-3 rounded-full hover:bg-[#003366] hover:text-white transition text-center font-semibold"
-              >
-                Pogledaj video uvod
-              </a>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Section */}
-      <section id="kako-funkcionise" className="bg-white py-16">
+      {/* HERO SECTION */}
+      <section className="relative pt-10 pb-20 lg:pt-20 lg:pb-32 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-12">
-            <h2 className="text-4xl md:text-5xl font-serif font-bold mb-4">
-              Kako funkcioniše <span className="text-[#FF6B35]">priprema?</span>
-            </h2>
-            <p className="text-gray-600 text-lg">Jednostavno za roditelje i decu</p>
-          </div>
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left - Text */}
+            <div className="relative z-10 space-y-8 text-center lg:text-left">
+              <h1 className="text-5xl lg:text-7xl font-serif font-bold leading-[1.1] text-[#003366]">
+                Online priprema za <br />
+                <span className="relative inline-block">
+                  malu maturu
+                  <svg className="absolute w-full h-3 -bottom-1 left-0 text-[#BFECC9] -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
+                    <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
+                  </svg>
+                </span>{' '}
+                uz proverene rezultate
+              </h1>
+              
+              <p className="text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
+                Profesorka Marina Lukić vas vodi do uspeha kroz proverenu metodologiju, 
+                interaktivne časove i materijale prilagođene svakom učeniku.
+              </p>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                icon: BookOpen,
-                title: 'Pregled kursa',
-                desc: 'Roditelj pogledom vidi šta dete uči i kako izgleda svaka faza.',
-                color: '#BFECC9',
-              },
-              {
-                icon: FileText,
-                title: 'Plaćanje preko uplatnice',
-                desc: 'Sistem generiše uplatnicu na ime roditelja i čuva račun.',
-                color: '#FFD700',
-              },
-              {
-                icon: Play,
-                title: 'Pristup lekcijama',
-                desc: 'Dete odmah dobija pristup sa kompjutera ili telefona, bez instalacija.',
-                color: '#42A5F5',
-              },
-              {
-                icon: Video,
-                title: 'Nedeljni online čas',
-                desc: 'U realnom vremenu sa profesorkom — postavljanje pitanja, rad po zadacima.',
-                color: '#FF6B35',
-              },
-            ].map((step, index) => {
-              const Icon = step.icon;
+              <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+                <Link to="/courses">
+                  <button className="bg-[#FF6B35] text-white px-10 py-4 rounded-full hover:bg-[#E55A28] transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl text-lg font-semibold tracking-wide">
+                    Pogledaj sve kurseve
+                  </button>
+                </Link>
+                <Link to="/about">
+                  <button className="px-10 py-4 rounded-full border-2 border-[#003366] text-[#003366] hover:bg-[#003366] hover:text-white transition-all text-lg font-semibold">
+                    Saznaj Više
+                  </button>
+                </Link>
+              </div>
+              
+              <div className="pt-6 flex items-center justify-center lg:justify-start gap-4 text-sm font-medium text-gray-500">
+                <div className="flex items-center gap-1">
+                  <CheckCircle className="w-4 h-4 text-[#BFECC9] fill-[#BFECC9]" /> 500+ Učenika
+                </div>
+                <div className="flex items-center gap-1">
+                  <CheckCircle className="w-4 h-4 text-[#BFECC9] fill-[#BFECC9]" /> 98% Prolaznost
+                </div>
+              </div>
+            </div>
+
+            {/* Right - Image & Blob */}
+            <div className="relative">
+              {/* Abstract Blob Background */}
+              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] z-0">
+                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-[#BFECC9] opacity-60 animate-pulse-slow">
+                  <path fill="currentColor" d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,81.6,-46.6C91.4,-34.1,98.1,-19.2,95.8,-4.9C93.5,9.3,82.2,22.9,71,35.4C59.8,47.9,48.7,59.3,35.9,68.5C23.1,77.7,8.6,84.7,-4.8,92.9C-18.2,101.1,-30.5,110.5,-41.8,104.1C-53.1,97.7,-63.4,75.5,-71.6,58.2C-79.8,40.9,-85.9,28.5,-88.3,15.5C-90.7,2.5,-89.4,-11.1,-82.9,-22.6C-76.4,-34.1,-64.7,-43.5,-52.9,-51.3C-41.1,-59.1,-29.2,-65.3,-16.9,-69.9C-4.6,-74.5,8.1,-77.5,21.3,-78.9" transform="translate(100 100)" />
+                </svg>
+              </div>
+
+              {/* Main Image */}
+              <div className="relative z-10">
+                <img 
+                  src="/slika2.jpeg" 
+                  alt="Profesorka Marina" 
+                  className="relative z-10 w-full max-w-md mx-auto rounded-[3rem] shadow-2xl transform -rotate-2 hover:rotate-0 transition-all duration-500 border-4 border-white"
+                />
+
+                {/* Floating Elements */}
+                {/* Book Icon */}
+                <div className="absolute -top-10 -left-4 bg-white p-4 rounded-2xl shadow-xl z-20 animate-bounce-slow">
+                   <Book className="w-8 h-8 text-[#FF6B35]" />
+                </div>
+
+                {/* 98% Badge */}
+                <div className="absolute top-10 -right-8 bg-white p-4 rounded-2xl shadow-xl z-20 transform rotate-6 animate-float">
+                   <div className="text-center">
+                     <div className="text-3xl font-black text-[#003366]">98%</div>
+                     <div className="text-xs font-bold text-gray-500 uppercase tracking-wider">Prolaznost</div>
+                   </div>
+                </div>
+
+                {/* Trophy */}
+                <div className="absolute -bottom-6 right-10 bg-[#FFD700] p-4 rounded-full shadow-xl z-20 border-4 border-white">
+                  <Trophy className="w-8 h-8 text-[#003366]" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* BENEFITS SECTION */}
+      <section className="py-20">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-3 gap-8">
+            {benefits.map((benefit, index) => {
+              const Icon = benefit.icon;
               return (
-                <div key={index} className="text-center">
-                  <div
-                    className="w-20 h-20 rounded-full mx-auto mb-6 flex items-center justify-center shadow-lg"
-                    style={{ backgroundColor: step.color }}
-                  >
-                    <Icon className="w-10 h-10 text-white" />
+                <div 
+                  key={index}
+                  className="group bg-white rounded-[2.5rem] p-10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100"
+                >
+                  <div className="w-16 h-16 bg-[#BFECC9]/30 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#BFECC9] transition-colors">
+                    <Icon className="w-8 h-8 text-[#003366]" />
                   </div>
-                  <div className="text-4xl font-bold text-gray-300 mb-2">{index + 1}</div>
-                  <h3 className="text-xl font-bold mb-3 text-[#003366]">{step.title}</h3>
-                  <p className="text-gray-600 text-sm leading-relaxed">{step.desc}</p>
+                  <h3 className="text-2xl font-serif font-bold text-[#003366] mb-4">{benefit.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">
+                    {benefit.description}
+                  </p>
                 </div>
               );
             })}
@@ -479,196 +200,195 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Courses Section */}
-      <section id="kursevi" className="max-w-7xl mx-auto px-6 py-16">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl md:text-5xl font-serif font-bold mb-4">
-            Dostupni <span className="text-[#FF6B35]">kursevi</span>
-          </h2>
-          <p className="text-gray-600 text-lg">Odaberite kurs koji odgovara vašim potrebama</p>
-        </div>
-
-        {loading ? (
-          <div className="text-center py-20">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#BFECC9] border-t-transparent mx-auto"></div>
-            <p className="mt-6 text-gray-600 text-lg">Učitavanje kurseva...</p>
-          </div>
-        ) : courses.length === 0 ? (
-          <div className="text-center py-20 bg-white rounded-3xl max-w-2xl mx-auto shadow-xl">
-            <div className="bg-[#BFECC9]/20 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
-              <BookOpen className="h-12 w-12 text-[#003366]" />
+      {/* STATS & SOCIAL PROOF */}
+      <section className="py-20 bg-white rounded-t-[4rem]">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* Why Nauči Srpski? */}
+          <div className="mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#003366] mb-4">
+                Zašto Nauči Srpski?
+              </h2>
             </div>
-            <h3 className="text-3xl font-bold mb-4 text-[#003366]">Kursevi će uskoro biti dostupni!</h3>
-            <p className="text-gray-600 text-lg max-w-md mx-auto mb-8">
-              Trenutno radimo na novim kursevima. Prijavite se da budete prvi obavešteni!
-            </p>
-            <Link
-              to="/register"
-              className="bg-[#FF6B35] text-white px-10 py-4 rounded-full hover:bg-[#E55A28] transition text-lg font-semibold shadow-lg inline-block"
-            >
-              Prijavite se
-            </Link>
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="bg-[#F5F3EF] p-8 rounded-[2rem] text-center hover:shadow-lg transition">
+                <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-[#FF6B35]">
+                  <Video className="w-8 h-8" />
+                </div>
+                <h3 className="text-xl font-bold text-[#003366] mb-2">Moderne Video Lekcije</h3>
+                <p className="text-gray-600">Učite kroz zabavne i interaktivne video materijale prilagođene vašem tempu.</p>
+              </div>
+              <div className="bg-[#F5F3EF] p-8 rounded-[2rem] text-center hover:shadow-lg transition">
+                <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-[#BFECC9]">
+                   <CheckCircle className="w-8 h-8 text-[#003366]" />
+                </div>
+                <h3 className="text-xl font-bold text-[#003366] mb-2">Garantovan Uspeh</h3>
+                <p className="text-gray-600">Pratimo vaš napredak i garantujemo rezultate uz našu proverenu metodologiju.</p>
+              </div>
+              <div className="bg-[#F5F3EF] p-8 rounded-[2rem] text-center hover:shadow-lg transition">
+                <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-[#003366]">
+                   <Users className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="text-xl font-bold text-[#003366] mb-2">Podrška Zajednice</h3>
+                <p className="text-gray-600">Učite u grupi vršnjaka i uz stalnu podršku mentora tokom celog procesa.</p>
+              </div>
+            </div>
           </div>
-        ) : (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {courses.map((course, index) => (
-              <div
-                key={course.id}
-                className="bg-white rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-2 border-gray-100"
-              >
-                <div className="relative h-48 bg-gradient-to-br from-[#BFECC9]/30 to-[#FFD700]/30 flex items-center justify-center overflow-hidden">
-                  <Book className="h-20 w-20 text-[#003366] opacity-40" />
-                  <div className="absolute top-4 right-4 bg-white px-4 py-2 rounded-full shadow-lg">
-                    <div className="flex items-center gap-1">
-                      <Star className="h-4 w-4 text-[#FFD700]" fill="#FFD700" />
-                      <span className="text-sm font-bold text-[#003366]">4.9</span>
-                    </div>
-                  </div>
-                  <div className="absolute top-4 left-4 bg-[#FF6B35] text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg">
-                    {course.type === 'video' ? '🎥 Video kurs' : '👨‍🏫 Uživo časovi'}
-                  </div>
-                </div>
 
-                <div className="p-6">
-                  <h3 className="text-2xl font-bold mb-3 text-[#003366]">{course.title}</h3>
-                  <p className="text-gray-600 mb-6 line-clamp-2">{course.description}</p>
+          {/* FAQ Button Section */}
+          <div className="bg-[#003366] text-white rounded-[3rem] p-10 text-center mb-20 relative overflow-hidden">
+            <div className="relative z-10">
+              <h2 className="text-3xl font-serif font-bold mb-4">Često postavljana pitanja</h2>
+              <p className="text-[#BFECC9] max-w-2xl mx-auto mb-8">
+                Imate nedoumice? Pogledajte odgovore na najčešća pitanja pre nego što nas kontaktirate.
+              </p>
+              <Link to="/faq">
+                <button className="bg-white text-[#003366] px-8 py-3 rounded-full font-bold hover:bg-[#BFECC9] transition">
+                  Pogledajte FAQ
+                </button>
+              </Link>
+            </div>
+            <div className="absolute top-0 left-0 w-64 h-64 bg-[#BFECC9] opacity-10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#FF6B35] opacity-10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+          </div>
 
-                  <div className="flex justify-between items-center pt-4 border-t-2 border-gray-100">
-                    <div>
-                      <div className="text-sm text-gray-500 mb-1">Cena</div>
-                      <span className="text-3xl font-black text-[#FF6B35]">{formatPrice(course.price)}</span>
-                    </div>
-                    <Link
-                      to={`/course/${course.id}`}
-                      className="bg-[#003366] text-white py-3 px-6 rounded-full hover:bg-[#002244] transition font-semibold inline-flex items-center gap-2 shadow-lg"
-                    >
-                      Vidi više <ArrowRight className="w-4 h-4" />
-                    </Link>
-                  </div>
-                </div>
+          {/* Stats Grid */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20 border-b border-gray-100 pb-12">
+            <div className="col-span-2 md:col-span-1 text-center md:text-left">
+               <h3 className="text-lg font-medium text-gray-500 mb-2">Naš uspeh u brojkama</h3>
+               <p className="text-sm text-gray-400">Rezultati govore više od reči</p>
+            </div>
+            {stats.map((stat, index) => (
+              <div key={index} className="text-center">
+                <div className="text-5xl font-serif font-bold text-[#003366] mb-2">{stat.number}</div>
+                <div className="text-sm font-bold uppercase tracking-widest text-[#FF6B35]">{stat.label}</div>
               </div>
             ))}
           </div>
-        )}
+
+          {/* Testimonials */}
+          <div className="grid lg:grid-cols-3 gap-8">
+             {testimonials.map((t, i) => (
+               <div key={i} className="bg-[#F5F3EF] p-8 rounded-3xl relative">
+                 <div className="absolute -top-4 left-8">
+                   <div className="bg-[#FF6B35] rounded-full p-2">
+                     <Star className="w-4 h-4 text-white fill-white" />
+                   </div>
+                 </div>
+                 <p className="text-[#003366] text-lg italic mb-6 leading-relaxed opacity-80">
+                   {t.text}
+                 </p>
+                 <div className="flex items-center gap-3">
+                   <div className="w-10 h-10 bg-[#003366] rounded-full flex items-center justify-center text-white font-bold">
+                     {t.author.charAt(0)}
+                   </div>
+                   <div>
+                     <div className="font-bold text-[#003366]">{t.author}</div>
+                     <div className="text-xs text-gray-500 uppercase font-bold">{t.role}</div>
+                   </div>
+                 </div>
+               </div>
+             ))}
+          </div>
+        </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-[#FFD700] rounded-3xl p-12 relative overflow-hidden shadow-2xl">
-            <div className="relative z-10 max-w-sm">
-              <h3 className="text-4xl font-serif font-bold mb-4 text-[#003366]">
-                Sigurnost koja gradi
-                <br />
-                bolju budućnost
-              </h3>
-              <p className="text-gray-800 mb-6">
-                Osnažujemo decu da otkriju svoj pun potencijal kroz poverenje i podršku.
-              </p>
-              <Link to="/contact">
-                <button className="bg-white text-[#003366] px-8 py-3 rounded-full hover:bg-gray-100 transition font-semibold shadow-lg inline-flex items-center gap-2">
-                  Zakažite razgovor <ArrowRight className="w-5 h-5" />
-                </button>
-              </Link>
-            </div>
-            <svg className="absolute bottom-0 left-0 opacity-20" width="200" height="200" viewBox="0 0 200 200">
-              <path d="M 20,100 L 60,60 L 60,140 Z" fill="#003366" />
-              <rect x="50" y="50" width="15" height="100" fill="#003366" />
-            </svg>
+      {/* CTA SECTION */}
+      <section className="py-24 bg-[#003366] text-white rounded-t-[4rem] -mt-10 relative z-10 overflow-hidden">
+        {/* Decorative Background */}
+        <div className="absolute top-0 left-0 w-full h-full">
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#FF6B35] opacity-10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/4"></div>
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#BFECC9] opacity-10 rounded-full blur-3xl -translate-x-1/3 translate-y-1/4"></div>
+        </div>
+
+        <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
+          <div className="inline-block bg-[#FF6B35] text-white text-sm font-bold px-4 py-1 rounded-full mb-6 animate-pulse">
+            Upis je u toku!
+          </div>
+          
+          <h2 className="text-5xl md:text-6xl font-serif font-bold mb-6 leading-tight">
+            Nemojte čekati, <br/>
+            <span className="text-[#BFECC9]">uspeh počinje danas.</span>
+          </h2>
+          
+          <p className="text-xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">
+            Pridružite se stotinama učenika koji su već osigurali svoje mesto u željenoj srednjoj školi.
+            Kreirajte nalog za manje od minut.
+          </p>
+
+          <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <Link to="/register">
+              <button className="bg-[#BFECC9] text-[#003366] px-12 py-5 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_40px_rgba(191,236,201,0.4)] text-xl font-bold tracking-wide flex items-center gap-2">
+                Napravi Nalog <ArrowRight className="w-6 h-6" />
+              </button>
+            </Link>
+            <Link to="/courses">
+              <button className="bg-transparent border-2 border-white/30 text-white px-12 py-5 rounded-full hover:bg-white/10 transition-all text-xl font-bold">
+                Istraži Kurseve
+              </button>
+            </Link>
           </div>
 
-          <div className="bg-[#FF6B35] rounded-3xl p-12 relative overflow-hidden text-white shadow-2xl">
-            <div className="relative z-10">
-              <h3 className="text-4xl font-serif font-bold mb-4">
-                Pomažemo deci da
-                <br />
-                ostvare snove
-              </h3>
-              <p className="text-white/90 mb-6">Zajedno ka uspehu, korak po korak.</p>
-              <Link to="/about">
-                <button className="bg-white text-[#FF6B35] px-8 py-3 rounded-full hover:bg-gray-100 transition font-semibold shadow-lg inline-flex items-center gap-2">
-                  Saznajte više <ArrowRight className="w-5 h-5" />
-                </button>
-              </Link>
+          <div className="mt-12 flex items-center justify-center gap-8 text-sm font-medium text-white/60">
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-[#BFECC9]" /> Bez skrivenih troškova
             </div>
-            <div className="absolute bottom-0 right-0">
-              <svg width="150" height="150" viewBox="0 0 150 150">
-                <circle cx="80" cy="80" r="50" fill="white" opacity="0.1" />
-                <path d="M 50,80 L 80,50 L 80,110" stroke="white" strokeWidth="3" opacity="0.2" />
-              </svg>
-            </div>
-            <div className="absolute top-8 right-8">
-              <Trophy className="w-12 h-12 text-white opacity-30" />
+            <div className="flex items-center gap-2">
+              <CheckCircle className="w-5 h-5 text-[#BFECC9]" /> 7 dana garancija
             </div>
           </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer id="kontakt" className="bg-[#003366] text-white pt-16 pb-8">
+      {/* FOOTER */}
+      <footer className="bg-[#002244] text-white pt-20 pb-10">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-12 mb-12">
-            <div className="md:col-span-2">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="bg-[#BFECC9] p-2 rounded-xl">
-                  <Book className="h-6 w-6 text-[#003366]" />
-                </div>
+          <div className="grid md:grid-cols-4 gap-12 mb-16">
+            <div className="col-span-1 md:col-span-2">
+              <Link to="/" className="flex items-center gap-2 mb-6">
+                <Book className="w-8 h-8 text-[#BFECC9]" />
                 <span className="text-2xl font-serif font-bold">Nauči Srpski</span>
-              </div>
-              <p className="text-gray-300 mb-6 max-w-md leading-relaxed">
-                Najbolja online platforma za učenje srpskog jezika i pripremu za malu maturu sa profesorkom
-                Marinom Lukić.
+              </Link>
+              <p className="text-gray-400 max-w-sm leading-relaxed">
+                Vaš pouzdan partner u pripremi za malu maturu. 
+                Kombinujemo tradiciju i moderne tehnologije za najbolje rezultate.
               </p>
             </div>
-
+            
             <div>
-              <h4 className="font-bold mb-4 text-[#BFECC9]">Brzi linkovi</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <a href="#kursevi" className="hover:text-[#BFECC9] transition">
-                    Kursevi
-                  </a>
-                </li>
-                <li>
-                  <a href="#profesor" className="hover:text-[#BFECC9] transition">
-                    O profesorki
-                  </a>
-                </li>
-                <li>
-                  <Link to="/login" className="hover:text-[#BFECC9] transition">
-                    Prijavi se
-                  </Link>
-                </li>
+              <h4 className="font-bold text-lg mb-6 text-[#BFECC9]">Linkovi</h4>
+              <ul className="space-y-4 text-gray-400">
+                <li><Link to="/" className="hover:text-white transition-colors">Početna</Link></li>
+                <li><Link to="/about" className="hover:text-white transition-colors">O Nama</Link></li>
+                <li><Link to="/contact" className="hover:text-white transition-colors">Kontakt</Link></li>
+                <li><Link to="/register" className="hover:text-white transition-colors">Prijavi se</Link></li>
               </ul>
             </div>
 
             <div>
-              <h4 className="font-bold mb-4 text-[#BFECC9]">Pravno</h4>
-              <ul className="space-y-2 text-sm">
-                <li>
-                  <Link to="/terms" className="hover:text-[#BFECC9] transition">
-                    Uslovi korišćenja
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/privacy" className="hover:text-[#BFECC9] transition">
-                    Privatnost
-                  </Link>
-                </li>
-                <li>
-                  <Link to="/contact" className="hover:text-[#BFECC9] transition">
-                    Kontakt
-                  </Link>
-                </li>
+              <h4 className="font-bold text-lg mb-6 text-[#BFECC9]">Kontakt</h4>
+              <ul className="space-y-4 text-gray-400">
+                <li>info@naucisrpski.rs</li>
+                <li>+381 60 123 4567</li>
+                <li>Beograd, Srbija</li>
               </ul>
             </div>
           </div>
-
-          <div className="border-t border-white/10 pt-8 text-center text-sm text-gray-400">
-            <p>&copy; 2025 Nauči Srpski — Online priprema za malu maturu. Sva prava zadržana.</p>
+          
+          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
+            <p>&copy; 2025 Nauči Srpski. Sva prava zadržana.</p>
+            <div className="flex gap-6">
+              <Link to="/privacy" className="hover:text-white">Politika privatnosti</Link>
+              <Link to="/terms" className="hover:text-white">Uslovi korišćenja</Link>
+            </div>
           </div>
         </div>
       </footer>
     </div>
   );
 }
+
+// Add some custom animations in your global CSS or tailwind config if needed, 
+// or use standard tailwind animate classes. 
+// For now, using standard tailwind classes where possible.
+

@@ -1,9 +1,11 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle, MessageSquare, Instagram, Globe } from 'lucide-react';
+import { sendContactFormEmail } from '../services/email.service';
 import Header from '../components/ui/Header';
 import Card, { CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
+import { Link } from 'react-router-dom';
 
 export default function ContactPage() {
   const [formData, setFormData] = useState({
@@ -28,187 +30,175 @@ export default function ContactPage() {
     setLoading(true);
     setError('');
 
-    // Simulacija slanja (ovde dodati EmailJS ili backend API)
-    setTimeout(() => {
-      setSuccess(true);
+    try {
+      const result = await sendContactFormEmail(formData);
+      if (result.success) {
+        setSuccess(true);
+        setFormData({ ime: '', email: '', telefon: '', poruka: '' });
+      } else {
+        throw new Error('Greška pri slanju poruke.');
+      }
+    } catch (err) {
+      setError('Došlo je do greške pri slanju poruke. Molimo pokušajte ponovo.');
+    } finally {
       setLoading(false);
-      setFormData({ ime: '', email: '', telefon: '', poruka: '' });
-    }, 1500);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F3EF]">
+    <div className="min-h-screen bg-[#F5F3EF] font-sans text-[#003366]">
       <Header />
 
-      {/* Hero */}
-      <div className="bg-gradient-to-br from-[#003366] to-[#004488] text-white py-16">
-        <div className="max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-5xl font-serif font-bold mb-4">Kontaktirajte nas</h1>
-          <p className="text-xl text-white/90 max-w-2xl mx-auto">
-            Imate pitanja? Rado ćemo vam pomoći! Pošaljite nam poruku i javićemo vam se u najkraćem roku.
-          </p>
-        </div>
+      {/* Hero Text */}
+      <div className="text-center pt-16 pb-8">
+        <h1 className="text-5xl font-serif font-bold mb-4">Tu smo za sva vaša <br/> pitanja.</h1>
       </div>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        <div className="grid lg:grid-cols-2 gap-12">
-          {/* Contact Form */}
-          <div>
-            <Card variant="elevated">
-              <CardBody className="p-8">
-                <h2 className="text-3xl font-bold text-[#003366] mb-6">Pošaljite poruku</h2>
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="grid lg:grid-cols-12 gap-12 items-start">
+          
+          {/* Left Side - Form (Span 7) */}
+          <div className="lg:col-span-7 relative">
+            {/* Floating Elements */}
+            <div className="absolute -left-12 -top-12 hidden lg:block">
+               <div className="bg-[#BFECC9] p-4 rounded-2xl transform -rotate-12 shadow-lg">
+                 <Send className="w-8 h-8 text-[#003366]" />
+               </div>
+            </div>
 
-                {success ? (
-                  <div className="text-center py-8">
+            <div className="bg-white rounded-[3rem] p-8 md:p-12 shadow-xl relative z-10">
+               {success ? (
+                  <div className="text-center py-20">
                     <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                       <CheckCircle className="w-10 h-10 text-green-600" />
                     </div>
-                    <h3 className="text-2xl font-bold text-[#003366] mb-4">
-                      Poruka uspešno poslata!
-                    </h3>
-                    <p className="text-gray-600 mb-6">
-                      Hvala što ste nas kontaktirali. Odgovorićemo vam u roku od 24 sata.
-                    </p>
-                    <Button variant="primary" onClick={() => setSuccess(false)}>
-                      Pošalji novu poruku
-                    </Button>
+                    <h3 className="text-2xl font-bold mb-4">Poruka poslata!</h3>
+                    <p className="text-gray-600 mb-8">Javićemo vam se uskoro.</p>
+                    <Button onClick={() => setSuccess(false)}>Nova poruka</Button>
                   </div>
-                ) : (
-                  <form onSubmit={handleSubmit} className="space-y-5">
-                    <Input
-                      type="text"
-                      name="ime"
-                      label="Ime i prezime"
-                      placeholder="Vaše ime"
-                      value={formData.ime}
-                      onChange={handleChange}
-                      required
-                    />
+               ) : (
+                 <form onSubmit={handleSubmit} className="space-y-6">
+                   <Input
+                     name="ime"
+                     placeholder="Ime i prezime"
+                     value={formData.ime}
+                     onChange={handleChange}
+                     className="bg-gray-50 border-gray-100 rounded-2xl py-4"
+                     required
+                   />
+                   <Input
+                     type="email"
+                     name="email"
+                     placeholder="Email adresa"
+                     value={formData.email}
+                     onChange={handleChange}
+                     className="bg-gray-50 border-gray-100 rounded-2xl py-4"
+                     required
+                   />
+                   <Input
+                     type="tel"
+                     name="telefon"
+                     placeholder="Telefon"
+                     value={formData.telefon}
+                     onChange={handleChange}
+                     className="bg-gray-50 border-gray-100 rounded-2xl py-4"
+                   />
+                   <textarea
+                     name="poruka"
+                     value={formData.poruka}
+                     onChange={handleChange}
+                     rows={5}
+                     className="w-full px-6 py-4 bg-gray-50 border-2 border-gray-100 rounded-2xl focus:border-[#BFECC9] focus:outline-none transition-colors resize-none"
+                     placeholder="Vaša poruka..."
+                     required
+                   />
+                   
+                   {error && <div className="text-red-500 text-sm">{error}</div>}
 
-                    <Input
-                      type="email"
-                      name="email"
-                      label="Email adresa"
-                      placeholder="vas@email.com"
-                      value={formData.email}
-                      onChange={handleChange}
-                      leftIcon={Mail}
-                      required
-                    />
+                   <button 
+                     type="submit" 
+                     disabled={loading}
+                     className="w-full bg-[#FF6B35] text-white font-bold py-4 rounded-full hover:bg-[#E55A28] transition shadow-lg hover:shadow-xl disabled:opacity-70"
+                   >
+                     {loading ? 'Slanje...' : 'Pošalji Poruku'}
+                   </button>
+                 </form>
+               )}
+            </div>
 
-                    <Input
-                      type="tel"
-                      name="telefon"
-                      label="Telefon"
-                      placeholder="0612345678"
-                      value={formData.telefon}
-                      onChange={handleChange}
-                      leftIcon={Phone}
-                    />
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">
-                        Poruka <span className="text-red-500">*</span>
-                      </label>
-                      <textarea
-                        name="poruka"
-                        value={formData.poruka}
-                        onChange={handleChange}
-                        rows={6}
-                        className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 focus:border-[#BFECC9] focus:ring-4 focus:ring-[#BFECC9]/20 focus:outline-none transition-all duration-200 placeholder:text-gray-400"
-                        placeholder="Kako možemo da vam pomognemo?"
-                        required
-                      />
-                    </div>
-
-                    {error && (
-                      <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-                        {error}
-                      </div>
-                    )}
-
-                    <Button
-                      type="submit"
-                      variant="primary"
-                      size="lg"
-                      className="w-full"
-                      loading={loading}
-                      disabled={loading}
-                    >
-                      <Send className="w-5 h-5 mr-2" />
-                      {loading ? 'Slanje...' : 'Pošalji poruku'}
-                    </Button>
-                  </form>
-                )}
-              </CardBody>
-            </Card>
+            {/* Chat Bubble Decoration */}
+            <div className="absolute -right-6 bottom-20 hidden lg:block z-20">
+              <div className="bg-[#003366] p-4 rounded-[2rem] rounded-bl-none shadow-lg transform rotate-6">
+                <MessageSquare className="w-8 h-8 text-white" />
+              </div>
+            </div>
           </div>
 
-          {/* Contact Info */}
-          <div className="space-y-6">
-            <Card variant="gradient" className="border-2 border-[#BFECC9]/30">
-              <CardBody className="p-8">
-                <div className="flex items-start gap-4">
-                  <div className="bg-[#42A5F5] p-3 rounded-xl">
-                    <Mail className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg text-[#003366] mb-2">Email</h3>
-                    <p className="text-gray-600">kontakt@naucisprski.com</p>
-                    <p className="text-sm text-gray-500 mt-1">Odgovaramo u roku od 24h</p>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
+          {/* Right Side - Info Cards (Span 5) */}
+          <div className="lg:col-span-5 space-y-6 pt-8">
+            {/* Email Card */}
+            <div className="bg-white p-6 rounded-[2rem] shadow-md flex items-center gap-6 hover:shadow-lg transition-shadow">
+              <div className="bg-[#42A5F5] w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 text-white">
+                <Mail />
+              </div>
+              <div>
+                <div className="font-bold text-[#003366]">email@naucisrpski.rs</div>
+                <div className="text-sm text-gray-500">Odgovaramo u roku od 24h</div>
+              </div>
+            </div>
 
-            <Card variant="gradient" className="border-2 border-[#FFD700]/30">
-              <CardBody className="p-8">
-                <div className="flex items-start gap-4">
-                  <div className="bg-[#FFD700] p-3 rounded-xl">
-                    <Phone className="w-6 h-6 text-[#003366]" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg text-[#003366] mb-2">Telefon</h3>
-                    <p className="text-gray-600">+381 60 123 4567</p>
-                    <p className="text-sm text-gray-500 mt-1">Pon-Pet: 9:00 - 17:00</p>
-                  </div>
-                </div>
-              </CardBody>
-            </Card>
+            {/* Phone Card */}
+            <div className="bg-white p-6 rounded-[2rem] shadow-md flex items-center gap-6 hover:shadow-lg transition-shadow">
+              <div className="bg-[#BFECC9] w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 text-[#003366]">
+                <Phone />
+              </div>
+              <div>
+                <div className="font-bold text-[#003366]">+381 60 123 4567</div>
+                <div className="text-sm text-gray-500">Pon-Pet: 10:00 - 18:00</div>
+              </div>
+            </div>
 
-            <Card variant="gradient" className="border-2 border-[#FF6B35]/30">
-              <CardBody className="p-8">
-                <div className="flex items-start gap-4">
-                  <div className="bg-[#FF6B35] p-3 rounded-xl">
-                    <MapPin className="w-6 h-6 text-white" />
-                  </div>
-                  <div>
-                    <h3 className="font-bold text-lg text-[#003366] mb-2">Lokacija</h3>
-                    <p className="text-gray-600">Beograd, Srbija</p>
-                    <p className="text-sm text-gray-500 mt-1">Online platforma</p>
-                  </div>
+            {/* Social Card */}
+            <div className="bg-white p-6 rounded-[2rem] shadow-md flex items-center gap-6 hover:shadow-lg transition-shadow">
+              <div className="bg-[#FFD700] w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 text-[#003366]">
+                <Instagram />
+              </div>
+              <div>
+                <div className="font-bold text-[#003366]">Drustvene Mreže</div>
+                <div className="text-sm text-gray-500 space-x-2">
+                  <a href="#" className="hover:text-[#FF6B35]">Instagram</a>
+                  <span>•</span>
+                  <a href="#" className="hover:text-[#FF6B35]">Facebook</a>
                 </div>
-              </CardBody>
-            </Card>
+              </div>
+            </div>
 
-            {/* FAQ Note */}
-            <Card variant="elevated">
-              <CardBody className="p-8 text-center">
-                <h3 className="font-bold text-lg text-[#003366] mb-3">
-                  Često postavljana pitanja
-                </h3>
-                <p className="text-gray-600 text-sm mb-4">
-                  Pre nego što nas kontaktirate, proverite da li ste pronašli odgovor u našem FAQ odeljku.
-                </p>
-                <Button variant="outline" size="sm">
-                  Pogledajte FAQ
-                </Button>
-              </CardBody>
-            </Card>
+            {/* FAQ Promo */}
+            <div className="bg-[#003366] text-white p-8 rounded-[2.5rem] text-center mt-8">
+               <h3 className="text-xl font-serif font-bold mb-2">Često postavljana pitanja</h3>
+               <p className="text-white/70 text-sm mb-6">
+                 Pre nego što nas kontaktirate, proverite da li ste pronašli odgovor u našem FAQ odeljku.
+               </p>
+               <Link to="/faq">
+                 <button className="bg-white text-[#003366] px-6 py-3 rounded-full text-sm font-bold hover:bg-[#BFECC9] transition w-full">
+                   Pogledajte FAQ
+                 </button>
+               </Link>
+            </div>
           </div>
+
         </div>
       </div>
+      
+      {/* Footer */}
+      <footer className="bg-[#002244] text-white py-12 text-center mt-12">
+        <div className="flex justify-center gap-8 mb-8 text-sm opacity-70">
+            <Link to="/about" className="hover:text-white">O nama</Link>
+            <Link to="/contact" className="hover:text-white">Kontakt</Link>
+            <Link to="/terms" className="hover:text-white">Uslovi</Link>
+        </div>
+        <p>&copy; 2025 Nauči Srpski.</p>
+      </footer>
     </div>
   );
 }

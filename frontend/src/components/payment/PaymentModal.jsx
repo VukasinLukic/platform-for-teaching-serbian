@@ -1,0 +1,78 @@
+import { X, CheckCircle, Copy } from 'lucide-react';
+import { useState } from 'react';
+import { formatPrice } from '../../utils/helpers';
+import Button from '../ui/Button';
+
+export default function PaymentModal({ course, onClose }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText('160-00000000-00');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+      <div className="bg-white rounded-[2.5rem] max-w-lg w-full p-8 shadow-2xl relative animate-scale-in">
+        <button 
+          onClick={onClose}
+          className="absolute top-6 right-6 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+        >
+          <X size={20} className="text-gray-600" />
+        </button>
+
+        <div className="text-center mb-8">
+           <h3 className="text-2xl font-serif font-bold text-[#003366] mb-2">Instrukcije za plaćanje</h3>
+           <p className="text-gray-500">Za pristup kursu: <span className="font-bold text-[#003366]">{course.title}</span></p>
+        </div>
+
+        <div className="space-y-6">
+           <div className="bg-[#F5F3EF] p-6 rounded-3xl border border-gray-200">
+              <div className="flex justify-between items-center mb-4">
+                 <span className="text-gray-500 text-sm font-bold uppercase">Iznos za uplatu</span>
+                 <span className="text-2xl font-black text-[#FF6B35]">{formatPrice(course.price)}</span>
+              </div>
+              <div className="h-px bg-gray-200 my-4"></div>
+              <div className="space-y-3">
+                 <div>
+                    <div className="text-xs text-gray-400 uppercase font-bold mb-1">Primalac</div>
+                    <div className="font-bold text-[#003366]">Nauči Srpski, Beograd</div>
+                 </div>
+                 <div>
+                    <div className="text-xs text-gray-400 uppercase font-bold mb-1">Svrha uplate</div>
+                    <div className="font-bold text-[#003366]">Uplata za kurs: {course.title}</div>
+                 </div>
+                 <div className="relative">
+                    <div className="text-xs text-gray-400 uppercase font-bold mb-1">Račun primaoca</div>
+                    <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-gray-200">
+                       <code className="text-lg font-mono font-bold text-[#003366]">160-00000000-00</code>
+                       <button 
+                         onClick={handleCopy}
+                         className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                       >
+                          {copied ? <CheckCircle size={18} className="text-green-500" /> : <Copy size={18} className="text-gray-400" />}
+                       </button>
+                    </div>
+                 </div>
+              </div>
+           </div>
+
+           <div className="bg-blue-50 p-4 rounded-2xl flex gap-3 items-start">
+              <CheckCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+              <p className="text-sm text-blue-800">
+                 Nakon uplate, pošaljite dokaz o uplati kroz Vaš Panel kako bismo vam odmah aktivirali pristup.
+              </p>
+           </div>
+        </div>
+
+        <div className="mt-8">
+           <Button onClick={onClose} variant="primary" className="w-full py-4 text-lg">
+              Razumem
+           </Button>
+        </div>
+      </div>
+    </div>
+  );
+}
+

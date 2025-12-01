@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, User, Phone, Book, Trophy } from 'lucide-react';
 import { registerUser } from '../services/auth.service';
+import { sendWelcomeEmail } from '../services/email.service';
 import { isValidEmail, isValidPhone } from '../utils/helpers';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
@@ -73,6 +74,14 @@ export default function RegisterPage() {
         formData.ime,
         formData.telefon
       );
+      
+      // Send welcome email
+      try {
+        await sendWelcomeEmail(formData.email, formData.ime);
+      } catch (emailErr) {
+        console.error('Failed to send welcome email:', emailErr);
+      }
+
       navigate('/dashboard');
     } catch (err) {
       console.error('Registration error:', err);

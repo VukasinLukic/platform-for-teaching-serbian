@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
+import { initEmailService } from './services/email.service';
 import ScrollToTop from './components/ScrollToTop';
 
 // Pages
@@ -16,6 +17,9 @@ import AboutPage from './pages/AboutPage';
 import BenefitsPage from './pages/BenefitsPage';
 import PrivacyPage from './pages/legal/PrivacyPage';
 import TermsPage from './pages/legal/TermsPage';
+
+import CoursesPage from './pages/CoursesPage';
+import FAQPage from './pages/FAQPage';
 
 // Protected Route Component
 function ProtectedRoute({ children, adminOnly = false }) {
@@ -48,6 +52,7 @@ function App() {
 
   useEffect(() => {
     initAuth();
+    initEmailService();
   }, [initAuth]);
 
   return (
@@ -60,6 +65,8 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/course/:id" element={<CoursePage />} />
+        <Route path="/courses" element={<CoursesPage />} />
+        <Route path="/faq" element={<FAQPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutPage />} />
         <Route path="/benefits" element={<BenefitsPage />} />

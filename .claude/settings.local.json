@@ -13,7 +13,11 @@
       "Bash(npx firebase-tools:*)",
       "Bash(timeout:*)",
       "Bash(npm uninstall:*)",
-      "Bash(mkdir:*)"
+      "Bash(mkdir:*)",
+      "Bash(node test-env.js:*)",
+      "Bash(copy HomePage.jsx HomePageOldBackup.jsx)",
+      "Bash(copy:*)",
+      "Bash(del HomePageNew.jsx)"
     ],
     "deny": [],
     "ask": []

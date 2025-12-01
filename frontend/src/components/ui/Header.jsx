@@ -28,8 +28,8 @@ export default function Header({ transparent = false }) {
                 Početna
               </Link>
 
-              <Link to="/benefits" className="text-white hover:text-[#BFECC9] transition">
-                Pogodnosti
+              <Link to="/courses" className="text-white hover:text-[#BFECC9] transition">
+                Kursevi
               </Link>
 
               <Link to="/about" className="text-white hover:text-[#BFECC9] transition">
