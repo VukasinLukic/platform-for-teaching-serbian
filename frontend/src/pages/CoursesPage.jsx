@@ -55,7 +55,13 @@ export default function CoursesPage() {
                 <Card variant="elevated" hover className="h-full flex flex-col">
                   {/* Card Header Image */}
                   <div className="h-48 bg-[#F5F3EF] relative overflow-hidden flex items-center justify-center group">
-                     {course.type === 'video' ? (
+                     {course.thumbnail_url ? (
+                       <img
+                         src={course.thumbnail_url}
+                         alt={course.title}
+                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                       />
+                     ) : course.type === 'video' ? (
                        <Video className="w-20 h-20 text-[#003366]/20 group-hover:scale-110 transition-transform duration-500" />
                      ) : (
                        <Users className="w-20 h-20 text-[#003366]/20 group-hover:scale-110 transition-transform duration-500" />
@@ -81,7 +87,7 @@ export default function CoursesPage() {
                         <div className="text-2xl font-black text-[#FF6B35]">
                           {formatPrice(course.price)}
                         </div>
-                        <Link to={`/course/${course.id}`}>
+                        <Link to={course.type === 'live' ? `/online-class/${course.id}` : `/course/${course.id}`}>
                           <Button variant="outline" size="sm" showArrow>
                             Detaljnije
                           </Button>

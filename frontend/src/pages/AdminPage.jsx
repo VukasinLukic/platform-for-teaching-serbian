@@ -47,33 +47,33 @@ export default function AdminPage() {
   ];
 
   const statsCards = [
-    { 
-      label: 'Ukupno Kurseva', 
-      value: statsData.totalCourses || 42, 
-      icon: BookOpen, 
-      color: 'text-[#BFECC9]', 
-      borderColor: 'border-b-4 border-[#BFECC9]' 
+    {
+      label: 'Ukupno Kurseva',
+      value: statsData.totalCourses || 0,
+      icon: BookOpen,
+      color: 'text-[#BFECC9]',
+      borderColor: 'border-b-4 border-[#BFECC9]'
     },
-    { 
-      label: 'Aktivnih Učenika', 
-      value: (statsData.activeStudents || 580) + '+', 
-      icon: Users, 
-      color: 'text-[#42A5F5]', 
-      borderColor: 'border-b-4 border-[#42A5F5]' 
+    {
+      label: 'Aktivnih Učenika',
+      value: statsData.activeStudents ? `${statsData.activeStudents}+` : '0',
+      icon: Users,
+      color: 'text-[#42A5F5]',
+      borderColor: 'border-b-4 border-[#42A5F5]'
     },
-    { 
-      label: 'Na Čekanju Uplate', 
-      value: statsData.pendingPayments || 15, 
-      icon: Clock, 
-      color: 'text-[#FFD700]', 
-      borderColor: 'border-b-4 border-[#FFD700]' 
+    {
+      label: 'Na Čekanju Uplate',
+      value: statsData.pendingPayments || 0,
+      icon: Clock,
+      color: 'text-[#FFD700]',
+      borderColor: 'border-b-4 border-[#FFD700]'
     },
-    { 
-      label: 'Mesečni Prihod', 
-      value: formatPrice(statsData.monthlyRevenue || 250000), 
-      icon: TrendingUp, 
-      color: 'text-[#FF6B35]', 
-      borderColor: 'border-b-4 border-[#FF6B35]' 
+    {
+      label: 'Mesečni Prihod',
+      value: formatPrice(statsData.monthlyRevenue || 0),
+      icon: TrendingUp,
+      color: 'text-[#FF6B35]',
+      borderColor: 'border-b-4 border-[#FF6B35]'
     },
   ];
 
@@ -189,8 +189,25 @@ export default function AdminPage() {
                  </div>
               )}
               {['students', 'settings'].includes(activeTab) && (
-                <div className="text-center py-20 text-gray-400">
-                  <p>Sekcija {sidebarItems.find(i => i.id === activeTab)?.label} je u izradi.</p>
+                <div className="text-center py-20">
+                  <div className="max-w-md mx-auto">
+                    <div className="bg-[#BFECC9]/20 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+                      {activeTab === 'students' ? (
+                        <Users className="w-12 h-12 text-[#003366]" />
+                      ) : (
+                        <Settings className="w-12 h-12 text-[#003366]" />
+                      )}
+                    </div>
+                    <h3 className="text-2xl font-bold text-[#003366] mb-3">
+                      {activeTab === 'students' ? 'Učenici' : 'Podešavanja'}
+                    </h3>
+                    <p className="text-gray-600">
+                      {activeTab === 'students'
+                        ? 'Ovde ćete moći videti listu svih učenika koji su kupili kurseve, njihov napredak i statistike.'
+                        : 'Ovde ćete moći podesiti profile, notifikacije, email template-ove i ostale postavke platforme.'}
+                    </p>
+                    <p className="text-sm text-gray-400 mt-4">Funkcionalnost uskoro dostupna</p>
+                  </div>
                 </div>
               )}
            </div>

@@ -1,11 +1,11 @@
 {
   "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
+    "rules": "backend/firestore.rules",
+    "indexes": "backend/firestore.indexes.json"
   },
   "functions": [
     {
-      "source": "functions",
+      "source": "backend/functions",
       "codebase": "default",
       "ignore": [
         "node_modules",
@@ -13,11 +13,26 @@
         "firebase-debug.log",
         "firebase-debug.*.log",
         "*.local"
-      ]
+      ],
+      "predeploy": []
     }
   ],
   "storage": {
-    "rules": "storage.rules"
+    "rules": "backend/storage.rules"
+  },
+  "hosting": {
+    "public": "frontend/dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
 }
 

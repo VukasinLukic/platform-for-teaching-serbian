@@ -12,7 +12,7 @@ initializeApp();
 
 // Set global options
 setGlobalOptions({
-  region: 'europe-west1',
+  region: 'us-central1',
   maxInstances: 10,
 });
 
@@ -30,3 +30,11 @@ export const helloWorld = onCall(async (request) => {
 export { getVideoUrl } from './generateSignedUrl.js';
 export { generateInvoice } from './generateInvoice.js';
 export { confirmPayment, rejectPayment } from './confirmPayment.js';
+
+// Email functions (replacing EmailJS)
+export {
+  sendContactFormEmail,
+  sendPaymentConfirmationEmail,
+  sendPaymentRejectionEmail,
+  sendWelcomeEmail,
+} from './sendEmail.js';

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { 
-  Play, Book, CheckCircle, Clock, Award, Shield, Star, 
-  Video, Users, FileText, Lock, Unlock 
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import {
+  Play, Book, CheckCircle, Clock, Award, Shield, Star,
+  Video, Users, FileText, Lock, Unlock, ArrowRight
 } from 'lucide-react';
 import { getCourseById } from '../services/course.service';
 import { useAuthStore } from '../store/authStore';
@@ -13,27 +13,58 @@ import PaymentModal from '../components/payment/PaymentModal';
 
 export default function CoursePage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [activeModule, setActiveModule] = useState(0);
 
-  // Mock syllabus data if not in DB yet
-  const syllabus = [
+  const handlePurchaseClick = () => {
+    if (!user) {
+      // Redirect to login with return URL
+      navigate('/login', { state: { returnTo: `/course/${id}` } });
+      return;
+    }
+    setShowPaymentModal(true);
+  };
+
+  // Get syllabus from course data or use default
+  const syllabus = course?.modules && course.modules.length > 0 ? course.modules : [
     {
       title: 'Modul 1: Gramatika',
-      lessons: ['Glasovne promene', 'Vrste reči', 'Sintaksa', 'Padeži']
+      lessons: [
+        { title: 'Glasovne promene', duration: 15 },
+        { title: 'Vrste reči', duration: 15 },
+        { title: 'Sintaksa', duration: 15 },
+        { title: 'Padeži', duration: 15 }
+      ]
     },
     {
       title: 'Modul 2: Književnost',
-      lessons: ['Epska poezija', 'Lirska poezija', 'Drama', 'Roman']
+      lessons: [
+        { title: 'Epska poezija', duration: 15 },
+        { title: 'Lirska poezija', duration: 15 },
+        { title: 'Drama', duration: 15 },
+        { title: 'Roman', duration: 15 }
+      ]
     },
     {
       title: 'Modul 3: Pravopis',
-      lessons: ['Veliko slovo', 'Spojeno i odvojeno pisanje', 'Interpunkcija']
+      lessons: [
+        { title: 'Veliko slovo', duration: 15 },
+        { title: 'Spojeno i odvojeno pisanje', duration: 15 },
+        { title: 'Interpunkcija', duration: 15 }
+      ]
     }
   ];
+
+  // Calculate total lessons and hours from modules
+  const totalLessons = syllabus.reduce((sum, module) => sum + module.lessons.length, 0);
+  const totalMinutes = syllabus.reduce((sum, module) =>
+    sum + module.lessons.reduce((lessonSum, lesson) => lessonSum + (lesson.duration || 15), 0), 0
+  );
+  const totalHours = Math.round(totalMinutes / 60);
 
   useEffect(() => {
     loadCourse();
@@ -106,11 +137,11 @@ export default function CoursePage() {
                   </div>
 
                   <div className="pt-4">
-                    <button 
-                      onClick={() => setShowPaymentModal(true)}
+                    <button
+                      onClick={handlePurchaseClick}
                       className="bg-[#FF6B35] text-white px-10 py-5 rounded-full text-lg font-bold hover:bg-[#E55A28] transition-all shadow-xl hover:shadow-[#FF6B35]/40 hover:-translate-y-1 flex items-center gap-3"
                     >
-                      Kupi Ovaj Kurs <ArrowRight className="w-6 h-6" />
+                      {user ? 'Kupi Ovaj Kurs' : 'Prijavi se i Kupi'} <ArrowRight className="w-6 h-6" />
                     </button>
                     <div className="mt-4 flex items-center gap-6 text-sm text-white/60 font-medium">
                        <span className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#BFECC9]" /> Jednokratno plaćanje</span>
@@ -125,32 +156,42 @@ export default function CoursePage() {
                      {/* Main Card */}
                      <div className="bg-white rounded-[3rem] p-4 shadow-2xl border-8 border-white/10 backdrop-blur-sm">
                         <div className="bg-[#F5F3EF] rounded-[2.5rem] overflow-hidden relative h-[500px] flex items-center justify-center group">
-                           <div className="absolute inset-0 bg-gradient-to-br from-[#003366]/5 to-[#003366]/10"></div>
-                           
-                           {/* Stacked Elements */}
-                           <div className="relative z-10 text-center space-y-6">
-                              <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mx-auto shadow-xl group-hover:scale-110 transition-transform">
-                                 <Play className="w-12 h-12 text-[#FF6B35] fill-[#FF6B35] ml-2" />
-                              </div>
-                              <div>
-                                 <div className="bg-white/80 backdrop-blur-md px-6 py-3 rounded-2xl inline-block shadow-lg mb-2">
-                                    <span className="font-bold text-[#003366]">Pregled Kursa</span>
-                                 </div>
-                                 <div className="flex justify-center gap-2 mt-4">
-                                    <div className="w-3 h-3 rounded-full bg-[#FF6B35]"></div>
-                                    <div className="w-3 h-3 rounded-full bg-[#BFECC9]"></div>
-                                    <div className="w-3 h-3 rounded-full bg-[#003366]"></div>
-                                 </div>
-                              </div>
-                           </div>
+                           {course.thumbnail_url ? (
+                              <img
+                                src={course.thumbnail_url}
+                                alt={course.title}
+                                className="absolute inset-0 w-full h-full object-cover"
+                              />
+                           ) : (
+                              <>
+                              <div className="absolute inset-0 bg-gradient-to-br from-[#003366]/5 to-[#003366]/10"></div>
 
-                           {/* Decorative Floating Icons */}
-                           <div className="absolute top-10 right-10 bg-white p-3 rounded-xl shadow-lg animate-bounce-slow">
-                              <Book className="w-8 h-8 text-[#003366]" />
-                           </div>
-                           <div className="absolute bottom-20 left-10 bg-[#FFD700] p-3 rounded-xl shadow-lg animate-float">
-                              <Award className="w-8 h-8 text-[#003366]" />
-                           </div>
+                              {/* Stacked Elements */}
+                              <div className="relative z-10 text-center space-y-6">
+                                 <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mx-auto shadow-xl group-hover:scale-110 transition-transform">
+                                    <Play className="w-12 h-12 text-[#FF6B35] fill-[#FF6B35] ml-2" />
+                                 </div>
+                                 <div>
+                                    <div className="bg-white/80 backdrop-blur-md px-6 py-3 rounded-2xl inline-block shadow-lg mb-2">
+                                       <span className="font-bold text-[#003366]">Pregled Kursa</span>
+                                    </div>
+                                    <div className="flex justify-center gap-2 mt-4">
+                                       <div className="w-3 h-3 rounded-full bg-[#FF6B35]"></div>
+                                       <div className="w-3 h-3 rounded-full bg-[#BFECC9]"></div>
+                                       <div className="w-3 h-3 rounded-full bg-[#003366]"></div>
+                                    </div>
+                                 </div>
+                              </div>
+
+                              {/* Decorative Floating Icons */}
+                              <div className="absolute top-10 right-10 bg-white p-3 rounded-xl shadow-lg animate-bounce-slow">
+                                 <Book className="w-8 h-8 text-[#003366]" />
+                              </div>
+                              <div className="absolute bottom-20 left-10 bg-[#FFD700] p-3 rounded-xl shadow-lg animate-float">
+                                 <Award className="w-8 h-8 text-[#003366]" />
+                              </div>
+                              </>
+                           )}
                         </div>
                      </div>
                   </div>
@@ -184,11 +225,11 @@ export default function CoursePage() {
                  
                  <div className="grid sm:grid-cols-3 gap-6 mt-8">
                     <div className="bg-[#F5F3EF] p-4 rounded-2xl text-center">
-                       <div className="font-black text-2xl text-[#FF6B35]">30+</div>
+                       <div className="font-black text-2xl text-[#FF6B35]">{totalHours}+</div>
                        <div className="text-xs font-bold text-gray-500 uppercase mt-1">Sati videa</div>
                     </div>
                     <div className="bg-[#F5F3EF] p-4 rounded-2xl text-center">
-                       <div className="font-black text-2xl text-[#42A5F5]">50+</div>
+                       <div className="font-black text-2xl text-[#42A5F5]">{totalLessons}+</div>
                        <div className="text-xs font-bold text-gray-500 uppercase mt-1">Lekcija</div>
                     </div>
                     <div className="bg-[#F5F3EF] p-4 rounded-2xl text-center">
@@ -228,8 +269,12 @@ export default function CoursePage() {
                                          <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm flex-shrink-0">
                                             <Play className="w-3 h-3 text-[#FF6B35] fill-[#FF6B35]" />
                                          </div>
-                                         <span className="text-gray-700 font-medium">{lesson}</span>
-                                         <span className="ml-auto text-xs text-gray-400 font-mono">15 min</span>
+                                         <span className="text-gray-700 font-medium">
+                                           {typeof lesson === 'string' ? lesson : lesson.title}
+                                         </span>
+                                         <span className="ml-auto text-xs text-gray-400 font-mono">
+                                           {typeof lesson === 'string' ? '15' : lesson.duration} min
+                                         </span>
                                       </li>
                                    ))}
                                 </ul>
@@ -275,11 +320,11 @@ export default function CoursePage() {
                        <div className="text-xs uppercase tracking-widest opacity-70">Prolaznost učenika</div>
                     </div>
 
-                    <button 
-                      onClick={() => setShowPaymentModal(true)}
+                    <button
+                      onClick={handlePurchaseClick}
                       className="w-full bg-[#FF6B35] text-white py-4 rounded-full font-bold hover:bg-[#E55A28] transition shadow-lg"
                     >
-                       Kupi Ovaj Kurs
+                       {user ? 'Kupi Ovaj Kurs' : 'Prijavi se i Kupi'}
                     </button>
                  </div>
 

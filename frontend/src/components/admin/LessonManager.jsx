@@ -3,6 +3,7 @@ import { collection, addDoc, getDocs, query, where, deleteDoc, doc, orderBy, upd
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../services/firebase';
 import { Plus, Trash2, Loader2, Upload, Video, FileVideo, CheckCircle, Edit2, Tag, FileText } from 'lucide-react';
+import { useToast } from '../ui/Toast';
 
 export default function LessonManager() {
   const [courses, setCourses] = useState([]);
@@ -12,11 +13,13 @@ export default function LessonManager() {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showForm, setShowForm] = useState(false);
+  const [editingLesson, setEditingLesson] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     videoFile: null,
   });
+  const { showToast } = useToast();
 
   useEffect(() => {
     loadCourses();
@@ -56,7 +59,7 @@ export default function LessonManager() {
       console.error('Error loading lessons:', error);
       // If error is due to missing index, show message
       if (error.code === 'failed-precondition') {
-        alert('Firestore index potreban. Kliknite na link u konzoli da kreirate index.');
+        showToast({ type: 'error', message: 'Firestore index potreban. Kliknite na link u konzoli da kreirate index.' });
       }
     }
   };
@@ -66,13 +69,13 @@ export default function LessonManager() {
     if (file) {
       // Validate file type
       if (!file.type.startsWith('video/')) {
-        alert('Molimo odaberite video fajl');
+        showToast({ type: 'warning', message: 'Molimo odaberite video fajl' });
         return;
       }
       // Validate file size (max 500MB)
       const maxSize = 500 * 1024 * 1024; // 500MB
       if (file.size > maxSize) {
-        alert('Video fajl je prevelik. Maksimalna veličina je 500MB.');
+        showToast({ type: 'warning', message: 'Video fajl je prevelik. Maksimalna veličina je 500MB.' });
         return;
       }
       setFormData({ ...formData, videoFile: file });
@@ -83,7 +86,7 @@ export default function LessonManager() {
     e.preventDefault();
 
     if (!formData.videoFile || !selectedCourse) {
-      alert('Molimo popunite sva polja i odaberite video');
+      showToast({ type: 'warning', message: 'Molimo popunite sva polja i odaberite video' });
       return;
     }
 
@@ -106,7 +109,7 @@ export default function LessonManager() {
         },
         (error) => {
           console.error('Upload error:', error);
-          alert('Greška pri upload-u videa');
+          showToast({ type: 'error', message: 'Greška pri upload-u videa' });
           setUploading(false);
         },
         async () => {
@@ -141,7 +144,7 @@ export default function LessonManager() {
       );
     } catch (error) {
       console.error('Error creating lesson:', error);
-      alert('Greška pri kreiranju lekcije');
+      showToast({ type: 'error', message: 'Greška pri kreiranju lekcije' });
       setUploading(false);
     }
   };
@@ -156,7 +159,7 @@ export default function LessonManager() {
       loadLessons(selectedCourse);
     } catch (error) {
       console.error('Error deleting lesson:', error);
-      alert('Greška pri brisanju lekcije');
+      showToast({ type: 'error', message: 'Greška pri brisanju lekcije' });
     }
   };
 

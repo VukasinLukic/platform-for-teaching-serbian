@@ -2,6 +2,9 @@ import Header from '../../components/ui/Header';
 import Card, { CardBody } from '../../components/ui/Card';
 
 export default function PrivacyPage() {
+  const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@naucisprski.com';
+  const contactPhone = import.meta.env.VITE_CONTACT_PHONE || '+381 XX XXX XXXX';
+
   return (
     <div className="min-h-screen bg-[#F5F3EF]">
       <Header />
@@ -97,8 +100,8 @@ export default function PrivacyPage() {
                   Za sva pitanja vezana za privatnost, možete nas kontaktirati na:
                 </p>
                 <p className="font-semibold">
-                  Email: kontakt@naucisprski.com<br />
-                  Telefon: +381 60 123 4567
+                  Email: {contactEmail}<br />
+                  Telefon: {contactPhone}
                 </p>
               </section>
             </div>

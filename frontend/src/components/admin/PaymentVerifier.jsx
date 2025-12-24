@@ -5,11 +5,13 @@ import { verifyPayment } from '../../services/admin.service';
 import { CheckCircle, XCircle, Loader2, ExternalLink, User, BookOpen } from 'lucide-react';
 import { formatPrice, formatDate } from '../../utils/helpers';
 import { sendPaymentConfirmationEmail, sendPaymentRejectionEmail } from '../../services/email.service';
+import { useToast } from '../ui/Toast';
 
 export default function PaymentVerifier() {
   const [pendingPayments, setPendingPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     loadPendingPayments();
@@ -85,10 +87,10 @@ export default function PaymentVerifier() {
 
       // Reload payments
       await loadPendingPayments();
-      alert('Uplata uspešno potvrđena! Kurs je aktiviran za korisnika.');
+      showToast({ type: 'success', message: 'Uplata uspešno potvrđena! Kurs je aktiviran za korisnika.' });
     } catch (error) {
       console.error('Error confirming payment:', error);
-      alert('Greška pri potvrđivanju uplate: ' + (error.message || 'Pokušajte ponovo'));
+      showToast({ type: 'error', message: 'Greška pri potvrđivanju uplate: ' + (error.message || 'Pokušajte ponovo') });
     } finally {
       setProcessingId(null);
     }
@@ -122,10 +124,10 @@ export default function PaymentVerifier() {
       }
 
       await loadPendingPayments();
-      alert('Uplata odbijena.');
+      showToast({ type: 'info', message: 'Uplata odbijena.' });
     } catch (error) {
       console.error('Error rejecting payment:', error);
-      alert('Greška pri odbijanju uplate: ' + (error.message || 'Pokušajte ponovo'));
+      showToast({ type: 'error', message: 'Greška pri odbijanju uplate: ' + (error.message || 'Pokušajte ponovo') });
     } finally {
       setProcessingId(null);
     }

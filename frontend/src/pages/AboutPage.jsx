@@ -3,6 +3,8 @@ import Header from '../components/ui/Header';
 import { Link } from 'react-router-dom';
 
 export default function AboutPage() {
+  const contactPhone = import.meta.env.VITE_CONTACT_PHONE || '+381 XX XXX XXXX';
+
   const values = [
     {
       icon: Heart,
@@ -214,7 +216,7 @@ export default function AboutPage() {
               <h4 className="font-bold text-lg mb-6 text-[#BFECC9]">Kontakt</h4>
               <ul className="space-y-4 text-gray-400">
                 <li>info@naucisrpski.rs</li>
-                <li>+381 60 123 4567</li>
+                <li>{contactPhone}</li>
                 <li>Beograd, Srbija</li>
               </ul>
             </div>

@@ -4,69 +4,70 @@
 
 @layer base {
   :root {
-    /* Zelena boja kao primary (#BFECC9) */
-    --primary: 142 78 54; /* #BFECC9 u HSL */
-    --primary-foreground: 0 0 0;
+    /* Crvena srca boja kao primary (#D62828) */
+    --primary: 0 71 50; /* #D62828 u HSL */
+    --primary-foreground: 0 0 100; /* White text on red */
 
-    /* Tamno plava kao secondary (#003366) */
-    --secondary: 210 100 20; /* #003366 u HSL */
-    --secondary-foreground: 255 255 255;
+    /* Tamno siva kao secondary (#1A1A1A) */
+    --secondary: 0 0 10; /* #1A1A1A u HSL */
+    --secondary-foreground: 0 0 100; /* White text */
 
-    /* Background - bela */
+    /* Background - čista bela (#FFFFFF) */
     --background: 0 0 100; /* White */
-    --foreground: 0 0 0; /* Black text */
+    --foreground: 0 0 10; /* Dark gray text (#1A1A1A) */
 
-    /* Card - svetlo siva */
-    --card: 0 0 98;
+    /* Card - svetlo siva (#F7F7F7) */
+    --card: 0 0 97;
     --card-foreground: 0 0 10;
 
     --popover: 0 0 100;
     --popover-foreground: 0 0 10;
 
-    --muted: 0 0 96;
+    --muted: 0 0 97; /* #F7F7F7 */
     --muted-foreground: 0 0 45;
 
-    --accent: 142 50 45; /* Tamnije zelena za akcente */
-    --accent-foreground: 0 0 100;
+    /* Zlatna akcent boja (#F2C94C) */
+    --accent: 45 87 62; /* #F2C94C u HSL */
+    --accent-foreground: 0 0 10; /* Dark text on gold */
 
-    --destructive: 0 84 60;
+    --destructive: 0 71 50; /* Red za errors */
     --destructive-foreground: 0 0 100;
 
     --border: 0 0 90;
     --input: 0 0 90;
-    --ring: 142 78 54; /* Primary zelena za focus */
+    --ring: 0 71 50; /* Primary red za focus */
 
     --radius: 1rem;
   }
 
   .dark {
-    --background: 0 0 0; /* Pure Black */
+    --background: 0 0 10; /* #1A1A1A */
     --foreground: 0 0 100; /* Pure White */
 
-    --card: 0 0 4; /* Very dark for cards */
+    --card: 0 0 15; /* Slightly lighter dark for cards */
     --card-foreground: 0 0 100;
 
-    --popover: 0 0 4;
+    --popover: 0 0 15;
     --popover-foreground: 0 0 100;
 
-    --primary: 142 78 54; /* #BFECC9 */
-    --primary-foreground: 0 0 0;
+    --primary: 0 71 50; /* #D62828 */
+    --primary-foreground: 0 0 100;
 
-    --secondary: 210 100 20; /* #003366 */
+    --secondary: 0 0 20; /* Lighter gray */
     --secondary-foreground: 0 0 100;
 
-    --muted: 0 0 6;
+    --muted: 0 0 20;
     --muted-foreground: 0 0 64;
 
-    --accent: 142 78 54;
-    --accent-foreground: 0 0 0;
+    --accent: 45 87 62; /* #F2C94C */
+    --accent-foreground: 0 0 10;
 
-    --destructive: 0 84 60;
+    --destructive: 0 71 50;
     --destructive-foreground: 0 0 100;
 
-    --border: 0 0 15;
-    --input: 0 0 15;
-    --ring: 142 78 54;
+    --border: 0 0 25;
+    --input: 0 0 25;
+    --ring: 0 71 50;
   }
 }
 
@@ -107,33 +108,32 @@
   .glass-card {
     background: linear-gradient(
       135deg,
-      rgba(191, 236, 201, 0.05) 0%,
+      rgba(214, 40, 40, 0.05) 0%,
       rgba(255, 255, 255, 0.08) 50%,
-      rgba(191, 236, 201, 0.05) 100%
+      rgba(214, 40, 40, 0.05) 100%
     );
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(191, 236, 201, 0.2);
-    box-shadow: 0 8px 32px 0 rgba(191, 236, 201, 0.1);
+    border: 1px solid rgba(214, 40, 40, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(214, 40, 40, 0.1);
   }
 
   .glass-card-dark {
     background: linear-gradient(
       135deg,
-      rgba(0, 0, 0, 0.6) 0%,
-      rgba(0, 51, 102, 0.4) 50%,
-      rgba(0, 0, 0, 0.6) 100%
+      rgba(26, 26, 26, 0.6) 0%,
+      rgba(214, 40, 40, 0.2) 50%,
+      rgba(26, 26, 26, 0.6) 100%
     );
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(191, 236, 201, 0.2);
+    border: 1px solid rgba(214, 40, 40, 0.3);
   }
 
   .text-gradient {
     background: linear-gradient(
       135deg,
-      #bfecc9 0%,
-      #9dd6ac 30%,
-      #7cc091 70%,
-      #bfecc9 100%
+      #D62828 0%,
+      #F2C94C 50%,
+      #D62828 100%
     );
     background-clip: text;
     -webkit-background-clip: text;
@@ -142,7 +142,7 @@
   }
 
   .btn-primary {
-    @apply bg-transparent border-2 border-primary text-primary px-8 py-4 rounded-xl font-bold transition-all duration-300 hover:bg-primary hover:text-black hover:shadow-2xl hover:shadow-primary/30 hover:scale-105;
+    @apply bg-transparent border-2 border-primary text-primary px-8 py-4 rounded-xl font-bold transition-all duration-300 hover:bg-primary hover:text-white hover:shadow-2xl hover:shadow-primary/30 hover:scale-105;
   }
 
   .btn-secondary {
@@ -194,7 +194,7 @@
   left: 0;
   width: 0;
   height: 2px;
-  background: linear-gradient(90deg, #bfecc9 0%, #9dd6ac 100%);
+  background: linear-gradient(90deg, #D62828 0%, #F2C94C 100%);
   transition: width 0.4s ease;
 }
 
@@ -208,16 +208,16 @@
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #f7f7f7;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #bfecc9;
+  background: #D62828;
   border-radius: 5px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #9dd6ac;
+  background: #b01f1f;
 }
 
 /* Fade In Animation */
@@ -225,11 +225,66 @@
   animation: fadeIn 1s ease-out;
 }
 
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Slide Up Animation (for modals) */
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slideUp {
+  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Slide In from Right (for toasts) */
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.animate-slideInRight {
+  animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Fade In (for modal backdrop) */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.2s ease-out;
+}
+
 /* Gradient Background */
 .bg-gradient-radial {
   background: radial-gradient(
     circle at center,
-    rgba(191, 236, 201, 0.1) 0%,
+    rgba(214, 40, 40, 0.08) 0%,
     transparent 70%
   );
 }

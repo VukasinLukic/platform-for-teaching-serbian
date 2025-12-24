@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Book,
+  Heart,
   Video,
   CheckCircle,
   ArrowRight,
@@ -9,18 +9,17 @@ import {
   Award,
   Star,
   Trophy,
-  Play,
-  Clock,
-  Target,
-  Shield,
-  Zap
+  Shield
 } from 'lucide-react';
 import { getAllCourses } from '../services/course.service';
 import { useAuthStore } from '../store/authStore';
 import { formatPrice } from '../utils/helpers';
 import Header from '../components/ui/Header';
+import Footer from '../components/ui/Footer';
 
 export default function HomePage() {
+  const contactPhone = import.meta.env.VITE_CONTACT_PHONE || '+381 XX XXX XXXX';
+
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuthStore();
@@ -42,94 +41,94 @@ export default function HomePage() {
 
   const benefits = [
     {
-      icon: Video,
-      title: 'Video lekcije 24/7',
-      description: 'Pristupite gradivu bilo kada. Preko 100 sati video materijala visoke rezolucije spremnog za učenje.',
+      icon: Heart,
+      title: 'Учење с разумевањем',
+      description: 'Српски језик учимо са љубављу и посвећеношћу. Свака лекција је осмишљена тако да изграђује дубоко разумевање, а не напамет учење.',
     },
     {
       icon: Users,
-      title: 'Individualan pristup',
-      description: 'Svaki učenik dobija pažnju koju zaslužuje kroz prilagođene planove i direktnu komunikaciju.',
+      title: 'Индивидуална пажња',
+      description: 'Свако дете је јединствено. Прилагођавамо наставу вашим потребама и пратимо напредак са посвећеношћу искусне професорке.',
     },
     {
       icon: Shield,
-      title: 'Proverena metoda',
-      description: 'Naša metodologija je razvijana 15 godina i garantuje uspeh na prijemnom ispitu.',
+      title: 'Проверени резултати',
+      description: 'Преко 15 година искуства и стотине задовољних ученика који су остварили своје снове. Ваш успех је наш успех.',
     },
   ];
 
   const stats = [
-    { number: '500+', label: 'Učenika' },
-    { number: '98%', label: 'Prolaznost' },
-    { number: '15', label: 'Godina iskustva' },
+    { number: '500+', label: 'Ученика' },
+    { number: '98%', label: 'Успешност' },
+    { number: '15', label: 'Година искуства' },
   ];
 
   const testimonials = [
     {
-      text: '"Najbolja iskustva sa najboljim rezultatima! Profesorka Marina je sjajna."',
-      author: 'Marko P.',
-      role: 'Učenik',
+      text: '"Професорка Марина је са толико љубави и стрпљења објашњавала градиво. Коначно разумем српски језик!"',
+      author: 'Марко П.',
+      role: 'Ученик',
       rating: 5,
     },
     {
-      text: '"Nisam verovala da online priprema može biti ovako efikasna. Sve preporuke!"',
-      author: 'Jelena M.',
-      role: 'Roditelj',
+      text: '"Нисам веровала да онлајн настава може бити овако топла и ефикасна. Све препоруке!"',
+      author: 'Јелена М.',
+      role: 'Родитељ',
       rating: 5,
     },
     {
-      text: '"Upisao sam željenu gimnaziju zahvaljujući ovom kursu. Hvala vam puno!"',
-      author: 'Stefan K.',
-      role: 'Učenik',
+      text: '"Уписао сам жељену гимназију захваљујући овој припреми. Хвала вам од срца!"',
+      author: 'Стефан К.',
+      role: 'Ученик',
       rating: 5,
     },
   ];
 
   return (
-    <div className="min-h-screen bg-[#F5F3EF] font-sans text-[#003366]">
+    <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />
 
       {/* HERO SECTION */}
-      <section className="relative pt-10 pb-20 lg:pt-20 lg:pb-32 overflow-hidden">
+      <section className="relative pt-10 pb-20 lg:pt-20 lg:pb-32 overflow-hidden bg-gradient-to-b from-white to-[#F7F7F7]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left - Text */}
             <div className="relative z-10 space-y-8 text-center lg:text-left">
-              <h1 className="text-5xl lg:text-7xl font-serif font-bold leading-[1.1] text-[#003366]">
-                Online priprema za <br />
+              <h1 className="text-5xl lg:text-7xl font-bold leading-[1.1] text-[#1A1A1A]">
+                Српски језик <br />
                 <span className="relative inline-block">
-                  malu maturu
-                  <svg className="absolute w-full h-3 -bottom-1 left-0 text-[#BFECC9] -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  учимо срцем
+                  <svg className="absolute w-full h-3 -bottom-1 left-0 text-[#D62828] -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
                     <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
                   </svg>
                 </span>{' '}
-                uz proverene rezultate
+                и с разумевањем
               </h1>
-              
+
               <p className="text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Profesorka Marina Lukić vas vodi do uspeha kroz proverenu metodologiju, 
-                interaktivne časove i materijale prilagođene svakom učeniku.
+                Припрема за малу матуру уз искусну професорку која верује да се језик учи љубављу,
+                стрпљењем и посвећеношћу. Ваш успех је наш успех.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link to="/courses">
-                  <button className="bg-[#FF6B35] text-white px-10 py-4 rounded-full hover:bg-[#E55A28] transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl text-lg font-semibold tracking-wide">
-                    Pogledaj sve kurseve
+                  <button className="bg-[#D62828] text-white px-10 py-4 rounded-full hover:bg-[#b01f1f] transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl text-lg font-semibold tracking-wide">
+                    Погледај курсеве
                   </button>
                 </Link>
                 <Link to="/about">
-                  <button className="px-10 py-4 rounded-full border-2 border-[#003366] text-[#003366] hover:bg-[#003366] hover:text-white transition-all text-lg font-semibold">
-                    Saznaj Više
+                  <button className="px-10 py-4 rounded-full border-2 border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white transition-all text-lg font-semibold">
+                    О нама
                   </button>
                 </Link>
               </div>
-              
+
               <div className="pt-6 flex items-center justify-center lg:justify-start gap-4 text-sm font-medium text-gray-500">
                 <div className="flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4 text-[#BFECC9] fill-[#BFECC9]" /> 500+ Učenika
+                  <CheckCircle className="w-4 h-4 text-[#D62828] fill-[#D62828]" /> 500+ Ученика
                 </div>
                 <div className="flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4 text-[#BFECC9] fill-[#BFECC9]" /> 98% Prolaznost
+                  <CheckCircle className="w-4 h-4 text-[#D62828] fill-[#D62828]" /> 98% Успешност
                 </div>
               </div>
             </div>
@@ -369,7 +368,7 @@ export default function HomePage() {
               <h4 className="font-bold text-lg mb-6 text-[#BFECC9]">Kontakt</h4>
               <ul className="space-y-4 text-gray-400">
                 <li>info@naucisrpski.rs</li>
-                <li>+381 60 123 4567</li>
+                <li>{contactPhone}</li>
                 <li>Beograd, Srbija</li>
               </ul>
             </div>

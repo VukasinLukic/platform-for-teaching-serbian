@@ -5,9 +5,12 @@ import Button from '../ui/Button';
 
 export default function PaymentModal({ course, onClose }) {
   const [copied, setCopied] = useState(false);
+  const bankAccount = import.meta.env.VITE_BANK_ACCOUNT;
+  const companyName = import.meta.env.VITE_COMPANY_NAME || 'Nauči Srpski';
+  const companyAddress = import.meta.env.VITE_COMPANY_ADDRESS || 'Beograd, Srbija';
 
   const handleCopy = () => {
-    navigator.clipboard.writeText('160-00000000-00');
+    navigator.clipboard.writeText(bankAccount);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -37,7 +40,7 @@ export default function PaymentModal({ course, onClose }) {
               <div className="space-y-3">
                  <div>
                     <div className="text-xs text-gray-400 uppercase font-bold mb-1">Primalac</div>
-                    <div className="font-bold text-[#003366]">Nauči Srpski, Beograd</div>
+                    <div className="font-bold text-[#003366]">{companyName}, {companyAddress}</div>
                  </div>
                  <div>
                     <div className="text-xs text-gray-400 uppercase font-bold mb-1">Svrha uplate</div>
@@ -46,8 +49,8 @@ export default function PaymentModal({ course, onClose }) {
                  <div className="relative">
                     <div className="text-xs text-gray-400 uppercase font-bold mb-1">Račun primaoca</div>
                     <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-gray-200">
-                       <code className="text-lg font-mono font-bold text-[#003366]">160-00000000-00</code>
-                       <button 
+                       <code className="text-lg font-mono font-bold text-[#003366]">{bankAccount}</code>
+                       <button
                          onClick={handleCopy}
                          className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                        >

@@ -8,6 +8,8 @@ import Input from '../components/ui/Input';
 import { Link } from 'react-router-dom';
 
 export default function ContactPage() {
+  const contactPhone = import.meta.env.VITE_CONTACT_PHONE || '+381 XX XXX XXXX';
+
   const [formData, setFormData] = useState({
     ime: '',
     email: '',
@@ -153,7 +155,7 @@ export default function ContactPage() {
                 <Phone />
               </div>
               <div>
-                <div className="font-bold text-[#003366]">+381 60 123 4567</div>
+                <div className="font-bold text-[#003366]">{contactPhone}</div>
                 <div className="text-sm text-gray-500">Pon-Pet: 10:00 - 18:00</div>
               </div>
             </div>
