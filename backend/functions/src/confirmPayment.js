@@ -9,7 +9,7 @@ import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 /**
  * Confirm a pending payment and grant course access
  */
-export const confirmPayment = onCall(async (request) => {
+export const confirmPayment = onCall({ region: 'europe-west1' }, async (request) => {
   const db = getFirestore();
 
   // Check authentication
@@ -85,7 +85,7 @@ export const confirmPayment = onCall(async (request) => {
 /**
  * Reject a pending payment
  */
-export const rejectPayment = onCall(async (request) => {
+export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) => {
   const db = getFirestore();
 
   // Check authentication

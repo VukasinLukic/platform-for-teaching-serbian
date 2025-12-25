@@ -1,11 +1,11 @@
 {
   "firestore": {
-    "rules": "firestore.rules",
-    "indexes": "firestore.indexes.json"
+    "rules": "backend/firestore.rules",
+    "indexes": "backend/firestore.indexes.json"
   },
   "functions": [
     {
-      "source": "functions",
+      "source": "backend/functions",
       "codebase": "default",
       "ignore": [
         "node_modules",
@@ -15,9 +15,6 @@
         "*.local"
       ]
     }
-  ],
-  "storage": {
-    "rules": "storage.rules"
-  }
+  ]
 }
 

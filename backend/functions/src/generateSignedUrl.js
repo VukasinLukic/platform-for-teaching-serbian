@@ -17,7 +17,7 @@ const s3Client = new S3Client({
  * Cloud Function to generate signed URL for video access
  * Only authenticated users who purchased the course can access videos
  */
-export const getVideoUrl = onCall(async (request) => {
+export const getVideoUrl = onCall({ region: 'europe-west1' }, async (request) => {
   // Check authentication
   if (!request.auth) {
     throw new HttpsError('unauthenticated', 'Morate biti ulogovani');
