@@ -5,11 +5,13 @@ import { verifyPayment } from '../../services/admin.service';
 import { CheckCircle, XCircle, Loader2, ExternalLink, User, BookOpen } from 'lucide-react';
 import { formatPrice, formatDate } from '../../utils/helpers';
 import { sendPaymentConfirmationEmail, sendPaymentRejectionEmail } from '../../services/email.service';
+import { useToast } from '../ui/Toast';
 
 export default function PaymentVerifier() {
   const [pendingPayments, setPendingPayments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [processingId, setProcessingId] = useState(null);
+  const { showToast } = useToast();
 
   useEffect(() => {
     loadPendingPayments();
@@ -58,7 +60,7 @@ export default function PaymentVerifier() {
   };
 
   const confirmPayment = async (payment) => {
-    if (!confirm('Da li ste sigurni da želite da potvrdite ovu uplatu?')) {
+    if (!confirm('Да ли сте сигурни да желите да потврдите ову уплату?')) {
       return;
     }
 
@@ -73,7 +75,7 @@ export default function PaymentVerifier() {
         try {
              await sendPaymentConfirmationEmail(
                 payment.user.email,
-                payment.user.ime || 'Korisnik',
+                payment.user.ime || 'Корисник',
                 payment.course.title,
                 payment.id
              );
@@ -83,24 +85,30 @@ export default function PaymentVerifier() {
         }
       }
 
-      // Reload payments
-      await loadPendingPayments();
-      alert('Uplata uspešno potvrđena! Kurs je aktiviran za korisnika.');
+      // Remove the confirmed payment from the list immediately (optimistic update)
+      setPendingPayments(prev => prev.filter(p => p.id !== payment.id));
+
+      showToast({ type: 'success', message: 'Уплата успешно потврђена! Курс је активиран за корисника.' });
+
+      // Reload payments in background to ensure consistency
+      setTimeout(() => loadPendingPayments(), 1000);
     } catch (error) {
       console.error('Error confirming payment:', error);
-      alert('Greška pri potvrđivanju uplate: ' + (error.message || 'Pokušajte ponovo'));
+      showToast({ type: 'error', message: 'Грешка при потврђивању уплате: ' + (error.message || 'Покушајте поново') });
+      // Reload on error to restore correct state
+      await loadPendingPayments();
     } finally {
       setProcessingId(null);
     }
   };
 
   const rejectPayment = async (payment) => {
-    if (!confirm('Da li ste sigurni da želite da odbijete ovu uplatu?')) {
+    if (!confirm('Да ли сте сигурни да желите да одбијете ову уплату?')) {
       return;
     }
 
     setProcessingId(payment.id);
-    const reason = prompt('Unesite razlog odbijanja (opciono):');
+    const reason = prompt('Унесите разлог одбијања (опционо):');
 
     try {
       // Use direct service instead of Cloud Function
@@ -111,9 +119,9 @@ export default function PaymentVerifier() {
         try {
              await sendPaymentRejectionEmail(
                 payment.user.email,
-                payment.user.ime || 'Korisnik',
+                payment.user.ime || 'Корисник',
                 payment.course.title,
-                reason || 'Nevalidna uplata'
+                reason || 'Невалидна уплата'
              );
              console.log('Rejection email sent');
         } catch (emailError) {
@@ -121,11 +129,18 @@ export default function PaymentVerifier() {
         }
       }
 
-      await loadPendingPayments();
-      alert('Uplata odbijena.');
+      // Remove the rejected payment from the list immediately (optimistic update)
+      setPendingPayments(prev => prev.filter(p => p.id !== payment.id));
+
+      showToast({ type: 'info', message: 'Уплата одбијена.' });
+
+      // Reload payments in background to ensure consistency
+      setTimeout(() => loadPendingPayments(), 1000);
     } catch (error) {
       console.error('Error rejecting payment:', error);
-      alert('Greška pri odbijanju uplate: ' + (error.message || 'Pokušajte ponovo'));
+      showToast({ type: 'error', message: 'Грешка при одбијању уплате: ' + (error.message || 'Покушајте поново') });
+      // Reload on error to restore correct state
+      await loadPendingPayments();
     } finally {
       setProcessingId(null);
     }
@@ -134,7 +149,7 @@ export default function PaymentVerifier() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-[#003366]" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#D62828]" />
       </div>
     );
   }
@@ -142,21 +157,21 @@ export default function PaymentVerifier() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-[#003366]">Verifikacija uplata</h2>
+        <h2 className="text-2xl font-bold text-[#1A1A1A]">Верификација уплата</h2>
         <button
           onClick={loadPendingPayments}
-          className="px-4 py-2 rounded-lg bg-[#F5F3EF] text-[#003366] font-medium hover:bg-[#BFECC9] transition-colors"
+          className="px-4 py-2 rounded-2xl bg-[#F7F7F7] text-[#1A1A1A] font-medium hover:bg-gray-200 transition-colors"
         >
-          Osveži
+          Освежи
         </button>
       </div>
 
       {pendingPayments.length === 0 ? (
-        <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-gray-100">
-          <CheckCircle className="h-16 w-16 text-[#BFECC9] mx-auto mb-4" />
-          <p className="text-gray-600 text-lg">Nema uplata na čekanju</p>
+        <div className="bg-white rounded-3xl p-12 text-center shadow-sm border border-gray-100">
+          <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
+          <p className="text-gray-600 text-lg">Нема уплата на чекању</p>
           <p className="text-sm text-gray-400 mt-2">
-            Sve uplate su verifikovane
+            Све уплате су верификоване
           </p>
         </div>
       ) : (
@@ -164,12 +179,12 @@ export default function PaymentVerifier() {
           {pendingPayments.map((payment) => (
             <div
               key={payment.id}
-              className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100"
+              className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100"
             >
               {/* Header */}
               <div className="flex items-start justify-between mb-6">
                 <div>
-                  <h3 className="text-xl font-bold text-[#003366] mb-1">
+                  <h3 className="text-xl font-bold text-[#1A1A1A] mb-1">
                     {formatPrice(payment.amount)}
                   </h3>
                   <p className="text-sm text-gray-500">
@@ -177,8 +192,8 @@ export default function PaymentVerifier() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <div className="bg-yellow-100 text-yellow-800 px-4 py-2 rounded-full text-sm font-bold">
-                    Na čekanju
+                  <div className="bg-[#F2C94C]/20 text-[#1A1A1A] px-4 py-2 rounded-full text-sm font-bold">
+                    На чекању
                   </div>
                   <p className="text-xs text-gray-400 mt-2">
                     {payment.created_at && formatDate(payment.created_at)}
@@ -189,10 +204,10 @@ export default function PaymentVerifier() {
               {/* User & Course Info Grid */}
               <div className="grid md:grid-cols-2 gap-6 mb-6">
                 {/* User Info */}
-                <div className="bg-[#F5F3EF] rounded-xl p-4">
+                <div className="bg-[#F7F7F7] rounded-2xl p-4">
                   <div className="flex items-center space-x-2 mb-3">
-                    <User className="h-5 w-5 text-[#003366]" />
-                    <h4 className="font-bold text-[#003366]">Korisnik</h4>
+                    <User className="h-5 w-5 text-[#D62828]" />
+                    <h4 className="font-bold text-[#1A1A1A]">Корисник</h4>
                   </div>
                   {payment.user ? (
                     <div className="space-y-1 text-sm text-gray-600">
@@ -203,15 +218,15 @@ export default function PaymentVerifier() {
                       )}
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500">Nepoznat korisnik</p>
+                    <p className="text-sm text-gray-500">Непознат корисник</p>
                   )}
                 </div>
 
                 {/* Course Info */}
-                <div className="bg-[#F5F3EF] rounded-xl p-4">
+                <div className="bg-[#F7F7F7] rounded-2xl p-4">
                   <div className="flex items-center space-x-2 mb-3">
-                    <BookOpen className="h-5 w-5 text-[#003366]" />
-                    <h4 className="font-bold text-[#003366]">Kurs</h4>
+                    <BookOpen className="h-5 w-5 text-[#D62828]" />
+                    <h4 className="font-bold text-[#1A1A1A]">Курс</h4>
                   </div>
                   {payment.course ? (
                     <div className="space-y-1 text-sm text-gray-600">
@@ -221,57 +236,57 @@ export default function PaymentVerifier() {
                       </p>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500">Nepoznat kurs</p>
+                    <p className="text-sm text-gray-500">Непознат курс</p>
                   )}
                 </div>
               </div>
 
               {/* Payment Reference */}
-              <div className="bg-blue-50/50 rounded-xl p-4 mb-6">
+              <div className="bg-blue-50/50 rounded-2xl p-4 mb-6">
                 <div className="flex justify-between items-center">
                   <div>
-                    <p className="text-sm text-gray-500 mb-1">Poziv na broj</p>
-                    <p className="font-mono font-bold text-lg text-[#003366]">{payment.payment_ref}</p>
+                    <p className="text-sm text-gray-500 mb-1">Позив на број</p>
+                    <p className="font-mono font-bold text-lg text-[#1A1A1A]">{payment.payment_ref}</p>
                   </div>
                   {payment.invoice_url && (
                     <a
                       href={payment.invoice_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 py-2 bg-white border border-gray-200 rounded-lg text-sm font-medium hover:bg-gray-50 flex items-center"
+                      className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium hover:bg-gray-50 flex items-center"
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
-                      Uplatnica
+                      Уплатница
                     </a>
                   )}
                 </div>
               </div>
 
               {/* Confirmation Document */}
-              {payment.confirmation_url ? (
-                <div className="bg-green-50 rounded-xl p-4 mb-6 border border-green-100">
+              {payment.confirmationUrl || payment.confirmation_url ? (
+                <div className="bg-green-50 rounded-2xl p-4 mb-6 border border-green-100">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-green-800 mb-1">✓ Potvrda o uplati primljena</p>
+                      <p className="font-semibold text-green-800 mb-1">✓ Потврда о уплати примљена</p>
                       <p className="text-sm text-green-600">
-                        Korisnik je upload-ovao potvrdu
+                        Корисник је отпремио потврду
                       </p>
                     </div>
                     <a
-                      href={payment.confirmation_url}
+                      href={payment.confirmationUrl || payment.confirmation_url}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="px-4 py-2 bg-white text-green-700 border border-green-200 rounded-lg text-sm font-medium hover:bg-green-50 flex items-center shadow-sm"
+                      className="px-4 py-2 bg-white text-green-700 border border-green-200 rounded-xl text-sm font-medium hover:bg-green-50 flex items-center shadow-sm"
                     >
                       <ExternalLink className="h-4 w-4 mr-2" />
-                      Pogledaj potvrdu
+                      Погледај потврду
                     </a>
                   </div>
                 </div>
               ) : (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 mb-6">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mb-6">
                   <p className="text-sm text-yellow-800">
-                    ⚠️ Korisnik još nije upload-ovao potvrdu o uplati
+                    ⚠️ Корисник још није отпремио потврду о уплати
                   </p>
                 </div>
               )}
@@ -281,34 +296,34 @@ export default function PaymentVerifier() {
                 <button
                   onClick={() => confirmPayment(payment)}
                   disabled={processingId === payment.id}
-                  className="flex-1 bg-green-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-green-700 disabled:opacity-50 flex items-center justify-center transition-colors"
+                  className="flex-1 bg-green-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-green-700 disabled:opacity-50 flex items-center justify-center transition-colors"
                 >
                   {processingId === payment.id ? (
                     <>
                       <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      Potvrđivanje...
+                      Потврђивање...
                     </>
                   ) : (
                     <>
                       <CheckCircle className="h-5 w-5 mr-2" />
-                      Potvrdi uplatu
+                      Потврди уплату
                     </>
                   )}
                 </button>
                 <button
                   onClick={() => rejectPayment(payment)}
                   disabled={processingId === payment.id}
-                  className="flex-1 bg-red-100 text-red-700 px-6 py-3 rounded-xl font-bold hover:bg-red-200 disabled:opacity-50 flex items-center justify-center transition-colors"
+                  className="flex-1 bg-red-100 text-red-700 px-6 py-3 rounded-2xl font-bold hover:bg-red-200 disabled:opacity-50 flex items-center justify-center transition-colors"
                 >
                   {processingId === payment.id ? (
                     <>
                       <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      Odbijanje...
+                      Одбијање...
                     </>
                   ) : (
                     <>
                       <XCircle className="h-5 w-5 mr-2" />
-                      Odbij uplatu
+                      Одбиј уплату
                     </>
                   )}
                 </button>

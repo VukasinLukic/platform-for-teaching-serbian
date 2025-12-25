@@ -47,44 +47,44 @@ export default function AdminPage() {
   ];
 
   const statsCards = [
-    { 
-      label: 'Ukupno Kurseva', 
-      value: statsData.totalCourses || 42, 
-      icon: BookOpen, 
-      color: 'text-[#BFECC9]', 
-      borderColor: 'border-b-4 border-[#BFECC9]' 
+    {
+      label: 'Ukupno Kurseva',
+      value: statsData.totalCourses || 0,
+      icon: BookOpen,
+      color: 'text-[#F2C94C]',
+      borderColor: 'border-b-4 border-[#F2C94C]'
     },
-    { 
-      label: 'Aktivnih Učenika', 
-      value: (statsData.activeStudents || 580) + '+', 
-      icon: Users, 
-      color: 'text-[#42A5F5]', 
-      borderColor: 'border-b-4 border-[#42A5F5]' 
+    {
+      label: 'Aktivnih Učenika',
+      value: statsData.activeStudents ? `${statsData.activeStudents}+` : '0',
+      icon: Users,
+      color: 'text-[#D62828]',
+      borderColor: 'border-b-4 border-[#D62828]'
     },
-    { 
-      label: 'Na Čekanju Uplate', 
-      value: statsData.pendingPayments || 15, 
-      icon: Clock, 
-      color: 'text-[#FFD700]', 
-      borderColor: 'border-b-4 border-[#FFD700]' 
+    {
+      label: 'Na Čekanju Uplate',
+      value: statsData.pendingPayments || 0,
+      icon: Clock,
+      color: 'text-[#FFD700]',
+      borderColor: 'border-b-4 border-[#FFD700]'
     },
-    { 
-      label: 'Mesečni Prihod', 
-      value: formatPrice(statsData.monthlyRevenue || 250000), 
-      icon: TrendingUp, 
-      color: 'text-[#FF6B35]', 
-      borderColor: 'border-b-4 border-[#FF6B35]' 
+    {
+      label: 'Mesečni Prihod',
+      value: formatPrice(statsData.monthlyRevenue || 0),
+      icon: TrendingUp,
+      color: 'text-[#D62828]',
+      borderColor: 'border-b-4 border-[#D62828]'
     },
   ];
 
   return (
-    <div className="min-h-screen bg-[#F5F3EF] font-sans flex">
+    <div className="min-h-screen bg-[#F7F7F7] font-sans flex">
       
       {/* SIDEBAR */}
-      <aside className="w-64 bg-[#003366] text-white flex flex-col fixed h-full shadow-2xl z-50">
+      <aside className="w-64 bg-[#1A1A1A] text-white flex flex-col fixed h-full shadow-2xl z-50">
         {/* Logo */}
         <div className="p-8 flex items-center gap-3">
-          <BookOpen className="w-8 h-8 text-[#BFECC9]" />
+          <BookOpen className="w-8 h-8 text-[#F2C94C]" />
           <span className="text-xl font-serif font-bold">Nauči Srpski</span>
         </div>
 
@@ -96,7 +96,7 @@ export default function AdminPage() {
                onClick={() => setActiveTab(item.id)}
                className={`w-full flex items-center gap-4 px-6 py-4 rounded-xl transition-all duration-200 ${
                  activeTab === item.id 
-                   ? 'bg-[#BFECC9] text-[#003366] font-bold shadow-lg' 
+                   ? 'bg-[#F2C94C] text-[#1A1A1A] font-bold shadow-lg' 
                    : 'text-white/70 hover:bg-white/10 hover:text-white'
                }`}
              >
@@ -131,18 +131,18 @@ export default function AdminPage() {
         
         {/* Top Header */}
         <header className="flex justify-between items-center mb-12">
-          <h1 className="text-4xl font-serif font-bold text-[#003366]">Admin Panel</h1>
+          <h1 className="text-4xl font-serif font-bold text-[#1A1A1A]">Admin Panel</h1>
           
           <div className="flex items-center gap-6">
-             <button className="relative p-2 text-gray-400 hover:text-[#003366] transition">
+             <button className="relative p-2 text-gray-400 hover:text-[#1A1A1A] transition">
                <Bell size={24} />
                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
              </button>
              <div className="bg-white px-4 py-2 rounded-full shadow-sm flex items-center gap-2 border border-gray-100">
-                <div className="w-8 h-8 bg-[#003366] rounded-full flex items-center justify-center text-white text-xs">
+                <div className="w-8 h-8 bg-[#1A1A1A] rounded-full flex items-center justify-center text-white text-xs">
                   {userProfile?.ime?.charAt(0) || 'A'}
                 </div>
-                <span className="text-sm font-bold text-[#003366]">{userProfile?.ime || 'Admin'}</span>
+                <span className="text-sm font-bold text-[#1A1A1A]">{userProfile?.ime || 'Admin'}</span>
                 <ChevronDown size={16} className="text-gray-400" />
              </div>
           </div>
@@ -159,7 +159,7 @@ export default function AdminPage() {
                      <stat.icon size={20} />
                    </div>
                  </div>
-                 <div className="text-3xl font-black text-[#003366]">{stat.value}</div>
+                 <div className="text-3xl font-black text-[#1A1A1A]">{stat.value}</div>
               </div>
             ))}
           </div>
@@ -169,7 +169,7 @@ export default function AdminPage() {
         <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 min-h-[600px] p-8">
            {/* Tab Title if not Dashboard */}
            {activeTab !== 'dashboard' && (
-             <h2 className="text-2xl font-bold text-[#003366] mb-6 pb-4 border-b border-gray-100">
+             <h2 className="text-2xl font-bold text-[#1A1A1A] mb-6 pb-4 border-b border-gray-100">
                {sidebarItems.find(i => i.id === activeTab)?.label}
              </h2>
            )}
@@ -182,15 +182,32 @@ export default function AdminPage() {
               {activeTab === 'dashboard' && (
                  <div className="space-y-8">
                     <div className="flex justify-between items-center">
-                       <h3 className="text-xl font-bold text-[#003366]">Poslednje Aktivnosti</h3>
+                       <h3 className="text-xl font-bold text-[#1A1A1A]">Poslednje Aktivnosti</h3>
                     </div>
                     {/* Placeholder for recent activities table if needed, or reuse components */}
                     <PaymentVerifier limit={5} title="Nedavne Uplate" />
                  </div>
               )}
               {['students', 'settings'].includes(activeTab) && (
-                <div className="text-center py-20 text-gray-400">
-                  <p>Sekcija {sidebarItems.find(i => i.id === activeTab)?.label} je u izradi.</p>
+                <div className="text-center py-20">
+                  <div className="max-w-md mx-auto">
+                    <div className="bg-[#F2C94C]/20 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
+                      {activeTab === 'students' ? (
+                        <Users className="w-12 h-12 text-[#1A1A1A]" />
+                      ) : (
+                        <Settings className="w-12 h-12 text-[#1A1A1A]" />
+                      )}
+                    </div>
+                    <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">
+                      {activeTab === 'students' ? 'Učenici' : 'Podešavanja'}
+                    </h3>
+                    <p className="text-gray-600">
+                      {activeTab === 'students'
+                        ? 'Ovde ćete moći videti listu svih učenika koji su kupili kurseve, njihov napredak i statistike.'
+                        : 'Ovde ćete moći podesiti profile, notifikacije, email template-ove i ostale postavke platforme.'}
+                    </p>
+                    <p className="text-sm text-gray-400 mt-4">Funkcionalnost uskoro dostupna</p>
+                  </div>
                 </div>
               )}
            </div>

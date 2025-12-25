@@ -142,3 +142,50 @@ export const getUserCourses = async (userId) => {
     throw error;
   }
 };
+
+/**
+ * Get course modules with their lessons
+ * @param {string} courseId
+ * @returns {Promise<Array>}
+ */
+export const getCourseModulesWithLessons = async (courseId) => {
+  try {
+    // Get modules for the course
+    const modulesQuery = query(
+      collection(db, 'modules'),
+      where('courseId', '==', courseId),
+      orderBy('order', 'asc')
+    );
+    const modulesSnapshot = await getDocs(modulesQuery);
+
+    // For each module, get its lessons
+    const modulesWithLessons = await Promise.all(
+      modulesSnapshot.docs.map(async (moduleDoc) => {
+        const moduleData = { id: moduleDoc.id, ...moduleDoc.data() };
+
+        // Get lessons for this module
+        const lessonsQuery = query(
+          collection(db, 'lessons'),
+          where('moduleId', '==', moduleDoc.id),
+          orderBy('order', 'asc')
+        );
+        const lessonsSnapshot = await getDocs(lessonsQuery);
+
+        const lessons = lessonsSnapshot.docs.map(lessonDoc => ({
+          id: lessonDoc.id,
+          ...lessonDoc.data()
+        }));
+
+        return {
+          ...moduleData,
+          lessons
+        };
+      })
+    );
+
+    return modulesWithLessons;
+  } catch (error) {
+    console.error('Error fetching course modules with lessons:', error);
+    throw error;
+  }
+};

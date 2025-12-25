@@ -2,23 +2,23 @@ import { forwardRef } from 'react';
 import { ArrowRight, Loader2 } from 'lucide-react';
 
 const variants = {
-  // Primary - Orange/Red gradient button (main CTA)
-  primary: 'bg-[#FF6B35] text-white hover:bg-[#E55A28] shadow-lg hover:shadow-xl',
+  // Primary - Срце црвена (главни CTA)
+  primary: 'bg-[#D62828] text-white hover:bg-[#B91F1F] shadow-lg hover:shadow-xl',
 
-  // Secondary - Dark blue button
-  secondary: 'bg-[#003366] text-white hover:bg-[#002244] shadow-lg hover:shadow-xl',
+  // Secondary - Тамно сива
+  secondary: 'bg-[#1A1A1A] text-white hover:bg-black shadow-lg hover:shadow-xl',
 
-  // Outline - Transparent with border
-  outline: 'border-2 border-[#003366] text-[#003366] bg-transparent hover:bg-[#003366] hover:text-white',
+  // Outline - Прозирна са ивицом
+  outline: 'border-2 border-[#D62828] text-[#D62828] bg-transparent hover:bg-[#D62828] hover:text-white',
 
-  // Outline white - For dark backgrounds
-  outlineWhite: 'border-2 border-white text-white bg-transparent hover:bg-white hover:text-[#003366]',
+  // Outline white - За тамне позадине
+  outlineWhite: 'border-2 border-white text-white bg-transparent hover:bg-white hover:text-[#D62828]',
 
-  // Green - Using primary color
-  green: 'bg-[#BFECC9] text-[#003366] hover:bg-[#A8DCBA] shadow-lg hover:shadow-xl',
+  // Gold - Топло златна
+  gold: 'bg-[#F2C94C] text-[#1A1A1A] hover:bg-[#E0B739] shadow-lg hover:shadow-xl',
 
-  // Ghost - Minimal button
-  ghost: 'text-[#003366] hover:bg-[#BFECC9]/20',
+  // Ghost - Минимални дугме
+  ghost: 'text-[#1A1A1A] hover:bg-[#F7F7F7]',
 
   // Danger
   danger: 'bg-red-500 text-white hover:bg-red-600 shadow-lg hover:shadow-xl',

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
-import { useParams, Link } from 'react-router-dom';
-import { 
-  Play, Book, CheckCircle, Clock, Award, Shield, Star, 
-  Video, Users, FileText, Lock, Unlock 
+import { useParams, Link, useNavigate } from 'react-router-dom';
+import {
+  Play, Book, CheckCircle, Lock, ChevronDown, ChevronRight,
+  Video, Award, Shield, Star, FileText, ArrowRight
 } from 'lucide-react';
-import { getCourseById } from '../services/course.service';
+import { getCourseById, checkUserAccess, getCourseModulesWithLessons } from '../services/course.service';
 import { useAuthStore } from '../store/authStore';
 import { formatPrice } from '../utils/helpers';
 import Header from '../components/ui/Header';
@@ -13,293 +13,292 @@ import PaymentModal from '../components/payment/PaymentModal';
 
 export default function CoursePage() {
   const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuthStore();
   const [course, setCourse] = useState(null);
+  const [hasAccess, setHasAccess] = useState(false);
+  const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [activeModule, setActiveModule] = useState(0);
-
-  // Mock syllabus data if not in DB yet
-  const syllabus = [
-    {
-      title: 'Modul 1: Gramatika',
-      lessons: ['Glasovne promene', 'Vrste reči', 'Sintaksa', 'Padeži']
-    },
-    {
-      title: 'Modul 2: Književnost',
-      lessons: ['Epska poezija', 'Lirska poezija', 'Drama', 'Roman']
-    },
-    {
-      title: 'Modul 3: Pravopis',
-      lessons: ['Veliko slovo', 'Spojeno i odvojeno pisanje', 'Interpunkcija']
-    }
-  ];
+  const [activeModuleIndex, setActiveModuleIndex] = useState(0);
+  const [selectedLesson, setSelectedLesson] = useState(null);
 
   useEffect(() => {
-    loadCourse();
-  }, [id]);
+    loadCourseData();
+  }, [id, user]);
 
-  const loadCourse = async () => {
+  const loadCourseData = async () => {
     try {
-      const data = await getCourseById(id);
-      setCourse(data);
+      const courseData = await getCourseById(id);
+      setCourse(courseData);
+
+      // Check if user has access
+      if (user) {
+        const access = await checkUserAccess(user.uid, id);
+        setHasAccess(access);
+
+        // Load modules and lessons if user has access
+        if (access) {
+          const modulesData = await getCourseModulesWithLessons(id);
+          setModules(modulesData);
+
+          // Auto-select first lesson
+          if (modulesData.length > 0 && modulesData[0].lessons.length > 0) {
+            setSelectedLesson(modulesData[0].lessons[0]);
+          }
+        }
+      }
     } catch (error) {
-      console.error('Error loading course:', error);
+      console.error('Error loading course data:', error);
     } finally {
       setLoading(false);
     }
   };
 
+  const handlePurchaseClick = () => {
+    if (!user) {
+      navigate('/login', { state: { returnTo: `/course/${id}` } });
+      return;
+    }
+    setShowPaymentModal(true);
+  };
+
+  const handleLessonSelect = (lesson) => {
+    setSelectedLesson(lesson);
+  };
+
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F5F3EF]">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#BFECC9] border-t-transparent"></div>
+      <div className="min-h-screen flex items-center justify-center bg-[#F7F7F7]">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#D62828] border-t-transparent"></div>
       </div>
     );
   }
 
   if (!course) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F5F3EF]">
+      <div className="min-h-screen flex items-center justify-center bg-[#F7F7F7]">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-[#003366]">Kurs nije pronađen</h2>
-          <Link to="/courses" className="text-[#FF6B35] hover:underline mt-4 block">
-            Nazad na kurseve
+          <h2 className="text-2xl font-bold text-[#1A1A1A]">Курс није пронађен</h2>
+          <Link to="/courses" className="text-[#D62828] hover:underline mt-4 block">
+            Назад на курсеве
           </Link>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-[#F5F3EF] font-sans text-[#003366]">
-      <Header />
+  // If user has access, show the learning interface
+  if (hasAccess) {
+    return (
+      <div className="min-h-screen bg-[#F7F7F7] font-sans text-[#1A1A1A]">
+        <Header />
 
-      {/* HERO SECTION - Premium Style */}
-      <section className="bg-gradient-to-br from-[#003366] to-[#002244] text-white pt-16 pb-32 relative overflow-hidden">
-         {/* Background Decor */}
-         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#42A5F5] opacity-10 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2"></div>
-         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#FF6B35] opacity-10 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/2"></div>
+        <div className="max-w-[1800px] mx-auto px-6 py-8">
+          <div className="grid lg:grid-cols-[300px_1fr] gap-6">
+            {/* Left Sidebar - Modules and Lessons */}
+            <div className="lg:h-[calc(100vh-140px)] lg:sticky lg:top-24 overflow-y-auto">
+              <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+                <h2 className="text-xl font-bold mb-4 text-[#1A1A1A]">{course.title}</h2>
+                <p className="text-sm text-gray-600 mb-6">
+                  {modules.length} {modules.length === 1 ? 'модул' : 'модула'}
+                </p>
 
-         <div className="max-w-7xl mx-auto px-6 relative z-10">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-               {/* Left Content */}
-               <div className="space-y-8">
-                  <div className="inline-flex items-center gap-2 bg-[#BFECC9] text-[#003366] px-4 py-2 rounded-full text-sm font-bold shadow-lg shadow-[#BFECC9]/20 animate-fade-in-up">
-                    <Star className="w-4 h-4 fill-[#003366]" /> Najpopularniji kurs
-                  </div>
-                  
-                  <h1 className="text-4xl md:text-6xl font-serif font-bold leading-tight">
-                    {course.title}
-                  </h1>
-                  
-                  <p className="text-xl text-white/80 leading-relaxed max-w-xl">
-                    {course.description}
-                  </p>
-
-                  <div className="flex items-end gap-6">
-                     <div className="text-5xl font-bold text-white">
-                       {formatPrice(course.price)}
-                     </div>
-                     {/* Optional: Old price with strikethrough */}
-                     {/* <div className="text-xl text-white/40 line-through mb-2">15.000 RSD</div> */}
-                  </div>
-
-                  <div className="pt-4">
-                    <button 
-                      onClick={() => setShowPaymentModal(true)}
-                      className="bg-[#FF6B35] text-white px-10 py-5 rounded-full text-lg font-bold hover:bg-[#E55A28] transition-all shadow-xl hover:shadow-[#FF6B35]/40 hover:-translate-y-1 flex items-center gap-3"
-                    >
-                      Kupi Ovaj Kurs <ArrowRight className="w-6 h-6" />
-                    </button>
-                    <div className="mt-4 flex items-center gap-6 text-sm text-white/60 font-medium">
-                       <span className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#BFECC9]" /> Jednokratno plaćanje</span>
-                       <span className="flex items-center gap-2"><CheckCircle className="w-4 h-4 text-[#BFECC9]" /> 7 dana garancija</span>
-                    </div>
-                  </div>
-               </div>
-
-               {/* Right Content - 3D Illustration Placeholder */}
-               <div className="relative hidden lg:block">
-                  <div className="relative z-10 transform rotate-3 hover:rotate-0 transition-all duration-700">
-                     {/* Main Card */}
-                     <div className="bg-white rounded-[3rem] p-4 shadow-2xl border-8 border-white/10 backdrop-blur-sm">
-                        <div className="bg-[#F5F3EF] rounded-[2.5rem] overflow-hidden relative h-[500px] flex items-center justify-center group">
-                           <div className="absolute inset-0 bg-gradient-to-br from-[#003366]/5 to-[#003366]/10"></div>
-                           
-                           {/* Stacked Elements */}
-                           <div className="relative z-10 text-center space-y-6">
-                              <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mx-auto shadow-xl group-hover:scale-110 transition-transform">
-                                 <Play className="w-12 h-12 text-[#FF6B35] fill-[#FF6B35] ml-2" />
-                              </div>
-                              <div>
-                                 <div className="bg-white/80 backdrop-blur-md px-6 py-3 rounded-2xl inline-block shadow-lg mb-2">
-                                    <span className="font-bold text-[#003366]">Pregled Kursa</span>
-                                 </div>
-                                 <div className="flex justify-center gap-2 mt-4">
-                                    <div className="w-3 h-3 rounded-full bg-[#FF6B35]"></div>
-                                    <div className="w-3 h-3 rounded-full bg-[#BFECC9]"></div>
-                                    <div className="w-3 h-3 rounded-full bg-[#003366]"></div>
-                                 </div>
-                              </div>
-                           </div>
-
-                           {/* Decorative Floating Icons */}
-                           <div className="absolute top-10 right-10 bg-white p-3 rounded-xl shadow-lg animate-bounce-slow">
-                              <Book className="w-8 h-8 text-[#003366]" />
-                           </div>
-                           <div className="absolute bottom-20 left-10 bg-[#FFD700] p-3 rounded-xl shadow-lg animate-float">
-                              <Award className="w-8 h-8 text-[#003366]" />
-                           </div>
+                <div className="space-y-2">
+                  {modules.map((module, moduleIndex) => (
+                    <div key={module.id}>
+                      <button
+                        onClick={() => setActiveModuleIndex(activeModuleIndex === moduleIndex ? -1 : moduleIndex)}
+                        className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-[#F7F7F7] transition text-left"
+                      >
+                        <div className="flex items-center gap-3">
+                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                            activeModuleIndex === moduleIndex ? 'bg-[#D62828] text-white' : 'bg-[#F7F7F7] text-gray-600'
+                          }`}>
+                            <Book className="w-4 h-4" />
+                          </div>
+                          <div>
+                            <p className="text-sm font-bold text-[#1A1A1A]">{module.title}</p>
+                            <p className="text-xs text-gray-500">{module.lessons?.length || 0} лекција</p>
+                          </div>
                         </div>
-                     </div>
-                  </div>
-                  {/* Back Glow */}
-                  <div className="absolute inset-0 bg-white opacity-20 blur-3xl -z-10 transform scale-90 translate-y-10"></div>
-               </div>
+                        <ChevronDown className={`w-4 h-4 text-gray-400 transition ${activeModuleIndex === moduleIndex ? 'rotate-180' : ''}`} />
+                      </button>
+
+                      {activeModuleIndex === moduleIndex && (
+                        <div className="ml-11 mt-2 space-y-1">
+                          {module.lessons?.map((lesson) => (
+                            <button
+                              key={lesson.id}
+                              onClick={() => handleLessonSelect(lesson)}
+                              className={`w-full flex items-center gap-2 p-2 rounded-xl text-left transition ${
+                                selectedLesson?.id === lesson.id
+                                  ? 'bg-[#D62828]/10 text-[#D62828]'
+                                  : 'hover:bg-[#F7F7F7] text-gray-700'
+                              }`}
+                            >
+                              <Play className={`w-3 h-3 ${selectedLesson?.id === lesson.id ? 'fill-[#D62828]' : ''}`} />
+                              <span className="text-sm font-medium truncate">{lesson.title}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
             </div>
-         </div>
-      </section>
 
-      {/* CONTENT SECTION */}
-      <div className="max-w-7xl mx-auto px-6 py-16 -mt-20 relative z-20">
-        <div className="grid lg:grid-cols-[2fr_1fr] gap-8">
-           
-           {/* Left Column - Bento Grid Content */}
-           <div className="space-y-8">
-              
-              {/* About Card */}
-              <div className="bg-white rounded-[2.5rem] p-10 shadow-lg">
-                 <div className="flex items-center gap-4 mb-6">
-                    <div className="bg-[#F5F3EF] p-3 rounded-2xl">
-                       <FileText className="w-8 h-8 text-[#003366]" />
-                    </div>
-                    <h2 className="text-2xl font-serif font-bold">O Kursu</h2>
-                 </div>
-                 <p className="text-gray-600 leading-relaxed text-lg">
-                    {course.description || 
-                      "Ovaj kurs pruža sveobuhvatnu pripremu za polaganje male mature iz srpskog jezika. Kroz seriju video lekcija, interaktivnih vežbi i testova, prelazimo celokupno gradivo od 5. do 8. razreda. Poseban fokus je na oblastima koje učenicima predstavljaju najveći izazov: glasovne promene, sintaksa i književnost."
-                    }
-                 </p>
-                 
-                 <div className="grid sm:grid-cols-3 gap-6 mt-8">
-                    <div className="bg-[#F5F3EF] p-4 rounded-2xl text-center">
-                       <div className="font-black text-2xl text-[#FF6B35]">30+</div>
-                       <div className="text-xs font-bold text-gray-500 uppercase mt-1">Sati videa</div>
-                    </div>
-                    <div className="bg-[#F5F3EF] p-4 rounded-2xl text-center">
-                       <div className="font-black text-2xl text-[#42A5F5]">50+</div>
-                       <div className="text-xs font-bold text-gray-500 uppercase mt-1">Lekcija</div>
-                    </div>
-                    <div className="bg-[#F5F3EF] p-4 rounded-2xl text-center">
-                       <div className="font-black text-2xl text-[#BFECC9]">24/7</div>
-                       <div className="text-xs font-bold text-gray-500 uppercase mt-1">Pristup</div>
-                    </div>
-                 </div>
-              </div>
+            {/* Main Content - Video Player */}
+            <div className="space-y-6">
+              {selectedLesson ? (
+                <>
+                  {/* Video Player */}
+                  <div className="bg-[#1A1A1A] rounded-3xl overflow-hidden shadow-lg aspect-video">
+                    {selectedLesson.videoUrl ? (
+                      <video
+                        key={selectedLesson.id}
+                        controls
+                        className="w-full h-full"
+                        src={selectedLesson.videoUrl}
+                      >
+                        Ваш претраживач не подржава видео.
+                      </video>
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-white">
+                        <div className="text-center">
+                          <Video className="w-16 h-16 mx-auto mb-4 opacity-50" />
+                          <p className="text-lg">Видео није доступан</p>
+                        </div>
+                      </div>
+                    )}
+                  </div>
 
-              {/* Syllabus Card */}
-              <div className="bg-white rounded-[2.5rem] p-10 shadow-lg">
-                 <div className="flex items-center gap-4 mb-8">
-                    <div className="bg-[#F5F3EF] p-3 rounded-2xl">
-                       <Book className="w-8 h-8 text-[#003366]" />
-                    </div>
-                    <h2 className="text-2xl font-serif font-bold">Plan i Program</h2>
-                 </div>
-
-                 <div className="space-y-4">
-                    {syllabus.map((module, index) => (
-                       <div key={index} className="border-2 border-gray-100 rounded-3xl overflow-hidden">
-                          <button 
-                            onClick={() => setActiveModule(activeModule === index ? -1 : index)}
-                            className="w-full flex items-center justify-between p-6 bg-white hover:bg-gray-50 transition-colors"
-                          >
-                             <span className="font-bold text-lg">{module.title}</span>
-                             <div className={`p-2 rounded-full ${activeModule === index ? 'bg-[#003366] text-white' : 'bg-gray-100 text-gray-500'}`}>
-                                <ChevronDown className={`w-5 h-5 transition-transform ${activeModule === index ? 'rotate-180' : ''}`} />
-                             </div>
-                          </button>
-                          
-                          {activeModule === index && (
-                             <div className="bg-[#F5F3EF] p-6 border-t-2 border-gray-100">
-                                <ul className="space-y-3">
-                                   {module.lessons.map((lesson, lIndex) => (
-                                      <li key={lIndex} className="flex items-center gap-3">
-                                         <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-sm flex-shrink-0">
-                                            <Play className="w-3 h-3 text-[#FF6B35] fill-[#FF6B35]" />
-                                         </div>
-                                         <span className="text-gray-700 font-medium">{lesson}</span>
-                                         <span className="ml-auto text-xs text-gray-400 font-mono">15 min</span>
-                                      </li>
-                                   ))}
-                                </ul>
-                             </div>
-                          )}
-                       </div>
-                    ))}
-                 </div>
-              </div>
-           </div>
-
-           {/* Right Column - Sticky Sidebar */}
-           <div className="lg:block">
-              <div className="sticky top-24 space-y-6">
-                 {/* Benefits Card */}
-                 <div className="bg-[#003366] text-white rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden">
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#BFECC9] opacity-10 rounded-full blur-2xl translate-x-1/2 -translate-y-1/2"></div>
-                    
-                    <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
-                       <Award className="text-[#FFD700]" /> Šta dobijate?
-                    </h3>
-                    
-                    <ul className="space-y-4 mb-8">
-                       {[
-                          'Neograničen pristup 24/7',
-                          'Sertifikat po završetku',
-                          '30+ sati video materijala',
-                          'PDF materijali za učenje',
-                          'Podrška profesorke',
-                          'Pristup zajednici'
-                       ].map((item, i) => (
-                          <li key={i} className="flex items-center gap-3 text-sm font-medium text-white/90">
-                             <div className="bg-[#BFECC9] rounded-full p-1">
-                                <CheckCircle className="w-3 h-3 text-[#003366]" />
-                             </div>
-                             {item}
-                          </li>
-                       ))}
-                    </ul>
-
-                    <div className="text-center bg-white/10 rounded-2xl p-4 mb-6 backdrop-blur-sm border border-white/10">
-                       <div className="text-3xl font-bold text-[#FFD700] mb-1">98%</div>
-                       <div className="text-xs uppercase tracking-widest opacity-70">Prolaznost učenika</div>
-                    </div>
-
-                    <button 
-                      onClick={() => setShowPaymentModal(true)}
-                      className="w-full bg-[#FF6B35] text-white py-4 rounded-full font-bold hover:bg-[#E55A28] transition shadow-lg"
-                    >
-                       Kupi Ovaj Kurs
-                    </button>
-                 </div>
-
-                 {/* Guarantee Badge */}
-                 <div className="bg-white rounded-3xl p-6 flex items-center gap-4 shadow-md border border-gray-100">
-                    <Shield className="w-10 h-10 text-[#BFECC9] fill-[#003366]" />
-                    <div>
-                       <div className="font-bold text-[#003366]">100% Sigurno</div>
-                       <div className="text-xs text-gray-500">SSL Enkripcija & Sigurno plaćanje</div>
-                    </div>
-                 </div>
-              </div>
-           </div>
+                  {/* Lesson Info */}
+                  <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
+                    <h1 className="text-3xl font-bold mb-4 text-[#1A1A1A]">{selectedLesson.title}</h1>
+                    {selectedLesson.description && (
+                      <p className="text-gray-600 leading-relaxed">{selectedLesson.description}</p>
+                    )}
+                  </div>
+                </>
+              ) : (
+                <div className="bg-white rounded-3xl p-12 text-center shadow-sm border border-gray-100">
+                  <div className="bg-[#F7F7F7] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <Play className="w-10 h-10 text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2 text-[#1A1A1A]">Одаберите лекцију</h3>
+                  <p className="text-gray-500">Изаберите лекцију из левог менија да бисте започели учење</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
+    );
+  }
 
-      {/* Footer */}
-      <footer className="bg-[#002244] text-white py-12 text-center mt-12">
-        <p>&copy; 2025 Nauči Srpski. Sva prava zadržana.</p>
-      </footer>
+  // If user doesn't have access, show the purchase page
+  return (
+    <div className="min-h-screen bg-[#F7F7F7] font-sans text-[#1A1A1A]">
+      <Header />
+
+      {/* HERO SECTION */}
+      <section className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] text-white pt-16 pb-32 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#D62828] opacity-10 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#F2C94C] opacity-10 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/2"></div>
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          <div className="grid lg:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <div className="inline-flex items-center gap-2 bg-[#F2C94C] text-[#1A1A1A] px-4 py-2 rounded-full text-sm font-bold shadow-lg">
+                <Star className="w-4 h-4 fill-[#1A1A1A]" /> Најпопуларнији курс
+              </div>
+
+              <h1 className="text-4xl md:text-6xl font-bold leading-tight">{course.title}</h1>
+              <p className="text-xl text-white/80 leading-relaxed">{course.description}</p>
+
+              <div className="flex items-end gap-6">
+                <div className="text-5xl font-bold text-white">{formatPrice(course.price)}</div>
+              </div>
+
+              <div className="pt-4">
+                <button
+                  onClick={handlePurchaseClick}
+                  className="bg-[#D62828] text-white px-10 py-5 rounded-full text-lg font-bold hover:bg-[#B91F1F] transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3"
+                >
+                  {user ? 'Купи Овај Курс' : 'Пријави се и Купи'} <ArrowRight className="w-6 h-6" />
+                </button>
+                <div className="mt-4 flex items-center gap-6 text-sm text-white/60 font-medium">
+                  <span className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-[#F2C94C]" /> Једнократно плаћање
+                  </span>
+                  <span className="flex items-center gap-2">
+                    <CheckCircle className="w-4 h-4 text-[#F2C94C]" /> 7 дана гаранција
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div className="relative hidden lg:block">
+              <div className="relative z-10 transform hover:scale-105 transition-transform duration-500">
+                <div className="bg-white rounded-[3rem] p-4 shadow-2xl">
+                  <div className="bg-[#F7F7F7] rounded-[2.5rem] overflow-hidden h-[500px] flex items-center justify-center">
+                    {course.thumbnail_url ? (
+                      <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" />
+                    ) : (
+                      <div className="text-center">
+                        <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mx-auto shadow-xl mb-6">
+                          <Play className="w-12 h-12 text-[#D62828] fill-[#D62828] ml-2" />
+                        </div>
+                        <div className="bg-white px-6 py-3 rounded-2xl inline-block shadow-lg">
+                          <span className="font-bold text-[#1A1A1A]">Преглед Курса</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Benefits Section */}
+      <div className="max-w-7xl mx-auto px-6 py-16 -mt-20 relative z-20">
+        <div className="bg-[#1A1A1A] text-white rounded-[3rem] p-10 shadow-xl">
+          <h3 className="text-2xl font-bold mb-8 flex items-center gap-3">
+            <Award className="text-[#F2C94C]" /> Шта добијате?
+          </h3>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            {[
+              'Неограничен приступ 24/7',
+              'Сертификат по завршетку',
+              'Видео материјали HD квалитета',
+              'PDF материјали за учење',
+              'Подршка професорке',
+              'Приступ заједници'
+            ].map((item, i) => (
+              <div key={i} className="flex items-center gap-3 text-white/90 font-medium">
+                <div className="bg-[#F2C94C] rounded-full p-1">
+                  <CheckCircle className="w-4 h-4 text-[#1A1A1A]" />
+                </div>
+                {item}
+              </div>
+            ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <button
+              onClick={handlePurchaseClick}
+              className="bg-[#D62828] text-white px-10 py-4 rounded-full font-bold hover:bg-[#B91F1F] transition shadow-lg"
+            >
+              {user ? 'Купи Курс' : 'Пријави се'}
+            </button>
+          </div>
+        </div>
+      </div>
 
       {/* Payment Modal */}
       {showPaymentModal && (
@@ -309,20 +308,5 @@ export default function CoursePage() {
         />
       )}
     </div>
-  );
-}
-
-function ChevronDown({ className }) {
-  return (
-    <svg 
-      xmlns="http://www.w3.org/2000/svg" 
-      width="24" height="24" 
-      viewBox="0 0 24 24" 
-      fill="none" stroke="currentColor" 
-      strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" 
-      className={className}
-    >
-      <polyline points="6 9 12 15 18 9"></polyline>
-    </svg>
   );
 }

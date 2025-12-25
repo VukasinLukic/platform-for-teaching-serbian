@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Book, Video, Users, Clock, ArrowRight } from 'lucide-react';
+import { Book, Video, Users, Clock, ArrowRight, CheckCircle } from 'lucide-react';
 import { getAllCourses } from '../services/course.service';
 import { formatPrice } from '../utils/helpers';
 import Header from '../components/ui/Header';
+import Footer from '../components/ui/Footer';
 import Card, { CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 
@@ -27,17 +28,17 @@ export default function CoursesPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F3EF] font-sans text-[#003366]">
+    <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />
 
       {/* Hero */}
-      <div className="bg-[#003366] text-white py-20 rounded-b-[3rem]">
+      <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] text-white py-20 rounded-b-[3rem]">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-4xl md:text-6xl font-serif font-bold mb-6">
-            Naši Kursevi
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            Наши Курсеви
           </h1>
-          <p className="text-xl text-[#BFECC9] max-w-2xl mx-auto">
-            Izaberite program koji vam najviše odgovara i započnite pripremu za malu maturu na vreme.
+          <p className="text-xl text-white/90 max-w-2xl mx-auto">
+            Изаберите програм који вам највише одговара и започните припрему за малу матуру на време.
           </p>
         </div>
       </div>
@@ -46,61 +47,72 @@ export default function CoursesPage() {
       <div className="max-w-7xl mx-auto px-6 py-20">
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#BFECC9] border-t-transparent"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#D62828] border-t-transparent"></div>
+          </div>
+        ) : courses.length === 0 ? (
+          <div className="text-center py-20">
+            <Book className="w-20 h-20 text-gray-300 mx-auto mb-6" />
+            <h3 className="text-2xl font-bold text-[#1A1A1A] mb-4">Ускоро ће бити доступни нови курсеви</h3>
+            <p className="text-gray-600 mb-8">Радимо на изради квалитетних материјала за вас.</p>
+            <Link to="/contact">
+              <Button variant="primary">Контактирајте нас</Button>
+            </Link>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {courses.map((course) => (
               <div key={course.id} className="h-full">
-                <Card variant="elevated" hover className="h-full flex flex-col">
+                <div className="bg-white rounded-[2.5rem] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 h-full flex flex-col overflow-hidden">
                   {/* Card Header Image */}
-                  <div className="h-48 bg-[#F5F3EF] relative overflow-hidden flex items-center justify-center group">
-                     {course.type === 'video' ? (
-                       <Video className="w-20 h-20 text-[#003366]/20 group-hover:scale-110 transition-transform duration-500" />
+                  <div className="h-48 bg-[#F7F7F7] relative overflow-hidden flex items-center justify-center group">
+                     {course.thumbnail_url ? (
+                       <img
+                         src={course.thumbnail_url}
+                         alt={course.title}
+                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                       />
+                     ) : course.type === 'video' ? (
+                       <Video className="w-20 h-20 text-[#D62828]/20 group-hover:scale-110 transition-transform duration-500" />
                      ) : (
-                       <Users className="w-20 h-20 text-[#003366]/20 group-hover:scale-110 transition-transform duration-500" />
+                       <Users className="w-20 h-20 text-[#D62828]/20 group-hover:scale-110 transition-transform duration-500" />
                      )}
-                     <div className="absolute top-4 right-4 bg-[#BFECC9] text-[#003366] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                       {course.type === 'video' ? 'Video Kurs' : 'Uživo Nastava'}
+                     <div className="absolute top-4 right-4 bg-[#F2C94C] text-[#1A1A1A] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                       {course.type === 'video' ? 'Видео Курс' : 'Уживо Настава'}
                      </div>
                   </div>
-                  
-                  <CardBody className="p-8 flex flex-col flex-grow">
-                    <h3 className="text-2xl font-bold text-[#003366] mb-3">{course.title}</h3>
-                    <p className="text-gray-600 text-sm line-clamp-3 mb-6 flex-grow">
+
+                  <div className="p-8 flex flex-col flex-grow">
+                    <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">{course.title}</h3>
+                    <p className="text-gray-600 text-sm line-clamp-3 mb-6 flex-grow leading-relaxed">
                       {course.description}
                     </p>
-                    
+
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <Clock className="w-4 h-4" />
-                        <span>48 lekcija</span>
+                        <CheckCircle className="w-4 h-4 text-[#D62828]" />
+                        <span>Комплетан материјал</span>
                       </div>
-                      
+
                       <div className="pt-6 border-t border-gray-100 flex items-center justify-between">
-                        <div className="text-2xl font-black text-[#FF6B35]">
+                        <div className="text-2xl font-black text-[#D62828]">
                           {formatPrice(course.price)}
                         </div>
-                        <Link to={`/course/${course.id}`}>
+                        <Link to={course.type === 'live' ? `/online-class/${course.id}` : `/course/${course.id}`}>
                           <Button variant="outline" size="sm" showArrow>
-                            Detaljnije
+                            Детаљније
                           </Button>
                         </Link>
                       </div>
                     </div>
-                  </CardBody>
-                </Card>
+                  </div>
+                </div>
               </div>
             ))}
           </div>
         )}
       </div>
-      
-      {/* Footer */}
-      <footer className="bg-[#002244] text-white py-12 text-center">
-        <p>&copy; 2025 Nauči Srpski. Sva prava zadržana.</p>
-      </footer>
+
+      <Footer />
     </div>
   );
 }
-

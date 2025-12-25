@@ -2,11 +2,14 @@ import { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, query, where, deleteDoc, doc, orderBy, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../services/firebase';
-import { Plus, Trash2, Loader2, Upload, Video, FileVideo, CheckCircle, Edit2, Tag, FileText } from 'lucide-react';
+import { Plus, Trash2, Loader2, Upload, Video, FileVideo, CheckCircle, ChevronDown, ChevronRight, Tag, FileText, Book } from 'lucide-react';
+import { useToast } from '../ui/Toast';
 
 export default function LessonManager() {
   const [courses, setCourses] = useState([]);
   const [selectedCourse, setSelectedCourse] = useState('');
+  const [modules, setModules] = useState([]);
+  const [selectedModule, setSelectedModule] = useState(null);
   const [lessons, setLessons] = useState([]);
   const [loading, setLoading] = useState(true);
   const [uploading, setUploading] = useState(false);
@@ -17,6 +20,7 @@ export default function LessonManager() {
     description: '',
     videoFile: null,
   });
+  const { showToast } = useToast();
 
   useEffect(() => {
     loadCourses();
@@ -24,11 +28,21 @@ export default function LessonManager() {
 
   useEffect(() => {
     if (selectedCourse) {
-      loadLessons(selectedCourse);
+      loadModules(selectedCourse);
     } else {
+      setModules([]);
+      setSelectedModule(null);
       setLessons([]);
     }
   }, [selectedCourse]);
+
+  useEffect(() => {
+    if (selectedModule) {
+      loadLessons(selectedModule.id);
+    } else {
+      setLessons([]);
+    }
+  }, [selectedModule]);
 
   const loadCourses = async () => {
     try {
@@ -42,11 +56,28 @@ export default function LessonManager() {
     }
   };
 
-  const loadLessons = async (courseId) => {
+  const loadModules = async (courseId) => {
+    try {
+      const q = query(
+        collection(db, 'modules'),
+        where('courseId', '==', courseId),
+        orderBy('order', 'asc')
+      );
+      const snapshot = await getDocs(q);
+      const modulesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setModules(modulesData);
+      setSelectedModule(null);
+    } catch (error) {
+      console.error('Error loading modules:', error);
+      showToast({ type: 'error', message: 'Грешка при учитавању модула' });
+    }
+  };
+
+  const loadLessons = async (moduleId) => {
     try {
       const q = query(
         collection(db, 'lessons'),
-        where('course_id', '==', courseId),
+        where('moduleId', '==', moduleId),
         orderBy('order', 'asc')
       );
       const snapshot = await getDocs(q);
@@ -54,25 +85,19 @@ export default function LessonManager() {
       setLessons(lessonsData);
     } catch (error) {
       console.error('Error loading lessons:', error);
-      // If error is due to missing index, show message
-      if (error.code === 'failed-precondition') {
-        alert('Firestore index potreban. Kliknite na link u konzoli da kreirate index.');
-      }
     }
   };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      // Validate file type
       if (!file.type.startsWith('video/')) {
-        alert('Molimo odaberite video fajl');
+        showToast({ type: 'warning', message: 'Молимо одаберите видео фајл' });
         return;
       }
-      // Validate file size (max 500MB)
       const maxSize = 500 * 1024 * 1024; // 500MB
       if (file.size > maxSize) {
-        alert('Video fajl je prevelik. Maksimalna veličina je 500MB.');
+        showToast({ type: 'warning', message: 'Видео фајл је превелик. Максимална величина је 500MB.' });
         return;
       }
       setFormData({ ...formData, videoFile: file });
@@ -82,8 +107,8 @@ export default function LessonManager() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.videoFile || !selectedCourse) {
-      alert('Molimo popunite sva polja i odaberite video');
+    if (!formData.videoFile || !selectedModule) {
+      showToast({ type: 'warning', message: 'Молимо попуните сва поља и одаберите видео' });
       return;
     }
 
@@ -91,13 +116,11 @@ export default function LessonManager() {
     setUploadProgress(0);
 
     try {
-      // Upload video to Firebase Storage
       const timestamp = Date.now();
-      const fileName = `videos/${selectedCourse}/${timestamp}_${formData.videoFile.name}`;
+      const fileName = `videos/${selectedCourse}/${selectedModule.id}/${timestamp}_${formData.videoFile.name}`;
       const storageRef = ref(storage, fileName);
       const uploadTask = uploadBytesResumable(storageRef, formData.videoFile);
 
-      // Monitor upload progress
       uploadTask.on(
         'state_changed',
         (snapshot) => {
@@ -106,26 +129,24 @@ export default function LessonManager() {
         },
         (error) => {
           console.error('Upload error:', error);
-          alert('Greška pri upload-u videa');
+          showToast({ type: 'error', message: 'Грешка при upload-у видеа' });
           setUploading(false);
         },
         async () => {
-          // Upload completed successfully
           const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
 
-          // Save lesson to Firestore
           await addDoc(collection(db, 'lessons'), {
-            course_id: selectedCourse,
+            courseId: selectedCourse,
+            moduleId: selectedModule.id,
             title: formData.title,
             description: formData.description,
-            video_key: uploadTask.snapshot.ref.fullPath,
-            video_url: downloadURL, // For development/testing
+            videoUrl: downloadURL,
+            videoPath: uploadTask.snapshot.ref.fullPath,
             order: lessons.length + 1,
-            duration: 0, // TODO: Extract video duration
-            created_at: new Date().toISOString(),
+            duration: 0,
+            createdAt: new Date().toISOString(),
           });
 
-          // Reset form
           setFormData({
             title: '',
             description: '',
@@ -135,54 +156,53 @@ export default function LessonManager() {
           setUploading(false);
           setUploadProgress(0);
 
-          // Reload lessons
-          loadLessons(selectedCourse);
+          loadLessons(selectedModule.id);
+          showToast({ type: 'success', message: 'Лекција успешно додата!' });
         }
       );
     } catch (error) {
       console.error('Error creating lesson:', error);
-      alert('Greška pri kreiranju lekcije');
+      showToast({ type: 'error', message: 'Грешка при креирању лекције' });
       setUploading(false);
     }
   };
 
   const handleDelete = async (lessonId, lessonTitle) => {
-    if (!confirm(`Da li ste sigurni da želite da obrišete lekciju "${lessonTitle}"?`)) {
+    if (!confirm(`Да ли сте сигурни да желите да обришете лекцију "${lessonTitle}"?`)) {
       return;
     }
 
     try {
       await deleteDoc(doc(db, 'lessons', lessonId));
-      loadLessons(selectedCourse);
+      loadLessons(selectedModule.id);
+      showToast({ type: 'success', message: 'Лекција обрисана' });
     } catch (error) {
       console.error('Error deleting lesson:', error);
-      alert('Greška pri brisanju lekcije');
+      showToast({ type: 'error', message: 'Грешка при брисању лекције' });
     }
   };
 
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#D62828]" />
       </div>
     );
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">Upravljanje lekcijama</h2>
-      </div>
+    <div className="space-y-6">
+      <h2 className="text-3xl font-bold text-[#1A1A1A]">Управљање лекцијама</h2>
 
       {/* Course Selector */}
-      <div className="mb-8">
-        <label className="block text-sm font-semibold mb-2">Odaberi kurs</label>
+      <div className="bg-white rounded-3xl p-6 border border-gray-100">
+        <label className="block text-sm font-bold mb-3 text-[#1A1A1A]">Одабери курс</label>
         <select
           value={selectedCourse}
           onChange={(e) => setSelectedCourse(e.target.value)}
-          className="w-full max-w-md px-4 py-2 border rounded-lg focus:ring-2 focus:ring-primary focus:border-primary"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-[#D62828] focus:outline-none transition-colors text-[#1A1A1A] font-medium"
         >
-          <option value="">-- Izaberi kurs --</option>
+          <option value="">-- Изабери курс --</option>
           {courses.map((course) => (
             <option key={course.id} value={course.id}>
               {course.title}
@@ -191,228 +211,217 @@ export default function LessonManager() {
         </select>
       </div>
 
-      {selectedCourse ? (
-        <>
-          {/* Add Lesson Button */}
-          {!showForm && (
-            <button
-              onClick={() => {
-                setEditingLesson(null);
-                setFormData({ title: '', description: '', videoFile: null });
-                setShowForm(true);
-              }}
-              className="btn-primary mb-6"
-            >
-              <Plus className="h-5 w-5 mr-2" />
-              Dodaj lekciju
-            </button>
-          )}
-
-          {/* Lesson Form */}
-          {showForm && (
-            <div className="bg-white rounded-2xl p-8 mb-8 border border-gray-100 shadow-sm">
-              <h3 className="text-xl font-bold mb-6 text-gray-900">
-                {editingLesson ? 'Izmeni lekciju' : 'Nova lekcija'}
-              </h3>
-
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Naziv lekcije</label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <Tag className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <input
-                        type="text"
-                        value={formData.title}
-                        onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                        className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition-colors"
-                        placeholder="npr. Lekcija 1: Uvod u gramatiku"
-                        required
-                        disabled={uploading}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Opis lekcije</label>
-                  <div className="relative">
-                    <div className="absolute top-3 left-3 pointer-events-none">
-                        <FileText className="h-5 w-5 text-gray-400" />
-                    </div>
-                    <textarea
-                        value={formData.description}
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition-colors"
-                        rows={3}
-                        placeholder="Kratak opis lekcije..."
-                        disabled={uploading}
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Video fajl</label>
-                  <div className="relative group">
-                    <input
-                      type="file"
-                      accept="video/*"
-                      onChange={handleFileChange}
-                      className="hidden"
-                      id="videoFile"
-                      disabled={uploading}
-                    />
-                    <label
-                      htmlFor="videoFile"
-                      className={`border-2 border-dashed rounded-xl p-8 text-center cursor-pointer block transition-all ${
-                        formData.videoFile 
-                            ? 'border-black bg-gray-50' 
-                            : 'border-gray-300 hover:border-black hover:bg-gray-50'
-                      }`}
-                    >
-                        {formData.videoFile ? (
-                            <div className="flex items-center justify-center space-x-4">
-                                <div className="bg-black text-white p-3 rounded-lg">
-                                    <FileVideo className="h-6 w-6" />
-                                </div>
-                                <div className="text-left">
-                                    <p className="font-bold text-gray-900">{formData.videoFile.name}</p>
-                                    <p className="text-sm text-gray-500">
-                                        {(formData.videoFile.size / 1024 / 1024).toFixed(2)} MB
-                                    </p>
-                                </div>
-                                <button 
-                                    type="button"
-                                    className="text-sm text-gray-500 underline hover:text-black ml-4"
-                                    onClick={(e) => {
-                                        e.preventDefault();
-                                        document.getElementById('videoFile').click();
-                                    }}
-                                >
-                                    Promeni
-                                </button>
-                            </div>
-                        ) : (
-                            <div className="space-y-2">
-                                <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                                    <Upload className="h-8 w-8 text-gray-400 group-hover:text-black transition-colors" />
-                                </div>
-                                <p className="font-medium text-gray-900">Kliknite da otpremite video</p>
-                                <p className="text-xs text-gray-500">MP4, MOV (maks 500MB)</p>
-                            </div>
-                        )}
-                    </label>
-                  </div>
-                </div>
-
-                {/* Upload Progress */}
-                {uploading && (
-                  <div className="space-y-2 pt-2">
-                    <div className="flex justify-between text-sm">
-                      <span className="font-semibold text-gray-900">Upload u toku...</span>
-                      <span className="font-bold text-gray-900">{uploadProgress}%</span>
-                    </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
-                      <div
-                        className="bg-black h-full rounded-full transition-all duration-300"
-                        style={{ width: `${uploadProgress}%` }}
-                      />
-                    </div>
-                  </div>
-                )}
-
-                <div className="flex space-x-4 pt-6 border-t border-gray-100 mt-6">
-                    <button
-                    type="submit"
-                    disabled={uploading || (!formData.videoFile && !editingLesson)}
-                    className="flex-1 bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
-                  >
-                    {uploading ? (
-                      <>
-                        <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                        {formData.videoFile ? 'Upload...' : 'Čuvanje...'}
-                      </>
-                    ) : (
-                      <>
-                        {editingLesson ? <CheckCircle className="h-5 w-5 mr-2" /> : <Upload className="h-5 w-5 mr-2" />}
-                        {editingLesson ? 'Sačuvaj izmene' : 'Dodaj lekciju'}
-                      </>
-                    )}
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setShowForm(false);
-                      setFormData({ title: '', description: '', videoFile: null });
-                    }}
-                    disabled={uploading}
-                    className="flex-1 bg-white text-gray-700 border border-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors disabled:opacity-50"
-                  >
-                    Otkaži
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-
-          {/* Lessons List */}
+      {selectedCourse && modules.length > 0 && (
+        <div className="bg-white rounded-3xl p-6 border border-gray-100">
+          <h3 className="text-xl font-bold mb-4 text-[#1A1A1A]">Модули ({modules.length})</h3>
           <div className="space-y-3">
-            <h3 className="font-bold text-lg mb-4">
-              Lekcije ({lessons.length})
-            </h3>
-
-            {lessons.length === 0 ? (
-              <div className="glass-card rounded-2xl p-8 text-center">
-                <p className="text-muted-foreground">Nema lekcija za ovaj kurs</p>
-              </div>
-            ) : (
-              lessons.map((lesson, idx) => (
-                <div
-                  key={lesson.id}
-                  className="glass-card rounded-xl p-6 flex items-center justify-between hover:border-primary/40 transition-colors"
+            {modules.map((module, index) => (
+              <div key={module.id} className="border-2 border-gray-200 rounded-2xl overflow-hidden">
+                <button
+                  onClick={() => setSelectedModule(selectedModule?.id === module.id ? null : module)}
+                  className="w-full p-4 flex items-center justify-between hover:bg-[#F7F7F7] transition-colors"
                 >
-                  <div className="flex items-center space-x-4">
-                    <div className="bg-primary/20 w-12 h-12 rounded-full flex items-center justify-center">
-                      <span className="font-bold text-lg text-secondary">{idx + 1}</span>
+                  <div className="flex items-center gap-4">
+                    <div className="bg-[#D62828]/10 p-3 rounded-xl">
+                      <Book className="w-5 h-5 text-[#D62828]" />
                     </div>
-                    <div>
-                      <p className="font-semibold text-lg">{lesson.title}</p>
-                      {lesson.description && (
-                        <p className="text-sm text-muted-foreground">{lesson.description}</p>
+                    <div className="text-left">
+                      <p className="font-bold text-[#1A1A1A]">{module.title}</p>
+                      <p className="text-sm text-gray-600">{module.lessons?.length || 0} лекција</p>
+                    </div>
+                  </div>
+                  {selectedModule?.id === module.id ? (
+                    <ChevronDown className="w-5 h-5 text-gray-600" />
+                  ) : (
+                    <ChevronRight className="w-5 h-5 text-gray-600" />
+                  )}
+                </button>
+
+                {selectedModule?.id === module.id && (
+                  <div className="p-6 bg-[#F7F7F7] border-t-2 border-gray-200">
+                    {/* Add Lesson Button */}
+                    {!showForm && (
+                      <button
+                        onClick={() => {
+                          setFormData({ title: '', description: '', videoFile: null });
+                          setShowForm(true);
+                        }}
+                        className="bg-[#D62828] text-white px-6 py-3 rounded-2xl font-bold hover:bg-[#B91F1F] transition-colors flex items-center gap-2 mb-6"
+                      >
+                        <Plus className="w-5 h-5" />
+                        Додај лекцију
+                      </button>
+                    )}
+
+                    {/* Lesson Form */}
+                    {showForm && (
+                      <div className="bg-white rounded-2xl p-6 mb-6 border border-gray-200">
+                        <h4 className="text-lg font-bold mb-4 text-[#1A1A1A]">Нова лекција</h4>
+
+                        <form onSubmit={handleSubmit} className="space-y-4">
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Назив лекције</label>
+                            <input
+                              type="text"
+                              value={formData.title}
+                              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                              className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-[#D62828] focus:outline-none transition-colors"
+                              placeholder="нпр. Лекција 1: Увод у граматику"
+                              required
+                              disabled={uploading}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Опис лекције</label>
+                            <textarea
+                              value={formData.description}
+                              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                              className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-[#D62828] focus:outline-none transition-colors"
+                              rows={3}
+                              placeholder="Кратак опис лекције..."
+                              disabled={uploading}
+                            />
+                          </div>
+
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">Видео фајл</label>
+                            <input
+                              type="file"
+                              accept="video/*"
+                              onChange={handleFileChange}
+                              className="hidden"
+                              id="videoFile"
+                              disabled={uploading}
+                            />
+                            <label
+                              htmlFor="videoFile"
+                              className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer block transition-all ${
+                                formData.videoFile
+                                  ? 'border-[#D62828] bg-[#D62828]/5'
+                                  : 'border-gray-300 hover:border-[#D62828] hover:bg-gray-50'
+                              }`}
+                            >
+                              {formData.videoFile ? (
+                                <div className="flex items-center justify-center gap-4">
+                                  <FileVideo className="w-8 h-8 text-[#D62828]" />
+                                  <div className="text-left">
+                                    <p className="font-bold text-[#1A1A1A]">{formData.videoFile.name}</p>
+                                    <p className="text-sm text-gray-500">
+                                      {(formData.videoFile.size / 1024 / 1024).toFixed(2)} MB
+                                    </p>
+                                  </div>
+                                </div>
+                              ) : (
+                                <div>
+                                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                                  <p className="font-medium text-gray-700">Кликните да отпремите видео</p>
+                                  <p className="text-xs text-gray-500">MP4, MOV (макс 500MB)</p>
+                                </div>
+                              )}
+                            </label>
+                          </div>
+
+                          {uploading && (
+                            <div className="space-y-2">
+                              <div className="flex justify-between text-sm">
+                                <span className="font-medium text-gray-700">Upload у току...</span>
+                                <span className="font-bold text-[#D62828]">{uploadProgress}%</span>
+                              </div>
+                              <div className="w-full bg-gray-200 rounded-full h-2">
+                                <div
+                                  className="bg-[#D62828] h-full rounded-full transition-all"
+                                  style={{ width: `${uploadProgress}%` }}
+                                />
+                              </div>
+                            </div>
+                          )}
+
+                          <div className="flex gap-3 pt-4">
+                            <button
+                              type="submit"
+                              disabled={uploading || !formData.videoFile}
+                              className="flex-1 bg-[#D62828] text-white py-3 rounded-2xl font-bold hover:bg-[#B91F1F] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                            >
+                              {uploading ? (
+                                <>
+                                  <Loader2 className="w-5 h-5 animate-spin" />
+                                  Upload...
+                                </>
+                              ) : (
+                                <>
+                                  <CheckCircle className="w-5 h-5" />
+                                  Додај лекцију
+                                </>
+                              )}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setShowForm(false);
+                                setFormData({ title: '', description: '', videoFile: null });
+                              }}
+                              disabled={uploading}
+                              className="px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-2xl font-bold hover:bg-gray-50 transition-colors disabled:opacity-50"
+                            >
+                              Откажи
+                            </button>
+                          </div>
+                        </form>
+                      </div>
+                    )}
+
+                    {/* Lessons List */}
+                    <div className="space-y-3">
+                      <h4 className="font-bold text-[#1A1A1A]">Лекције ({lessons.length})</h4>
+                      {lessons.length === 0 ? (
+                        <p className="text-gray-500 text-center py-8">Нема лекција за овај модул</p>
+                      ) : (
+                        lessons.map((lesson, idx) => (
+                          <div
+                            key={lesson.id}
+                            className="bg-white rounded-2xl p-4 flex items-center justify-between border border-gray-200"
+                          >
+                            <div className="flex items-center gap-3">
+                              <div className="bg-[#F2C94C]/20 w-10 h-10 rounded-full flex items-center justify-center">
+                                <span className="font-bold text-[#1A1A1A]">{idx + 1}</span>
+                              </div>
+                              <div>
+                                <p className="font-bold text-[#1A1A1A]">{lesson.title}</p>
+                                {lesson.description && (
+                                  <p className="text-sm text-gray-600">{lesson.description}</p>
+                                )}
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleDelete(lesson.id, lesson.title)}
+                              className="p-2 bg-red-100 hover:bg-red-200 rounded-xl transition-colors"
+                            >
+                              <Trash2 className="w-5 h-5 text-red-700" />
+                            </button>
+                          </div>
+                        ))
                       )}
                     </div>
                   </div>
-                    <button
-                      onClick={() => {
-                        setEditingLesson(lesson);
-                        setFormData({
-                          title: lesson.title,
-                          description: lesson.description || '',
-                          videoFile: null
-                        });
-                        setShowForm(true);
-                      }}
-                      className="p-2 bg-primary/20 hover:bg-primary/30 rounded-lg transition-colors mr-2"
-                      title="Izmeni"
-                    >
-                      <Edit2 className="h-5 w-5 text-secondary" />
-                    </button>
-                    <button
-                      onClick={() => handleDelete(lesson.id, lesson.title)}
-                    className="p-2 bg-red-100 hover:bg-red-200 rounded-lg transition-colors"
-                    title="Obriši"
-                  >
-                    <Trash2 className="h-5 w-5 text-red-700" />
-                  </button>
-                </div>
-              ))
-            )}
+                )}
+              </div>
+            ))}
           </div>
-        </>
-      ) : (
-        <div className="glass-card rounded-2xl p-12 text-center">
-          <Video className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
-          <p className="text-muted-foreground">Odaberite kurs da biste upravljali lekcijama</p>
+        </div>
+      )}
+
+      {selectedCourse && modules.length === 0 && (
+        <div className="bg-white rounded-3xl p-12 text-center border border-gray-100">
+          <Video className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-500">Нема модула за овај курс. Прво креирајте модуле у менаџеру курсева.</p>
+        </div>
+      )}
+
+      {!selectedCourse && (
+        <div className="bg-white rounded-3xl p-12 text-center border border-gray-100">
+          <Video className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-500">Одаберите курс да бисте управљали лекцијама</p>
         </div>
       )}
     </div>

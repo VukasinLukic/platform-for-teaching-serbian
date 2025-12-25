@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
-import { initEmailService } from './services/email.service';
 import ScrollToTop from './components/ScrollToTop';
+import { FullScreenSpinner } from './components/ui/Spinner';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -11,6 +11,7 @@ import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
 import DashboardPage from './pages/DashboardPage';
 import CoursePage from './pages/CoursePage';
+import OnlineClassPage from './pages/OnlineClassPage';
 import AdminPage from './pages/AdminPage';
 import ContactPage from './pages/ContactPage';
 import AboutPage from './pages/AboutPage';
@@ -26,14 +27,7 @@ function ProtectedRoute({ children, adminOnly = false }) {
   const { user, userProfile, loading } = useAuthStore();
 
   if (loading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F5F3EF]">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#BFECC9] border-t-transparent mx-auto"></div>
-          <p className="mt-6 text-gray-600 text-lg">Učitavanje...</p>
-        </div>
-      </div>
-    );
+    return <FullScreenSpinner text="Provera pristupa..." />;
   }
 
   if (!user) {
@@ -52,7 +46,6 @@ function App() {
 
   useEffect(() => {
     initAuth();
-    initEmailService();
   }, [initAuth]);
 
   return (
@@ -65,6 +58,7 @@ function App() {
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
         <Route path="/course/:id" element={<CoursePage />} />
+        <Route path="/online-class/:id" element={<OnlineClassPage />} />
         <Route path="/courses" element={<CoursesPage />} />
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/contact" element={<ContactPage />} />

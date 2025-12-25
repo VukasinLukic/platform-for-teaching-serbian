@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  Book,
+  Heart,
   Video,
   CheckCircle,
   ArrowRight,
@@ -9,16 +9,15 @@ import {
   Award,
   Star,
   Trophy,
-  Play,
-  Clock,
-  Target,
   Shield,
-  Zap
+  Book,
+  Target
 } from 'lucide-react';
 import { getAllCourses } from '../services/course.service';
 import { useAuthStore } from '../store/authStore';
 import { formatPrice } from '../utils/helpers';
 import Header from '../components/ui/Header';
+import Footer from '../components/ui/Footer';
 
 export default function HomePage() {
   const [courses, setCourses] = useState([]);
@@ -42,157 +41,239 @@ export default function HomePage() {
 
   const benefits = [
     {
-      icon: Video,
-      title: 'Video lekcije 24/7',
-      description: 'Pristupite gradivu bilo kada. Preko 100 sati video materijala visoke rezolucije spremnog za učenje.',
+      icon: Heart,
+      title: 'Учење с разумевањем',
+      description: 'Српски језик учимо са љубављу и посвећеношћу. Свака лекција је осмишљена тако да изграђује дубоко разумевање, а не напамет учење.',
     },
     {
       icon: Users,
-      title: 'Individualan pristup',
-      description: 'Svaki učenik dobija pažnju koju zaslužuje kroz prilagođene planove i direktnu komunikaciju.',
+      title: 'Индивидуална пажња',
+      description: 'Свако дете је јединствено. Прилагођавамо наставу вашим потребама и пратимо напредак са посвећеношћу искусне професорке.',
     },
     {
       icon: Shield,
-      title: 'Proverena metoda',
-      description: 'Naša metodologija je razvijana 15 godina i garantuje uspeh na prijemnom ispitu.',
+      title: 'Проверени резултати',
+      description: 'Преко 15 година искуства и стотине задовољних ученика који су остварили своје снове. Ваш успех је наш успех.',
     },
   ];
 
   const stats = [
-    { number: '500+', label: 'Učenika' },
-    { number: '98%', label: 'Prolaznost' },
-    { number: '15', label: 'Godina iskustva' },
+    { number: '500+', label: 'Ученика' },
+    { number: '98%', label: 'Успешност' },
+    { number: '15', label: 'Година искуства' },
   ];
 
   const testimonials = [
     {
-      text: '"Najbolja iskustva sa najboljim rezultatima! Profesorka Marina je sjajna."',
-      author: 'Marko P.',
-      role: 'Učenik',
+      text: '"Професорка Марина је са толико љубави и стрпљења објашњавала градиво. Коначно разумем српски језик!"',
+      author: 'Марко П.',
+      role: 'Ученик',
       rating: 5,
     },
     {
-      text: '"Nisam verovala da online priprema može biti ovako efikasna. Sve preporuke!"',
-      author: 'Jelena M.',
-      role: 'Roditelj',
+      text: '"Нисам веровала да онлајн настава може бити овако топла и ефикасна. Све препоруке!"',
+      author: 'Јелена М.',
+      role: 'Родитељ',
       rating: 5,
     },
     {
-      text: '"Upisao sam željenu gimnaziju zahvaljujući ovom kursu. Hvala vam puno!"',
-      author: 'Stefan K.',
-      role: 'Učenik',
+      text: '"Уписао сам жељену гимназију захваљујући овој припреми. Хвала вам од срца!"',
+      author: 'Стефан К.',
+      role: 'Ученик',
       rating: 5,
     },
   ];
 
+  const features = [
+    {
+      icon: Video,
+      title: 'Модерне видео лекције',
+      description: 'Учите кроз забавне и интерактивне видео материјале прилагођене вашем темпу.',
+    },
+    {
+      icon: Target,
+      title: 'Гарантован успех',
+      description: 'Пратимо ваш напредак и гарантујемо резултате уз нашу проверену методологију.',
+    },
+    {
+      icon: Users,
+      title: 'Подршка заједнице',
+      description: 'Учите у групи вршњака и уз сталну подршку ментора током целог процеса.',
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#F5F3EF] font-sans text-[#003366]">
+    <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />
 
       {/* HERO SECTION */}
-      <section className="relative pt-10 pb-20 lg:pt-20 lg:pb-32 overflow-hidden">
+      <section className="relative pt-10 pb-20 lg:pt-20 lg:pb-32 overflow-hidden bg-gradient-to-b from-white to-[#F7F7F7]">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             {/* Left - Text */}
             <div className="relative z-10 space-y-8 text-center lg:text-left">
-              <h1 className="text-5xl lg:text-7xl font-serif font-bold leading-[1.1] text-[#003366]">
-                Online priprema za <br />
+              <h1 className="text-5xl lg:text-7xl font-bold leading-[1.1] text-[#1A1A1A]">
+                Српски језик <br />
                 <span className="relative inline-block">
-                  malu maturu
-                  <svg className="absolute w-full h-3 -bottom-1 left-0 text-[#BFECC9] -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  учимо срцем
+                  <svg className="absolute w-full h-3 -bottom-1 left-0 text-[#D62828] -z-10" viewBox="0 0 100 10" preserveAspectRatio="none">
                     <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="8" fill="none" />
                   </svg>
                 </span>{' '}
-                uz proverene rezultate
+                и с разумевањем
               </h1>
-              
+
               <p className="text-lg lg:text-xl text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Profesorka Marina Lukić vas vodi do uspeha kroz proverenu metodologiju, 
-                interaktivne časove i materijale prilagođene svakom učeniku.
+                Припрема за малу матуру уз искусну професорку која верује да се језик учи љубављу,
+                стрпљењем и посвећеношћу. Ваш успех је наш успех.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
                 <Link to="/courses">
-                  <button className="bg-[#FF6B35] text-white px-10 py-4 rounded-full hover:bg-[#E55A28] transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl text-lg font-semibold tracking-wide">
-                    Pogledaj sve kurseve
+                  <button className="bg-[#D62828] text-white px-10 py-4 rounded-full hover:bg-[#B91F1F] transition-all transform hover:scale-105 shadow-xl hover:shadow-2xl text-lg font-semibold tracking-wide">
+                    Погледај курсеве
                   </button>
                 </Link>
                 <Link to="/about">
-                  <button className="px-10 py-4 rounded-full border-2 border-[#003366] text-[#003366] hover:bg-[#003366] hover:text-white transition-all text-lg font-semibold">
-                    Saznaj Više
+                  <button className="px-10 py-4 rounded-full border-2 border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white transition-all text-lg font-semibold">
+                    О нама
                   </button>
                 </Link>
               </div>
-              
+
               <div className="pt-6 flex items-center justify-center lg:justify-start gap-4 text-sm font-medium text-gray-500">
                 <div className="flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4 text-[#BFECC9] fill-[#BFECC9]" /> 500+ Učenika
+                  <CheckCircle className="w-4 h-4 text-[#D62828] fill-[#D62828]" /> 500+ Ученика
                 </div>
                 <div className="flex items-center gap-1">
-                  <CheckCircle className="w-4 h-4 text-[#BFECC9] fill-[#BFECC9]" /> 98% Prolaznost
+                  <CheckCircle className="w-4 h-4 text-[#D62828] fill-[#D62828]" /> 98% Успешност
                 </div>
               </div>
             </div>
 
-            {/* Right - Image & Blob */}
+            {/* Right - Dynamic Illustration */}
             <div className="relative">
-              {/* Abstract Blob Background */}
-              <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[120%] h-[120%] z-0">
-                <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" className="w-full h-full text-[#BFECC9] opacity-60 animate-pulse-slow">
-                  <path fill="currentColor" d="M44.7,-76.4C58.9,-69.2,71.8,-59.1,81.6,-46.6C91.4,-34.1,98.1,-19.2,95.8,-4.9C93.5,9.3,82.2,22.9,71,35.4C59.8,47.9,48.7,59.3,35.9,68.5C23.1,77.7,8.6,84.7,-4.8,92.9C-18.2,101.1,-30.5,110.5,-41.8,104.1C-53.1,97.7,-63.4,75.5,-71.6,58.2C-79.8,40.9,-85.9,28.5,-88.3,15.5C-90.7,2.5,-89.4,-11.1,-82.9,-22.6C-76.4,-34.1,-64.7,-43.5,-52.9,-51.3C-41.1,-59.1,-29.2,-65.3,-16.9,-69.9C-4.6,-74.5,8.1,-77.5,21.3,-78.9" transform="translate(100 100)" />
-                </svg>
+              {/* Gradient Background Orbs */}
+              <div className="absolute inset-0 z-0">
+                <div className="absolute top-1/4 right-1/4 w-72 h-72 bg-gradient-to-br from-[#D62828]/30 via-[#F2C94C]/20 to-transparent rounded-full blur-3xl animate-pulse"></div>
+                <div className="absolute bottom-1/4 left-1/4 w-64 h-64 bg-gradient-to-tr from-[#F2C94C]/30 via-[#D62828]/20 to-transparent rounded-full blur-3xl animate-pulse" style={{animationDelay: '1s'}}></div>
               </div>
 
-              {/* Main Image */}
-              <div className="relative z-10">
-                <img 
-                  src="/slika2.jpeg" 
-                  alt="Profesorka Marina" 
-                  className="relative z-10 w-full max-w-md mx-auto rounded-[3rem] shadow-2xl transform -rotate-2 hover:rotate-0 transition-all duration-500 border-4 border-white"
-                />
-
-                {/* Floating Elements */}
-                {/* Book Icon */}
-                <div className="absolute -top-10 -left-4 bg-white p-4 rounded-2xl shadow-xl z-20 animate-bounce-slow">
-                   <Book className="w-8 h-8 text-[#FF6B35]" />
+              {/* Main Visual - Serbian Flag Inspired Design */}
+              <div className="relative z-10 space-y-6">
+                {/* Top Card - Trophy Achievement */}
+                <div className="bg-gradient-to-r from-[#D62828] to-[#B91F1F] rounded-3xl p-8 shadow-2xl transform hover:-translate-y-2 transition-all duration-300 hover:shadow-[#D62828]/50">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-white/20 backdrop-blur-lg p-4 rounded-2xl">
+                      <Trophy className="w-12 h-12 text-white" />
+                    </div>
+                    <div className="text-white">
+                      <div className="text-4xl font-black">98%</div>
+                      <div className="text-sm font-bold uppercase tracking-wider opacity-90">Успешност</div>
+                    </div>
+                  </div>
                 </div>
 
-                {/* 98% Badge */}
-                <div className="absolute top-10 -right-8 bg-white p-4 rounded-2xl shadow-xl z-20 transform rotate-6 animate-float">
-                   <div className="text-center">
-                     <div className="text-3xl font-black text-[#003366]">98%</div>
-                     <div className="text-xs font-bold text-gray-500 uppercase tracking-wider">Prolaznost</div>
-                   </div>
+                {/* Middle Card - Students Count */}
+                <div className="bg-gradient-to-r from-white to-gray-50 rounded-3xl p-8 shadow-2xl ml-12 transform hover:-translate-y-2 transition-all duration-300 border-2 border-gray-100">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-[#F2C94C] p-4 rounded-2xl">
+                      <Users className="w-12 h-12 text-[#1A1A1A]" />
+                    </div>
+                    <div className="text-[#1A1A1A]">
+                      <div className="text-4xl font-black">500+</div>
+                      <div className="text-sm font-bold uppercase tracking-wider text-gray-600">Задовољних ученика</div>
+                    </div>
+                  </div>
                 </div>
 
-                {/* Trophy */}
-                <div className="absolute -bottom-6 right-10 bg-[#FFD700] p-4 rounded-full shadow-xl z-20 border-4 border-white">
-                  <Trophy className="w-8 h-8 text-[#003366]" />
+                {/* Bottom Card - Heart/Love for Language */}
+                <div className="bg-gradient-to-br from-[#1A1A1A] to-gray-800 rounded-3xl p-8 shadow-2xl transform hover:-translate-y-2 transition-all duration-300">
+                  <div className="flex items-center gap-4">
+                    <div className="bg-[#D62828] p-4 rounded-2xl">
+                      <Heart className="w-12 h-12 text-white fill-white" />
+                    </div>
+                    <div className="text-white">
+                      <div className="text-2xl font-black">Учимо срцем</div>
+                      <div className="text-sm font-bold uppercase tracking-wider opacity-90">и с разумевањем</div>
+                    </div>
+                  </div>
                 </div>
+              </div>
+
+              {/* Floating Decorative Elements */}
+              <div className="absolute -top-6 -left-6 bg-[#F2C94C] p-3 rounded-full shadow-lg z-20 animate-bounce">
+                <Star className="w-6 h-6 text-[#1A1A1A] fill-[#1A1A1A]" />
+              </div>
+              <div className="absolute -bottom-4 -right-4 bg-[#D62828] p-3 rounded-full shadow-lg z-20 animate-bounce" style={{animationDelay: '0.5s'}}>
+                <Award className="w-6 h-6 text-white" />
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* BENEFITS SECTION */}
-      <section className="py-20">
-        <div className="max-w-7xl mx-auto px-6">
+      {/* BENEFITS SECTION - CREATIVE REDESIGN */}
+      <section className="py-20 relative overflow-hidden">
+        {/* Background Pattern */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-0 left-0 w-full h-full" style={{
+            backgroundImage: 'radial-gradient(circle at 2px 2px, #D62828 1px, transparent 0)',
+            backgroundSize: '40px 40px'
+          }}></div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
+          {/* Section Header */}
+          <div className="text-center mb-16">
+            <div className="inline-block bg-[#F2C94C] text-[#1A1A1A] text-sm font-bold px-4 py-1 rounded-full mb-4">
+              НАШЕ ВРЕДНОСТИ
+            </div>
+            <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
+              Зашто нас бирају ученици
+            </h2>
+          </div>
+
           <div className="grid md:grid-cols-3 gap-8">
             {benefits.map((benefit, index) => {
               const Icon = benefit.icon;
+              const colors = [
+                { bg: 'from-[#D62828] to-[#B91F1F]', accent: 'bg-white/20', text: 'text-white' },
+                { bg: 'from-[#F2C94C] to-[#F4A261]', accent: 'bg-[#1A1A1A]/10', text: 'text-[#1A1A1A]' },
+                { bg: 'from-[#1A1A1A] to-gray-800', accent: 'bg-[#D62828]', text: 'text-white' }
+              ];
+              const color = colors[index];
+
               return (
-                <div 
+                <div
                   key={index}
-                  className="group bg-white rounded-[2.5rem] p-10 shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100"
+                  className={`group bg-gradient-to-br ${color.bg} rounded-[2.5rem] p-10 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-3 transform hover:scale-105 relative overflow-hidden`}
                 >
-                  <div className="w-16 h-16 bg-[#BFECC9]/30 rounded-2xl flex items-center justify-center mb-6 group-hover:bg-[#BFECC9] transition-colors">
-                    <Icon className="w-8 h-8 text-[#003366]" />
+                  {/* Animated Background Glow */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                    <div className="absolute bottom-0 left-0 w-40 h-40 bg-white/10 rounded-full blur-3xl"></div>
                   </div>
-                  <h3 className="text-2xl font-serif font-bold text-[#003366] mb-4">{benefit.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">
-                    {benefit.description}
-                  </p>
+
+                  <div className="relative z-10">
+                    {/* Icon with Special Background */}
+                    <div className={`w-20 h-20 ${color.accent} rounded-3xl flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform duration-500 shadow-lg`}>
+                      <Icon className={`w-10 h-10 ${color.text}`} />
+                    </div>
+
+                    {/* Title */}
+                    <h3 className={`text-2xl font-bold ${color.text} mb-4 group-hover:translate-x-1 transition-transform`}>
+                      {benefit.title}
+                    </h3>
+
+                    {/* Description */}
+                    <p className={`${color.text} ${index === 1 ? 'opacity-90' : 'opacity-80'} leading-relaxed`}>
+                      {benefit.description}
+                    </p>
+
+                    {/* Decorative Corner Element */}
+                    <div className="absolute -bottom-4 -right-4 w-24 h-24 border-4 border-white/20 rounded-full group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
+                  </div>
                 </div>
               );
             })}
@@ -200,195 +281,180 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* STATS & SOCIAL PROOF */}
-      <section className="py-20 bg-white rounded-t-[4rem]">
+      {/* WHY US SECTION */}
+      <section className="py-20 bg-[#F7F7F7]">
         <div className="max-w-7xl mx-auto px-6">
-          {/* Why Nauči Srpski? */}
-          <div className="mb-20">
-            <div className="text-center mb-12">
-              <h2 className="text-4xl md:text-5xl font-serif font-bold text-[#003366] mb-4">
-                Zašto Nauči Srpski?
-              </h2>
-            </div>
-            <div className="grid md:grid-cols-3 gap-8">
-              <div className="bg-[#F5F3EF] p-8 rounded-[2rem] text-center hover:shadow-lg transition">
-                <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-[#FF6B35]">
-                  <Video className="w-8 h-8" />
-                </div>
-                <h3 className="text-xl font-bold text-[#003366] mb-2">Moderne Video Lekcije</h3>
-                <p className="text-gray-600">Učite kroz zabavne i interaktivne video materijale prilagođene vašem tempu.</p>
-              </div>
-              <div className="bg-[#F5F3EF] p-8 rounded-[2rem] text-center hover:shadow-lg transition">
-                <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-[#BFECC9]">
-                   <CheckCircle className="w-8 h-8 text-[#003366]" />
-                </div>
-                <h3 className="text-xl font-bold text-[#003366] mb-2">Garantovan Uspeh</h3>
-                <p className="text-gray-600">Pratimo vaš napredak i garantujemo rezultate uz našu proverenu metodologiju.</p>
-              </div>
-              <div className="bg-[#F5F3EF] p-8 rounded-[2rem] text-center hover:shadow-lg transition">
-                <div className="bg-white w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm text-[#003366]">
-                   <Users className="w-8 h-8 text-white" />
-                </div>
-                <h3 className="text-xl font-bold text-[#003366] mb-2">Podrška Zajednice</h3>
-                <p className="text-gray-600">Učite u grupi vršnjaka i uz stalnu podršku mentora tokom celog procesa.</p>
-              </div>
-            </div>
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
+              Зашто СРПСКИ У СРЦУ?
+            </h2>
+            <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+              Комбинујемо традицију и модерне технологије за најбоље резултате
+            </p>
           </div>
 
-          {/* FAQ Button Section */}
-          <div className="bg-[#003366] text-white rounded-[3rem] p-10 text-center mb-20 relative overflow-hidden">
+          <div className="grid md:grid-cols-3 gap-8">
+            {features.map((feature, index) => {
+              const Icon = feature.icon;
+              return (
+                <div key={index} className="bg-white p-8 rounded-[2rem] text-center hover:shadow-xl transition-all hover:-translate-y-2">
+                  <div className="bg-[#F7F7F7] w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
+                    <Icon className="w-8 h-8 text-[#D62828]" />
+                  </div>
+                  <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">{feature.title}</h3>
+                  <p className="text-gray-600">{feature.description}</p>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* STATS & TESTIMONIALS */}
+      <section className="py-20 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          {/* FAQ CTA */}
+          <div className="bg-[#D62828] text-white rounded-[3rem] p-10 text-center mb-20 relative overflow-hidden">
             <div className="relative z-10">
-              <h2 className="text-3xl font-serif font-bold mb-4">Često postavljana pitanja</h2>
-              <p className="text-[#BFECC9] max-w-2xl mx-auto mb-8">
-                Imate nedoumice? Pogledajte odgovore na najčešća pitanja pre nego što nas kontaktirate.
+              <h2 className="text-3xl font-bold mb-4">Често постављана питања</h2>
+              <p className="text-white/90 max-w-2xl mx-auto mb-8">
+                Имате недоумице? Погледајте одговоре на најчешћа питања пре него што нас контактирате.
               </p>
               <Link to="/faq">
-                <button className="bg-white text-[#003366] px-8 py-3 rounded-full font-bold hover:bg-[#BFECC9] transition">
-                  Pogledajte FAQ
+                <button className="bg-white text-[#D62828] px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition">
+                  Погледајте FAQ
                 </button>
               </Link>
             </div>
-            <div className="absolute top-0 left-0 w-64 h-64 bg-[#BFECC9] opacity-10 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-[#FF6B35] opacity-10 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+            <div className="absolute top-0 left-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
           </div>
 
           {/* Stats Grid */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-20 border-b border-gray-100 pb-12">
             <div className="col-span-2 md:col-span-1 text-center md:text-left">
-               <h3 className="text-lg font-medium text-gray-500 mb-2">Naš uspeh u brojkama</h3>
-               <p className="text-sm text-gray-400">Rezultati govore više od reči</p>
+               <h3 className="text-lg font-medium text-gray-500 mb-2">Наш успех у бројкама</h3>
+               <p className="text-sm text-gray-400">Резултати говоре више од речи</p>
             </div>
             {stats.map((stat, index) => (
               <div key={index} className="text-center">
-                <div className="text-5xl font-serif font-bold text-[#003366] mb-2">{stat.number}</div>
-                <div className="text-sm font-bold uppercase tracking-widest text-[#FF6B35]">{stat.label}</div>
+                <div className="text-5xl font-bold text-[#D62828] mb-2">{stat.number}</div>
+                <div className="text-sm font-bold uppercase tracking-widest text-gray-500">{stat.label}</div>
               </div>
             ))}
           </div>
 
-          {/* Testimonials */}
-          <div className="grid lg:grid-cols-3 gap-8">
-             {testimonials.map((t, i) => (
-               <div key={i} className="bg-[#F5F3EF] p-8 rounded-3xl relative">
-                 <div className="absolute -top-4 left-8">
-                   <div className="bg-[#FF6B35] rounded-full p-2">
-                     <Star className="w-4 h-4 text-white fill-white" />
-                   </div>
-                 </div>
-                 <p className="text-[#003366] text-lg italic mb-6 leading-relaxed opacity-80">
-                   {t.text}
-                 </p>
-                 <div className="flex items-center gap-3">
-                   <div className="w-10 h-10 bg-[#003366] rounded-full flex items-center justify-center text-white font-bold">
-                     {t.author.charAt(0)}
-                   </div>
-                   <div>
-                     <div className="font-bold text-[#003366]">{t.author}</div>
-                     <div className="text-xs text-gray-500 uppercase font-bold">{t.role}</div>
-                   </div>
-                 </div>
-               </div>
-             ))}
+        </div>
+      </section>
+
+      {/* TESTIMONIALS SECTION - FULL WIDTH */}
+      <section className="py-20 bg-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="mb-12 text-center">
+            <h2 className="text-4xl font-bold text-[#1A1A1A] mb-4">Шта кажу наши ученици</h2>
+            <p className="text-gray-600 text-lg">Искуства која инспиришу</p>
+          </div>
+        </div>
+
+        {/* Full Width Scrolling Container */}
+        <div className="relative w-full overflow-hidden py-8">
+          <style>{`
+            @keyframes scroll {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+            .animate-scroll {
+              animation: scroll 30s linear infinite;
+            }
+            .animate-scroll:hover {
+              animation-play-state: paused;
+            }
+          `}</style>
+
+          <div className="flex gap-8 animate-scroll pl-8">
+            {/* Duplicate testimonials for infinite effect */}
+            {[...testimonials, ...testimonials].map((t, i) => (
+              <div key={i} className="bg-gradient-to-br from-[#F7F7F7] to-white p-10 rounded-3xl relative hover:shadow-2xl transition-all flex-shrink-0 w-[420px] border-2 border-gray-100 hover:border-[#D62828]/30">
+                {/* Star Badge - Positioned Inside Card */}
+                <div className="absolute top-6 right-6">
+                  <div className="bg-[#F2C94C] rounded-full p-3 shadow-lg">
+                    <Star className="w-5 h-5 text-[#1A1A1A] fill-[#1A1A1A]" />
+                  </div>
+                </div>
+
+                {/* Quote Content */}
+                <p className="text-[#1A1A1A] text-lg italic mb-8 leading-relaxed pt-4">
+                  {t.text}
+                </p>
+
+                {/* Author Info */}
+                <div className="flex items-center gap-4 mt-auto">
+                  <div className="w-14 h-14 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg">
+                    {t.author.charAt(0)}
+                  </div>
+                  <div>
+                    <div className="font-bold text-[#1A1A1A] text-lg">{t.author}</div>
+                    <div className="text-sm text-gray-500 uppercase font-bold tracking-wide">{t.role}</div>
+                  </div>
+                </div>
+
+                {/* Decorative Element */}
+                <div className="absolute bottom-0 left-0 w-full h-1 bg-gradient-to-r from-[#D62828] via-[#F2C94C] to-transparent"></div>
+              </div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* CTA SECTION */}
-      <section className="py-24 bg-[#003366] text-white rounded-t-[4rem] -mt-10 relative z-10 overflow-hidden">
+      <section className="py-24 bg-white relative z-10 overflow-hidden">
         {/* Decorative Background */}
         <div className="absolute top-0 left-0 w-full h-full">
-          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#FF6B35] opacity-10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/4"></div>
-          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#BFECC9] opacity-10 rounded-full blur-3xl -translate-x-1/3 translate-y-1/4"></div>
+          <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#D62828] opacity-5 rounded-full blur-3xl translate-x-1/3 -translate-y-1/4"></div>
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-[#F2C94C] opacity-5 rounded-full blur-3xl -translate-x-1/3 translate-y-1/4"></div>
         </div>
 
         <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
-          <div className="inline-block bg-[#FF6B35] text-white text-sm font-bold px-4 py-1 rounded-full mb-6 animate-pulse">
-            Upis je u toku!
+          <div className="inline-block bg-[#D62828] text-white text-sm font-bold px-4 py-1 rounded-full mb-6 animate-pulse">
+            Упис је у току!
           </div>
-          
-          <h2 className="text-5xl md:text-6xl font-serif font-bold mb-6 leading-tight">
-            Nemojte čekati, <br/>
-            <span className="text-[#BFECC9]">uspeh počinje danas.</span>
+
+          <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight text-[#1A1A1A]">
+            Немојте чекати, <br/>
+            <span className="text-[#D62828]">успех почиње данас.</span>
           </h2>
-          
-          <p className="text-xl text-white/80 max-w-2xl mx-auto mb-12 leading-relaxed">
-            Pridružite se stotinama učenika koji su već osigurali svoje mesto u željenoj srednjoj školi.
-            Kreirajte nalog za manje od minut.
+
+          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-12 leading-relaxed">
+            Придружите се стотинама ученика који су већ осигурали своје место у жељеној средњој школи.
+            Креирајте налог за мање од минут.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
             <Link to="/register">
-              <button className="bg-[#BFECC9] text-[#003366] px-12 py-5 rounded-full hover:bg-white transition-all transform hover:scale-105 shadow-[0_0_40px_rgba(191,236,201,0.4)] text-xl font-bold tracking-wide flex items-center gap-2">
-                Napravi Nalog <ArrowRight className="w-6 h-6" />
+              <button className="bg-[#D62828] text-white px-12 py-5 rounded-full hover:bg-[#B91F1F] transition-all transform hover:scale-105 shadow-xl text-xl font-bold tracking-wide flex items-center gap-2">
+                Направи Налог <ArrowRight className="w-6 h-6" />
               </button>
             </Link>
             <Link to="/courses">
-              <button className="bg-transparent border-2 border-white/30 text-white px-12 py-5 rounded-full hover:bg-white/10 transition-all text-xl font-bold">
-                Istraži Kurseve
+              <button className="bg-transparent border-2 border-[#1A1A1A] text-[#1A1A1A] px-12 py-5 rounded-full hover:bg-[#1A1A1A] hover:text-white transition-all text-xl font-bold">
+                Истражи Курсеве
               </button>
             </Link>
           </div>
 
-          <div className="mt-12 flex items-center justify-center gap-8 text-sm font-medium text-white/60">
+          <div className="mt-12 flex items-center justify-center gap-8 text-sm font-medium text-gray-600">
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-[#BFECC9]" /> Bez skrivenih troškova
+              <CheckCircle className="w-5 h-5 text-[#D62828]" /> Без скривених трошкова
             </div>
             <div className="flex items-center gap-2">
-              <CheckCircle className="w-5 h-5 text-[#BFECC9]" /> 7 dana garancija
+              <CheckCircle className="w-5 h-5 text-[#D62828]" /> 7 дана гаранција
             </div>
           </div>
         </div>
       </section>
 
-      {/* FOOTER */}
-      <footer className="bg-[#002244] text-white pt-20 pb-10">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="grid md:grid-cols-4 gap-12 mb-16">
-            <div className="col-span-1 md:col-span-2">
-              <Link to="/" className="flex items-center gap-2 mb-6">
-                <Book className="w-8 h-8 text-[#BFECC9]" />
-                <span className="text-2xl font-serif font-bold">Nauči Srpski</span>
-              </Link>
-              <p className="text-gray-400 max-w-sm leading-relaxed">
-                Vaš pouzdan partner u pripremi za malu maturu. 
-                Kombinujemo tradiciju i moderne tehnologije za najbolje rezultate.
-              </p>
-            </div>
-            
-            <div>
-              <h4 className="font-bold text-lg mb-6 text-[#BFECC9]">Linkovi</h4>
-              <ul className="space-y-4 text-gray-400">
-                <li><Link to="/" className="hover:text-white transition-colors">Početna</Link></li>
-                <li><Link to="/about" className="hover:text-white transition-colors">O Nama</Link></li>
-                <li><Link to="/contact" className="hover:text-white transition-colors">Kontakt</Link></li>
-                <li><Link to="/register" className="hover:text-white transition-colors">Prijavi se</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-bold text-lg mb-6 text-[#BFECC9]">Kontakt</h4>
-              <ul className="space-y-4 text-gray-400">
-                <li>info@naucisrpski.rs</li>
-                <li>+381 60 123 4567</li>
-                <li>Beograd, Srbija</li>
-              </ul>
-            </div>
-          </div>
-          
-          <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
-            <p>&copy; 2025 Nauči Srpski. Sva prava zadržana.</p>
-            <div className="flex gap-6">
-              <Link to="/privacy" className="hover:text-white">Politika privatnosti</Link>
-              <Link to="/terms" className="hover:text-white">Uslovi korišćenja</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
-
-// Add some custom animations in your global CSS or tailwind config if needed, 
-// or use standard tailwind animate classes. 
-// For now, using standard tailwind classes where possible.
-

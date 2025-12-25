@@ -1,20 +1,25 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Book, FileText, CheckCircle, Clock, AlertCircle, ArrowRight, User, PlayCircle, LogOut, Settings } from 'lucide-react';
+import { Book, FileText, CheckCircle, Clock, AlertCircle, User, PlayCircle, LogOut, Star, TrendingUp, Upload } from 'lucide-react';
+import { addDoc, collection } from 'firebase/firestore';
 import { useAuthStore } from '../store/authStore';
-import { getUserCourses } from '../services/course.service';
-import { getUserTransactions } from '../services/payment.service';
+import { getUserCourses, getAllCourses } from '../services/course.service';
+import { getUserTransactions, generateInvoice } from '../services/payment.service';
 import { formatPrice, formatDate, getTransactionStatusLabel } from '../utils/helpers';
 import PaymentConfirmationUpload from '../components/payment/PaymentConfirmationUpload';
 import Header from '../components/ui/Header';
-import Card, { CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
+import Modal from '../components/ui/Modal';
+import { db } from '../services/firebase';
 
 export default function DashboardPage() {
   const { user, userProfile, logout } = useAuthStore();
   const [myCourses, setMyCourses] = useState([]);
+  const [allCourses, setAllCourses] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [uploadModalOpen, setUploadModalOpen] = useState(false);
+  const [selectedTransaction, setSelectedTransaction] = useState(null);
 
   useEffect(() => {
     if (user) {
@@ -24,18 +29,88 @@ export default function DashboardPage() {
 
   const loadUserData = async () => {
     try {
-      const [coursesData, transactionsData] = await Promise.all([
+      const [coursesData, transactionsData, allCoursesData] = await Promise.all([
         getUserCourses(user.uid),
         getUserTransactions(user.uid),
+        getAllCourses(),
       ]);
       setMyCourses(coursesData);
       setTransactions(transactionsData);
+      setAllCourses(allCoursesData);
     } catch (error) {
       console.error('Error loading user data:', error);
     } finally {
       setLoading(false);
     }
   };
+
+  const handleOpenUploadModal = (transaction) => {
+    setSelectedTransaction(transaction);
+    setUploadModalOpen(true);
+  };
+
+  const handleUploadSuccess = () => {
+    setUploadModalOpen(false);
+    setSelectedTransaction(null);
+    loadUserData(); // Reload data to show updated status
+  };
+
+  // Generate payment reference number (unique per user + course)
+  const generatePaymentRef = (userId, courseId) => {
+    // Create a simple but unique reference based on user ID and course ID
+    const userPart = userId.substring(0, 8).toUpperCase();
+    const coursePart = courseId.substring(0, 4).toUpperCase();
+    const timestamp = Date.now().toString().slice(-6);
+    return `${userPart}-${coursePart}-${timestamp}`;
+  };
+
+  const handlePurchaseCourse = async (courseId, courseData) => {
+    try {
+      setLoading(true);
+
+      // Check if transaction already exists for this course
+      const existingTransaction = transactions.find(t => t.courseId === courseId);
+      if (existingTransaction) {
+        alert('Већ сте креирали трансакцију за овај курс. Погледајте своје трансакције.');
+        return;
+      }
+
+      // Create transaction directly in Firestore
+      const paymentRef = generatePaymentRef(user.uid, courseId);
+      const newTransaction = {
+        userId: user.uid,
+        courseId: courseId,
+        courseName: courseData.title,
+        amount: courseData.price,
+        status: 'pending',
+        payment_ref: paymentRef,
+        createdAt: new Date().toISOString(),
+        user_id: user.uid,
+        course_id: courseId
+      };
+
+      // Add to Firestore
+      await addDoc(collection(db, 'transactions'), newTransaction);
+
+      alert(`Трансакција креирана! Ваш позив на број: ${paymentRef}\n\nМолимо извршите уплату и отпремите потврду.`);
+      loadUserData(); // Reload to show new transaction
+    } catch (error) {
+      console.error('Error creating transaction:', error);
+      alert('Грешка при креирању трансакције. Покушајте поново.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Get courses that user can purchase (not enrolled and no pending transaction)
+  const availableForPurchase = allCourses.filter(course => {
+    const isEnrolled = myCourses.some(c => c.id === course.id);
+    const hasPendingTransaction = transactions.some(t =>
+      (t.courseId === course.id || t.course_id === course.id) && t.status === 'pending'
+    );
+    // Only show courses that are not enrolled AND don't have pending transactions
+    return !isEnrolled && !hasPendingTransaction;
+  });
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -48,160 +123,280 @@ export default function DashboardPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F5F3EF]">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#BFECC9] border-t-transparent"></div>
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D62828] border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#F5F3EF] font-sans text-[#003366]">
+    <div className="min-h-screen bg-[#F7F7F7] font-sans text-[#1A1A1A]">
       <Header />
 
-      {/* Hero Dashboard */}
-      <div className="bg-[#003366] text-white pb-20 pt-12 rounded-b-[3rem] shadow-lg">
-        <div className="max-w-7xl mx-auto px-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-8">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-serif font-bold mb-2">
-                Dobro došli nazad!
-              </h1>
-              <p className="text-[#BFECC9] text-lg">
-                {userProfile?.ime || user.email}
-              </p>
-            </div>
-            
-            {/* Quick Stats */}
-            <div className="flex gap-4">
-              <div className="bg-white/10 backdrop-blur-sm p-4 rounded-2xl text-center min-w-[100px]">
-                 <div className="text-2xl font-bold">{myCourses.length}</div>
-                 <div className="text-xs opacity-70 uppercase tracking-wider">Kurseva</div>
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        {/* Welcome Section */}
+        <div className="mb-12">
+          <h1 className="text-4xl font-bold mb-2 text-[#1A1A1A]">
+            Добродошли, {userProfile?.ime?.split(' ')[0] || 'Ученик'}!
+          </h1>
+          <p className="text-gray-600 text-lg">Ево прегледа вашег напретка</p>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid md:grid-cols-4 gap-6 mb-12">
+          <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-4">
+              <div className="bg-[#D62828]/10 p-3 rounded-2xl">
+                <Book className="w-6 h-6 text-[#D62828]" />
               </div>
             </div>
+            <div className="text-3xl font-bold text-[#1A1A1A] mb-1">{myCourses.length}</div>
+            <div className="text-sm text-gray-600">Активни Курсеви</div>
           </div>
 
-          {/* Quick Navigation Cards */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-12">
-            <Link to="/dashboard" className="bg-[#FF6B35] p-4 rounded-2xl flex flex-col items-center justify-center gap-2 text-center hover:bg-[#E55A28] transition shadow-lg">
-               <Book className="w-6 h-6" />
-               <span className="font-bold text-sm">Moji Kursevi</span>
-            </Link>
-            <Link to="/profile" className="bg-white/10 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 text-center hover:bg-white/20 transition backdrop-blur-sm">
-               <User className="w-6 h-6" />
-               <span className="font-bold text-sm">Profil</span>
-            </Link>
-            <Link to="/dashboard" className="bg-white/10 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 text-center hover:bg-white/20 transition backdrop-blur-sm">
-               <PlayCircle className="w-6 h-6" />
-               <span className="font-bold text-sm">Nastavi Učenje</span>
-            </Link>
-             <button onClick={logout} className="bg-white/10 p-4 rounded-2xl flex flex-col items-center justify-center gap-2 text-center hover:bg-red-500/20 transition backdrop-blur-sm text-red-200 hover:text-red-100">
-               <LogOut className="w-6 h-6" />
-               <span className="font-bold text-sm">Odjavi se</span>
-            </button>
+          <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-4">
+              <div className="bg-[#F2C94C]/20 p-3 rounded-2xl">
+                <TrendingUp className="w-6 h-6 text-[#F2C94C]" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-[#1A1A1A] mb-1">0%</div>
+            <div className="text-sm text-gray-600">Просечан Напредак</div>
+          </div>
+
+          <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-4">
+              <div className="bg-green-100 p-3 rounded-2xl">
+                <CheckCircle className="w-6 h-6 text-green-600" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-[#1A1A1A] mb-1">0</div>
+            <div className="text-sm text-gray-600">Завршене Лекције</div>
+          </div>
+
+          <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between mb-4">
+              <div className="bg-blue-100 p-3 rounded-2xl">
+                <Star className="w-6 h-6 text-blue-600" />
+              </div>
+            </div>
+            <div className="text-3xl font-bold text-[#1A1A1A] mb-1">0</div>
+            <div className="text-sm text-gray-600">Поени</div>
           </div>
         </div>
-      </div>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 -mt-10 pb-20">
-        
-        {/* My Courses */}
-        <div className="mb-12">
-           <div className="flex items-center justify-between mb-6 px-2">
-             <h2 className="text-2xl font-bold text-[#003366]">Moji Kursevi</h2>
-             <Link to="/courses" className="text-sm font-bold text-[#FF6B35] hover:text-[#E55A28]">
-               Pogledaj sve kurseve
-             </Link>
-           </div>
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Left Column - Courses */}
+          <div className="lg:col-span-2 space-y-6">
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-bold text-[#1A1A1A]">Моји Курсеви</h2>
+              <Link to="/courses" className="text-sm font-medium text-[#D62828] hover:text-[#B91F1F]">
+                Прегледај све →
+              </Link>
+            </div>
 
-           {myCourses.length === 0 ? (
-              <div className="bg-white rounded-[2rem] p-12 text-center shadow-lg">
-                <div className="bg-[#F5F3EF] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+            {myCourses.length === 0 ? (
+              <div className="bg-white rounded-3xl p-12 text-center shadow-sm border border-gray-100">
+                <div className="bg-[#F7F7F7] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                   <Book className="w-10 h-10 text-gray-400" />
                 </div>
-                <h3 className="text-xl font-bold mb-2">Nemate aktivnih kurseva</h3>
-                <p className="text-gray-500 mb-6">Započnite svoju pripremu danas!</p>
+                <h3 className="text-xl font-bold mb-2">Немате активних курсева</h3>
+                <p className="text-gray-500 mb-6">Започните своју припрему данас!</p>
                 <Link to="/courses">
-                  <Button variant="primary">Istraži Kurseve</Button>
+                  <Button variant="primary">Истражи Курсеве</Button>
                 </Link>
               </div>
-           ) : (
-             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-               {myCourses.map((course) => (
-                 <Link key={course.id} to={`/course/${course.id}`}>
-                   <div className="bg-white rounded-[2rem] p-6 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 group cursor-pointer border border-gray-100">
-                     <div className="flex justify-between items-start mb-4">
-                        <div className="bg-[#BFECC9] p-3 rounded-xl group-hover:scale-110 transition-transform">
-                          <Book className="w-6 h-6 text-[#003366]" />
-                        </div>
-                        <span className="bg-[#F5F3EF] px-3 py-1 rounded-full text-xs font-bold text-gray-500">
-                          Aktivan
-                        </span>
-                     </div>
-                     <h3 className="text-lg font-bold mb-2 text-[#003366]">{course.title}</h3>
-                     <div className="w-full bg-gray-100 h-2 rounded-full mt-4 overflow-hidden">
-                       <div className="bg-[#FF6B35] h-full w-[10%]"></div> {/* Progress placeholder */}
-                     </div>
-                     <div className="flex justify-between mt-2 text-xs text-gray-500 font-medium">
-                       <span>Napredak</span>
-                       <span>10%</span>
-                     </div>
-                     <div className="mt-6 pt-4 border-t border-gray-100 flex justify-end">
-                       <span className="text-sm font-bold text-[#003366] flex items-center gap-1 group-hover:translate-x-1 transition-transform">
-                         Otvori Kurs <ArrowRight className="w-4 h-4" />
-                       </span>
-                     </div>
-                   </div>
-                 </Link>
-               ))}
-             </div>
-           )}
-        </div>
-
-        {/* Transactions */}
-        <div>
-           <h2 className="text-2xl font-bold text-[#003366] mb-6 px-2">Istorija Uplata</h2>
-           {transactions.length === 0 ? (
-              <div className="text-center p-8 bg-white rounded-[2rem] shadow-sm border border-gray-100">
-                 <p className="text-gray-500">Nemate zabeleženih transakcija.</p>
-              </div>
-           ) : (
+            ) : (
               <div className="space-y-4">
-                {transactions.map((tx) => (
-                  <div key={tx.id} className="bg-white p-6 rounded-[1.5rem] shadow-sm flex flex-col md:flex-row justify-between items-center gap-4">
-                     <div className="flex items-center gap-4 w-full md:w-auto">
-                       <div className={`p-3 rounded-full ${
-                         tx.status === 'confirmed' ? 'bg-green-100 text-green-600' :
-                         tx.status === 'pending' ? 'bg-yellow-100 text-yellow-600' : 
-                         'bg-red-100 text-red-600'
-                       }`}>
-                         {getStatusIcon(tx.status)}
-                       </div>
-                       <div>
-                         <div className="font-bold text-[#003366]">{formatPrice(tx.amount)}</div>
-                         <div className="text-xs text-gray-500">{formatDate(tx.created_at)}</div>
-                       </div>
-                     </div>
-                     
-                     <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end">
-                       <span className={`px-4 py-1 rounded-full text-xs font-bold uppercase ${
-                          tx.status === 'confirmed' ? 'bg-green-50 text-green-700' :
-                          tx.status === 'pending' ? 'bg-yellow-50 text-yellow-700' : 
-                          'bg-red-50 text-red-700'
-                       }`}>
-                         {getTransactionStatusLabel(tx.status)}
-                       </span>
-                       
-                       {tx.status === 'pending' && !tx.confirmation_url && (
-                         <PaymentConfirmationUpload transactionId={tx.id} onSuccess={loadUserData} />
-                       )}
-                     </div>
-                  </div>
+                {myCourses.map((course) => (
+                  <Link key={course.id} to={`/course/${course.id}`}>
+                    <div className="bg-white rounded-3xl p-6 shadow-sm hover:shadow-md transition-all border border-gray-100 group">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-start gap-4">
+                          <div className="bg-[#D62828]/10 p-4 rounded-2xl group-hover:scale-110 transition-transform">
+                            <Book className="w-6 h-6 text-[#D62828]" />
+                          </div>
+                          <div>
+                            <h3 className="text-lg font-bold mb-1 text-[#1A1A1A]">{course.title}</h3>
+                            <p className="text-sm text-gray-600">0 од {course.totalLessons || 20} лекција</p>
+                          </div>
+                        </div>
+                        <span className="bg-[#F2C94C]/20 px-4 py-1.5 rounded-full text-xs font-bold text-[#1A1A1A]">
+                          Активан
+                        </span>
+                      </div>
+
+                      <div className="mb-3">
+                        <div className="flex justify-between text-xs text-gray-600 mb-2">
+                          <span>Напредак</span>
+                          <span>0%</span>
+                        </div>
+                        <div className="w-full bg-gray-100 h-2 rounded-full overflow-hidden">
+                          <div className="bg-[#D62828] h-full w-[0%] rounded-full transition-all"></div>
+                        </div>
+                      </div>
+
+                      <div className="flex items-center justify-between pt-4 border-t border-gray-100">
+                        <div className="flex items-center gap-2 text-sm text-gray-600">
+                          <PlayCircle className="w-4 h-4" />
+                          <span>Настави учење</span>
+                        </div>
+                        <span className="text-[#D62828] text-sm font-medium">→</span>
+                      </div>
+                    </div>
+                  </Link>
                 ))}
               </div>
-           )}
+            )}
+
+            {/* Transactions Section */}
+            <div className="mt-12">
+              <h2 className="text-2xl font-bold mb-6 text-[#1A1A1A]">Трансакције</h2>
+
+              {transactions.length === 0 ? (
+                <div className="bg-white rounded-3xl p-12 text-center shadow-sm border border-gray-100">
+                  <div className="bg-[#F7F7F7] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <FileText className="w-10 h-10 text-gray-400" />
+                  </div>
+                  <h3 className="text-xl font-bold mb-2">Нема трансакција</h3>
+                  <p className="text-gray-500">Још нисте извршили ниједну куповину.</p>
+                </div>
+              ) : (
+                <div className="bg-white rounded-3xl shadow-sm overflow-hidden border border-gray-100">
+                  <div className="overflow-x-auto">
+                    <table className="w-full">
+                      <thead className="bg-[#F7F7F7]">
+                        <tr>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Курс</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Износ</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Статус</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Датум</th>
+                          <th className="px-6 py-4 text-left text-xs font-bold text-gray-600 uppercase">Акција</th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-gray-100">
+                        {transactions.map((transaction) => (
+                          <tr key={transaction.id} className="hover:bg-[#F7F7F7] transition">
+                            <td className="px-6 py-4 font-medium text-[#1A1A1A]">{transaction.courseName || transaction.course?.title || 'Непознат курс'}</td>
+                            <td className="px-6 py-4 font-bold text-[#1A1A1A]">{formatPrice(transaction.amount)}</td>
+                            <td className="px-6 py-4">
+                              <span className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold ${
+                                transaction.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                                transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-red-100 text-red-800'
+                              }`}>
+                                {getStatusIcon(transaction.status)}
+                                {getTransactionStatusLabel(transaction.status)}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 text-sm text-gray-500">{formatDate(transaction.createdAt)}</td>
+                            <td className="px-6 py-4">
+                              {transaction.status === 'pending' && !transaction.confirmationUrl && (
+                                <button
+                                  onClick={() => handleOpenUploadModal(transaction)}
+                                  className="flex items-center gap-2 bg-[#D62828] text-white px-4 py-2 rounded-xl font-medium hover:bg-[#B91F1F] transition text-sm"
+                                >
+                                  <Upload className="w-4 h-4" />
+                                  Отпреми потврду
+                                </button>
+                              )}
+                              {transaction.confirmationUrl && (
+                                <span className="text-sm text-gray-600">Потврда послата</span>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Right Column - Sidebar */}
+          <div className="lg:col-span-1 space-y-6">
+            {/* Profile Card */}
+            <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="bg-[#D62828]/10 p-4 rounded-full">
+                  <User className="w-8 h-8 text-[#D62828]" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-[#1A1A1A]">{userProfile?.ime || 'Корисник'}</h3>
+                  <p className="text-sm text-gray-600">{user.email}</p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Link to="/profile" className="block w-full text-center bg-[#F7F7F7] hover:bg-gray-200 text-[#1A1A1A] py-3 rounded-2xl font-medium transition">
+                  Уреди Профил
+                </Link>
+                <button
+                  onClick={logout}
+                  className="block w-full text-center bg-white border-2 border-gray-200 hover:border-red-300 hover:bg-red-50 text-[#1A1A1A] hover:text-red-600 py-3 rounded-2xl font-medium transition"
+                >
+                  Одјави се
+                </button>
+              </div>
+            </div>
+
+            {/* Quick Actions */}
+            <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-3xl p-6 text-white shadow-lg">
+              <h3 className="font-bold text-lg mb-4">Брзе радње</h3>
+              <div className="space-y-3">
+                <Link to="/courses" className="flex items-center gap-3 p-3 bg-white/10 rounded-2xl hover:bg-white/20 transition backdrop-blur-sm">
+                  <Book className="w-5 h-5" />
+                  <span className="font-medium">Прегледај курсеве</span>
+                </Link>
+                <Link to="/contact" className="flex items-center gap-3 p-3 bg-white/10 rounded-2xl hover:bg-white/20 transition backdrop-blur-sm">
+                  <FileText className="w-5 h-5" />
+                  <span className="font-medium">Контакт подршка</span>
+                </Link>
+              </div>
+            </div>
+          </div>
         </div>
+
+        {/* Available Courses for Purchase */}
+        {availableForPurchase.length > 0 && (
+          <div className="mt-12">
+            <h2 className="text-2xl font-bold mb-6 text-[#1A1A1A]">Доступни Курсеви</h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {availableForPurchase.map((course) => (
+                <div key={course.id} className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100 hover:shadow-md transition">
+                  <div className="bg-[#D62828]/10 p-4 rounded-2xl w-fit mb-4">
+                    <Book className="w-8 h-8 text-[#D62828]" />
+                  </div>
+                  <h3 className="text-lg font-bold mb-2 text-[#1A1A1A]">{course.title}</h3>
+                  <p className="text-sm text-gray-600 mb-4 line-clamp-2">{course.description}</p>
+                  <div className="text-2xl font-bold text-[#D62828] mb-4">{formatPrice(course.price)}</div>
+                  <button
+                    onClick={() => handlePurchaseCourse(course.id, course)}
+                    className="w-full bg-[#D62828] text-white py-3 rounded-2xl font-bold hover:bg-[#B91F1F] transition"
+                  >
+                    Купи Курс
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
       </div>
+
+      {/* Upload Modal */}
+      <Modal
+        isOpen={uploadModalOpen}
+        onClose={() => setUploadModalOpen(false)}
+        title={`Потврда уплате - ${selectedTransaction?.courseName || ''}`}
+      >
+        {selectedTransaction && (
+          <PaymentConfirmationUpload
+            transactionId={selectedTransaction.id}
+            onSuccess={handleUploadSuccess}
+          />
+        )}
+      </Modal>
     </div>
   );
 }

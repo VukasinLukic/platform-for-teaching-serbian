@@ -8,6 +8,7 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import {
   collection,
   doc,
+  getDoc,
   updateDoc,
   getDocs,
   query,
@@ -42,13 +43,13 @@ export const uploadPaymentConfirmation = async (transactionId, file) => {
     // Validate file size (max 5MB)
     const MAX_SIZE = 5 * 1024 * 1024;
     if (file.size > MAX_SIZE) {
-      throw new Error('Fajl je prevelik. Maksimalna veličina je 5MB.');
+      throw new Error('Фајл је превелик. Максимална величина је 5MB.');
     }
 
     // Validate file type
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf'];
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp', 'application/pdf'];
     if (!allowedTypes.includes(file.type)) {
-      throw new Error('Dozvoljen je samo JPEG, PNG ili PDF format.');
+      throw new Error('Дозвољен је само JPEG, PNG, WebP или PDF формат.');
     }
 
     // Upload to Firebase Storage
@@ -58,8 +59,9 @@ export const uploadPaymentConfirmation = async (transactionId, file) => {
 
     // Update transaction document
     await updateDoc(doc(db, 'transactions', transactionId), {
-      confirmation_url: downloadUrl,
-      confirmation_uploaded_at: new Date().toISOString(),
+      confirmationUrl: downloadUrl,
+      confirmationUploadedAt: new Date().toISOString(),
+      status: 'pending', // Set to pending when confirmation is uploaded
     });
 
     return downloadUrl;

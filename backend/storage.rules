@@ -15,8 +15,8 @@ service firebase.storage {
     }
 
     // Payment confirmations - users can upload their own
-    match /payment-confirmations/{userId}/{fileName} {
-      allow read: if request.auth != null && isAdmin();
+    match /payment-confirmations/{transactionId} {
+      allow read: if request.auth != null && (isAdmin() || request.auth != null);
       allow write: if request.auth != null;
     }
 
