@@ -1,81 +1,136 @@
-import { X, CheckCircle, Copy } from 'lucide-react';
-import { useState } from 'react';
+import { X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { formatPrice } from '../../utils/helpers';
-import Button from '../ui/Button';
 
-export default function PaymentModal({ course, onClose }) {
-  const [copied, setCopied] = useState(false);
-  const bankAccount = import.meta.env.VITE_BANK_ACCOUNT;
-  const companyName = import.meta.env.VITE_COMPANY_NAME || 'СРПСКИ У СРЦУ';
-  const companyAddress = import.meta.env.VITE_COMPANY_ADDRESS || 'Београд, Србија';
-
-  const handleCopy = () => {
-    navigator.clipboard.writeText(bankAccount);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
-  };
+export default function PaymentModal({ course, paymentReference, onClose }) {
+  const bankAccount = import.meta.env.VITE_BANK_ACCOUNT || '160-00000000000-00';
+  const companyName = import.meta.env.VITE_COMPANY_NAME || 'Nauči Srpski';
+  const companyAddress = import.meta.env.VITE_COMPANY_ADDRESS || 'Beograd, Srbija';
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
-      <div className="bg-white rounded-[2.5rem] max-w-lg w-full p-8 shadow-2xl relative animate-scale-in">
-        <button 
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn" onClick={onClose}>
+      <div className="bg-white rounded-2xl max-w-4xl w-full shadow-2xl relative animate-slideUp" onClick={(e) => e.stopPropagation()}>
+        <button
           onClick={onClose}
-          className="absolute top-6 right-6 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+          className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors z-10"
         >
           <X size={20} className="text-gray-600" />
         </button>
 
-        <div className="text-center mb-8">
-           <h3 className="text-2xl font-bold text-[#1A1A1A] mb-2">Упутство за уплату</h3>
-           <p className="text-gray-500">За приступ курсу: <span className="font-bold text-[#D62828]">{course.title}</span></p>
-        </div>
+        <div className="p-6">
+          {/* Header */}
+          <div className="text-center mb-4">
+            <h2 className="text-2xl font-bold text-[#1A1A1A]">НАЛОГ ЗА УПЛАТУ</h2>
+          </div>
 
-        <div className="space-y-6">
-           <div className="bg-[#F7F7F7] p-6 rounded-3xl border border-gray-200">
-              <div className="flex justify-between items-center mb-4">
-                 <span className="text-gray-500 text-sm font-bold uppercase">Износ за уплату</span>
-                 <span className="text-2xl font-black text-[#D62828]">{formatPrice(course.price)}</span>
+          {/* Uplatnica - Compact Horizontal Layout */}
+          <div className="border-4 border-[#1A1A1A] rounded-lg overflow-hidden mb-4">
+            {/* Row 1 - Uplatalac */}
+            <div className="border-b-2 border-[#1A1A1A] p-3 bg-white">
+              <div className="border-2 border-[#1A1A1A] p-2 rounded">
+                <label className="text-[10px] font-bold uppercase text-gray-500 block">уплатилац</label>
+                <div className="h-6 bg-gray-50 rounded mt-1"></div>
               </div>
-              <div className="h-px bg-gray-200 my-4"></div>
-              <div className="space-y-3">
-                 <div>
-                    <div className="text-xs text-gray-400 uppercase font-bold mb-1">Прималац</div>
-                    <div className="font-bold text-[#1A1A1A]">{companyName}, {companyAddress}</div>
-                 </div>
-                 <div>
-                    <div className="text-xs text-gray-400 uppercase font-bold mb-1">Сврха уплате</div>
-                    <div className="font-bold text-[#1A1A1A]">Уплата за курс: {course.title}</div>
-                 </div>
-                 <div className="relative">
-                    <div className="text-xs text-gray-400 uppercase font-bold mb-1">Рачун примаоца</div>
-                    <div className="flex items-center justify-between bg-white p-3 rounded-xl border border-gray-200">
-                       <code className="text-lg font-mono font-bold text-[#1A1A1A]">{bankAccount}</code>
-                       <button
-                         onClick={handleCopy}
-                         className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                       >
-                          {copied ? <CheckCircle size={18} className="text-[#D62828]" /> : <Copy size={18} className="text-gray-400" />}
-                       </button>
-                    </div>
-                 </div>
+            </div>
+
+            {/* Row 2 - Svrha & Primalac (side by side) */}
+            <div className="border-b-2 border-[#1A1A1A] p-3 bg-white grid grid-cols-2 gap-3">
+              <div className="border-2 border-[#1A1A1A] p-2 rounded">
+                <label className="text-[10px] font-bold uppercase text-gray-500 block">сврха уплате</label>
+                <div className="font-semibold text-[#1A1A1A] text-sm mt-1">
+                  Уплата за курс: {course.title}
+                </div>
               </div>
-           </div>
+              <div className="border-2 border-[#1A1A1A] p-2 rounded">
+                <label className="text-[10px] font-bold uppercase text-gray-500 block">прималац</label>
+                <div className="font-semibold text-[#1A1A1A] text-sm mt-1">
+                  {companyName}, {companyAddress}
+                </div>
+              </div>
+            </div>
 
-           <div className="bg-[#D62828]/10 p-4 rounded-2xl flex gap-3 items-start border border-[#D62828]/20">
-              <CheckCircle className="w-5 h-5 text-[#D62828] flex-shrink-0 mt-0.5" />
-              <p className="text-sm text-[#1A1A1A]">
-                 Након уплате, пошаљите доказ о уплати кроз Ваш Панел како бисмо вам одмах активирали приступ.
-              </p>
-           </div>
-        </div>
+            {/* Row 3 - Payment Details (horizontal) */}
+            <div className="border-b-2 border-[#1A1A1A] p-3 bg-white grid grid-cols-5 gap-3">
+              <div className="border-2 border-[#1A1A1A] p-2 rounded">
+                <label className="text-[10px] font-bold uppercase text-gray-500 block">шифра плаћања</label>
+                <div className="font-bold text-[#1A1A1A] text-center mt-1">189</div>
+              </div>
+              <div className="border-2 border-[#1A1A1A] p-2 rounded">
+                <label className="text-[10px] font-bold uppercase text-gray-500 block">валута</label>
+                <div className="font-bold text-[#1A1A1A] text-center mt-1">RSD</div>
+              </div>
+              <div className="border-2 border-[#1A1A1A] p-2 rounded">
+                <label className="text-[10px] font-bold uppercase text-gray-500 block">износ</label>
+                <div className="font-bold text-[#D62828] text-center mt-1 text-sm">{formatPrice(course.price)}</div>
+              </div>
+              <div className="col-span-2 border-2 border-[#1A1A1A] p-2 rounded">
+                <label className="text-[10px] font-bold uppercase text-gray-500 block">рачун примаоца</label>
+                <div className="font-mono font-bold text-[#1A1A1A] mt-1 text-sm">
+                  {bankAccount}
+                </div>
+              </div>
+            </div>
 
-        <div className="mt-8">
-           <Button onClick={onClose} variant="primary" className="w-full py-4 text-lg">
+            {/* Row 4 - Bottom (Poziv na broj, Pecat, Datum) */}
+            <div className="bg-gray-50 p-3 grid grid-cols-3 gap-3">
+              <div className="border-2 border-[#1A1A1A] p-2 rounded bg-white">
+                <label className="text-[10px] font-bold uppercase text-gray-500 block">позив на број</label>
+                <div className="font-mono font-bold text-[#D62828] text-center mt-1 text-sm">
+                  {paymentReference || 'Генерисање...'}
+                </div>
+              </div>
+              <div className="text-center">
+                <div className="text-[10px] text-gray-500 uppercase">печат и потпис уплатиоца</div>
+                <div className="h-8 border-b border-gray-300 mt-2"></div>
+              </div>
+              <div className="text-center">
+                <div className="text-[10px] text-gray-500 uppercase">датум уплате</div>
+                <div className="h-8 border-b border-gray-300 mt-2"></div>
+              </div>
+            </div>
+          </div>
+
+          {/* Instructions - Larger */}
+          <div className="bg-[#D62828]/10 border-2 border-[#D62828]/30 rounded-xl p-5">
+            <h3 className="text-base font-bold text-[#1A1A1A] mb-3 flex items-center gap-2">
+              <span>📋</span> Упутство за уплату:
+            </h3>
+            <ol className="space-y-2 text-sm text-[#1A1A1A]">
+              <li className="flex items-start gap-3">
+                <span className="font-bold text-[#D62828] flex-shrink-0 text-lg">1.</span>
+                <span className="leading-relaxed">Попуните налог за уплату овим подацима и одите у банку или користите е-банкарство</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="font-bold text-[#D62828] flex-shrink-0 text-lg">2.</span>
+                <span className="leading-relaxed"><strong>Направите фотографију или скенирајте потврду</strong> о извршеној уплати</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="font-bold text-[#D62828] flex-shrink-0 text-lg">3.</span>
+                <span className="leading-relaxed">Одите на <strong>Ваш Панел → Трансакције</strong> и отпремите слику потврде</span>
+              </li>
+              <li className="flex items-start gap-3">
+                <span className="font-bold text-[#D62828] flex-shrink-0 text-lg">4.</span>
+                <span className="leading-relaxed">Приступ курсу ће бити активиран у року од <strong>24 сата</strong> након верификације</span>
+              </li>
+            </ol>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="mt-5 flex gap-3 justify-center">
+            <Link to="/dashboard" onClick={onClose}>
+              <button className="bg-[#D62828] text-white px-10 py-3 rounded-full font-bold hover:bg-[#B91F1F] transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+                Иди на Ваш Панел
+              </button>
+            </Link>
+            <button
+              onClick={onClose}
+              className="bg-gray-100 text-[#1A1A1A] px-10 py-3 rounded-full font-bold hover:bg-gray-200 transition-all"
+            >
               Разумем
-           </Button>
+            </button>
+          </div>
         </div>
       </div>
     </div>
   );
 }
-

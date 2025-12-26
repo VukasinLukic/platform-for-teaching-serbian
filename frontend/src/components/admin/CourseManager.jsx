@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, addDoc, getDocs, updateDoc, doc, deleteDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, where } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../services/firebase';
 import { Plus, Edit2, Trash2, Eye, EyeOff, Loader2, CheckCircle, Tag, FileText, Video, Users, MonitorPlay, Upload, Image, List, Clock, X } from 'lucide-react';
@@ -142,6 +142,36 @@ export default function CourseManager() {
     }
   };
 
+  // Helper function to delete old modules and lessons
+  const deleteOldModulesAndLessons = async (courseId) => {
+    console.log('🔵 [CourseManager] Deleting old modules/lessons for course:', courseId);
+
+    // Delete old modules
+    const modulesQuery = query(
+      collection(db, 'modules'),
+      where('courseId', '==', courseId)
+    );
+    const modulesSnapshot = await getDocs(modulesQuery);
+
+    for (const moduleDoc of modulesSnapshot.docs) {
+      // First delete lessons of this module
+      const lessonsQuery = query(
+        collection(db, 'lessons'),
+        where('moduleId', '==', moduleDoc.id)
+      );
+      const lessonsSnapshot = await getDocs(lessonsQuery);
+
+      for (const lessonDoc of lessonsSnapshot.docs) {
+        await deleteDoc(lessonDoc.ref);
+      }
+
+      // Then delete the module
+      await deleteDoc(moduleDoc.ref);
+    }
+
+    console.log('✅ [CourseManager] Old modules/lessons deleted');
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -159,6 +189,8 @@ export default function CourseManager() {
     setUploadProgress(0);
 
     try {
+      console.log('🔵 [CourseManager] Saving course with modules:', formData.modules);
+
       let thumbnailUrl = formData.thumbnail_url;
 
       // Upload thumbnail if a new file was selected
@@ -178,7 +210,7 @@ export default function CourseManager() {
               setUploadProgress(Math.round(progress));
             },
             (error) => {
-              console.error('Upload error:', error);
+              console.error('❌ [CourseManager] Upload error:', error);
               showToast({ type: 'error', message: 'Greška pri upload-u slike' });
               reject(error);
             },
@@ -190,31 +222,93 @@ export default function CourseManager() {
         });
       }
 
-      // Prepare course data (exclude thumbnailFile, include thumbnail_url)
-      const { thumbnailFile, ...courseData } = formData;
+      // Prepare course data (exclude thumbnailFile, modules, include thumbnail_url)
+      const { thumbnailFile, modules, ...courseData } = formData;
       const dataToSave = {
         ...courseData,
         thumbnail_url: thumbnailUrl,
         updated_at: new Date().toISOString(),
       };
 
+      let courseId;
+
       if (editingCourse) {
         // Update existing course
+        console.log('🔵 [CourseManager] Updating existing course:', editingCourse.id);
         await updateDoc(doc(db, 'courses', editingCourse.id), dataToSave);
-        showToast({ type: 'success', message: 'Kurs uspešno izmenjen!' });
+        courseId = editingCourse.id;
+
+        // Delete old modules and lessons before creating new ones
+        await deleteOldModulesAndLessons(courseId);
       } else {
         // Create new course
-        await addDoc(collection(db, 'courses'), {
+        console.log('🔵 [CourseManager] Creating new course...');
+        const courseDoc = await addDoc(collection(db, 'courses'), {
           ...dataToSave,
           created_at: new Date().toISOString(),
         });
-        showToast({ type: 'success', message: 'Kurs uspešno kreiran!' });
+        courseId = courseDoc.id;
+        console.log('✅ [CourseManager] Course created:', courseId);
       }
+
+      // Save modules to separate collection
+      console.log('🔵 [CourseManager] Saving', formData.modules.length, 'modules...');
+
+      for (let i = 0; i < formData.modules.length; i++) {
+        const module = formData.modules[i];
+
+        if (!module.title.trim()) {
+          console.warn('⚠️ [CourseManager] Skipping module with empty title');
+          continue;
+        }
+
+        console.log(`🔵 [CourseManager] Creating module ${i + 1}:`, module.title);
+
+        const moduleDoc = await addDoc(collection(db, 'modules'), {
+          courseId: courseId,
+          title: module.title,
+          order: i + 1,
+          created_at: new Date().toISOString(),
+        });
+
+        console.log(`✅ [CourseManager] Module created:`, moduleDoc.id);
+
+        // Save lessons for this module
+        console.log(`🔵 [CourseManager] Saving ${module.lessons.length} lessons for module ${moduleDoc.id}...`);
+
+        for (let j = 0; j < module.lessons.length; j++) {
+          const lesson = module.lessons[j];
+
+          if (!lesson.title.trim()) {
+            console.warn(`⚠️ [CourseManager] Skipping lesson with empty title`);
+            continue;
+          }
+
+          console.log(`  📝 Creating lesson ${j + 1}:`, lesson.title);
+
+          await addDoc(collection(db, 'lessons'), {
+            courseId: courseId,
+            moduleId: moduleDoc.id,
+            title: lesson.title,
+            duration: lesson.duration || 15,
+            order: j + 1,
+            videoUrl: '',
+            description: '',
+            created_at: new Date().toISOString(),
+          });
+
+          console.log(`  ✅ Lesson created:`, lesson.title);
+        }
+      }
+
+      console.log('✅ [CourseManager] All modules and lessons saved successfully!');
+      showToast({ type: 'success', message: editingCourse ? 'Kurs uspešno izmenjen!' : 'Kurs uspešno kreiran!' });
 
       handleCloseForm();
       loadCourses();
     } catch (error) {
-      console.error('Error saving course:', error);
+      console.error('❌ [CourseManager] Error saving course:', error);
+      console.error('❌ [CourseManager] Error details:', error.message);
       showToast({ type: 'error', message: 'Greška pri čuvanju kursa: ' + error.message });
     } finally {
       setFormLoading(false);

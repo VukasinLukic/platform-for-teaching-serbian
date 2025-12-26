@@ -21,7 +21,9 @@
       "Bash(cat:*)",
       "Bash(firebase projects:list:*)",
       "Bash(ls:*)",
-      "Skill(frontend-design)"
+      "Skill(frontend-design)",
+      "Bash(find:*)",
+      "Bash(firebase functions:secrets:set:*)"
     ],
     "deny": [],
     "ask": []

@@ -17,10 +17,10 @@ export default function Header({ transparent = false }) {
           <div className="flex items-center gap-16">
             <Link to="/" className="flex items-center group transition-transform hover:scale-105">
               <img
-                src="/logoICON.svg"
+                src="/icon.png"
                 alt="СРПСКИ У СРЦУ"
                 className="h-20 w-auto py-2"
-              />
+              />  
             </Link>
 
             <nav className="hidden lg:flex items-center gap-8 text-sm font-medium">

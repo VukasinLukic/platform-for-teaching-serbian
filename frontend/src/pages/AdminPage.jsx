@@ -7,6 +7,8 @@ import CourseManager from '../components/admin/CourseManager';
 import LessonManager from '../components/admin/LessonManager';
 import { Link, useNavigate } from 'react-router-dom';
 import PaymentVerifier from '../components/admin/PaymentVerifier';
+import UsersList from '../components/admin/UsersList';
+import TransactionHistory from '../components/admin/TransactionHistory';
 
 export default function AdminPage() {
   const { userProfile, logout } = useAuthStore();
@@ -184,27 +186,28 @@ export default function AdminPage() {
                     <div className="flex justify-between items-center">
                        <h3 className="text-xl font-bold text-[#1A1A1A]">Poslednje Aktivnosti</h3>
                     </div>
-                    {/* Placeholder for recent activities table if needed, or reuse components */}
-                    <PaymentVerifier limit={5} title="Nedavne Uplate" />
+
+                    {/* Pending Payments */}
+                    <PaymentVerifier limit={5} title="Уплате на Чекању" />
+
+                    {/* Transaction History */}
+                    <TransactionHistory maxItems={10} />
                  </div>
               )}
-              {['students', 'settings'].includes(activeTab) && (
+
+              {activeTab === 'students' && <UsersList />}
+
+              {activeTab === 'settings' && (
                 <div className="text-center py-20">
                   <div className="max-w-md mx-auto">
                     <div className="bg-[#F2C94C]/20 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
-                      {activeTab === 'students' ? (
-                        <Users className="w-12 h-12 text-[#1A1A1A]" />
-                      ) : (
-                        <Settings className="w-12 h-12 text-[#1A1A1A]" />
-                      )}
+                      <Settings className="w-12 h-12 text-[#1A1A1A]" />
                     </div>
                     <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">
-                      {activeTab === 'students' ? 'Učenici' : 'Podešavanja'}
+                      Podešavanja
                     </h3>
                     <p className="text-gray-600">
-                      {activeTab === 'students'
-                        ? 'Ovde ćete moći videti listu svih učenika koji su kupili kurseve, njihov napredak i statistike.'
-                        : 'Ovde ćete moći podesiti profile, notifikacije, email template-ove i ostale postavke platforme.'}
+                      Ovde ćete moći podesiti profile, notifikacije, email template-ove i ostale postavke platforme.
                     </p>
                     <p className="text-sm text-gray-400 mt-4">Funkcionalnost uskoro dostupna</p>
                   </div>

@@ -11,7 +11,7 @@ export default function Footer() {
             <div className="mb-6">
               <Link to="/" className="inline-block">
                 <img
-                  src="/logoFOOTER.svg"
+                  src="/footer.png"
                   alt="СРПСКИ У СРЦУ"
                   className="h-64 w-auto"
                 />

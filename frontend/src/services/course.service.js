@@ -150,6 +150,8 @@ export const getUserCourses = async (userId) => {
  */
 export const getCourseModulesWithLessons = async (courseId) => {
   try {
+    console.log('🔵 [course.service] Fetching modules for course:', courseId);
+
     // Get modules for the course
     const modulesQuery = query(
       collection(db, 'modules'),
@@ -157,11 +159,13 @@ export const getCourseModulesWithLessons = async (courseId) => {
       orderBy('order', 'asc')
     );
     const modulesSnapshot = await getDocs(modulesQuery);
+    console.log('✅ [course.service] Found', modulesSnapshot.docs.length, 'modules');
 
     // For each module, get its lessons
     const modulesWithLessons = await Promise.all(
       modulesSnapshot.docs.map(async (moduleDoc) => {
         const moduleData = { id: moduleDoc.id, ...moduleDoc.data() };
+        console.log('  📦 Processing module:', moduleData.title);
 
         // Get lessons for this module
         const lessonsQuery = query(
@@ -170,6 +174,7 @@ export const getCourseModulesWithLessons = async (courseId) => {
           orderBy('order', 'asc')
         );
         const lessonsSnapshot = await getDocs(lessonsQuery);
+        console.log('    📝 Found', lessonsSnapshot.docs.length, 'lessons for module', moduleData.title);
 
         const lessons = lessonsSnapshot.docs.map(lessonDoc => ({
           id: lessonDoc.id,
@@ -183,9 +188,11 @@ export const getCourseModulesWithLessons = async (courseId) => {
       })
     );
 
+    console.log('✅ [course.service] Total modules with lessons:', modulesWithLessons.length);
     return modulesWithLessons;
   } catch (error) {
-    console.error('Error fetching course modules with lessons:', error);
+    console.error('❌ [course.service] Error fetching course modules:', error);
+    console.error('❌ [course.service] Error details:', error.message);
     throw error;
   }
 };

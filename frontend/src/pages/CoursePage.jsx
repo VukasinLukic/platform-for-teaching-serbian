@@ -4,9 +4,11 @@ import {
   Play, Book, CheckCircle, Lock, ChevronDown, ChevronRight,
   Video, Award, Shield, Star, FileText, ArrowRight
 } from 'lucide-react';
+import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { getCourseById, checkUserAccess, getCourseModulesWithLessons } from '../services/course.service';
 import { useAuthStore } from '../store/authStore';
 import { formatPrice } from '../utils/helpers';
+import { db } from '../services/firebase';
 import Header from '../components/ui/Header';
 import Button from '../components/ui/Button';
 import PaymentModal from '../components/payment/PaymentModal';
@@ -22,6 +24,7 @@ export default function CoursePage() {
   const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [activeModuleIndex, setActiveModuleIndex] = useState(0);
   const [selectedLesson, setSelectedLesson] = useState(null);
+  const [paymentReference, setPaymentReference] = useState(null);
 
   useEffect(() => {
     loadCourseData();
@@ -29,38 +32,110 @@ export default function CoursePage() {
 
   const loadCourseData = async () => {
     try {
+      console.log('🔵 [CoursePage] Loading course data for ID:', id);
+
       const courseData = await getCourseById(id);
+      console.log('✅ [CoursePage] Course loaded:', courseData);
       setCourse(courseData);
 
       // Check if user has access
       if (user) {
+        console.log('🔵 [CoursePage] Checking access for user:', user.uid);
         const access = await checkUserAccess(user.uid, id);
+        console.log('✅ [CoursePage] Access check result:', access);
         setHasAccess(access);
 
         // Load modules and lessons if user has access
         if (access) {
+          console.log('🔵 [CoursePage] User has access, loading modules...');
           const modulesData = await getCourseModulesWithLessons(id);
+          console.log('✅ [CoursePage] Modules loaded:', modulesData);
+          console.log('📊 [CoursePage] Total modules:', modulesData.length);
+
+          if (modulesData.length === 0) {
+            console.warn('⚠️ [CoursePage] No modules found for this course!');
+          } else {
+            modulesData.forEach((module, idx) => {
+              console.log(`  📦 Module ${idx + 1}:`, module.title, `(${module.lessons.length} lessons)`);
+            });
+          }
+
           setModules(modulesData);
 
           // Auto-select first lesson
           if (modulesData.length > 0 && modulesData[0].lessons.length > 0) {
+            console.log('🔵 [CoursePage] Setting current lesson to first lesson');
             setSelectedLesson(modulesData[0].lessons[0]);
           }
+        } else {
+          console.log('⚠️ [CoursePage] User does NOT have access to this course');
         }
+      } else {
+        console.log('⚠️ [CoursePage] No user logged in');
       }
     } catch (error) {
-      console.error('Error loading course data:', error);
+      console.error('❌ [CoursePage] Error loading course data:', error);
+      console.error('❌ [CoursePage] Error details:', error.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const handlePurchaseClick = () => {
+  // Generate unique payment reference
+  const generatePaymentRef = (userId, courseId) => {
+    const userPart = userId.substring(0, 6).toUpperCase();
+    const coursePart = courseId.substring(0, 4).toUpperCase();
+    const timestamp = Date.now().toString().slice(-4);
+    return `${userPart}-${coursePart}-${timestamp}`;
+  };
+
+  const handlePurchaseClick = async () => {
     if (!user) {
       navigate('/login', { state: { returnTo: `/course/${id}` } });
       return;
     }
-    setShowPaymentModal(true);
+
+    try {
+      // Check if transaction already exists for this user + course
+      const q = query(
+        collection(db, 'transactions'),
+        where('userId', '==', user.uid),
+        where('courseId', '==', id)
+      );
+      const existingTransactions = await getDocs(q);
+
+      let paymentRef;
+
+      if (!existingTransactions.empty) {
+        // Use existing payment reference
+        const existingTransaction = existingTransactions.docs[0].data();
+        paymentRef = existingTransaction.payment_ref;
+        console.log('🔵 [CoursePage] Using existing payment ref:', paymentRef);
+      } else {
+        // Create new transaction with unique payment reference
+        paymentRef = generatePaymentRef(user.uid, id);
+        console.log('🔵 [CoursePage] Creating new transaction with ref:', paymentRef);
+
+        await addDoc(collection(db, 'transactions'), {
+          userId: user.uid,
+          user_id: user.uid,
+          courseId: id,
+          course_id: id,
+          courseName: course.title,
+          amount: course.price,
+          status: 'pending',
+          payment_ref: paymentRef,
+          createdAt: new Date().toISOString(),
+          created_at: new Date().toISOString(),
+        });
+      }
+
+      setPaymentReference(paymentRef);
+      setShowPaymentModal(true);
+    } catch (error) {
+      console.error('❌ [CoursePage] Error creating transaction:', error);
+      alert('Грешка при креирању трансакције. Покушајте поново.');
+    }
   };
 
   const handleLessonSelect = (lesson) => {
@@ -304,6 +379,7 @@ export default function CoursePage() {
       {showPaymentModal && (
         <PaymentModal
           course={course}
+          paymentReference={paymentReference}
           onClose={() => setShowPaymentModal(false)}
         />
       )}

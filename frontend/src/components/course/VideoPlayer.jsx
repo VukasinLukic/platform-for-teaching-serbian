@@ -72,6 +72,15 @@ export default function VideoPlayer({ lessonId, onProgress }) {
           pictureInPictureToggle: true,
           fullscreenToggle: true,
         },
+        // Disable right-click and download
+        html5: {
+          vhs: {
+            overrideNative: true,
+          },
+          nativeVideoTracks: false,
+          nativeAudioTracks: false,
+          nativeTextTracks: false,
+        },
         sources: [
           {
             src: url,
@@ -79,6 +88,14 @@ export default function VideoPlayer({ lessonId, onProgress }) {
           },
         ],
       });
+
+      // Disable download attribute
+      const videoElement = playerRef.current.el().querySelector('video');
+      if (videoElement) {
+        videoElement.controlsList = 'nodownload';
+        videoElement.disablePictureInPicture = false;
+        videoElement.oncontextmenu = (e) => e.preventDefault();
+      }
 
       // Track video progress
       if (onProgress) {

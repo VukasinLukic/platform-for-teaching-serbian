@@ -78,12 +78,28 @@ export const uploadPaymentConfirmation = async (transactionId, file) => {
  */
 export const getUserTransactions = async (userId) => {
   try {
-    const q = query(
+    // Try both field names since some old transactions may use user_id
+    const q1 = query(
       collection(db, 'transactions'),
       where('user_id', '==', userId)
     );
-    const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
+    const q2 = query(
+      collection(db, 'transactions'),
+      where('userId', '==', userId)
+    );
+
+    const [snapshot1, snapshot2] = await Promise.all([
+      getDocs(q1),
+      getDocs(q2)
+    ]);
+
+    // Combine results and remove duplicates
+    const allDocs = [...snapshot1.docs, ...snapshot2.docs];
+    const uniqueDocs = allDocs.filter((doc, index, self) =>
+      index === self.findIndex((d) => d.id === doc.id)
+    );
+
+    return uniqueDocs.map(doc => ({
       id: doc.id,
       ...doc.data()
     }));

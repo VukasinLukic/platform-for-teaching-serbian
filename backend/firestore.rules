@@ -42,9 +42,14 @@ service cloud.firestore {
     // Transactions collection
     match /transactions/{transactionId} {
       allow read: if isAuthenticated() &&
-                     (resource.data.user_id == request.auth.uid || isAdmin());
+                     (resource.data.user_id == request.auth.uid ||
+                      resource.data.userId == request.auth.uid ||
+                      isAdmin());
       allow create: if isAuthenticated();
-      allow update: if isAdmin();
+      allow update: if isAuthenticated() &&
+                       (resource.data.user_id == request.auth.uid ||
+                        resource.data.userId == request.auth.uid) ||
+                       isAdmin();
       allow delete: if isAdmin();
     }
 

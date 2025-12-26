@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, query, where, deleteDoc, doc, orderBy, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { db, storage } from '../../services/firebase';
-import { Plus, Trash2, Loader2, Upload, Video, FileVideo, CheckCircle, ChevronDown, ChevronRight, Tag, FileText, Book } from 'lucide-react';
+import { db } from '../../services/firebase';
+import { uploadVideoToR2, deleteVideoFromR2 } from '../../services/cloudflare.service';
+import { Plus, Trash2, Loader2, Upload, Video, FileVideo, CheckCircle, ChevronDown, ChevronRight, Tag, FileText, Book, Edit } from 'lucide-react';
 import { useToast } from '../ui/Toast';
+import ConfirmModal from '../ui/ConfirmModal';
 
 export default function LessonManager() {
   const [courses, setCourses] = useState([]);
@@ -15,10 +16,17 @@ export default function LessonManager() {
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [showForm, setShowForm] = useState(false);
+  const [editingLesson, setEditingLesson] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
     description: '',
     videoFile: null,
+  });
+  const [confirmModal, setConfirmModal] = useState({
+    isOpen: false,
+    title: '',
+    message: '',
+    onConfirm: null,
   });
   const { showToast } = useToast();
 
@@ -107,79 +115,185 @@ export default function LessonManager() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.videoFile || !selectedModule) {
-      showToast({ type: 'warning', message: 'Молимо попуните сва поља и одаберите видео' });
+    if (!selectedModule) {
+      showToast({ type: 'warning', message: 'Молимо одаберите модул' });
       return;
     }
 
-    setUploading(true);
-    setUploadProgress(0);
+    // Check if editing existing lesson
+    if (editingLesson) {
+      // Editing mode - video is optional
+      if (!formData.title.trim()) {
+        showToast({ type: 'warning', message: 'Молимо унесите назив лекције' });
+        return;
+      }
 
-    try {
-      const timestamp = Date.now();
-      const fileName = `videos/${selectedCourse}/${selectedModule.id}/${timestamp}_${formData.videoFile.name}`;
-      const storageRef = ref(storage, fileName);
-      const uploadTask = uploadBytesResumable(storageRef, formData.videoFile);
+      setUploading(true);
+      setUploadProgress(0);
 
-      uploadTask.on(
-        'state_changed',
-        (snapshot) => {
-          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-          setUploadProgress(Math.round(progress));
-        },
-        (error) => {
-          console.error('Upload error:', error);
-          showToast({ type: 'error', message: 'Грешка при upload-у видеа' });
-          setUploading(false);
-        },
-        async () => {
-          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+      try {
+        console.log('🔵 [LessonManager] Updating lesson:', editingLesson.id);
 
-          await addDoc(collection(db, 'lessons'), {
-            courseId: selectedCourse,
-            moduleId: selectedModule.id,
-            title: formData.title,
-            description: formData.description,
-            videoUrl: downloadURL,
-            videoPath: uploadTask.snapshot.ref.fullPath,
-            order: lessons.length + 1,
-            duration: 0,
-            createdAt: new Date().toISOString(),
-          });
+        let videoUrl = editingLesson.videoUrl;
+        let videoPath = editingLesson.videoPath;
 
-          setFormData({
-            title: '',
-            description: '',
-            videoFile: null,
-          });
-          setShowForm(false);
-          setUploading(false);
-          setUploadProgress(0);
+        // If new video file is provided, upload it
+        if (formData.videoFile) {
+          console.log('🔵 [LessonManager] New video file provided, uploading to Cloudflare R2...');
 
-          loadLessons(selectedModule.id);
-          showToast({ type: 'success', message: 'Лекција успешно додата!' });
+          // Delete old video from R2 if it exists
+          if (editingLesson.videoPath) {
+            console.log('🔵 [LessonManager] Deleting old video from R2:', editingLesson.videoPath);
+            await deleteVideoFromR2(editingLesson.videoPath);
+          }
+
+          // Upload new video to Cloudflare R2
+          const result = await uploadVideoToR2(
+            formData.videoFile,
+            selectedCourse,
+            selectedModule.id,
+            (progress) => {
+              console.log(`📊 [LessonManager] Upload progress: ${progress}%`);
+              setUploadProgress(progress);
+            }
+          );
+
+          videoUrl = result.url;
+          videoPath = result.path;
+
+          console.log('✅ [LessonManager] Video uploaded:', videoUrl);
         }
-      );
-    } catch (error) {
-      console.error('Error creating lesson:', error);
-      showToast({ type: 'error', message: 'Грешка при креирању лекције' });
-      setUploading(false);
+
+        // Update lesson document
+        await updateDoc(doc(db, 'lessons', editingLesson.id), {
+          title: formData.title,
+          description: formData.description,
+          videoUrl: videoUrl,
+          videoPath: videoPath,
+          updatedAt: new Date().toISOString(),
+        });
+
+        console.log('✅ [LessonManager] Lesson updated successfully');
+
+        setFormData({
+          title: '',
+          description: '',
+          videoFile: null,
+        });
+        setEditingLesson(null);
+        setShowForm(false);
+        setUploading(false);
+        setUploadProgress(0);
+
+        loadLessons(selectedModule.id);
+        showToast({ type: 'success', message: 'Лекција успешно ажурирана!' });
+      } catch (error) {
+        console.error('❌ [LessonManager] Error updating lesson:', error);
+        showToast({ type: 'error', message: error.message || 'Грешка при ажурирању лекције' });
+        setUploading(false);
+      }
+    } else {
+      // Creating new lesson - video is required
+      if (!formData.videoFile || !formData.title.trim()) {
+        showToast({ type: 'warning', message: 'Молимо попуните сва поља и одаберите видео' });
+        return;
+      }
+
+      setUploading(true);
+      setUploadProgress(0);
+
+      try {
+        console.log('🔵 [LessonManager] Creating new lesson...');
+        console.log('🔵 [LessonManager] Uploading video to Cloudflare R2...');
+
+        // Upload video to Cloudflare R2
+        const result = await uploadVideoToR2(
+          formData.videoFile,
+          selectedCourse,
+          selectedModule.id,
+          (progress) => {
+            console.log(`📊 [LessonManager] Upload progress: ${progress}%`);
+            setUploadProgress(progress);
+          }
+        );
+
+        console.log('✅ [LessonManager] Video uploaded:', result.url);
+        console.log('🔵 [LessonManager] Creating lesson document...');
+
+        await addDoc(collection(db, 'lessons'), {
+          courseId: selectedCourse,
+          moduleId: selectedModule.id,
+          title: formData.title,
+          description: formData.description,
+          videoUrl: result.url,
+          videoPath: result.path,
+          order: lessons.length + 1,
+          duration: 0,
+          createdAt: new Date().toISOString(),
+        });
+
+        console.log('✅ [LessonManager] Lesson created successfully');
+
+        setFormData({
+          title: '',
+          description: '',
+          videoFile: null,
+        });
+        setShowForm(false);
+        setUploading(false);
+        setUploadProgress(0);
+
+        loadLessons(selectedModule.id);
+        showToast({ type: 'success', message: 'Лекција успешно додата!' });
+      } catch (error) {
+        console.error('❌ [LessonManager] Error creating lesson:', error);
+        showToast({ type: 'error', message: error.message || 'Грешка при креирању лекције' });
+        setUploading(false);
+      }
     }
   };
 
-  const handleDelete = async (lessonId, lessonTitle) => {
-    if (!confirm(`Да ли сте сигурни да желите да обришете лекцију "${lessonTitle}"?`)) {
-      return;
-    }
+  const handleEdit = (lesson) => {
+    console.log('🔵 [LessonManager] Editing lesson:', lesson.id);
+    setEditingLesson(lesson);
+    setFormData({
+      title: lesson.title,
+      description: lesson.description || '',
+      videoFile: null, // Don't load existing video file
+    });
+    setShowForm(true);
+  };
 
-    try {
-      await deleteDoc(doc(db, 'lessons', lessonId));
-      loadLessons(selectedModule.id);
-      showToast({ type: 'success', message: 'Лекција обрисана' });
-    } catch (error) {
-      console.error('Error deleting lesson:', error);
-      showToast({ type: 'error', message: 'Грешка при брисању лекције' });
-    }
+  const handleDelete = async (lesson) => {
+    setConfirmModal({
+      isOpen: true,
+      title: 'Брисање лекције',
+      message: `Да ли сте сигурни да желите да обришете лекцију "${lesson.title}"?`,
+      onConfirm: async () => {
+        try {
+          console.log('🔵 [LessonManager] Deleting lesson:', lesson.id);
+
+          // Delete video from R2 if it exists
+          if (lesson.videoPath) {
+            console.log('🔵 [LessonManager] Deleting video from R2:', lesson.videoPath);
+            await deleteVideoFromR2(lesson.videoPath);
+          }
+
+          // Delete lesson document
+          await deleteDoc(doc(db, 'lessons', lesson.id));
+
+          console.log('✅ [LessonManager] Lesson deleted successfully');
+
+          loadLessons(selectedModule.id);
+          showToast({ type: 'success', message: 'Лекција обрисана' });
+          setConfirmModal({ isOpen: false, title: '', message: '', onConfirm: null });
+        } catch (error) {
+          console.error('❌ [LessonManager] Error deleting lesson:', error);
+          showToast({ type: 'error', message: 'Грешка при брисању лекције' });
+          setConfirmModal({ isOpen: false, title: '', message: '', onConfirm: null });
+        }
+      },
+    });
   };
 
   if (loading) {
@@ -243,6 +357,7 @@ export default function LessonManager() {
                     {!showForm && (
                       <button
                         onClick={() => {
+                          setEditingLesson(null);
                           setFormData({ title: '', description: '', videoFile: null });
                           setShowForm(true);
                         }}
@@ -256,7 +371,9 @@ export default function LessonManager() {
                     {/* Lesson Form */}
                     {showForm && (
                       <div className="bg-white rounded-2xl p-6 mb-6 border border-gray-200">
-                        <h4 className="text-lg font-bold mb-4 text-[#1A1A1A]">Нова лекција</h4>
+                        <h4 className="text-lg font-bold mb-4 text-[#1A1A1A]">
+                          {editingLesson ? 'Измени лекцију' : 'Нова лекција'}
+                        </h4>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
                           <div>
@@ -285,7 +402,9 @@ export default function LessonManager() {
                           </div>
 
                           <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Видео фајл</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              Видео фајл {editingLesson && '(опционо - остави празно да задржиш постојећи)'}
+                            </label>
                             <input
                               type="file"
                               accept="video/*"
@@ -311,6 +430,12 @@ export default function LessonManager() {
                                       {(formData.videoFile.size / 1024 / 1024).toFixed(2)} MB
                                     </p>
                                   </div>
+                                </div>
+                              ) : editingLesson ? (
+                                <div>
+                                  <FileVideo className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                                  <p className="font-medium text-gray-700">Кликните да промените видео</p>
+                                  <p className="text-xs text-gray-500">Тренутни видео ће бити задржан ако не отпремите нови</p>
                                 </div>
                               ) : (
                                 <div>
@@ -340,18 +465,18 @@ export default function LessonManager() {
                           <div className="flex gap-3 pt-4">
                             <button
                               type="submit"
-                              disabled={uploading || !formData.videoFile}
+                              disabled={uploading || (!editingLesson && !formData.videoFile)}
                               className="flex-1 bg-[#D62828] text-white py-3 rounded-2xl font-bold hover:bg-[#B91F1F] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                               {uploading ? (
                                 <>
                                   <Loader2 className="w-5 h-5 animate-spin" />
-                                  Upload...
+                                  {editingLesson ? 'Ажурирање...' : 'Upload...'}
                                 </>
                               ) : (
                                 <>
                                   <CheckCircle className="w-5 h-5" />
-                                  Додај лекцију
+                                  {editingLesson ? 'Сачувај измене' : 'Додај лекцију'}
                                 </>
                               )}
                             </button>
@@ -359,6 +484,7 @@ export default function LessonManager() {
                               type="button"
                               onClick={() => {
                                 setShowForm(false);
+                                setEditingLesson(null);
                                 setFormData({ title: '', description: '', videoFile: null });
                               }}
                               disabled={uploading}
@@ -393,12 +519,22 @@ export default function LessonManager() {
                                 )}
                               </div>
                             </div>
-                            <button
-                              onClick={() => handleDelete(lesson.id, lesson.title)}
-                              className="p-2 bg-red-100 hover:bg-red-200 rounded-xl transition-colors"
-                            >
-                              <Trash2 className="w-5 h-5 text-red-700" />
-                            </button>
+                            <div className="flex items-center gap-2">
+                              <button
+                                onClick={() => handleEdit(lesson)}
+                                className="p-2 bg-blue-100 hover:bg-blue-200 rounded-xl transition-colors"
+                                title="Измени лекцију"
+                              >
+                                <Edit className="w-5 h-5 text-blue-700" />
+                              </button>
+                              <button
+                                onClick={() => handleDelete(lesson)}
+                                className="p-2 bg-red-100 hover:bg-red-200 rounded-xl transition-colors"
+                                title="Обриши лекцију"
+                              >
+                                <Trash2 className="w-5 h-5 text-red-700" />
+                              </button>
+                            </div>
                           </div>
                         ))
                       )}
@@ -424,6 +560,16 @@ export default function LessonManager() {
           <p className="text-gray-500">Одаберите курс да бисте управљали лекцијама</p>
         </div>
       )}
+
+      {/* Confirm Modal */}
+      <ConfirmModal
+        isOpen={confirmModal.isOpen}
+        title={confirmModal.title}
+        message={confirmModal.message}
+        onConfirm={confirmModal.onConfirm}
+        onCancel={() => setConfirmModal({ isOpen: false, title: '', message: '', onConfirm: null })}
+        type="danger"
+      />
     </div>
   );
 }
