@@ -1,11 +1,118 @@
 import { X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { formatPrice } from '../../utils/helpers';
+import { addDoc, collection, query, where, getDocs } from 'firebase/firestore';
+import { db } from '../../services/firebase';
+import { useAuthStore } from '../../store/authStore';
+import { useState } from 'react';
 
-export default function PaymentModal({ course, paymentReference, onClose }) {
+export default function PaymentModal({
+  course,
+  packageData,
+  type = 'course',
+  paymentReference,
+  onClose
+}) {
+  const navigate = useNavigate();
+  const { user, userProfile } = useAuthStore();
+  const [isProcessing, setIsProcessing] = useState(false);
   const bankAccount = import.meta.env.VITE_BANK_ACCOUNT || '160-00000000000-00';
   const companyName = import.meta.env.VITE_COMPANY_NAME || 'Nauči Srpski';
   const companyAddress = import.meta.env.VITE_COMPANY_ADDRESS || 'Beograd, Srbija';
+
+  // Determine data based on type
+  const itemData = type === 'course' ? course : packageData;
+  const itemTitle = type === 'course'
+    ? `Уплата за курс: ${course?.title}`
+    : `Online настава: ${packageData?.name}`;
+  const itemPrice = type === 'course' ? course?.price : packageData?.price;
+
+  const handleConfirmPurchase = async () => {
+    if (!user || !userProfile) {
+      alert('Молимо вас да се пријавите');
+      return;
+    }
+
+    if (type !== 'online_package') {
+      return; // Only for online packages
+    }
+
+    if (isProcessing) {
+      return; // Prevent double submission
+    }
+
+    setIsProcessing(true);
+
+    try {
+      // Check if there's already a pending transaction for this package
+      const existingTxQuery = query(
+        collection(db, 'transactions'),
+        where('userId', '==', user.uid),
+        where('packageId', '==', packageData.id),
+        where('status', '==', 'pending')
+      );
+      const existingTxSnapshot = await getDocs(existingTxQuery);
+
+      if (!existingTxSnapshot.empty) {
+        // Navigate to existing transaction instead of creating new one
+        const existingTxId = existingTxSnapshot.docs[0].id;
+        onClose();
+        navigate(`/dashboard`);
+        // Scroll to transactions section after navigation
+        setTimeout(() => {
+          const transactionsSection = document.querySelector('h2:has-text("Трансакције")');
+          if (transactionsSection) {
+            transactionsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 100);
+        return;
+      }
+
+      // Create transaction
+      const transactionRef = await addDoc(collection(db, 'transactions'), {
+        userId: user.uid,
+        type: 'online_package',
+        packageId: packageData.id,
+        packageName: packageData.name, // Store package name directly
+        amount: packageData.price,
+        status: 'pending',
+        paymentReference: paymentReference,
+        created_at: new Date(),
+        user_email: userProfile.email,
+        userName: userProfile.ime || '',
+        userPhone: userProfile.telefon || ''
+      });
+
+      // Create pending enrollment
+      await addDoc(collection(db, 'online_enrollments'), {
+        userId: user.uid,
+        packageId: packageData.id,
+        transactionId: transactionRef.id,
+        status: 'pending',
+        remainingClasses: packageData.durationMonths * 4, // 4 classes per month
+        usedClasses: 0,
+        createdAt: new Date()
+      });
+
+      // Close modal and navigate to dashboard
+      onClose();
+      navigate(`/dashboard`);
+
+      // Scroll to transactions section after navigation
+      setTimeout(() => {
+        const transactionsHeading = document.querySelector('h2');
+        const allHeadings = Array.from(document.querySelectorAll('h2'));
+        const transactionsSection = allHeadings.find(h => h.textContent.includes('Трансакције'));
+        if (transactionsSection) {
+          transactionsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    } catch (error) {
+      console.error('Error creating transaction:', error);
+      alert('Грешка при креирању трансакције');
+      setIsProcessing(false);
+    }
+  };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn" onClick={onClose}>
@@ -38,7 +145,7 @@ export default function PaymentModal({ course, paymentReference, onClose }) {
               <div className="border-2 border-[#1A1A1A] p-2 rounded">
                 <label className="text-[10px] font-bold uppercase text-gray-500 block">сврха уплате</label>
                 <div className="font-semibold text-[#1A1A1A] text-sm mt-1">
-                  Уплата за курс: {course.title}
+                  {itemTitle}
                 </div>
               </div>
               <div className="border-2 border-[#1A1A1A] p-2 rounded">
@@ -61,7 +168,7 @@ export default function PaymentModal({ course, paymentReference, onClose }) {
               </div>
               <div className="border-2 border-[#1A1A1A] p-2 rounded">
                 <label className="text-[10px] font-bold uppercase text-gray-500 block">износ</label>
-                <div className="font-bold text-[#D62828] text-center mt-1 text-sm">{formatPrice(course.price)}</div>
+                <div className="font-bold text-[#D62828] text-center mt-1 text-sm">{formatPrice(itemPrice)}</div>
               </div>
               <div className="col-span-2 border-2 border-[#1A1A1A] p-2 rounded">
                 <label className="text-[10px] font-bold uppercase text-gray-500 block">рачун примаоца</label>
@@ -117,17 +224,38 @@ export default function PaymentModal({ course, paymentReference, onClose }) {
 
           {/* Action Buttons */}
           <div className="mt-5 flex gap-3 justify-center">
-            <Link to="/dashboard" onClick={onClose}>
-              <button className="bg-[#D62828] text-white px-10 py-3 rounded-full font-bold hover:bg-[#B91F1F] transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
-                Иди на Ваш Панел
-              </button>
-            </Link>
-            <button
-              onClick={onClose}
-              className="bg-gray-100 text-[#1A1A1A] px-10 py-3 rounded-full font-bold hover:bg-gray-200 transition-all"
-            >
-              Разумем
-            </button>
+            {type === 'online_package' ? (
+              <>
+                <button
+                  onClick={handleConfirmPurchase}
+                  disabled={isProcessing}
+                  className="bg-[#D62828] text-white px-8 py-3 rounded-full font-bold hover:bg-[#B91F1F] transition-all shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                >
+                  {isProcessing ? 'Обрада...' : 'Потврђујем да желим да купим'}
+                </button>
+                <button
+                  onClick={onClose}
+                  disabled={isProcessing}
+                  className="bg-gray-100 text-[#1A1A1A] px-8 py-3 rounded-full font-bold hover:bg-gray-200 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  Откажи
+                </button>
+              </>
+            ) : (
+              <>
+                <Link to="/dashboard" onClick={onClose}>
+                  <button className="bg-[#D62828] text-white px-10 py-3 rounded-full font-bold hover:bg-[#B91F1F] transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
+                    Иди на Ваш Панел
+                  </button>
+                </Link>
+                <button
+                  onClick={onClose}
+                  className="bg-gray-100 text-[#1A1A1A] px-10 py-3 rounded-full font-bold hover:bg-gray-200 transition-all"
+                >
+                  Разумем
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

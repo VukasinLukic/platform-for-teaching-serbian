@@ -30,16 +30,26 @@ export default function PaymentVerifier() {
 
           // Load user data
           let user = null;
-          if (transaction.user_id) {
-            const userDoc = await getDoc(doc(db, 'users', transaction.user_id));
+          const userId = transaction.userId || transaction.user_id;
+          if (userId) {
+            const userDoc = await getDoc(doc(db, 'users', userId));
             user = userDoc.exists() ? userDoc.data() : null;
           }
 
-          // Load course data
+          // Load course or package data based on type
           let course = null;
-          if (transaction.course_id) {
+          let package_data = null;
+          const type = transaction.type || 'course';
+
+          if (type === 'course' && transaction.course_id) {
             const courseDoc = await getDoc(doc(db, 'courses', transaction.course_id));
             course = courseDoc.exists() ? courseDoc.data() : null;
+          } else if (type === 'online_package') {
+            // For online packages, create package_data from transaction fields
+            package_data = {
+              name: transaction.packageName || 'Online пакет',
+              description: `Пакет ID: ${transaction.packageId || 'N/A'}`,
+            };
           }
 
           return {
@@ -47,6 +57,7 @@ export default function PaymentVerifier() {
             ...transaction,
             user,
             course,
+            package_data,
           };
         })
       );
@@ -222,13 +233,22 @@ export default function PaymentVerifier() {
                   )}
                 </div>
 
-                {/* Course Info */}
+                {/* Course/Package Info */}
                 <div className="bg-[#F7F7F7] rounded-2xl p-4">
                   <div className="flex items-center space-x-2 mb-3">
                     <BookOpen className="h-5 w-5 text-[#D62828]" />
-                    <h4 className="font-bold text-[#1A1A1A]">Курс</h4>
+                    <h4 className="font-bold text-[#1A1A1A]">
+                      {payment.type === 'online_package' ? 'Online Пакет' : 'Курс'}
+                    </h4>
                   </div>
-                  {payment.course ? (
+                  {payment.type === 'online_package' && payment.package_data ? (
+                    <div className="space-y-1 text-sm text-gray-600">
+                      <p className="font-semibold">{payment.package_data.name}</p>
+                      <p className="text-gray-500">
+                        {payment.package_data.duration || payment.package_data.description}
+                      </p>
+                    </div>
+                  ) : payment.course ? (
                     <div className="space-y-1 text-sm text-gray-600">
                       <p className="font-semibold">{payment.course.title}</p>
                       <p className="text-gray-500 line-clamp-2">
@@ -236,7 +256,9 @@ export default function PaymentVerifier() {
                       </p>
                     </div>
                   ) : (
-                    <p className="text-sm text-gray-500">Непознат курс</p>
+                    <p className="text-sm text-gray-500">
+                      {payment.type === 'online_package' ? 'Непознат пакет' : 'Непознат курс'}
+                    </p>
                   )}
                 </div>
               </div>

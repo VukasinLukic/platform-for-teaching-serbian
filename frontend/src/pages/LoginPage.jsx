@@ -135,9 +135,9 @@ export default function LoginPage() {
       {/* LEFT SIDE - Logo Only */}
       <div className="hidden lg:flex lg:w-1/2 bg-white relative overflow-hidden">
         {/* Content Container */}
-        <div className="relative z-10 flex flex-col items-center justify-center w-full px-12 animate-slide-in-left">
+        <div className="relative z-10 flex flex-col items-center justify-center w-full pl-20 pr-2 animate-slide-in-left -mt-16">
           {/* Logo */}
-          <div className="w-full max-w-2xl">
+          <div className="w-full max-w-3xl">
             <img
               src="/logoFULL.svg"
               alt="СРПСКИ У СРЦУ"
@@ -148,7 +148,7 @@ export default function LoginPage() {
       </div>
 
       {/* RIGHT SIDE - Clean & Sophisticated Form */}
-      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 lg:p-16 relative bg-white">
+      <div className="w-full lg:w-1/2 flex items-center justify-start p-8 lg:pl-8 lg:pr-16 relative bg-white">
         {/* Subtle Background Texture */}
         <div className="absolute inset-0 opacity-[0.02]">
           <div className="w-full h-full" style={{

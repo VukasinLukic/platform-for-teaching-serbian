@@ -1,15 +1,62 @@
+import { useState, useEffect, useRef } from 'react';
 import { Award, CheckCircle } from 'lucide-react';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import { Link } from 'react-router-dom';
 
 export default function AboutPage() {
+  const [counters, setCounters] = useState({
+    experience: 0,
+    students: 0,
+    success: 0,
+    rating: 0
+  });
+  const [hasAnimated, setHasAnimated] = useState(false);
+  const statsRef = useRef(null);
+
   const stats = [
-    { number: '15+', label: 'Година искуства' },
-    { number: '500+', label: 'Ученика' },
-    { number: '98%', label: 'Успешност' },
-    { number: '4.9', label: 'Просечна оцена' },
+    { key: 'experience', number: 15, suffix: '+', label: 'Година искуства' },
+    { key: 'students', number: 500, suffix: '+', label: 'Ученика' },
+    { key: 'success', number: 98, suffix: '%', label: 'Успешност' },
+    { key: 'rating', number: 4.9, suffix: '', label: 'Просечна оцена', decimals: true },
   ];
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !hasAnimated) {
+          setHasAnimated(true);
+
+          stats.forEach(stat => {
+            const duration = 2000;
+            const steps = 60;
+            const increment = stat.number / steps;
+            let current = 0;
+
+            const timer = setInterval(() => {
+              current += increment;
+              if (current >= stat.number) {
+                current = stat.number;
+                clearInterval(timer);
+              }
+
+              setCounters(prev => ({
+                ...prev,
+                [stat.key]: stat.decimals ? current.toFixed(1) : Math.floor(current)
+              }));
+            }, duration / steps);
+          });
+        }
+      },
+      { threshold: 0.3 }
+    );
+
+    if (statsRef.current) {
+      observer.observe(statsRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [hasAnimated]);
 
   return (
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
@@ -29,10 +76,12 @@ export default function AboutPage() {
           </p>
 
           {/* Stats Bar */}
-          <div className="bg-white rounded-[3rem] p-8 shadow-xl max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div ref={statsRef} className="bg-white rounded-[3rem] p-8 shadow-xl max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center border-r last:border-r-0 border-gray-100">
-                <div className="text-4xl font-black text-[#D62828] mb-1">{stat.number}</div>
+                <div className="text-4xl font-black text-[#D62828] mb-1">
+                  {counters[stat.key]}{stat.suffix}
+                </div>
                 <div className="text-sm text-gray-500 font-bold uppercase tracking-wider">{stat.label}</div>
               </div>
             ))}
@@ -46,26 +95,11 @@ export default function AboutPage() {
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             {/* Image Side */}
             <div className="relative order-2 lg:order-1">
-               {/* Decorative background */}
-               <div className="absolute top-0 left-0 w-full h-full bg-[#D62828] opacity-5 rounded-[40%_60%_70%_30%/40%_50%_60%_50%] transform rotate-6 scale-110 -z-10"></div>
                <img
                  src="/Nenaslovljeni dizajn (1).png"
                  alt="Професорка Марина"
-                 className="rounded-[3rem] shadow-2xl w-full object-cover h-[600px] transform -rotate-2 hover:rotate-0 transition-transform duration-500"
+                 className="w-full object-contain h-auto"
                />
-
-               {/* Badge */}
-               <div className="absolute bottom-10 -right-6 bg-white p-6 rounded-3xl shadow-xl max-w-xs">
-                 <div className="flex items-start gap-4">
-                   <div className="bg-[#D62828] p-3 rounded-full text-white">
-                     <Award size={24} />
-                   </div>
-                   <div>
-                     <div className="font-bold text-lg mb-1 text-[#1A1A1A]">Професорка српског језика</div>
-                     <div className="text-sm text-gray-500">15 година искуства</div>
-                   </div>
-                 </div>
-               </div>
             </div>
 
             {/* Text Side */}

@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
 import ScrollToTop from './components/ScrollToTop';
 import { FullScreenSpinner } from './components/ui/Spinner';
+import { Toaster } from 'react-hot-toast';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -21,6 +22,7 @@ import TermsPage from './pages/legal/TermsPage';
 
 import CoursesPage from './pages/CoursesPage';
 import FAQPage from './pages/FAQPage';
+import OnlineNastavaPage from './pages/OnlineNastavaPage';
 
 // Protected Route Component
 function ProtectedRoute({ children, adminOnly = false }) {
@@ -50,6 +52,7 @@ function App() {
 
   return (
     <BrowserRouter>
+      <Toaster />
       <ScrollToTop />
       <Routes>
         {/* Public Routes */}
@@ -60,6 +63,7 @@ function App() {
         <Route path="/course/:id" element={<CoursePage />} />
         <Route path="/online-class/:id" element={<OnlineClassPage />} />
         <Route path="/courses" element={<CoursesPage />} />
+        <Route path="/online-nastava" element={<OnlineNastavaPage />} />
         <Route path="/faq" element={<FAQPage />} />
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/about" element={<AboutPage />} />

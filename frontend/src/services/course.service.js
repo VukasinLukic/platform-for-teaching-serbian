@@ -25,10 +25,28 @@ export const getAllCourses = async () => {
       where('status', '==', 'active')
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+
+    // Fetch lesson count for each course
+    const coursesWithLessonCount = await Promise.all(
+      snapshot.docs.map(async (courseDoc) => {
+        const courseData = {
+          id: courseDoc.id,
+          ...courseDoc.data()
+        };
+
+        // Count lessons for this course by querying lessons collection
+        const lessonsQuery = query(
+          collection(db, 'lessons'),
+          where('courseId', '==', courseDoc.id)
+        );
+        const lessonsSnapshot = await getDocs(lessonsQuery);
+        courseData.lessonsCount = lessonsSnapshot.size;
+
+        return courseData;
+      })
+    );
+
+    return coursesWithLessonCount;
   } catch (error) {
     console.error('Error fetching courses:', error);
     throw error;

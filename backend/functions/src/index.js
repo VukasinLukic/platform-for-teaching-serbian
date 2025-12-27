@@ -38,4 +38,11 @@ export {
   sendPaymentConfirmationEmail,
   sendPaymentRejectionEmail,
   sendWelcomeEmail,
+  sendClassReminderEmail,
 } from './sendEmail.js';
+
+// Seed functions
+export { seedOnlinePackages } from './seedPackagesFunction.js';
+
+// User management functions
+export { deleteUserAuth, bulkDeleteUsersAuth } from './deleteUserAuth.js';

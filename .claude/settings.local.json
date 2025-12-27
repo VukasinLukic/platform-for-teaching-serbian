@@ -23,7 +23,15 @@
       "Bash(ls:*)",
       "Skill(frontend-design)",
       "Bash(find:*)",
-      "Bash(firebase functions:secrets:set:*)"
+      "Bash(firebase functions:secrets:set:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(node -e:*)",
+      "Bash(gcloud auth application-default login:*)",
+      "Bash(set GOOGLE_APPLICATION_CREDENTIALS=%USERPROFILE%.configfirebase*_application_default_credentials.json)",
+      "Bash(node seedPackagesADC.mjs:*)",
+      "Bash(node -c:*)",
+      "Bash(firebase functions:log:*)"
     ],
     "deny": [],
     "ask": []

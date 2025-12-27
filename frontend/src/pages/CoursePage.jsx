@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   Play, Book, CheckCircle, Lock, ChevronDown, ChevronRight,
-  Video, Award, Shield, Star, FileText, ArrowRight
+  Video, Award, Shield, Star, FileText, ArrowRight, Clock, Users, Download
 } from 'lucide-react';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { getCourseById, checkUserAccess, getCourseModulesWithLessons } from '../services/course.service';
@@ -10,7 +10,7 @@ import { useAuthStore } from '../store/authStore';
 import { formatPrice } from '../utils/helpers';
 import { db } from '../services/firebase';
 import Header from '../components/ui/Header';
-import Button from '../components/ui/Button';
+import Footer from '../components/ui/Footer';
 import PaymentModal from '../components/payment/PaymentModal';
 
 export default function CoursePage() {
@@ -32,56 +32,29 @@ export default function CoursePage() {
 
   const loadCourseData = async () => {
     try {
-      console.log('🔵 [CoursePage] Loading course data for ID:', id);
-
       const courseData = await getCourseById(id);
-      console.log('✅ [CoursePage] Course loaded:', courseData);
       setCourse(courseData);
 
-      // Check if user has access
       if (user) {
-        console.log('🔵 [CoursePage] Checking access for user:', user.uid);
         const access = await checkUserAccess(user.uid, id);
-        console.log('✅ [CoursePage] Access check result:', access);
         setHasAccess(access);
 
-        // Load modules and lessons if user has access
         if (access) {
-          console.log('🔵 [CoursePage] User has access, loading modules...');
           const modulesData = await getCourseModulesWithLessons(id);
-          console.log('✅ [CoursePage] Modules loaded:', modulesData);
-          console.log('📊 [CoursePage] Total modules:', modulesData.length);
-
-          if (modulesData.length === 0) {
-            console.warn('⚠️ [CoursePage] No modules found for this course!');
-          } else {
-            modulesData.forEach((module, idx) => {
-              console.log(`  📦 Module ${idx + 1}:`, module.title, `(${module.lessons.length} lessons)`);
-            });
-          }
-
           setModules(modulesData);
 
-          // Auto-select first lesson
           if (modulesData.length > 0 && modulesData[0].lessons.length > 0) {
-            console.log('🔵 [CoursePage] Setting current lesson to first lesson');
             setSelectedLesson(modulesData[0].lessons[0]);
           }
-        } else {
-          console.log('⚠️ [CoursePage] User does NOT have access to this course');
         }
-      } else {
-        console.log('⚠️ [CoursePage] No user logged in');
       }
     } catch (error) {
-      console.error('❌ [CoursePage] Error loading course data:', error);
-      console.error('❌ [CoursePage] Error details:', error.message);
+      console.error('Error loading course:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  // Generate unique payment reference
   const generatePaymentRef = (userId, courseId) => {
     const userPart = userId.substring(0, 6).toUpperCase();
     const coursePart = courseId.substring(0, 4).toUpperCase();
@@ -96,7 +69,6 @@ export default function CoursePage() {
     }
 
     try {
-      // Check if transaction already exists for this user + course
       const q = query(
         collection(db, 'transactions'),
         where('userId', '==', user.uid),
@@ -107,14 +79,10 @@ export default function CoursePage() {
       let paymentRef;
 
       if (!existingTransactions.empty) {
-        // Use existing payment reference
         const existingTransaction = existingTransactions.docs[0].data();
         paymentRef = existingTransaction.payment_ref;
-        console.log('🔵 [CoursePage] Using existing payment ref:', paymentRef);
       } else {
-        // Create new transaction with unique payment reference
         paymentRef = generatePaymentRef(user.uid, id);
-        console.log('🔵 [CoursePage] Creating new transaction with ref:', paymentRef);
 
         await addDoc(collection(db, 'transactions'), {
           userId: user.uid,
@@ -133,7 +101,7 @@ export default function CoursePage() {
       setPaymentReference(paymentRef);
       setShowPaymentModal(true);
     } catch (error) {
-      console.error('❌ [CoursePage] Error creating transaction:', error);
+      console.error('Error creating transaction:', error);
       alert('Грешка при креирању трансакције. Покушајте поново.');
     }
   };
@@ -144,7 +112,7 @@ export default function CoursePage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F7F7F7]">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#D62828] border-t-transparent"></div>
       </div>
     );
@@ -152,10 +120,10 @@ export default function CoursePage() {
 
   if (!course) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F7F7F7]">
+      <div className="min-h-screen flex items-center justify-center bg-white">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-[#1A1A1A]">Курс није пронађен</h2>
-          <Link to="/courses" className="text-[#D62828] hover:underline mt-4 block">
+          <h2 className="text-2xl font-bold text-[#1A1A1A] mb-4">Курс није пронађен</h2>
+          <Link to="/courses" className="text-[#D62828] hover:underline">
             Назад на курсеве
           </Link>
         </div>
@@ -163,57 +131,70 @@ export default function CoursePage() {
     );
   }
 
-  // If user has access, show the learning interface
+  // Learning Interface - When user has access
   if (hasAccess) {
     return (
-      <div className="min-h-screen bg-[#F7F7F7] font-sans text-[#1A1A1A]">
+      <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
         <Header />
 
-        <div className="max-w-[1800px] mx-auto px-6 py-8">
-          <div className="grid lg:grid-cols-[300px_1fr] gap-6">
-            {/* Left Sidebar - Modules and Lessons */}
-            <div className="lg:h-[calc(100vh-140px)] lg:sticky lg:top-24 overflow-y-auto">
-              <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
-                <h2 className="text-xl font-bold mb-4 text-[#1A1A1A]">{course.title}</h2>
-                <p className="text-sm text-gray-600 mb-6">
-                  {modules.length} {modules.length === 1 ? 'модул' : 'модула'}
-                </p>
+        <div className="max-w-[1600px] mx-auto px-6 py-8">
+          <div className="grid lg:grid-cols-[320px_1fr] gap-8">
+            {/* Sidebar - Course Content */}
+            <div className="lg:h-[calc(100vh-120px)] lg:sticky lg:top-24">
+              <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-6 shadow-sm border border-gray-100 h-full overflow-y-auto">
+                <div className="mb-6">
+                  <h2 className="text-xl font-bold text-[#1A1A1A] mb-2">{course.title}</h2>
+                  <p className="text-sm text-gray-600">
+                    {modules.length} {modules.length === 1 ? 'модул' : 'модула'} • {
+                      modules.reduce((acc, m) => acc + (m.lessons?.length || 0), 0)
+                    } лекција
+                  </p>
+                </div>
 
-                <div className="space-y-2">
+                <div className="space-y-3">
                   {modules.map((module, moduleIndex) => (
                     <div key={module.id}>
                       <button
                         onClick={() => setActiveModuleIndex(activeModuleIndex === moduleIndex ? -1 : moduleIndex)}
-                        className="w-full flex items-center justify-between p-3 rounded-2xl hover:bg-[#F7F7F7] transition text-left"
+                        className="w-full flex items-center justify-between p-4 rounded-2xl bg-white hover:bg-gray-50 transition border border-gray-100"
                       >
-                        <div className="flex items-center gap-3">
-                          <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                            activeModuleIndex === moduleIndex ? 'bg-[#D62828] text-white' : 'bg-[#F7F7F7] text-gray-600'
+                        <div className="flex items-center gap-3 flex-1 text-left">
+                          <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                            activeModuleIndex === moduleIndex ? 'bg-[#D62828] text-white' : 'bg-gray-100 text-gray-600'
                           }`}>
-                            <Book className="w-4 h-4" />
+                            <Book className="w-5 h-5" />
                           </div>
-                          <div>
-                            <p className="text-sm font-bold text-[#1A1A1A]">{module.title}</p>
+                          <div className="flex-1 min-w-0">
+                            <p className="font-bold text-[#1A1A1A] truncate">{module.title}</p>
                             <p className="text-xs text-gray-500">{module.lessons?.length || 0} лекција</p>
                           </div>
                         </div>
-                        <ChevronDown className={`w-4 h-4 text-gray-400 transition ${activeModuleIndex === moduleIndex ? 'rotate-180' : ''}`} />
+                        <ChevronDown className={`w-5 h-5 text-gray-400 transition flex-shrink-0 ${activeModuleIndex === moduleIndex ? 'rotate-180' : ''}`} />
                       </button>
 
-                      {activeModuleIndex === moduleIndex && (
-                        <div className="ml-11 mt-2 space-y-1">
-                          {module.lessons?.map((lesson) => (
+                      {activeModuleIndex === moduleIndex && module.lessons && (
+                        <div className="mt-2 ml-4 space-y-1">
+                          {module.lessons.map((lesson, lessonIndex) => (
                             <button
                               key={lesson.id}
                               onClick={() => handleLessonSelect(lesson)}
-                              className={`w-full flex items-center gap-2 p-2 rounded-xl text-left transition ${
+                              className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition ${
                                 selectedLesson?.id === lesson.id
-                                  ? 'bg-[#D62828]/10 text-[#D62828]'
-                                  : 'hover:bg-[#F7F7F7] text-gray-700'
+                                  ? 'bg-[#D62828] text-white'
+                                  : 'hover:bg-gray-50 text-gray-700 border border-gray-100 bg-white'
                               }`}
                             >
-                              <Play className={`w-3 h-3 ${selectedLesson?.id === lesson.id ? 'fill-[#D62828]' : ''}`} />
-                              <span className="text-sm font-medium truncate">{lesson.title}</span>
+                              <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                                selectedLesson?.id === lesson.id ? 'bg-white/20' : 'bg-gray-100'
+                              }`}>
+                                <Play className={`w-4 h-4 ${selectedLesson?.id === lesson.id ? 'text-white fill-white' : 'text-[#D62828] fill-[#D62828]'}`} />
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <span className="text-sm font-medium block truncate">{lesson.title}</span>
+                                <span className={`text-xs ${selectedLesson?.id === lesson.id ? 'text-white/70' : 'text-gray-500'}`}>
+                                  Лекција {lessonIndex + 1}
+                                </span>
+                              </div>
                             </button>
                           ))}
                         </div>
@@ -224,46 +205,47 @@ export default function CoursePage() {
               </div>
             </div>
 
-            {/* Main Content - Video Player */}
+            {/* Main Content Area */}
             <div className="space-y-6">
               {selectedLesson ? (
                 <>
                   {/* Video Player */}
-                  <div className="bg-[#1A1A1A] rounded-3xl overflow-hidden shadow-lg aspect-video">
+                  <div className="bg-[#1A1A1A] rounded-3xl overflow-hidden shadow-xl aspect-video">
                     {selectedLesson.videoUrl ? (
                       <video
                         key={selectedLesson.id}
                         controls
                         className="w-full h-full"
                         src={selectedLesson.videoUrl}
+                        controlsList="nodownload"
                       >
                         Ваш претраживач не подржава видео.
                       </video>
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-white">
                         <div className="text-center">
-                          <Video className="w-16 h-16 mx-auto mb-4 opacity-50" />
-                          <p className="text-lg">Видео није доступан</p>
+                          <Video className="w-20 h-20 mx-auto mb-4 opacity-30" />
+                          <p className="text-lg opacity-70">Видео тренутно није доступан</p>
                         </div>
                       </div>
                     )}
                   </div>
 
-                  {/* Lesson Info */}
+                  {/* Lesson Details */}
                   <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
                     <h1 className="text-3xl font-bold mb-4 text-[#1A1A1A]">{selectedLesson.title}</h1>
                     {selectedLesson.description && (
-                      <p className="text-gray-600 leading-relaxed">{selectedLesson.description}</p>
+                      <p className="text-gray-600 text-lg leading-relaxed">{selectedLesson.description}</p>
                     )}
                   </div>
                 </>
               ) : (
-                <div className="bg-white rounded-3xl p-12 text-center shadow-sm border border-gray-100">
-                  <div className="bg-[#F7F7F7] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
-                    <Play className="w-10 h-10 text-gray-400" />
+                <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-16 text-center border border-gray-100">
+                  <div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
+                    <Play className="w-12 h-12 text-[#D62828]" />
                   </div>
-                  <h3 className="text-xl font-bold mb-2 text-[#1A1A1A]">Одаберите лекцију</h3>
-                  <p className="text-gray-500">Изаберите лекцију из левог менија да бисте започели учење</p>
+                  <h3 className="text-2xl font-bold mb-3 text-[#1A1A1A]">Започните учење</h3>
+                  <p className="text-gray-600 text-lg">Изаберите лекцију из менија да бисте почели</p>
                 </div>
               )}
             </div>
@@ -273,107 +255,154 @@ export default function CoursePage() {
     );
   }
 
-  // If user doesn't have access, show the purchase page
+  // Course Purchase Page
   return (
-    <div className="min-h-screen bg-[#F7F7F7] font-sans text-[#1A1A1A]">
+    <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />
 
-      {/* HERO SECTION */}
-      <section className="bg-gradient-to-br from-[#1A1A1A] to-[#2A2A2A] text-white pt-16 pb-32 relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#D62828] opacity-10 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#F2C94C] opacity-10 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/2"></div>
+      {/* Hero Section - Red Background */}
+      <section className="pt-24 pb-20 px-6 bg-gradient-to-br from-[#D62828] to-[#B91F1F] relative overflow-hidden">
+        {/* Decorative Elements */}
+        <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-white opacity-5 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3"></div>
+        <div className="absolute bottom-0 left-0 w-[500px] h-[500px] bg-black opacity-10 rounded-full blur-3xl -translate-x-1/3 translate-y-1/3"></div>
 
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
+        <div className="max-w-7xl mx-auto relative z-10">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
+            {/* Left - Course Info */}
             <div className="space-y-8">
-              <div className="inline-flex items-center gap-2 bg-[#F2C94C] text-[#1A1A1A] px-4 py-2 rounded-full text-sm font-bold shadow-lg">
-                <Star className="w-4 h-4 fill-[#1A1A1A]" /> Најпопуларнији курс
+              <div className="inline-flex items-center gap-2 bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-bold">
+                <Star className="w-4 h-4 fill-white" /> Препоручено
               </div>
 
-              <h1 className="text-4xl md:text-6xl font-bold leading-tight">{course.title}</h1>
-              <p className="text-xl text-white/80 leading-relaxed">{course.description}</p>
+              <h1 className="text-5xl lg:text-6xl font-bold leading-tight text-white">
+                {course.title}
+              </h1>
 
-              <div className="flex items-end gap-6">
-                <div className="text-5xl font-bold text-white">{formatPrice(course.price)}</div>
+              <p className="text-xl text-white/90 leading-relaxed">
+                {course.description}
+              </p>
+
+              <div className="flex items-center gap-8 pt-4">
+                <div>
+                  <div className="text-5xl font-bold text-white">{formatPrice(course.price)}</div>
+                  <div className="text-sm text-white/70 mt-1">Једнократна уплата</div>
+                </div>
               </div>
 
-              <div className="pt-4">
+              <div className="pt-6">
                 <button
                   onClick={handlePurchaseClick}
-                  className="bg-[#D62828] text-white px-10 py-5 rounded-full text-lg font-bold hover:bg-[#B91F1F] transition-all shadow-xl hover:-translate-y-1 flex items-center gap-3"
+                  className="bg-white text-[#D62828] px-12 py-5 rounded-full text-lg font-bold hover:bg-gray-100 transition-all shadow-2xl hover:shadow-white/20 hover:scale-105 transform flex items-center gap-3"
                 >
-                  {user ? 'Купи Овај Курс' : 'Пријави се и Купи'} <ArrowRight className="w-6 h-6" />
+                  {user ? 'Купи курс сада' : 'Пријави се и купи'}
+                  <ArrowRight className="w-6 h-6" />
                 </button>
-                <div className="mt-4 flex items-center gap-6 text-sm text-white/60 font-medium">
-                  <span className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-[#F2C94C]" /> Једнократно плаћање
-                  </span>
-                  <span className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-[#F2C94C]" /> 7 дана гаранција
-                  </span>
+              </div>
+
+              <div className="flex flex-wrap gap-4 pt-4">
+                <div className="flex items-center gap-2 text-sm text-white/90">
+                  <CheckCircle className="w-5 h-5 text-white" />
+                  <span className="font-medium">Трајан приступ</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-white/90">
+                  <CheckCircle className="w-5 h-5 text-white" />
+                  <span className="font-medium">7 дана гаранција</span>
+                </div>
+                <div className="flex items-center gap-2 text-sm text-white/90">
+                  <CheckCircle className="w-5 h-5 text-white" />
+                  <span className="font-medium">Сертификат</span>
                 </div>
               </div>
             </div>
 
-            <div className="relative hidden lg:block">
-              <div className="relative z-10 transform hover:scale-105 transition-transform duration-500">
-                <div className="bg-white rounded-[3rem] p-4 shadow-2xl">
-                  <div className="bg-[#F7F7F7] rounded-[2.5rem] overflow-hidden h-[500px] flex items-center justify-center">
-                    {course.thumbnail_url ? (
-                      <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" />
-                    ) : (
-                      <div className="text-center">
-                        <div className="w-32 h-32 bg-white rounded-full flex items-center justify-center mx-auto shadow-xl mb-6">
-                          <Play className="w-12 h-12 text-[#D62828] fill-[#D62828] ml-2" />
-                        </div>
-                        <div className="bg-white px-6 py-3 rounded-2xl inline-block shadow-lg">
-                          <span className="font-bold text-[#1A1A1A]">Преглед Курса</span>
-                        </div>
-                      </div>
-                    )}
+            {/* Right - Course Thumbnail */}
+            <div className="relative">
+              <div className="bg-white/10 backdrop-blur-sm rounded-3xl overflow-hidden shadow-2xl border-2 border-white/20">
+                {course.thumbnail_url ? (
+                  <img
+                    src={course.thumbnail_url}
+                    alt={course.title}
+                    className="w-full h-[500px] object-cover"
+                  />
+                ) : (
+                  <div className="w-full h-[500px] bg-white/5 flex items-center justify-center">
+                    <div className="text-center text-white">
+                      <Book className="w-32 h-32 mx-auto mb-6 opacity-30" />
+                      <p className="text-2xl font-bold opacity-50">Курс</p>
+                    </div>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <div className="max-w-7xl mx-auto px-6 py-16 -mt-20 relative z-20">
-        <div className="bg-[#1A1A1A] text-white rounded-[3rem] p-10 shadow-xl">
-          <h3 className="text-2xl font-bold mb-8 flex items-center gap-3">
-            <Award className="text-[#F2C94C]" /> Шта добијате?
-          </h3>
+      {/* What You Get Section */}
+      <section className="py-20 px-6 bg-white relative overflow-hidden">
+        {/* Decorative background circles */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute top-20 left-10 w-96 h-96 bg-[#D62828] rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-[#D62828] rounded-full blur-3xl"></div>
+        </div>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            {[
-              'Неограничен приступ 24/7',
-              'Сертификат по завршетку',
-              'Видео материјали HD квалитета',
-              'PDF материјали за учење',
-              'Подршка професорке',
-              'Приступ заједници'
-            ].map((item, i) => (
-              <div key={i} className="flex items-center gap-3 text-white/90 font-medium">
-                <div className="bg-[#F2C94C] rounded-full p-1">
-                  <CheckCircle className="w-4 h-4 text-[#1A1A1A]" />
-                </div>
-                {item}
-              </div>
-            ))}
+        <div className="max-w-7xl mx-auto relative z-10">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-4">Шта добијате у курсу?</h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">Комплетан пакет за успешно учење српског језика</p>
           </div>
 
-          <div className="mt-10 text-center">
-            <button
-              onClick={handlePurchaseClick}
-              className="bg-[#D62828] text-white px-10 py-4 rounded-full font-bold hover:bg-[#B91F1F] transition shadow-lg"
-            >
-              {user ? 'Купи Курс' : 'Пријави се'}
-            </button>
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              { icon: Video, title: 'HD видео лекције', desc: 'Квалитетни видео материјали у HD резолуцији', gradient: 'from-[#D62828] to-[#B91F1F]' },
+              { icon: Download, title: 'PDF материјали', desc: 'Преузмите и учите офлајн било када', gradient: 'from-[#1A1A1A] to-gray-800' },
+              { icon: Clock, title: 'Трајан приступ', desc: '24/7 приступ свим материјалима', gradient: 'from-[#D62828] to-[#B91F1F]' },
+              { icon: Award, title: 'Сертификат', desc: 'Званични сертификат по завршетку', gradient: 'from-[#1A1A1A] to-gray-800' },
+              { icon: Users, title: 'Подршка професорке', desc: 'Директна помоћ и одговори на питања', gradient: 'from-[#D62828] to-[#B91F1F]' },
+              { icon: Shield, title: '7 дана гаранција', desc: 'Повраћај новца без питања', gradient: 'from-[#1A1A1A] to-gray-800' }
+            ].map((item, i) => {
+              const Icon = item.icon;
+              return (
+                <div
+                  key={i}
+                  className="group bg-white p-8 rounded-3xl border border-gray-100 hover:shadow-2xl hover:border-[#D62828]/20 transition-all hover:-translate-y-2 relative overflow-hidden"
+                >
+                  {/* Hover gradient overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-[#D62828]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity rounded-3xl"></div>
+
+                  <div className="relative">
+                    <div className={`w-16 h-16 bg-gradient-to-br ${item.gradient} rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg`}>
+                      <Icon className="w-8 h-8 text-white" />
+                    </div>
+                    <h3 className="text-xl font-bold text-[#1A1A1A] mb-3 group-hover:text-[#D62828] transition-colors">{item.title}</h3>
+                    <p className="text-gray-600 leading-relaxed">{item.desc}</p>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          {/* CTA Section */}
+          <div className="mt-16 bg-gradient-to-br from-[#1A1A1A] to-gray-800 rounded-3xl p-12 text-center relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-64 h-64 bg-[#D62828] opacity-10 rounded-full blur-3xl translate-x-1/3 -translate-y-1/3"></div>
+            <div className="relative z-10">
+              <h3 className="text-3xl font-bold text-white mb-4">Спремни да почнете?</h3>
+              <p className="text-white/80 text-lg mb-8 max-w-2xl mx-auto">
+                Придружите се стотинама задовољних ученика који су већ уписали курс
+              </p>
+              <button
+                onClick={handlePurchaseClick}
+                className="bg-[#D62828] text-white px-12 py-5 rounded-full text-lg font-bold hover:bg-[#B91F1F] transition-all shadow-2xl hover:scale-105 transform inline-flex items-center gap-3"
+              >
+                {user ? 'Купи курс сада' : 'Пријави се и купи'}
+                <ArrowRight className="w-6 h-6" />
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
+
+      <Footer />
 
       {/* Payment Modal */}
       {showPaymentModal && (

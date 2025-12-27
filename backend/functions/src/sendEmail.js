@@ -1,5 +1,5 @@
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
-import * as functions from 'firebase-functions';
+import { defineString } from 'firebase-functions/params';
 import nodemailer from 'nodemailer';
 
 /**
@@ -8,12 +8,14 @@ import nodemailer from 'nodemailer';
  * 100% free (up to 500 emails/day)
  */
 
+// Define environment parameters (new method for Firebase Functions v7+)
+const gmailUser = defineString('GMAIL_USER', { default: 'vukasin4sports@gmail.com' });
+const gmailPassword = defineString('GMAIL_PASSWORD', { default: 'ltlf ziag mpma chat' });
+
 // Get transporter (created on-demand to avoid issues)
 const getTransporter = () => {
-  // Get credentials from Firebase config (legacy method, still works until 2026)
-  const config = functions.config();
-  const userEmail = config.gmail?.user || process.env.GMAIL_USER;
-  const userPassword = config.gmail?.password || process.env.GMAIL_APP_PASSWORD;
+  const userEmail = gmailUser.value();
+  const userPassword = gmailPassword.value();
 
   if (!userEmail || !userPassword) {
     console.error('Missing Gmail credentials!');
@@ -212,6 +214,88 @@ const emailTemplates = {
     `,
   }),
 
+  classReminder: ({ userName, userEmail, className, classDate, classTime, meetLink, groupName }) => ({
+    subject: `⏰ Подсетник: Час почиње за 1 сат - ${className}`,
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: 'Inter', Arial, sans-serif; background-color: #F5F3EF; padding: 20px; }
+          .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 24px; padding: 40px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+          .header { background: linear-gradient(135deg, #FF6B35, #FF8C42); color: white; padding: 30px; border-radius: 16px; text-align: center; margin-bottom: 30px; }
+          .header h1 { margin: 0; font-size: 28px; }
+          .clock-icon { font-size: 64px; margin-bottom: 10px; }
+          .content { color: #333; line-height: 1.6; }
+          .info-box { background: #FFF3E0; padding: 25px; border-radius: 16px; margin: 20px 0; border: 2px solid #FFB84D; }
+          .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #FFE0B2; }
+          .info-row:last-child { border-bottom: none; }
+          .label { font-weight: bold; color: #E65100; }
+          .value { color: #555; font-weight: 600; }
+          .button { display: inline-block; background: #4CAF50; color: white; padding: 18px 45px; border-radius: 30px; text-decoration: none; font-weight: bold; margin: 25px 0; font-size: 16px; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3); }
+          .button:hover { background: #45A049; }
+          .warning-box { background: #FFF9C4; padding: 20px; border-radius: 12px; border-left: 4px solid #FBC02D; margin: 20px 0; }
+          .footer { text-align: center; margin-top: 30px; color: #999; font-size: 12px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="clock-icon">⏰</div>
+            <h1>Час почиње ускоро!</h1>
+          </div>
+          <div class="content">
+            <p>Поштовани/а <strong>${userName}</strong>,</p>
+            <p style="font-size: 18px; color: #E65100;"><strong>Ваш час почиње за 1 сат!</strong></p>
+
+            <div class="info-box">
+              <div class="info-row">
+                <span class="label">📚 Назив часа:</span>
+                <span class="value">${className}</span>
+              </div>
+              ${groupName ? `<div class="info-row">
+                <span class="label">👥 Група:</span>
+                <span class="value">${groupName}</span>
+              </div>` : ''}
+              <div class="info-row">
+                <span class="label">📅 Датум:</span>
+                <span class="value">${classDate}</span>
+              </div>
+              <div class="info-row">
+                <span class="label">🕐 Време:</span>
+                <span class="value">${classTime}</span>
+              </div>
+            </div>
+
+            <div class="warning-box">
+              <p style="margin: 0;"><strong>💡 Савети:</strong></p>
+              <ul style="margin: 10px 0;">
+                <li>Припремите бележницу и оловку</li>
+                <li>Проверите да ли вам ради микрофон и камера</li>
+                <li>Пронађите мирно место за час</li>
+                <li>Придружите се неколико минута раније</li>
+              </ul>
+            </div>
+
+            <p style="margin-top: 30px; text-align: center; font-size: 16px;">Кликните на дугме испод да се придружите часу:</p>
+
+            <center>
+              <a href="${meetLink || 'https://naucisprski.com/dashboard'}" class="button">🎥 Придружи се часу</a>
+            </center>
+
+            <p style="margin-top: 40px; text-align: center;">Видимо се на часу! 📚</p>
+            <p style="text-align: center;"><strong>Професорка Марина Лукић</strong></p>
+          </div>
+          <div class="footer">
+            <p>Ако имате техничких проблема, контактирајте нас на kontakt@naucisprski.com</p>
+            <p>&copy; 2025 Nauči Srpski. Sva prava zadržana.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+  }),
+
   welcome: ({ userName, userEmail }) => ({
     subject: '🎉 Dobrodošli na Nauči Srpski platformu!',
     html: `
@@ -293,69 +377,99 @@ const emailTemplates = {
 
 // Cloud Function: Send Contact Form Email
 export const sendContactFormEmail = onCall({ cors: true }, async (request) => {
+  console.log('=== sendContactFormEmail called ===');
+  console.log('Request data:', JSON.stringify(request.data, null, 2));
+
   const { name, email, phone, message } = request.data;
 
   if (!name || !email || !message) {
+    console.error('Missing required fields:', { name: !!name, email: !!email, message: !!message });
     throw new HttpsError('invalid-argument', 'Missing required fields');
   }
 
   try {
+    console.log('Creating transporter...');
     const transporter = getTransporter();
+
+    console.log('Generating email template...');
     const template = emailTemplates.contactForm({ name, email, phone, message });
-    const config = functions.config();
-    const gmailUser = config.gmail?.user || 'vukasin4sports@gmail.com';
-    const contactEmail = process.env.CONTACT_EMAIL || gmailUser;
+
+    const userEmail = gmailUser.value();
+    const contactEmail = process.env.CONTACT_EMAIL || userEmail;
+
+    console.log('Sending email from:', userEmail, 'to:', contactEmail);
 
     await transporter.sendMail({
-      from: `"Nauči Srpski - Kontakt Forma" <${gmailUser}>`,
+      from: `"Nauči Srpski - Kontakt Forma" <${userEmail}>`,
       to: contactEmail,
       replyTo: email,
       subject: template.subject,
       html: template.html,
     });
 
+    console.log('Email sent successfully!');
     return { success: true, message: 'Email successfully sent' };
   } catch (error) {
     console.error('Error sending contact form email:', error);
-    throw new HttpsError('internal', 'Failed to send email');
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
+    throw new HttpsError('internal', `Failed to send email: ${error.message}`);
   }
 });
 
 // Cloud Function: Send Payment Confirmation Email
 export const sendPaymentConfirmationEmail = onCall({ cors: true }, async (request) => {
+  console.log('=== sendPaymentConfirmationEmail called ===');
+  console.log('Request data:', JSON.stringify(request.data, null, 2));
+
   const { userName, userEmail, courseTitle, transactionId } = request.data;
 
   if (!userName || !userEmail || !courseTitle || !transactionId) {
+    console.error('Missing required fields:', { userName: !!userName, userEmail: !!userEmail, courseTitle: !!courseTitle, transactionId: !!transactionId });
     throw new HttpsError('invalid-argument', 'Missing required fields');
   }
 
   try {
+    console.log('Creating transporter...');
     const transporter = getTransporter();
+
+    console.log('Generating email template...');
     const template = emailTemplates.paymentConfirmation({
       userName,
       userEmail,
       courseTitle,
       transactionId,
     });
-    const config = functions.config();
-    const gmailUser = config.gmail?.user || 'vukasin4sports@gmail.com';
+
+    const senderEmail = gmailUser.value();
+    console.log('Sending email from:', senderEmail, 'to:', userEmail);
 
     await transporter.sendMail({
-      from: `"Nauči Srpski" <${gmailUser}>`,
+      from: `"Nauči Srpski" <${senderEmail}>`,
       to: userEmail,
       subject: template.subject,
       html: template.html,
     });
 
+    console.log('Email sent successfully!');
     return { success: true, message: 'Email successfully sent' };
   } catch (error) {
     console.error('Error sending payment confirmation email:', error);
-    throw new HttpsError('internal', 'Failed to send email');
+    console.error('Error details:', {
+      message: error.message,
+      code: error.code,
+      stack: error.stack
+    });
+    throw new HttpsError('internal', `Failed to send email: ${error.message}`);
   }
 });
 
 // Cloud Function: Send Payment Rejection Email
 export const sendPaymentRejectionEmail = onCall({ cors: true }, async (request) => {
+  console.log('=== sendPaymentRejectionEmail called ===');
   const { userName, userEmail, courseTitle, reason } = request.data;
 
   if (!userName || !userEmail || !courseTitle) {
@@ -370,25 +484,26 @@ export const sendPaymentRejectionEmail = onCall({ cors: true }, async (request) 
       courseTitle,
       reason,
     });
-    const config = functions.config();
-    const gmailUser = config.gmail?.user || 'vukasin4sports@gmail.com';
+    const senderEmail = gmailUser.value();
 
     await transporter.sendMail({
-      from: `"Nauči Srpski" <${gmailUser}>`,
+      from: `"Nauči Srpski" <${senderEmail}>`,
       to: userEmail,
       subject: template.subject,
       html: template.html,
     });
 
+    console.log('Email sent successfully!');
     return { success: true, message: 'Email successfully sent' };
   } catch (error) {
     console.error('Error sending payment rejection email:', error);
-    throw new HttpsError('internal', 'Failed to send email');
+    throw new HttpsError('internal', `Failed to send email: ${error.message}`);
   }
 });
 
 // Cloud Function: Send Welcome Email
 export const sendWelcomeEmail = onCall({ cors: true }, async (request) => {
+  console.log('=== sendWelcomeEmail called ===');
   const { userName, userEmail } = request.data;
 
   if (!userName || !userEmail) {
@@ -398,19 +513,56 @@ export const sendWelcomeEmail = onCall({ cors: true }, async (request) => {
   try {
     const transporter = getTransporter();
     const template = emailTemplates.welcome({ userName, userEmail });
-    const config = functions.config();
-    const gmailUser = config.gmail?.user || 'vukasin4sports@gmail.com';
+    const senderEmail = gmailUser.value();
 
     await transporter.sendMail({
-      from: `"Nauči Srpski" <${gmailUser}>`,
+      from: `"Nauči Srpski" <${senderEmail}>`,
       to: userEmail,
       subject: template.subject,
       html: template.html,
     });
 
+    console.log('Email sent successfully!');
     return { success: true, message: 'Email successfully sent' };
   } catch (error) {
     console.error('Error sending welcome email:', error);
-    throw new HttpsError('internal', 'Failed to send email');
+    throw new HttpsError('internal', `Failed to send email: ${error.message}`);
+  }
+});
+
+// Cloud Function: Send Class Reminder Email (1 hour before class)
+export const sendClassReminderEmail = onCall({ cors: true }, async (request) => {
+  console.log('=== sendClassReminderEmail called ===');
+  const { userName, userEmail, className, classDate, classTime, meetLink, groupName } = request.data;
+
+  if (!userName || !userEmail || !className || !classDate || !classTime) {
+    throw new HttpsError('invalid-argument', 'Missing required fields');
+  }
+
+  try {
+    const transporter = getTransporter();
+    const template = emailTemplates.classReminder({
+      userName,
+      userEmail,
+      className,
+      classDate,
+      classTime,
+      meetLink,
+      groupName,
+    });
+    const senderEmail = gmailUser.value();
+
+    await transporter.sendMail({
+      from: `"Nauči Srpski - Online Časovi" <${senderEmail}>`,
+      to: userEmail,
+      subject: template.subject,
+      html: template.html,
+    });
+
+    console.log('Class reminder email sent successfully!');
+    return { success: true, message: 'Class reminder email successfully sent' };
+  } catch (error) {
+    console.error('Error sending class reminder email:', error);
+    throw new HttpsError('internal', `Failed to send email: ${error.message}`);
   }
 });

@@ -112,6 +112,74 @@ export default function CoursesPage() {
         )}
       </div>
 
+      {/* How It Works Section */}
+      <div className="bg-gradient-to-br from-[#F7F7F7] to-white py-20">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
+              Како функционише?
+            </h2>
+            <p className="text-xl text-gray-600">
+              Једноставан процес од уписа до учења
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {/* Step 1 */}
+            <div className="text-center group">
+              <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <span className="text-3xl font-bold text-white">1</span>
+              </div>
+              <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">
+                Изаберите курс
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Погледајте наше курсеве и изаберите онај који вам одговара
+              </p>
+            </div>
+
+            {/* Step 2 */}
+            <div className="text-center group">
+              <div className="bg-gradient-to-br from-[#F77F00] to-[#DC6B00] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <span className="text-3xl font-bold text-white">2</span>
+              </div>
+              <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">
+                Извршите уплату
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Кликните на "Купи курс" и пратите инструкције за уплату
+              </p>
+            </div>
+
+            {/* Step 3 */}
+            <div className="text-center group">
+              <div className="bg-gradient-to-br from-[#F2C94C] to-[#D4A927] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <span className="text-3xl font-bold text-white">3</span>
+              </div>
+              <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">
+                Потврда уплате
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Контактираћемо вас email-ом у року од 24h
+              </p>
+            </div>
+
+            {/* Step 4 */}
+            <div className="text-center group">
+              <div className="bg-gradient-to-br from-[#27AE60] to-[#1E8449] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+                <span className="text-3xl font-bold text-white">4</span>
+              </div>
+              <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">
+                Почните да учите
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Приступите курсу и започните своје учење
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <Footer />
     </div>
   );

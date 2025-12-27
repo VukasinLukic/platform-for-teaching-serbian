@@ -99,10 +99,46 @@ export const getUserTransactions = async (userId) => {
       index === self.findIndex((d) => d.id === doc.id)
     );
 
-    return uniqueDocs.map(doc => ({
-      id: doc.id,
-      ...doc.data()
-    }));
+    // Load course and package data for each transaction
+    const transactionsWithData = await Promise.all(
+      uniqueDocs.map(async (docSnap) => {
+        const txData = docSnap.data();
+        const type = txData.type || 'course';
+
+        let courseName = null;
+        let course = null;
+
+        // Load course or package data based on type
+        if (type === 'course' && txData.course_id) {
+          const courseDoc = await getDoc(doc(db, 'courses', txData.course_id));
+          if (courseDoc.exists()) {
+            course = courseDoc.data();
+            courseName = course.title;
+          }
+        } else if (type === 'online_package') {
+          // For online packages, use the packageName field stored in the transaction
+          courseName = txData.packageName || 'Online пакет';
+        }
+
+        // Handle Firestore Timestamp conversion
+        let createdAt = txData.created_at || txData.createdAt;
+        if (createdAt && createdAt.toDate) {
+          createdAt = createdAt.toDate();
+        } else if (createdAt && !(createdAt instanceof Date)) {
+          createdAt = new Date(createdAt);
+        }
+
+        return {
+          id: docSnap.id,
+          ...txData,
+          courseName,
+          course,
+          createdAt
+        };
+      })
+    );
+
+    return transactionsWithData;
   } catch (error) {
     console.error('Error fetching transactions:', error);
     throw error;

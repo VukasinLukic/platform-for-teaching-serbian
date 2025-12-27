@@ -99,44 +99,91 @@ export const getPendingPayments = async (maxResults = 20) => {
 export const verifyPayment = async (transactionId, isApproved) => {
   try {
     const transactionRef = doc(db, 'transactions', transactionId);
-    
-    // If approving, grant access to the course
+
+    // If approving, grant access to the course or online package
     if (isApproved) {
       const txSnap = await getDoc(transactionRef);
       if (!txSnap.exists()) throw new Error("Transaction not found");
       const txData = txSnap.data();
-      
-      const userId = txData.user_id;
-      const courseId = txData.course_id;
-      
-      if (userId && courseId) {
-        const userCoursesRef = doc(db, 'user_courses', userId);
-        const userCoursesSnap = await getDoc(userCoursesRef);
-        
-        const courseData = {
-          active: true,
-          purchased_at: new Date(),
-          valid_until: null, // Lifetime access
-          transaction_id: transactionId
-        };
 
-        if (userCoursesSnap.exists()) {
-          await updateDoc(userCoursesRef, {
-            [`courses.${courseId}`]: courseData
-          });
-        } else {
-          await setDoc(userCoursesRef, {
-            userId: userId,
-            courses: {
-              [courseId]: courseData
+      const userId = txData.userId || txData.user_id;
+      const type = txData.type || 'course'; // default to 'course' for backwards compatibility
+
+      if (type === 'course') {
+        // Handle course purchase
+        const courseId = txData.course_id;
+
+        if (userId && courseId) {
+          const userCoursesRef = doc(db, 'user_courses', userId);
+          const userCoursesSnap = await getDoc(userCoursesRef);
+
+          const courseData = {
+            active: true,
+            purchased_at: new Date(),
+            valid_until: null, // Lifetime access
+            transaction_id: transactionId
+          };
+
+          if (userCoursesSnap.exists()) {
+            await updateDoc(userCoursesRef, {
+              [`courses.${courseId}`]: courseData
+            });
+          } else {
+            await setDoc(userCoursesRef, {
+              userId: userId,
+              courses: {
+                [courseId]: courseData
+              }
+            });
+          }
+        }
+      } else if (type === 'online_package') {
+        // Handle online package purchase
+        const packageId = txData.packageId;
+
+        if (userId && packageId) {
+          // Find the enrollment and activate it
+          const enrollmentQuery = query(
+            collection(db, 'online_enrollments'),
+            where('transactionId', '==', transactionId)
+          );
+          const enrollmentSnapshot = await getDocs(enrollmentQuery);
+
+          if (!enrollmentSnapshot.empty) {
+            const enrollmentDoc = enrollmentSnapshot.docs[0];
+            const enrollmentData = enrollmentDoc.data();
+
+            // Load package data from JSON file
+            let packageData = null;
+            try {
+              const response = await fetch('/paketiOnlajnNastave.json');
+              const packages = await response.json();
+              packageData = packages.find(pkg => pkg.id === packageId);
+            } catch (error) {
+              console.error('Error loading package data:', error);
             }
-          });
+
+            const startDate = new Date();
+            const endDate = new Date();
+            const durationMonths = packageData?.durationMonths || enrollmentData.remainingClasses / 4 || 1;
+            endDate.setMonth(endDate.getMonth() + durationMonths);
+
+            // Activate enrollment
+            await updateDoc(enrollmentDoc.ref, {
+              status: 'active',
+              startDate: startDate,
+              endDate: endDate,
+              activatedAt: new Date()
+            });
+          }
         }
       }
     }
 
     await updateDoc(transactionRef, {
       status: isApproved ? 'confirmed' : 'rejected',
+      confirmed_at: isApproved ? new Date() : null,
+      rejected_at: !isApproved ? new Date() : null,
       updated_at: new Date()
     });
     return true;

@@ -5,6 +5,23 @@
 
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { defineString } from 'firebase-functions/params';
+import nodemailer from 'nodemailer';
+
+// Gmail credentials
+const gmailUser = defineString('GMAIL_USER', { default: 'vukasin4sports@gmail.com' });
+const gmailPassword = defineString('GMAIL_PASSWORD', { default: 'ltlf ziag mpma chat' });
+
+// Get email transporter
+const getTransporter = () => {
+  return nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+      user: gmailUser.value(),
+      pass: gmailPassword.value(),
+    },
+  });
+};
 
 /**
  * Confirm a pending payment and grant course access
@@ -65,8 +82,54 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
       { merge: true }
     );
 
-    // NOTE: Email notification is now handled on the frontend using EmailJS
-    // to avoid backend SendGrid dependency (which requires a custom domain).
+    // Send confirmation email to user
+    try {
+      const userDoc = await db.collection('users').doc(userId).get();
+      const userData = userDoc.data();
+      const courseDoc = await db.collection('courses').doc(courseId).get();
+      const courseData = courseDoc.data();
+
+      if (userData && userData.email) {
+        const transporter = getTransporter();
+        await transporter.sendMail({
+          from: `"Nauči Srpski" <${gmailUser.value()}>`,
+          to: userData.email,
+          subject: `✅ Vaša uplata je potvrđena - ${courseData?.title || transaction.packageName || 'Kurs'}`,
+          html: `
+            <!DOCTYPE html>
+            <html>
+            <body style="font-family: Arial, sans-serif; background-color: #F5F3EF; padding: 20px;">
+              <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 24px; padding: 40px;">
+                <div style="background: linear-gradient(135deg, #BFECC9, #9DD6AC); color: #003366; padding: 30px; border-radius: 16px; text-align: center;">
+                  <div style="font-size: 48px; margin-bottom: 10px;">✅</div>
+                  <h1 style="margin: 0; font-size: 28px;">Uplata potvrđena!</h1>
+                </div>
+                <div style="padding: 30px 0;">
+                  <p>Pozdrav <strong>${userData.ime || 'Korisniče'}</strong>,</p>
+                  <p>Vaša uplata je uspešno potvrđena! Sada imate pristup kursu:</p>
+                  <div style="background: #F5F3EF; padding: 20px; border-radius: 12px; margin: 20px 0;">
+                    <h3 style="color: #003366; margin-top: 0;">${courseData?.title || transaction.packageName || 'Kurs'}</h3>
+                    <p style="color: #666; margin: 5px 0;">ID transakcije: <strong>${transactionId}</strong></p>
+                  </div>
+                  <p>Možete početi sa učenjem odmah! Prijavite se na platformu i pristupite kursu.</p>
+                  <div style="text-align: center; margin: 30px 0;">
+                    <a href="https://naucisprski.com/dashboard" style="background: #003366; color: white; padding: 15px 30px; border-radius: 12px; text-decoration: none; display: inline-block; font-weight: bold;">Idi na Dashboard</a>
+                  </div>
+                </div>
+                <div style="text-align: center; color: #999; font-size: 12px; border-top: 1px solid #eee; padding-top: 20px;">
+                  <p>Nauči Srpski - Online platforma za učenje</p>
+                </div>
+              </div>
+            </body>
+            </html>
+          `,
+        });
+        console.log(`Payment confirmation email sent to ${userData.email}`);
+      }
+    } catch (emailError) {
+      console.error('Error sending confirmation email:', emailError);
+      // Don't fail the whole operation if email fails
+    }
 
     return {
       success: true,
@@ -128,7 +191,52 @@ export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) 
       rejection_reason: reason || 'Nevalidna uplata',
     });
 
-    // NOTE: Email notification is now handled on the frontend using EmailJS.
+    // Send rejection email to user
+    try {
+      const userDoc = await db.collection('users').doc(transaction.user_id || transaction.userId).get();
+      const userData = userDoc.data();
+
+      if (userData && userData.email) {
+        const transporter = getTransporter();
+        await transporter.sendMail({
+          from: `"Nauči Srpski" <${gmailUser.value()}>`,
+          to: userData.email,
+          subject: `❌ Vaša uplata je odbijena - ${transaction.packageName || 'Kurs'}`,
+          html: `
+            <!DOCTYPE html>
+            <html>
+            <body style="font-family: Arial, sans-serif; background-color: #F5F3EF; padding: 20px;">
+              <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 24px; padding: 40px;">
+                <div style="background: linear-gradient(135deg, #FFB8B8, #FF9090); color: #8B0000; padding: 30px; border-radius: 16px; text-align: center;">
+                  <div style="font-size: 48px; margin-bottom: 10px;">❌</div>
+                  <h1 style="margin: 0; font-size: 28px;">Uplata odbijena</h1>
+                </div>
+                <div style="padding: 30px 0;">
+                  <p>Pozdrav <strong>${userData.ime || 'Korisniče'}</strong>,</p>
+                  <p>Nažalost, vaša uplata za kurs <strong>${transaction.packageName || 'Kurs'}</strong> je odbijena.</p>
+                  <div style="background: #FFF3F3; padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #FF6B6B;">
+                    <h4 style="color: #8B0000; margin-top: 0;">Razlog odbijanja:</h4>
+                    <p style="color: #666; margin: 5px 0;">${reason || 'Nevalidna uplata'}</p>
+                  </div>
+                  <p>Molimo vas da proverite detalje uplate i pokušate ponovo. Ukoliko imate pitanja, slobodno nas kontaktirajte.</p>
+                  <div style="text-align: center; margin: 30px 0;">
+                    <a href="https://naucisprski.com/contact" style="background: #003366; color: white; padding: 15px 30px; border-radius: 12px; text-decoration: none; display: inline-block; font-weight: bold;">Kontaktirajte nas</a>
+                  </div>
+                </div>
+                <div style="text-align: center; color: #999; font-size: 12px; border-top: 1px solid #eee; padding-top: 20px;">
+                  <p>Nauči Srpski - Online platforma za učenje</p>
+                </div>
+              </div>
+            </body>
+            </html>
+          `,
+        });
+        console.log(`Payment rejection email sent to ${userData.email}`);
+      }
+    } catch (emailError) {
+      console.error('Error sending rejection email:', emailError);
+      // Don't fail the whole operation if email fails
+    }
 
     return {
       success: true,

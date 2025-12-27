@@ -32,6 +32,10 @@ export default function Header({ transparent = false }) {
                 Курсеви
               </Link>
 
+              <Link to="/online-nastava" className="text-[#1A1A1A] hover:text-[#D62828] transition">
+                Online настава
+              </Link>
+
               <Link to="/about" className="text-[#1A1A1A] hover:text-[#D62828] transition">
                 О нама
               </Link>

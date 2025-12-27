@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, BookOpen, Video, CreditCard, Users, Settings, Bell, ChevronDown, LogOut, TrendingUp, Clock, Search, Eye, Check, X } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Video, CreditCard, Users, Settings, Bell, ChevronDown, LogOut, TrendingUp, Clock, Search, Eye, Check, X, Mail } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { getDashboardStats, getPendingPayments, verifyPayment } from '../services/admin.service';
 import { formatPrice, formatDate } from '../utils/helpers';
@@ -9,11 +9,15 @@ import { Link, useNavigate } from 'react-router-dom';
 import PaymentVerifier from '../components/admin/PaymentVerifier';
 import UsersList from '../components/admin/UsersList';
 import TransactionHistory from '../components/admin/TransactionHistory';
+import SettingsPanel from '../components/admin/SettingsPanel';
+import OnlineClassManager from '../components/admin/OnlineClassManager';
+import EmailTestingPanel from '../components/admin/EmailTestingPanel';
 
 export default function AdminPage() {
   const { userProfile, logout } = useAuthStore();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('payments');
+  const [isEmailPanelOpen, setIsEmailPanelOpen] = useState(false);
   const [statsData, setStatsData] = useState({
     totalCourses: 0,
     activeStudents: 0,
@@ -44,6 +48,7 @@ export default function AdminPage() {
     { id: 'courses', label: 'Kursevi', icon: BookOpen },
     { id: 'lessons', label: 'Lekcije', icon: Video },
     { id: 'payments', label: 'Uplate', icon: CreditCard },
+    { id: 'online', label: 'Onlajn časovi', icon: Video },
     { id: 'students', label: 'Učenici', icon: Users },
     { id: 'settings', label: 'Podešavanja', icon: Settings },
   ];
@@ -81,7 +86,22 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-[#F7F7F7] font-sans flex">
-      
+
+      {/* Email Testing Panel */}
+      <EmailTestingPanel
+        isOpen={isEmailPanelOpen}
+        onClose={() => setIsEmailPanelOpen(false)}
+      />
+
+      {/* Floating Email Test Button */}
+      <button
+        onClick={() => setIsEmailPanelOpen(true)}
+        className="fixed bottom-6 left-72 bg-gradient-to-r from-[#D62828] to-[#F77F00] text-white px-6 py-4 rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 flex items-center gap-3 font-bold z-50 group"
+      >
+        <Mail size={24} className="group-hover:rotate-12 transition-transform" />
+        <span>Test Emails</span>
+      </button>
+
       {/* SIDEBAR */}
       <aside className="w-64 bg-[#1A1A1A] text-white flex flex-col fixed h-full shadow-2xl z-50">
         {/* Logo */}
@@ -178,7 +198,12 @@ export default function AdminPage() {
 
            {/* Active Tab Component */}
            <div className="animate-fade-in">
-              {activeTab === 'payments' && <PaymentVerifier />}
+              {activeTab === 'payments' && (
+                <div className="space-y-8">
+                  <PaymentVerifier />
+                  <TransactionHistory />
+                </div>
+              )}
               {activeTab === 'courses' && <CourseManager />}
               {activeTab === 'lessons' && <LessonManager />}
               {activeTab === 'dashboard' && (
@@ -197,22 +222,9 @@ export default function AdminPage() {
 
               {activeTab === 'students' && <UsersList />}
 
-              {activeTab === 'settings' && (
-                <div className="text-center py-20">
-                  <div className="max-w-md mx-auto">
-                    <div className="bg-[#F2C94C]/20 rounded-full w-24 h-24 mx-auto mb-6 flex items-center justify-center">
-                      <Settings className="w-12 h-12 text-[#1A1A1A]" />
-                    </div>
-                    <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">
-                      Podešavanja
-                    </h3>
-                    <p className="text-gray-600">
-                      Ovde ćete moći podesiti profile, notifikacije, email template-ove i ostale postavke platforme.
-                    </p>
-                    <p className="text-sm text-gray-400 mt-4">Funkcionalnost uskoro dostupna</p>
-                  </div>
-                </div>
-              )}
+              {activeTab === 'online' && <OnlineClassManager />}
+
+              {activeTab === 'settings' && <SettingsPanel />}
            </div>
         </div>
       </main>
