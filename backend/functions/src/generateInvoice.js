@@ -7,6 +7,7 @@ import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import PDFDocument from 'pdfkit';
+import { checkRateLimit } from './rate-limiter.js';
 
 export const generateInvoice = onCall(async (request) => {
   const db = getFirestore();
@@ -21,6 +22,9 @@ export const generateInvoice = onCall(async (request) => {
   if (!courseId) {
     throw new HttpsError('invalid-argument', 'courseId je obavezan');
   }
+
+  // ✅ Rate limiting - 10 invoice generations per hour
+  await checkRateLimit(userId, 'invoice_generation', 10, 60);
 
   try {
     // Get course details
@@ -340,7 +344,7 @@ async function createInvoicePDF(data) {
 
     doc
       .fontSize(8)
-      .text(`Za pitanja i podršku: ${process.env.CONTACT_EMAIL || 'kontakt@naucisprski.com'} | ${process.env.CONTACT_PHONE || '+381 XX XXX XXXX'}`, {
+      .text(`Za pitanja i podršku: ${process.env.CONTACT_EMAIL || 'kontakt@srpskiusrcu.com'} | ${process.env.CONTACT_PHONE || '+381 XX XXX XXXX'}`, {
         align: 'center',
       });
 

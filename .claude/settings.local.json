@@ -31,7 +31,15 @@
       "Bash(set GOOGLE_APPLICATION_CREDENTIALS=%USERPROFILE%.configfirebase*_application_default_credentials.json)",
       "Bash(node seedPackagesADC.mjs:*)",
       "Bash(node -c:*)",
-      "Bash(firebase functions:log:*)"
+      "Bash(firebase functions:log:*)",
+      "Bash(npx replace-in-file:*)",
+      "Bash(npm run deploy:*)",
+      "Bash(node --trace-warnings src/index.js:*)",
+      "Bash(timeout 600 firebase deploy:*)",
+      "Bash(npm run lint)",
+      "Bash(node --experimental-modules:*)",
+      "Bash(firebase functions:config:get:*)",
+      "Bash(gcloud functions describe:*)"
     ],
     "deny": [],
     "ask": []

@@ -1,4 +1,4 @@
-import { collection, query, where, getCountFromServer, getDocs, doc, updateDoc, orderBy, limit, getDoc, setDoc } from 'firebase/firestore';
+import { collection, query, where, getCountFromServer, getDocs, doc, updateDoc, orderBy, limit, getDoc, setDoc, writeBatch } from 'firebase/firestore';
 import { db } from './firebase';
 
 /**
@@ -98,17 +98,26 @@ export const getPendingPayments = async (maxResults = 20) => {
  */
 export const verifyPayment = async (transactionId, isApproved) => {
   try {
+    const batch = writeBatch(db);
     const transactionRef = doc(db, 'transactions', transactionId);
+    const txSnap = await getDoc(transactionRef);
+
+    if (!txSnap.exists()) throw new Error("Transaction not found");
+    const txData = txSnap.data();
+
+    const userId = txData.userId || txData.user_id;
+    const type = txData.type || 'course';
+
+    // Update transaction status in batch
+    batch.update(transactionRef, {
+      status: isApproved ? 'confirmed' : 'rejected',
+      confirmed_at: isApproved ? new Date() : null,
+      rejected_at: !isApproved ? new Date() : null,
+      updated_at: new Date()
+    });
 
     // If approving, grant access to the course or online package
     if (isApproved) {
-      const txSnap = await getDoc(transactionRef);
-      if (!txSnap.exists()) throw new Error("Transaction not found");
-      const txData = txSnap.data();
-
-      const userId = txData.userId || txData.user_id;
-      const type = txData.type || 'course'; // default to 'course' for backwards compatibility
-
       if (type === 'course') {
         // Handle course purchase
         const courseId = txData.course_id;
@@ -125,11 +134,11 @@ export const verifyPayment = async (transactionId, isApproved) => {
           };
 
           if (userCoursesSnap.exists()) {
-            await updateDoc(userCoursesRef, {
+            batch.update(userCoursesRef, {
               [`courses.${courseId}`]: courseData
             });
           } else {
-            await setDoc(userCoursesRef, {
+            batch.set(userCoursesRef, {
               userId: userId,
               courses: {
                 [courseId]: courseData
@@ -168,8 +177,8 @@ export const verifyPayment = async (transactionId, isApproved) => {
             const durationMonths = packageData?.durationMonths || enrollmentData.remainingClasses / 4 || 1;
             endDate.setMonth(endDate.getMonth() + durationMonths);
 
-            // Activate enrollment
-            await updateDoc(enrollmentDoc.ref, {
+            // Activate enrollment in batch
+            batch.update(enrollmentDoc.ref, {
               status: 'active',
               startDate: startDate,
               endDate: endDate,
@@ -180,12 +189,8 @@ export const verifyPayment = async (transactionId, isApproved) => {
       }
     }
 
-    await updateDoc(transactionRef, {
-      status: isApproved ? 'confirmed' : 'rejected',
-      confirmed_at: isApproved ? new Date() : null,
-      rejected_at: !isApproved ? new Date() : null,
-      updated_at: new Date()
-    });
+    // Commit all changes atomically
+    await batch.commit();
     return true;
   } catch (error) {
     console.error('Error verifying payment:', error);

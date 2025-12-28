@@ -11,7 +11,8 @@ import {
   sendPasswordResetEmail,
 } from 'firebase/auth';
 import { doc, setDoc, getDoc } from 'firebase/firestore';
-import { auth, db } from './firebase';
+import { httpsCallable } from 'firebase/functions';
+import { auth, db, functions } from './firebase';
 
 /**
  * Register a new user
@@ -37,7 +38,18 @@ export const registerUser = async (email, password, ime, telefon) => {
       telefon,
       role: 'korisnik', // default role
       registrovan_at: new Date().toISOString(),
+      emailVerified: false, // Track verification status
     });
+
+    // ✅ Send custom verification email with token
+    try {
+      const sendVerificationEmail = httpsCallable(functions, 'sendVerificationEmailFunction');
+      await sendVerificationEmail();
+      console.log('✅ Verification email sent successfully');
+    } catch (emailError) {
+      console.error('Error sending verification email:', emailError);
+      // Don't throw - registration was successful, email sending is secondary
+    }
 
     return user;
   } catch (error) {

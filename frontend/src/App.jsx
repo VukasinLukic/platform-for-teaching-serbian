@@ -10,6 +10,7 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import ResetPasswordPage from './pages/ResetPasswordPage';
+import VerifyEmailPage from './pages/VerifyEmailPage';
 import DashboardPage from './pages/DashboardPage';
 import CoursePage from './pages/CoursePage';
 import OnlineClassPage from './pages/OnlineClassPage';
@@ -23,6 +24,7 @@ import TermsPage from './pages/legal/TermsPage';
 import CoursesPage from './pages/CoursesPage';
 import FAQPage from './pages/FAQPage';
 import OnlineNastavaPage from './pages/OnlineNastavaPage';
+import EmailVerificationGate from './components/auth/EmailVerificationGate';
 
 // Protected Route Component
 function ProtectedRoute({ children, adminOnly = false }) {
@@ -34,6 +36,11 @@ function ProtectedRoute({ children, adminOnly = false }) {
 
   if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  // Check if email is verified (except for /verify route)
+  if (userProfile && !userProfile.emailVerified) {
+    return <EmailVerificationGate />;
   }
 
   if (adminOnly && userProfile?.role !== 'admin') {
@@ -60,6 +67,7 @@ function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/reset-password" element={<ResetPasswordPage />} />
+        <Route path="/verify" element={<VerifyEmailPage />} />
         <Route path="/course/:id" element={<CoursePage />} />
         <Route path="/online-class/:id" element={<OnlineClassPage />} />
         <Route path="/courses" element={<CoursesPage />} />

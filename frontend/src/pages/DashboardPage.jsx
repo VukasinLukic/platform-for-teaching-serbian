@@ -54,6 +54,7 @@ export default function DashboardPage() {
   };
 
 
+
   // Get courses that user can purchase (not enrolled and no pending transaction)
   const availableForPurchase = allCourses.filter(course => {
     const isEnrolled = myCourses.some(c => c.id === course.id);

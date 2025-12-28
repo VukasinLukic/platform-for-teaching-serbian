@@ -55,7 +55,8 @@ service cloud.firestore {
 
     // User courses collection
     match /user_courses/{userId} {
-      allow read: if request.auth.uid == userId || isAdmin();
+      // ✅ Require email verification for course access
+      allow read: if (request.auth.uid == userId && request.auth.token.email_verified == true) || isAdmin();
       allow write: if isAdmin();
     }
 
@@ -104,6 +105,18 @@ service cloud.firestore {
     match /settings/{settingId} {
       allow read: if isAdmin();
       allow write: if isAdmin();
+    }
+
+    // Email verifications collection - backend only
+    match /email_verifications/{token} {
+      allow read: if false;
+      allow write: if false;
+    }
+
+    // Rate limits collection - backend only
+    match /rate_limits/{limitId} {
+      allow read: if false;
+      allow write: if false;
     }
   }
 }

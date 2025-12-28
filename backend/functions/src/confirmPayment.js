@@ -57,8 +57,41 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
 
     const transaction = transactionDoc.data();
 
+    // ✅ IDEMPOTENCY CHECK - Proveri da li je transakcija već potvrđena
     if (transaction.status !== 'pending') {
       throw new HttpsError('failed-precondition', `Transakcija je već ${transaction.status}`);
+    }
+
+    // ✅ VALIDATION - Proveri da li userId i courseId odgovaraju transakciji
+    const txUserId = transaction.userId || transaction.user_id;
+    const txCourseId = transaction.course_id || transaction.courseId;
+
+    if (txUserId !== userId) {
+      throw new HttpsError(
+        'invalid-argument',
+        'userId se ne poklapa sa transakcijom'
+      );
+    }
+
+    if (txCourseId !== courseId) {
+      throw new HttpsError(
+        'invalid-argument',
+        'courseId se ne poklapa sa transakcijom'
+      );
+    }
+
+    // ✅ DUPLICATE PAYMENT PREVENTION - Proveri da li korisnik već ima pristup kursu
+    const userCoursesRef = db.collection('user_courses').doc(userId);
+    const userCoursesDoc = await userCoursesRef.get();
+
+    if (userCoursesDoc.exists()) {
+      const courses = userCoursesDoc.data().courses || {};
+      if (courses[courseId] && courses[courseId].active) {
+        throw new HttpsError(
+          'already-exists',
+          'Korisnik već ima pristup ovom kursu!'
+        );
+      }
     }
 
     // Update transaction status
@@ -68,8 +101,7 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
       confirmed_by: request.auth.uid,
     });
 
-    // Grant user access to course
-    const userCoursesRef = db.collection('user_courses').doc(userId);
+    // Grant user access to course (reuse userCoursesRef from above)
     await userCoursesRef.set(
       {
         courses: {
@@ -92,7 +124,7 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
       if (userData && userData.email) {
         const transporter = getTransporter();
         await transporter.sendMail({
-          from: `"Nauči Srpski" <${gmailUser.value()}>`,
+          from: `"Srpski u Srcu" <${gmailUser.value()}>`,
           to: userData.email,
           subject: `✅ Vaša uplata je potvrđena - ${courseData?.title || transaction.packageName || 'Kurs'}`,
           html: `
@@ -113,11 +145,11 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
                   </div>
                   <p>Možete početi sa učenjem odmah! Prijavite se na platformu i pristupite kursu.</p>
                   <div style="text-align: center; margin: 30px 0;">
-                    <a href="https://naucisprski.com/dashboard" style="background: #003366; color: white; padding: 15px 30px; border-radius: 12px; text-decoration: none; display: inline-block; font-weight: bold;">Idi na Dashboard</a>
+                    <a href="https://srpskiusrcu.com/dashboard" style="background: #003366; color: white; padding: 15px 30px; border-radius: 12px; text-decoration: none; display: inline-block; font-weight: bold;">Idi na Dashboard</a>
                   </div>
                 </div>
                 <div style="text-align: center; color: #999; font-size: 12px; border-top: 1px solid #eee; padding-top: 20px;">
-                  <p>Nauči Srpski - Online platforma za učenje</p>
+                  <p>Srpski u Srcu - Online platforma za učenje</p>
                 </div>
               </div>
             </body>
@@ -191,6 +223,26 @@ export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) 
       rejection_reason: reason || 'Nevalidna uplata',
     });
 
+    // ✅ CLEANUP orphaned enrollments - Ako postoji enrollment za ovu transakciju, označi ga kao rejected
+    try {
+      const enrollmentsSnapshot = await db.collection('online_enrollments')
+        .where('transactionId', '==', transactionId)
+        .get();
+
+      if (!enrollmentsSnapshot.empty) {
+        const enrollmentDoc = enrollmentsSnapshot.docs[0];
+        await enrollmentDoc.ref.update({
+          status: 'rejected',
+          rejectedAt: FieldValue.serverTimestamp(),
+          rejectionReason: reason || 'Nevalidna uplata'
+        });
+        console.log(`Enrollment ${enrollmentDoc.id} marked as rejected`);
+      }
+    } catch (enrollmentError) {
+      console.error('Error updating enrollment:', enrollmentError);
+      // Don't fail the whole operation if enrollment update fails
+    }
+
     // Send rejection email to user
     try {
       const userDoc = await db.collection('users').doc(transaction.user_id || transaction.userId).get();
@@ -199,7 +251,7 @@ export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) 
       if (userData && userData.email) {
         const transporter = getTransporter();
         await transporter.sendMail({
-          from: `"Nauči Srpski" <${gmailUser.value()}>`,
+          from: `"Srpski u Srcu" <${gmailUser.value()}>`,
           to: userData.email,
           subject: `❌ Vaša uplata je odbijena - ${transaction.packageName || 'Kurs'}`,
           html: `
@@ -220,11 +272,11 @@ export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) 
                   </div>
                   <p>Molimo vas da proverite detalje uplate i pokušate ponovo. Ukoliko imate pitanja, slobodno nas kontaktirajte.</p>
                   <div style="text-align: center; margin: 30px 0;">
-                    <a href="https://naucisprski.com/contact" style="background: #003366; color: white; padding: 15px 30px; border-radius: 12px; text-decoration: none; display: inline-block; font-weight: bold;">Kontaktirajte nas</a>
+                    <a href="https://srpskiusrcu.com/contact" style="background: #003366; color: white; padding: 15px 30px; border-radius: 12px; text-decoration: none; display: inline-block; font-weight: bold;">Kontaktirajte nas</a>
                   </div>
                 </div>
                 <div style="text-align: center; color: #999; font-size: 12px; border-top: 1px solid #eee; padding-top: 20px;">
-                  <p>Nauči Srpski - Online platforma za učenje</p>
+                  <p>Srpski u Srcu - Online platforma za učenje</p>
                 </div>
               </div>
             </body>

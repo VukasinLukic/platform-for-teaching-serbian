@@ -46,3 +46,13 @@ export { seedOnlinePackages } from './seedPackagesFunction.js';
 
 // User management functions
 export { deleteUserAuth, bulkDeleteUsersAuth } from './deleteUserAuth.js';
+
+// Scheduled cleanup functions
+export { cleanupOldPendingTransactions } from './cleanupTransactions.js';
+
+// Email verification functions
+export {
+  sendVerificationEmail as sendVerificationEmailFunction,
+  verifyEmailToken,
+  resendVerificationEmail,
+} from './emailVerification.js';

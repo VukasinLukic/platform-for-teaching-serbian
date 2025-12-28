@@ -14,6 +14,7 @@ export default function RegisterPage() {
     confirmPassword: '',
   });
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -25,6 +26,7 @@ export default function RegisterPage() {
       [e.target.name]: e.target.value,
     });
     setError('');
+    setSuccess('');
   };
 
   const validateForm = () => {
@@ -59,6 +61,7 @@ export default function RegisterPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
 
     if (!validateForm()) {
       return;
@@ -74,14 +77,16 @@ export default function RegisterPage() {
         formData.telefon
       );
 
-      // Send welcome email
-      try {
-        await sendWelcomeEmail(formData.email, formData.ime);
-      } catch (emailErr) {
-        console.error('Failed to send welcome email:', emailErr);
-      }
+      // Welcome email will be sent AFTER email verification
 
-      navigate('/dashboard');
+      // ✅ Show success message about email verification
+      setSuccess('Регистрација успешна! Послали смо вам email са линком за верификацију.');
+
+      // Redirect to dashboard immediately (user is auto-logged in)
+      // The EmailVerificationGate will intercept and show verification screen
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 2000);
     } catch (err) {
       console.error('Registration error:', err);
       if (err.code === 'auth/email-already-in-use') {
@@ -377,6 +382,13 @@ export default function RegisterPage() {
                 </button>
               </div>
             </div>
+
+            {/* Success Message */}
+            {success && (
+              <div className="bg-green-50 border-2 border-green-200 text-green-700 px-5 py-4 rounded-2xl animate-fade-in-up" style={{fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem'}}>
+                ✅ {success}
+              </div>
+            )}
 
             {/* Error Message */}
             {error && (

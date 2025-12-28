@@ -2,7 +2,7 @@ import Header from '../../components/ui/Header';
 import Card, { CardBody } from '../../components/ui/Card';
 
 export default function TermsPage() {
-  const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@naucisprski.com';
+  const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@srpskiusrcu.com';
   const contactPhone = import.meta.env.VITE_CONTACT_PHONE || '+381 XX XXX XXXX';
 
   return (

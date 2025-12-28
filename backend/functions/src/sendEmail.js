@@ -1,6 +1,7 @@
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { defineString } from 'firebase-functions/params';
 import nodemailer from 'nodemailer';
+import { checkRateLimit } from './rate-limiter.js';
 
 /**
  * Gmail + Nodemailer Email Service
@@ -79,7 +80,7 @@ const emailTemplates = {
             </div>
           </div>
           <div class="footer">
-            <p>Primljeno preko naucisprski.com kontakt forme</p>
+            <p>Primljeno preko srpskiusrcu.com kontakt forme</p>
           </div>
         </div>
       </body>
@@ -137,14 +138,14 @@ const emailTemplates = {
             <p>Možete odmah započeti učenje! Prijavite se na platformu i pristupite svim lekcijama.</p>
 
             <center>
-              <a href="https://naucisprski.com/dashboard" class="button">Pristupi kursu</a>
+              <a href="https://srpskiusrcu.com/dashboard" class="button">Pristupi kursu</a>
             </center>
 
             <p style="margin-top: 30px;">Srećno učenje! 📚</p>
-            <p><strong>Tim Nauči Srpski</strong></p>
+            <p><strong>Tim Srpski u Srcu</strong></p>
           </div>
           <div class="footer">
-            <p>Ako imate bilo kakvih pitanja, kontaktirajte nas na kontakt@naucisprski.com</p>
+            <p>Ako imate bilo kakvih pitanja, kontaktirajte nas na kontakt@srpskiusrcu.com</p>
           </div>
         </div>
       </body>
@@ -199,14 +200,14 @@ const emailTemplates = {
             <p>Možete ponovo otpremiti potvrdu o uplati nakon što ispravite problem.</p>
 
             <center>
-              <a href="https://naucisprski.com/dashboard" class="button">Otpremi ponovo</a>
+              <a href="https://srpskiusrcu.com/dashboard" class="button">Otpremi ponovo</a>
             </center>
 
             <p style="margin-top: 30px;">Za dodatna pitanja, slobodno nas kontaktirajte.</p>
-            <p><strong>Tim Nauči Srpski</strong></p>
+            <p><strong>Tim Srpski u Srcu</strong></p>
           </div>
           <div class="footer">
-            <p>Kontakt: kontakt@naucisprski.com | +381 XX XXX XXXX</p>
+            <p>Kontakt: kontakt@srpskiusrcu.com | +381 XX XXX XXXX</p>
           </div>
         </div>
       </body>
@@ -280,15 +281,15 @@ const emailTemplates = {
             <p style="margin-top: 30px; text-align: center; font-size: 16px;">Кликните на дугме испод да се придружите часу:</p>
 
             <center>
-              <a href="${meetLink || 'https://naucisprski.com/dashboard'}" class="button">🎥 Придружи се часу</a>
+              <a href="${meetLink || 'https://srpskiusrcu.com/dashboard'}" class="button">🎥 Придружи се часу</a>
             </center>
 
             <p style="margin-top: 40px; text-align: center;">Видимо се на часу! 📚</p>
             <p style="text-align: center;"><strong>Професорка Марина Лукић</strong></p>
           </div>
           <div class="footer">
-            <p>Ако имате техничких проблема, контактирајте нас на kontakt@naucisprski.com</p>
-            <p>&copy; 2025 Nauči Srpski. Sva prava zadržana.</p>
+            <p>Ако имате техничких проблема, контактирајте нас на kontakt@srpskiusrcu.com</p>
+            <p>&copy; 2025 Srpski u Srcu. Sva prava zadržana.</p>
           </div>
         </div>
       </body>
@@ -297,7 +298,7 @@ const emailTemplates = {
   }),
 
   welcome: ({ userName, userEmail }) => ({
-    subject: '🎉 Dobrodošli na Nauči Srpski platformu!',
+    subject: '🎉 Dobrodošli na Srpski u Srcu platformu!',
     html: `
       <!DOCTYPE html>
       <html>
@@ -324,7 +325,7 @@ const emailTemplates = {
           </div>
           <div class="content">
             <p>Poštovani/a <strong>${userName}</strong>,</p>
-            <p>Dobrodošli na <strong>Nauči Srpski</strong> platformu! Drago nam je što ste se pridružili našoj zajednici učenika.</p>
+            <p>Dobrodošli na <strong>Srpski u Srcu</strong> platformu! Drago nam je što ste se pridružili našoj zajednici učenika.</p>
 
             <div class="feature-list">
               <div class="feature-item">
@@ -358,15 +359,88 @@ const emailTemplates = {
             </ol>
 
             <center>
-              <a href="https://naucisprski.com/courses" class="button">Pregledaj kurseve</a>
+              <a href="https://srpskiusrcu.com/courses" class="button">Pregledaj kurseve</a>
             </center>
 
             <p style="margin-top: 30px;">Srećno učenje i vidimo se u lekcijama! 📖</p>
-            <p><strong>Tim Nauči Srpski</strong></p>
+            <p><strong>Tim Srpski u Srcu</strong></p>
           </div>
           <div class="footer">
-            <p>Kontakt: kontakt@naucisprski.com | +381 XX XXX XXXX</p>
-            <p>&copy; 2025 Nauči Srpski. Sva prava zadržana.</p>
+            <p>Kontakt: kontakt@srpskiusrcu.com | +381 XX XXX XXXX</p>
+            <p>&copy; 2025 Srpski u Srcu. Sva prava zadržana.</p>
+          </div>
+        </div>
+      </body>
+      </html>
+    `,
+  }),
+
+  emailVerification: ({ userName, verificationUrl }) => ({
+    subject: '✉️ Verifikujte vaš email - Srpski u Srcu',
+    html: `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <style>
+          body { font-family: 'Inter', Arial, sans-serif; background-color: #F5F3EF; padding: 20px; }
+          .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 24px; padding: 40px; box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+          .header { background: linear-gradient(135deg, #003366, #004080); color: white; padding: 40px; border-radius: 16px; text-align: center; margin-bottom: 30px; }
+          .header h1 { margin: 0; font-size: 28px; }
+          .email-icon { font-size: 64px; margin-bottom: 10px; }
+          .content { color: #333; line-height: 1.8; }
+          .info-box { background: #E3F2FD; padding: 25px; border-radius: 16px; margin: 25px 0; border-left: 4px solid #2196F3; }
+          .button { display: inline-block; background: #4CAF50; color: white; padding: 18px 45px; border-radius: 30px; text-decoration: none; font-weight: bold; margin: 25px 0; font-size: 18px; box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3); }
+          .button:hover { background: #45A049; }
+          .warning { background: #FFF3CD; padding: 15px; border-radius: 12px; border-left: 4px solid #FFC107; margin: 20px 0; font-size: 14px; }
+          .footer { text-align: center; margin-top: 30px; color: #999; font-size: 12px; }
+          .security-note { font-size: 12px; color: #666; margin-top: 20px; padding: 15px; background: #F5F5F5; border-radius: 8px; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <div class="header">
+            <div class="email-icon">✉️</div>
+            <h1>Verifikujte vašu email adresu</h1>
+          </div>
+          <div class="content">
+            <p>Poštovani/a <strong>${userName}</strong>,</p>
+            <p style="font-size: 16px;">Hvala što ste se registrovali na <strong>Srpski u Srcu</strong> platformu!</p>
+
+            <div class="info-box">
+              <p style="margin: 0; font-size: 16px;"><strong>📌 Da biste aktivirali vaš nalog, molimo vas da verifikujete vašu email adresu.</strong></p>
+            </div>
+
+            <p>Kliknite na dugme ispod da verifikujete vaš nalog:</p>
+
+            <center>
+              <a href="${verificationUrl}" class="button">✅ Verifikuj email</a>
+            </center>
+
+            <div class="warning">
+              <p style="margin: 0;"><strong>⚠️ Važno:</strong></p>
+              <ul style="margin: 10px 0 0 0; padding-left: 20px;">
+                <li>Link za verifikaciju je važeći 60 minuta</li>
+                <li>Ako ne verifikujete email, nećete moći pristupiti kursevima</li>
+                <li>Ako link ne radi, kopirajte ga i nalepite u browser</li>
+              </ul>
+            </div>
+
+            <p style="margin-top: 25px;">Ako dugme ne radi, možete kopirati i nalepiti sledeći link u vaš browser:</p>
+            <p style="background: #F5F5F5; padding: 12px; border-radius: 8px; word-break: break-all; font-size: 13px; color: #555;">
+              ${verificationUrl}
+            </p>
+
+            <div class="security-note">
+              <p style="margin: 0;"><strong>🔒 Sigurnosna napomena:</strong></p>
+              <p style="margin: 5px 0 0 0;">Ako niste vi napravili ovaj nalog, molimo vas ignorišite ovaj email. Vaša email adresa neće biti korišćena bez verifikacije.</p>
+            </div>
+
+            <p style="margin-top: 30px;">Vidimo se na platformi!</p>
+            <p><strong>Tim Srpski u Srcu</strong></p>
+          </div>
+          <div class="footer">
+            <p>Imate pitanja? Kontaktirajte nas: kontakt@srpskiusrcu.com</p>
+            <p>&copy; 2025 Srpski u Srcu. Sva prava zadržana.</p>
           </div>
         </div>
       </body>
@@ -387,6 +461,10 @@ export const sendContactFormEmail = onCall({ cors: true }, async (request) => {
     throw new HttpsError('invalid-argument', 'Missing required fields');
   }
 
+  // ✅ Rate limiting - 3 contact form submissions per hour
+  const userId = request.auth?.uid || request.rawRequest.ip || 'anonymous';
+  await checkRateLimit(userId, 'contact_form', 3, 60);
+
   try {
     console.log('Creating transporter...');
     const transporter = getTransporter();
@@ -400,7 +478,7 @@ export const sendContactFormEmail = onCall({ cors: true }, async (request) => {
     console.log('Sending email from:', userEmail, 'to:', contactEmail);
 
     await transporter.sendMail({
-      from: `"Nauči Srpski - Kontakt Forma" <${userEmail}>`,
+      from: `"Srpski u Srcu - Kontakt Forma" <${userEmail}>`,
       to: contactEmail,
       replyTo: email,
       subject: template.subject,
@@ -448,7 +526,7 @@ export const sendPaymentConfirmationEmail = onCall({ cors: true }, async (reques
     console.log('Sending email from:', senderEmail, 'to:', userEmail);
 
     await transporter.sendMail({
-      from: `"Nauči Srpski" <${senderEmail}>`,
+      from: `"Srpski u Srcu" <${senderEmail}>`,
       to: userEmail,
       subject: template.subject,
       html: template.html,
@@ -487,7 +565,7 @@ export const sendPaymentRejectionEmail = onCall({ cors: true }, async (request) 
     const senderEmail = gmailUser.value();
 
     await transporter.sendMail({
-      from: `"Nauči Srpski" <${senderEmail}>`,
+      from: `"Srpski u Srcu" <${senderEmail}>`,
       to: userEmail,
       subject: template.subject,
       html: template.html,
@@ -516,7 +594,7 @@ export const sendWelcomeEmail = onCall({ cors: true }, async (request) => {
     const senderEmail = gmailUser.value();
 
     await transporter.sendMail({
-      from: `"Nauči Srpski" <${senderEmail}>`,
+      from: `"Srpski u Srcu" <${senderEmail}>`,
       to: userEmail,
       subject: template.subject,
       html: template.html,
@@ -553,7 +631,7 @@ export const sendClassReminderEmail = onCall({ cors: true }, async (request) => 
     const senderEmail = gmailUser.value();
 
     await transporter.sendMail({
-      from: `"Nauči Srpski - Online Časovi" <${senderEmail}>`,
+      from: `"Srpski u Srcu - Online Časovi" <${senderEmail}>`,
       to: userEmail,
       subject: template.subject,
       html: template.html,
@@ -566,3 +644,39 @@ export const sendClassReminderEmail = onCall({ cors: true }, async (request) => 
     throw new HttpsError('internal', `Failed to send email: ${error.message}`);
   }
 });
+
+/**
+ * Helper function: Send Email Verification Email
+ * Used by emailVerification.js to send verification emails
+ * @param {Object} params - Email parameters
+ * @param {string} params.userEmail - User's email address
+ * @param {string} params.userName - User's name
+ * @param {string} params.verificationUrl - Verification URL with token
+ */
+export const sendVerificationEmail = async ({ userEmail, userName, verificationUrl }) => {
+  if (!userEmail || !userName || !verificationUrl) {
+    throw new Error('Missing required parameters for verification email');
+  }
+
+  try {
+    const transporter = getTransporter();
+    const template = emailTemplates.emailVerification({
+      userName,
+      verificationUrl,
+    });
+    const senderEmail = gmailUser.value();
+
+    await transporter.sendMail({
+      from: `"Srpski u Srcu" <${senderEmail}>`,
+      to: userEmail,
+      subject: template.subject,
+      html: template.html,
+    });
+
+    console.log('✅ Verification email sent successfully to:', userEmail);
+    return { success: true };
+  } catch (error) {
+    console.error('Error sending verification email:', error);
+    throw new Error(`Failed to send verification email: ${error.message}`);
+  }
+};

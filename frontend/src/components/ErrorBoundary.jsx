@@ -107,10 +107,10 @@ class ErrorBoundary extends Component {
               <p className="text-sm text-gray-600">
                 Ako problem i dalje postoji, kontaktirajte nas na:{' '}
                 <a
-                  href={`mailto:${import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@naucisprski.com'}`}
+                  href={`mailto:${import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@srpskiusrcu.com'}`}
                   className="text-[#FF6B35] hover:underline font-semibold"
                 >
-                  {import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@naucisprski.com'}
+                  {import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@srpskiusrcu.com'}
                 </a>
               </p>
             </div>

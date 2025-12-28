@@ -70,6 +70,20 @@ export const useAuthStore = create((set, get) => ({
     set({ userProfile: profile });
   },
 
+  refreshUserProfile: async () => {
+    const { user } = get();
+    if (user) {
+      try {
+        const profile = await getUserProfile(user.uid);
+        set({ userProfile: profile });
+        return profile;
+      } catch (error) {
+        console.error('Error refreshing user profile:', error);
+        throw error;
+      }
+    }
+  },
+
   clearError: () => {
     set({ error: null });
   },
