@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, BookOpen, Video, CreditCard, Users, Settings, Bell, ChevronDown, LogOut, TrendingUp, Clock, Search, Eye, Check, X, Mail } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Video, CreditCard, Users, Settings, Bell, ChevronDown, LogOut, TrendingUp, Clock, Search, Eye, Check, X, Mail, Menu } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { getDashboardStats, getPendingPayments, verifyPayment } from '../services/admin.service';
 import { formatPrice, formatDate } from '../utils/helpers';
@@ -18,6 +18,7 @@ export default function AdminPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('payments');
   const [isEmailPanelOpen, setIsEmailPanelOpen] = useState(false);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [statsData, setStatsData] = useState({
     totalCourses: 0,
     activeStudents: 0,
@@ -85,7 +86,7 @@ export default function AdminPage() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7] font-sans flex">
+    <div className="min-h-screen bg-[#F7F7F7] font-sans flex overflow-x-hidden">
 
       {/* Email Testing Panel */}
       <EmailTestingPanel
@@ -93,17 +94,35 @@ export default function AdminPage() {
         onClose={() => setIsEmailPanelOpen(false)}
       />
 
-      {/* Floating Email Test Button */}
+      {/* Floating Email Test Button - Desktop */}
       <button
         onClick={() => setIsEmailPanelOpen(true)}
-        className="fixed bottom-6 left-72 bg-gradient-to-r from-[#D62828] to-[#F77F00] text-white px-6 py-4 rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 flex items-center gap-3 font-bold z-50 group"
+        className="hidden lg:flex fixed bottom-6 left-72 bg-gradient-to-r from-[#D62828] to-[#F77F00] text-white px-6 py-4 rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 items-center gap-3 font-bold z-50 group"
       >
         <Mail size={24} className="group-hover:rotate-12 transition-transform" />
         <span>Test Emails</span>
       </button>
 
+      {/* Floating Email Test Button - Mobile */}
+      <button
+        onClick={() => setIsEmailPanelOpen(true)}
+        className="lg:hidden fixed bottom-6 right-6 bg-gradient-to-r from-[#D62828] to-[#F77F00] text-white p-4 rounded-full shadow-2xl z-50"
+      >
+        <Mail size={24} />
+      </button>
+
+      {/* Mobile Overlay */}
+      {mobileSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          onClick={() => setMobileSidebarOpen(false)}
+        />
+      )}
+
       {/* SIDEBAR */}
-      <aside className="w-64 bg-[#1A1A1A] text-white flex flex-col fixed h-full shadow-2xl z-50">
+      <aside className={`w-64 bg-[#1A1A1A] text-white flex flex-col fixed h-full shadow-2xl z-50 transition-transform duration-300 ${
+        mobileSidebarOpen ? 'translate-x-0' : '-translate-x-full'
+      } lg:translate-x-0`}>
         {/* Logo */}
         <div className="p-8 flex items-center gap-3">
           <BookOpen className="w-8 h-8 text-[#F2C94C]" />
@@ -111,14 +130,17 @@ export default function AdminPage() {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 px-4 space-y-2">
+        <nav className="flex-1 px-4 space-y-2 overflow-y-auto">
           {sidebarItems.map((item) => (
              <button
                key={item.id}
-               onClick={() => setActiveTab(item.id)}
+               onClick={() => {
+                 setActiveTab(item.id);
+                 setMobileSidebarOpen(false);
+               }}
                className={`w-full flex items-center gap-4 px-6 py-4 rounded-xl transition-all duration-200 ${
-                 activeTab === item.id 
-                   ? 'bg-[#F2C94C] text-[#1A1A1A] font-bold shadow-lg' 
+                 activeTab === item.id
+                   ? 'bg-[#F2C94C] text-[#1A1A1A] font-bold shadow-lg'
                    : 'text-white/70 hover:bg-white/10 hover:text-white'
                }`}
              >
@@ -149,18 +171,27 @@ export default function AdminPage() {
       </aside>
 
       {/* MAIN CONTENT */}
-      <main className="flex-1 ml-64 p-8 lg:p-12">
-        
+      <main className="flex-1 lg:ml-64 p-4 md:p-8 lg:p-12 w-full overflow-x-hidden">
+
         {/* Top Header */}
-        <header className="flex justify-between items-center mb-12">
-          <h1 className="text-4xl font-serif font-bold text-[#1A1A1A]">Admin Panel</h1>
-          
-          <div className="flex items-center gap-6">
+        <header className="flex justify-between items-center mb-8 lg:mb-12">
+          <div className="flex items-center gap-4">
+            {/* Mobile Menu Button */}
+            <button
+              onClick={() => setMobileSidebarOpen(true)}
+              className="lg:hidden p-2 text-[#1A1A1A] hover:bg-gray-100 rounded-lg transition"
+            >
+              <Menu size={24} />
+            </button>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-[#1A1A1A]">Admin Panel</h1>
+          </div>
+
+          <div className="flex items-center gap-3 md:gap-6">
              <button className="relative p-2 text-gray-400 hover:text-[#1A1A1A] transition">
-               <Bell size={24} />
+               <Bell size={20} className="md:w-6 md:h-6" />
                <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
              </button>
-             <div className="bg-white px-4 py-2 rounded-full shadow-sm flex items-center gap-2 border border-gray-100">
+             <div className="hidden md:flex bg-white px-4 py-2 rounded-full shadow-sm items-center gap-2 border border-gray-100">
                 <div className="w-8 h-8 bg-[#1A1A1A] rounded-full flex items-center justify-center text-white text-xs">
                   {userProfile?.ime?.charAt(0) || 'A'}
                 </div>
@@ -172,32 +203,32 @@ export default function AdminPage() {
 
         {/* Stats Cards */}
         {activeTab === 'dashboard' && (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-8 md:mb-12">
             {statsCards.map((stat, index) => (
-              <div key={index} className={`bg-white p-6 rounded-3xl shadow-sm hover:shadow-md transition-all ${stat.borderColor}`}>
-                 <div className="flex justify-between items-start mb-4">
-                   <div className="text-gray-500 text-sm font-medium">{stat.label}</div>
-                   <div className={`p-2 rounded-lg bg-gray-50 ${stat.color}`}>
-                     <stat.icon size={20} />
+              <div key={index} className={`bg-white p-4 md:p-6 rounded-2xl md:rounded-3xl shadow-sm hover:shadow-md transition-all ${stat.borderColor}`}>
+                 <div className="flex justify-between items-start mb-3 md:mb-4">
+                   <div className="text-gray-500 text-xs md:text-sm font-medium break-words max-w-[60%]">{stat.label}</div>
+                   <div className={`p-2 rounded-lg bg-gray-50 ${stat.color} flex-shrink-0`}>
+                     <stat.icon size={18} className="md:w-5 md:h-5" />
                    </div>
                  </div>
-                 <div className="text-3xl font-black text-[#1A1A1A]">{stat.value}</div>
+                 <div className="text-2xl md:text-3xl font-black text-[#1A1A1A] break-words">{stat.value}</div>
               </div>
             ))}
           </div>
         )}
 
         {/* Content Area */}
-        <div className="bg-white rounded-[2.5rem] shadow-sm border border-gray-100 min-h-[600px] p-8">
+        <div className="bg-white rounded-2xl lg:rounded-[2.5rem] shadow-sm border border-gray-100 min-h-[400px] lg:min-h-[600px] p-4 md:p-6 lg:p-8 overflow-x-auto">
            {/* Tab Title if not Dashboard */}
            {activeTab !== 'dashboard' && (
-             <h2 className="text-2xl font-bold text-[#1A1A1A] mb-6 pb-4 border-b border-gray-100">
+             <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-[#1A1A1A] mb-4 md:mb-6 pb-4 border-b border-gray-100">
                {sidebarItems.find(i => i.id === activeTab)?.label}
              </h2>
            )}
 
            {/* Active Tab Component */}
-           <div className="animate-fade-in">
+           <div className="animate-fade-in overflow-x-auto">
               {activeTab === 'payments' && (
                 <div className="space-y-8">
                   <PaymentVerifier />

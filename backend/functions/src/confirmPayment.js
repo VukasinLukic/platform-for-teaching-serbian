@@ -34,9 +34,8 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
     throw new HttpsError('unauthenticated', 'Morate biti ulogovani');
   }
 
-  // Check if user is admin
-  const adminDoc = await db.collection('users').doc(request.auth.uid).get();
-  if (!adminDoc.exists || adminDoc.data().role !== 'admin') {
+  // ✅ Check if user is admin using custom claims (FAST!)
+  if (!request.auth.token.role || request.auth.token.role !== 'admin') {
     throw new HttpsError('permission-denied', 'Samo admin može da potvrđuje uplate');
   }
 
@@ -188,9 +187,8 @@ export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) 
     throw new HttpsError('unauthenticated', 'Morate biti ulogovani');
   }
 
-  // Check if user is admin
-  const adminDoc = await db.collection('users').doc(request.auth.uid).get();
-  if (!adminDoc.exists || adminDoc.data().role !== 'admin') {
+  // ✅ Check if user is admin using custom claims (FAST!)
+  if (!request.auth.token.role || request.auth.token.role !== 'admin') {
     throw new HttpsError('permission-denied', 'Samo admin može da odbije uplate');
   }
 

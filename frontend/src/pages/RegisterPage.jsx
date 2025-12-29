@@ -223,13 +223,6 @@ export default function RegisterPage() {
         </div>
 
         <div className="w-full max-w-md relative z-10 animate-slide-in-right py-8">
-          {/* Mobile Logo */}
-          <div className="lg:hidden mb-8 text-center">
-            <Link to="/">
-              <img src="/logoFULL.svg" alt="СРПСКИ У СРЦУ" className="h-16 mx-auto" />
-            </Link>
-          </div>
-
           {/* Header */}
           <div className="mb-10 animate-fade-in-up">
             <h2 className="text-[#1A1A1A] mb-3" style={{fontFamily: "'Playfair Display', serif", fontSize: '2.75rem', fontWeight: '700', lineHeight: '1.1'}}>

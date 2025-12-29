@@ -66,13 +66,12 @@ export const uploadVideoToR2 = onCall(async (request) => {
       throw new HttpsError('invalid-argument', 'Nedostaju obavezna polja');
     }
 
-    // Verify user is admin
-    const db = getFirestore();
-    const userDoc = await db.collection('users').doc(request.auth.uid).get();
-
-    if (!userDoc.exists || userDoc.data().role !== 'admin') {
+    // ✅ Verify user is admin using custom claims (FAST!)
+    if (!request.auth.token.role || request.auth.token.role !== 'admin') {
       throw new HttpsError('permission-denied', 'Samo admin može upload-ovati videe');
     }
+
+    const db = getFirestore();
 
     // Check file size (max 500MB)
     const maxSize = 500 * 1024 * 1024; // 500MB in bytes
@@ -160,13 +159,12 @@ export const deleteVideoFromR2 = onCall(async (request) => {
       throw new HttpsError('invalid-argument', 'videoPath je obavezan');
     }
 
-    // Verify user is admin
-    const db = getFirestore();
-    const userDoc = await db.collection('users').doc(request.auth.uid).get();
-
-    if (!userDoc.exists || userDoc.data().role !== 'admin') {
+    // ✅ Verify user is admin using custom claims (FAST!)
+    if (!request.auth.token.role || request.auth.token.role !== 'admin') {
       throw new HttpsError('permission-denied', 'Samo admin može brisati videe');
     }
+
+    const db = getFirestore();
 
     console.log(`🔵 [deleteVideoFromR2] Deleting: ${videoPath}`);
 

@@ -120,3 +120,34 @@ export const getUserProfile = async (userId) => {
     throw error;
   }
 };
+
+/**
+ * Get user role from custom claims (FAST - no Firestore read!)
+ * @param {User} user - Firebase Auth user
+ * @param {boolean} forceRefresh - Force token refresh
+ * @returns {Promise<string>} User role ('admin' or 'korisnik')
+ */
+export const getUserRole = async (user, forceRefresh = false) => {
+  try {
+    const idTokenResult = await user.getIdTokenResult(forceRefresh);
+    return idTokenResult.claims.role || 'korisnik'; // Default to 'korisnik'
+  } catch (error) {
+    console.error('Get user role error:', error);
+    return 'korisnik'; // Safe default
+  }
+};
+
+/**
+ * Check if user is admin using custom claims (FAST!)
+ * @param {User} user - Firebase Auth user
+ * @returns {Promise<boolean>} True if admin
+ */
+export const isUserAdmin = async (user) => {
+  try {
+    const idTokenResult = await user.getIdTokenResult();
+    return idTokenResult.claims.role === 'admin';
+  } catch (error) {
+    console.error('Check admin error:', error);
+    return false;
+  }
+};

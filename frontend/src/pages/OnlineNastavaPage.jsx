@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { Video, Calendar, Users, Clock, CheckCircle, X, BookOpen } from 'lucide-react';
 import { formatPrice } from '../utils/helpers';
@@ -14,9 +14,40 @@ export default function OnlineNastavaPage() {
   const [paymentReference, setPaymentReference] = useState('');
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [visibleSteps, setVisibleSteps] = useState([false, false, false, false]);
+  const stepRefs = useRef([]);
 
   useEffect(() => {
     loadPackages();
+  }, []);
+
+  useEffect(() => {
+    const observers = stepRefs.current.map((ref, index) => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting) {
+            setTimeout(() => {
+              setVisibleSteps(prev => {
+                const newSteps = [...prev];
+                newSteps[index] = true;
+                return newSteps;
+              });
+            }, index * 200); // Staggered delay: 0ms, 200ms, 400ms, 600ms
+          }
+        },
+        { threshold: 0.3 }
+      );
+
+      if (ref) {
+        observer.observe(ref);
+      }
+
+      return observer;
+    });
+
+    return () => {
+      observers.forEach(observer => observer.disconnect());
+    };
   }, []);
 
   const loadPackages = async () => {
@@ -94,7 +125,12 @@ export default function OnlineNastavaPage() {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Step 1 */}
-            <div className="text-center group">
+            <div
+              ref={el => stepRefs.current[0] = el}
+              className={`text-center group transition-all duration-700 ${
+                visibleSteps[0] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
               <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">1</span>
               </div>
@@ -107,7 +143,12 @@ export default function OnlineNastavaPage() {
             </div>
 
             {/* Step 2 */}
-            <div className="text-center group">
+            <div
+              ref={el => stepRefs.current[1] = el}
+              className={`text-center group transition-all duration-700 ${
+                visibleSteps[1] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
               <div className="bg-gradient-to-br from-[#F77F00] to-[#DC6B00] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">2</span>
               </div>
@@ -120,7 +161,12 @@ export default function OnlineNastavaPage() {
             </div>
 
             {/* Step 3 */}
-            <div className="text-center group">
+            <div
+              ref={el => stepRefs.current[2] = el}
+              className={`text-center group transition-all duration-700 ${
+                visibleSteps[2] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
               <div className="bg-gradient-to-br from-[#F2C94C] to-[#D4A927] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">3</span>
               </div>
@@ -133,7 +179,12 @@ export default function OnlineNastavaPage() {
             </div>
 
             {/* Step 4 */}
-            <div className="text-center group">
+            <div
+              ref={el => stepRefs.current[3] = el}
+              className={`text-center group transition-all duration-700 ${
+                visibleSteps[3] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+              }`}
+            >
               <div className="bg-gradient-to-br from-[#27AE60] to-[#1E8449] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">4</span>
               </div>

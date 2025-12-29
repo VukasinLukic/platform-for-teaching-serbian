@@ -73,10 +73,31 @@ export default function HomePage() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const { user } = useAuthStore();
+  const [visibleSteps, setVisibleSteps] = useState([]);
+  const [howItWorksVisible, setHowItWorksVisible] = useState(false);
+  const stepsRef = useRef([]);
+  const howItWorksRef = useRef(null);
 
   useEffect(() => {
     loadCourses();
   }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && !howItWorksVisible) {
+          setHowItWorksVisible(true);
+        }
+      },
+      { threshold: 0.2 }
+    );
+
+    if (howItWorksRef.current) {
+      observer.observe(howItWorksRef.current);
+    }
+
+    return () => observer.disconnect();
+  }, [howItWorksVisible]);
 
   const loadCourses = async () => {
     try {
@@ -123,7 +144,7 @@ export default function HomePage() {
   const stats = [
     { number: '500+', label: 'Ученика' },
     { number: '98%', label: 'Успешност' },
-    { number: '15', label: 'Година искуства' },
+    { number: '27', label: 'Година искуства' },
   ];
 
   const testimonials = [
@@ -149,9 +170,9 @@ export default function HomePage() {
       <Header />
 
       {/* 1. HERO SECTION */}
-      <section className="relative min-h-screen flex items-start pt-24 overflow-hidden bg-white">
+      <section className="relative pb-0 flex items-start pt-16 overflow-hidden bg-white">
         <div className="max-w-7xl mx-auto px-6 w-full">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-20 items-center">
             {/* Left - Text */}
             <div className="relative z-10 space-y-8 text-center lg:text-left">
               <h1 className="text-5xl lg:text-7xl font-bold leading-tight text-[#1A1A1A]">
@@ -184,11 +205,11 @@ export default function HomePage() {
             </div>
 
             {/* Right - Hero Image */}
-            <div className="relative flex items-center justify-center">
+            <div className="relative flex items-center justify-center lg:-mt-8">
               <img
                 src="/heroSekcija.png"
                 alt="Професорка са децом"
-                className="w-[115%] max-w-none h-auto relative z-10"
+                className="w-[125%] max-w-none h-auto relative z-10"
               />
             </div>
           </div>
@@ -196,68 +217,83 @@ export default function HomePage() {
       </section>
 
       {/* 2. HOW IT WORKS SECTION */}
-      <section className="py-20 bg-gradient-to-br from-[#F7F7F7] to-white">
-        <div className="max-w-7xl mx-auto px-6">
+      <section
+        ref={howItWorksRef}
+        className={`pt-40 pb-20 bg-white relative overflow-hidden transition-all duration-1000 ${
+          howItWorksVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
             <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
               Како функционише?
             </h2>
-            <p className="text-xl text-gray-600">
-              Једноставан процес од уписа до учења
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Једноставан и транспарентан процес — од уписа до првог часа
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {/* Step 1 */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-2 transform">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl font-bold text-white">1</span>
+          <div className="relative max-w-6xl mx-auto">
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+              {/* Step 1 */}
+              <div className="relative group transition-all duration-500 hover:scale-105">
+                <div className="bg-gradient-to-br from-[#FFF5F5] to-white p-8 rounded-3xl border-2 border-[#D62828]/20 hover:border-[#D62828] transition-all hover:shadow-2xl">
+                  <div className="relative w-16 h-16 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
+                    <span className="text-3xl font-black text-white">1</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-[#1A1A1A] mb-3">
+                    Изаберите курс
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">
+                    Прегледајте наше курсеве или пакете online наставе и изаберите онај који вам одговара
+                  </p>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-[#1A1A1A] mb-3">
-                Изаберите курс
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Прегледајте наше курсеве или пакете online наставе и изаберите онај који вам одговара
-              </p>
-            </div>
 
-            {/* Step 2 */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-2 transform">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#1A1A1A] to-gray-800 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl font-bold text-white">2</span>
+              {/* Step 2 */}
+              <div className="relative group transition-all duration-500 hover:scale-105">
+                <div className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-3xl border-2 border-gray-200 hover:border-[#1A1A1A] transition-all hover:shadow-2xl">
+                  <div className="relative w-16 h-16 bg-gradient-to-br from-[#1A1A1A] to-gray-700 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
+                    <span className="text-3xl font-black text-white">2</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-[#1A1A1A] mb-3">
+                    Извршите уплату
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">
+                    Пратите упутства за уплату и пошаљите доказ о извршеној трансакцији
+                  </p>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-[#1A1A1A] mb-3">
-                Извршите уплату
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Пратите упутства за уплату и пошаљите доказ о извршеној трансакцији
-              </p>
-            </div>
 
-            {/* Step 3 */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-2 transform">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl font-bold text-white">3</span>
+              {/* Step 3 */}
+              <div className="relative group transition-all duration-500 hover:scale-105">
+                <div className="bg-gradient-to-br from-[#FFF5F5] to-white p-8 rounded-3xl border-2 border-[#D62828]/20 hover:border-[#D62828] transition-all hover:shadow-2xl">
+                  <div className="relative w-16 h-16 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
+                    <span className="text-3xl font-black text-white">3</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-[#1A1A1A] mb-3">
+                    Потврда уплате
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">
+                    Контактираћемо вас email-ом у року од 24h са потврдом и даљим инструкцијама
+                  </p>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-[#1A1A1A] mb-3">
-                Потврда уплате
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Контактираћемо вас email-ом у року од 24h са потврдом и даљим инструкцијама
-              </p>
-            </div>
 
-            {/* Step 4 */}
-            <div className="bg-white p-8 rounded-2xl shadow-lg hover:shadow-xl transition-all hover:-translate-y-2 transform">
-              <div className="w-16 h-16 bg-gradient-to-br from-[#1A1A1A] to-gray-800 rounded-2xl flex items-center justify-center mb-6">
-                <span className="text-3xl font-bold text-white">4</span>
+              {/* Step 4 */}
+              <div className="relative group transition-all duration-500 hover:scale-105">
+                <div className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-3xl border-2 border-gray-200 hover:border-[#1A1A1A] transition-all hover:shadow-2xl">
+                  <div className="relative w-16 h-16 bg-gradient-to-br from-[#1A1A1A] to-gray-700 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
+                    <span className="text-3xl font-black text-white">4</span>
+                  </div>
+                  <h3 className="text-lg font-bold text-[#1A1A1A] mb-3">
+                    Почните да учите
+                  </h3>
+                  <p className="text-gray-600 leading-relaxed text-sm">
+                    Приступите курсевима преко вашег Dashboard-а или придружите се online часовима
+                  </p>
+                </div>
               </div>
-              <h3 className="text-xl font-bold text-[#1A1A1A] mb-3">
-                Почните да учите
-              </h3>
-              <p className="text-gray-600 leading-relaxed">
-                Приступите курсевима преко вашег Dashboard-а или придружите се online часовима
-              </p>
             </div>
           </div>
         </div>
@@ -363,47 +399,47 @@ export default function HomePage() {
 
       {/* 4. STATS SECTION */}
       <section className="py-20 bg-white relative overflow-hidden">
-        {/* Background Decoration */}
-        <div className="absolute inset-0">
-          <div className="absolute top-0 left-0 w-96 h-96 bg-[#D62828] opacity-5 rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 right-0 w-96 h-96 bg-[#D62828] opacity-5 rounded-full blur-3xl"></div>
-        </div>
-
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4">
+        <div className="max-w-6xl mx-auto px-6 relative z-10">
+          <div className="text-center mb-14">
+            <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
               Наш успех у бројкама
             </h2>
-            <p className="text-gray-600 text-lg">
+            <p className="text-gray-600 text-xl">
               Резултати говоре више од речи
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            <div className="text-center group">
-              <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-2xl p-10 hover:shadow-xl transition-all hover:-translate-y-2">
-                <div className="text-5xl font-black text-white mb-3">
+          <div className="grid md:grid-cols-3 gap-6">
+            {/* Stat 1 */}
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
+              <div className="relative bg-white border-2 border-[#D62828]/30 rounded-3xl p-10 text-center hover:border-[#D62828] transition-all hover:shadow-2xl">
+                <div className="text-6xl font-black bg-gradient-to-br from-[#D62828] to-[#B91F1F] bg-clip-text text-transparent mb-2">
                   <AnimatedCounter end="500" suffix="+" />
                 </div>
-                <div className="text-lg font-bold uppercase tracking-wider text-white/90">Ученика</div>
+                <div className="text-base font-bold uppercase tracking-wider text-gray-600">Ученика</div>
               </div>
             </div>
 
-            <div className="text-center group">
-              <div className="bg-gradient-to-br from-[#1A1A1A] to-gray-800 rounded-2xl p-10 hover:shadow-xl transition-all hover:-translate-y-2">
-                <div className="text-5xl font-black text-white mb-3">
+            {/* Stat 2 */}
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#1A1A1A] to-gray-700 rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
+              <div className="relative bg-white border-2 border-gray-300 rounded-3xl p-10 text-center hover:border-[#1A1A1A] transition-all hover:shadow-2xl">
+                <div className="text-6xl font-black bg-gradient-to-br from-[#1A1A1A] to-gray-700 bg-clip-text text-transparent mb-2">
                   <AnimatedCounter end="98" suffix="%" />
                 </div>
-                <div className="text-lg font-bold uppercase tracking-wider text-white/90">Успешност</div>
+                <div className="text-base font-bold uppercase tracking-wider text-gray-600">Успешност</div>
               </div>
             </div>
 
-            <div className="text-center group">
-              <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-2xl p-10 hover:shadow-xl transition-all hover:-translate-y-2">
-                <div className="text-5xl font-black text-white mb-3">
-                  <AnimatedCounter end="15" />
+            {/* Stat 3 */}
+            <div className="relative group">
+              <div className="absolute inset-0 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
+              <div className="relative bg-white border-2 border-[#D62828]/30 rounded-3xl p-10 text-center hover:border-[#D62828] transition-all hover:shadow-2xl">
+                <div className="text-6xl font-black bg-gradient-to-br from-[#D62828] to-[#B91F1F] bg-clip-text text-transparent mb-2">
+                  <AnimatedCounter end="27" />
                 </div>
-                <div className="text-lg font-bold uppercase tracking-wider text-white/90">Година искуства</div>
+                <div className="text-base font-bold uppercase tracking-wider text-gray-600">Година искуства</div>
               </div>
             </div>
           </div>
@@ -417,8 +453,8 @@ export default function HomePage() {
           <p className="text-gray-600 text-lg">Искуства која инспиришу</p>
         </div>
 
-        {/* Infinite Horizontal Scroll */}
-        <div className="relative">
+        {/* Desktop: Infinite Horizontal Scroll */}
+        <div className="relative hidden md:block">
           <style>{`
             @keyframes scroll-left {
               0% { transform: translateX(0); }
@@ -458,33 +494,86 @@ export default function HomePage() {
             ))}
           </div>
         </div>
+
+        {/* Mobile: Manual Horizontal Scroll */}
+        <div className="md:hidden">
+          <div className="overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 px-6">
+            <div className="flex gap-4">
+              {testimonials.map((t, i) => (
+                <div
+                  key={i}
+                  className="flex-shrink-0 w-[85vw] bg-white p-6 rounded-xl shadow-lg border-2 border-gray-100 snap-center"
+                >
+                  {/* Quote Content */}
+                  <p className="text-[#1A1A1A] text-sm italic mb-4 leading-relaxed">
+                    {t.text}
+                  </p>
+
+                  {/* Author Info */}
+                  <div className="flex items-center gap-3 mt-auto">
+                    <div className="w-10 h-10 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center text-white font-bold text-base shadow-lg">
+                      {t.author.charAt(0)}
+                    </div>
+                    <div>
+                      <div className="font-bold text-[#1A1A1A] text-sm">{t.author}</div>
+                      <div className="text-xs text-gray-500 uppercase font-bold tracking-wide">{t.role}</div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Scroll Indicator Arrow */}
+          <div className="flex justify-center mt-6 animate-bounce">
+            <div className="flex items-center gap-2 text-gray-500 text-sm">
+              <span>Prevucite levo-desno</span>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
+              </svg>
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </div>
+          </div>
+        </div>
+
+        <style>{`
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+          }
+        `}</style>
       </section>
 
       {/* 6. CTA SECTION */}
-      <section className="py-24 bg-white relative overflow-hidden">
+      <section className="py-16 md:py-24 bg-white relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full opacity-5">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#D62828] rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#F2C94C] rounded-full blur-3xl"></div>
         </div>
 
         <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
-          <h2 className="text-5xl md:text-6xl font-bold mb-6 leading-tight text-[#1A1A1A]">
+          <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-[#1A1A1A]">
             Немојте чекати, <br/>
             <span className="text-[#D62828]">успех почиње данас.</span>
           </h2>
 
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-12 leading-relaxed">
+          <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto mb-8 md:mb-12 leading-relaxed">
             Придружите се стотинама ученика који су већ осигурали своје место.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-            <Link to="/register">
-              <button className="bg-[#D62828] text-white px-16 py-6 rounded-full hover:bg-[#B91F1F] transition-all transform hover:scale-105 shadow-xl text-2xl font-bold flex items-center gap-3">
-                Направи Налог <ArrowRight className="w-7 h-7" />
+          <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-stretch sm:items-center">
+            <Link to="/register" className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto bg-[#D62828] text-white px-8 md:px-16 py-4 md:py-6 rounded-full hover:bg-[#B91F1F] transition-all transform hover:scale-105 shadow-xl text-lg md:text-2xl font-bold flex items-center justify-center gap-3">
+                Направи Налог <ArrowRight className="w-5 h-5 md:w-7 md:h-7" />
               </button>
             </Link>
-            <Link to="/courses">
-              <button className="bg-transparent border-2 border-[#1A1A1A] text-[#1A1A1A] px-16 py-6 rounded-full hover:bg-[#1A1A1A] hover:text-white transition-all text-2xl font-bold">
+            <Link to="/courses" className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto bg-transparent border-2 border-[#1A1A1A] text-[#1A1A1A] px-8 md:px-16 py-4 md:py-6 rounded-full hover:bg-[#1A1A1A] hover:text-white transition-all text-lg md:text-2xl font-bold">
                 Истражи Курсеве
               </button>
             </Link>

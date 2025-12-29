@@ -56,3 +56,9 @@ export {
   verifyEmailToken,
   resendVerificationEmail,
 } from './emailVerification.js';
+
+// User role management with custom claims
+export { setUserRole } from './setUserRole.js';
+
+// One-time admin initialization (REMOVE after first use!)
+export { initializeAdminClaim } from './initializeAdminClaim.js';

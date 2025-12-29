@@ -1,108 +1,110 @@
+Ti si senior full-stack developer.
+Stack: Firebase (Auth + Firestore).
 
-### 18. Имплементирај Custom Claims за Roles
+Cilj:
+Implementiraj jednostavan i skalabilan Referral Program.
 
-**Тренутно**: Свака функција чита Firestore да провери role
+Funkcionalni zahtevi:
 
-**Проблем**: Slow, costly, екстра database read
+1. Svaki korisnik mora imati:
+   - Jedinstveni referralCode (automatski generisan pri registraciji)
+   - referralCount
+   - referralDiscount (u procentima)
 
-**Фикс - Користи Firebase Custom Claims**:
-```javascript
-// Backend - setUserRole.js
-export const setUserRole = onCall(async (request) => {
-  const { uid, role } = request.data;
+2. Kada se novi korisnik registruje:
+   - Može uneti referral code (opciono)
+   - Ako je kod validan:
+     - Novi korisnik dobija 10% popusta
+     - Referrer dobija 10% popusta
+     - Povećaj referralCount referrera
+     - Sačuvaj zapis u referrals kolekciji
 
-  // Set custom claim
-  await admin.auth().setCustomUserClaims(uid, { role });
+3. Firestore struktura:
 
-  // Също update Firestore за consistency
-  await db.collection('users').doc(uid).update({ role });
-});
-
-// Frontend - provera
-const checkAdmin = async () => {
-  const token = await user.getIdTokenResult(true);
-  return token.claims.role === 'admin';
-};
-
-// Backend - provera (BRŽE!)
-export const confirmPayment = onCall(async (request) => {
-  if (!request.auth || request.auth.token.role !== 'admin') {
-    throw new HttpsError('permission-denied', 'Only admins');
-  }
-  // ...
-});
-```
-
-**Benefit**: Нема database query, бржа провера!
-
-
-
-
-### 23. Referral Program
-
-**Додај**:
-- ✅ Сваки корисник добија referral code
-- ✅ Ако пријатељ користи твој код → оба добијају discount (10%)
-- ✅ Tracking referral-а у dashboard-у
-
-**Schema**:
-```javascript
-// users collection - додај:
+users:
 {
-  referralCode: 'MARKO-ABC123',  // Unique
-  referredBy: 'JELENA-XYZ789',   // Who referred this user
-  referralCount: 5,               // How many people they referred
-  referralDiscount: 50,           // % discount earned
+  referralCode: string,
+  referredBy: string | null,
+  referralCount: number,
+  referralDiscount: number
 }
 
-// referrals collection
+referrals:
 {
-  referrerId: 'user1',
-  referredUserId: 'user2',
-  discountApplied: true,
+  referrerId: string,
+  referredUserId: string,
+  discountApplied: boolean,
   createdAt: Timestamp
 }
-```
 
----
+4. Dodaj zaštite:
+   - Referral kod može da se iskoristi samo jednom po korisniku
+   - Korisnik ne može koristiti sopstveni referral kod
+
+5. Pripremi helper funkcije:
+   - generateReferralCode()
+   - applyReferral(referralCode, newUserId)
+
+6. Pripremi osnovu za UI:
+   - Prikaz referral koda u dashboardu
+   - Prikaz broja uspešnih referral-a
+   - Tekst: „Pozovi prijatelja i oboje dobijate 10% popusta“
+
+Output:
+- Firebase funkcije
+- Firestore queries
+- Jasno komentarisani kod
+- Spremno za produkciju
 
 
+FOMO 
 
-### 26. Analytics & Insights Dashboard за Teacher-a
+Ti si senior frontend developer i UX copywriter.
 
-**Додај**:
-- ✅ Колико корисника гледа сваку лекцију
-- ✅ Average completion rate
-- ✅ Most popular courses
-- ✅ Revenue по месецу
-- ✅ Student engagement metrics
+Cilj:
+Implementiraj sekciju „Paketi pripreme za malu maturu“ za web platformu za učenje srpskog jezika.
+Target su RODITELJI dece 8. razreda u Srbiji.
 
-**Имплементација**:
-```javascript
-// analytics collection (aggregated daily)
-{
-  date: '2025-01-15',
-  metrics: {
-    newUsers: 25,
-    activeUsers: 150,
-    videosWatched: 320,
-    averageWatchTime: 12.5,  // minutes
-    revenue: 45000,           // RSD
-    courseCompletions: 8
-  }
-}
+Zahtevi:
+1. Napravi 3 paketa:
+   - Mesečni
+   - Polugodišnji (najpopularniji)
+   - Godišnji
 
-// Компонента:
-const AnalyticsDashboard = () => {
-  return (
-    <div className="grid grid-cols-4 gap-6">
-      <StatCard title="Нови корисници" value={25} trend="+12%" />
-      <StatCard title="Активни корисници" value={150} trend="+8%" />
-      <StatCard title="Видеа гледана" value={320} trend="+15%" />
-      <StatCard title="Приход" value="45,000 RSD" trend="+20%" />
-    </div>
-  );
-};
-```
+2. Svaki paket mora imati:
+   - Naziv
+   - Kratak podnaslov (benefit za roditelje)
+   - Cenu u RSD
+   - Trajanje
+   - Listu benefita (bullets)
+   - CTA dugme „Kupi paket“
 
----
+3. Polugodišnji paket mora:
+   - Vizuelno da se istakne (badge „Najpopularnije“)
+   - Ima dodatni BONUS tekst (do 31. januara)
+   - Ima copy koji stvara FOMO (ograničena mesta)
+
+4. Ispod paketa dodaj FOMO sekciju:
+   - Objasni zašto je januar poslednji pravi trenutak za pripremu
+   - Naglasi manji stres i bolje rezultate kod dece koja krenu ranije
+
+5. Dodaj mini trust sekciju:
+   - Rad u malim grupama
+   - Iskustvo profesorke
+   - Strukturisan plan
+   - Fokus na razumevanje, ne bubanje
+
+6. Dizajn smernice:
+   - Clean, edukativan, roditeljski
+   - Bez agresivnog marketinga
+   - Više dugmića, manje dugih pasusa
+   - Mobile-first layout
+
+7. Sav tekst mora biti:
+   - Na srpskom jeziku (ćirilica)
+   - Profesionalan, smiren, uliva poverenje
+
+Output:
+- React / JSX komponenta (ili HTML + CSS ako proceniš bolje)
+- Jasna struktura sekcije
+- Copy koji je spreman za produkciju

@@ -184,7 +184,8 @@ export default function DashboardPage() {
           <div className="mb-16">
             <h2 className="text-3xl font-bold mb-8 text-[#1A1A1A]">Трансакције</h2>
 
-            <div className="bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm">
+            {/* Desktop Table View */}
+            <div className="hidden md:block bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm">
               <div className="overflow-x-auto">
                 <table className="w-full">
                   <thead className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-100">
@@ -231,6 +232,60 @@ export default function DashboardPage() {
                   </tbody>
                 </table>
               </div>
+            </div>
+
+            {/* Mobile Card View */}
+            <div className="md:hidden space-y-4">
+              {transactions.map((transaction) => (
+                <div key={transaction.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5">
+                  {/* Course Name */}
+                  <div className="mb-4 pb-4 border-b border-gray-100">
+                    <div className="text-xs text-gray-500 font-bold uppercase mb-1">Курс</div>
+                    <div className="font-bold text-[#1A1A1A] text-base">
+                      {transaction.courseName || transaction.packageName || transaction.course?.title || 'Непознат курс'}
+                    </div>
+                  </div>
+
+                  {/* Amount and Status Row */}
+                  <div className="grid grid-cols-2 gap-4 mb-4">
+                    <div>
+                      <div className="text-xs text-gray-500 font-bold uppercase mb-1">Износ</div>
+                      <div className="font-black text-[#D62828] text-xl">{formatPrice(transaction.amount)}</div>
+                    </div>
+                    <div>
+                      <div className="text-xs text-gray-500 font-bold uppercase mb-1">Статус</div>
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${
+                        transaction.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                        transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {getStatusIcon(transaction.status)}
+                        {getTransactionStatusLabel(transaction.status)}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Date */}
+                  <div className="mb-4">
+                    <div className="text-xs text-gray-500 font-bold uppercase mb-1">Датум</div>
+                    <div className="text-sm text-gray-600">{formatDate(transaction.createdAt)}</div>
+                  </div>
+
+                  {/* Action Button */}
+                  {transaction.status === 'pending' && !transaction.confirmationUrl && (
+                    <button
+                      onClick={() => handleOpenUploadModal(transaction)}
+                      className="w-full flex items-center justify-center gap-2 bg-[#D62828] text-white px-5 py-3 rounded-xl font-bold hover:bg-[#B91F1F] transition-all"
+                    >
+                      <Upload className="w-4 h-4" />
+                      Отпреми потврду
+                    </button>
+                  )}
+                  {transaction.confirmationUrl && (
+                    <div className="text-center text-sm text-green-600 font-bold py-2">✓ Потврда послата</div>
+                  )}
+                </div>
+              ))}
             </div>
           </div>
         )}

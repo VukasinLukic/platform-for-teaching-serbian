@@ -13,7 +13,7 @@ export default function Footer() {
                 <img
                   src="/footer.png"
                   alt="СРПСКИ У СРЦУ"
-                  className="h-64 w-auto"
+                  className="h-40 md:h-64 w-auto"
                 />
               </Link>
             </div>

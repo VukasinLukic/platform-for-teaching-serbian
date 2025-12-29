@@ -7,18 +7,16 @@ import { Link } from 'react-router-dom';
 export default function AboutPage() {
   const [counters, setCounters] = useState({
     experience: 0,
-    students: 0,
-    success: 0,
-    rating: 0
+    awards: 0,
+    students: 0
   });
   const [hasAnimated, setHasAnimated] = useState(false);
   const statsRef = useRef(null);
 
   const stats = [
-    { key: 'experience', number: 15, suffix: '+', label: 'Година искуства' },
+    { key: 'experience', number: 27, suffix: '', label: 'Година искуства' },
+    { key: 'awards', number: 10, suffix: '+', label: 'Републичких награда' },
     { key: 'students', number: 500, suffix: '+', label: 'Ученика' },
-    { key: 'success', number: 98, suffix: '%', label: 'Успешност' },
-    { key: 'rating', number: 4.9, suffix: '', label: 'Просечна оцена', decimals: true },
   ];
 
   useEffect(() => {
@@ -71,12 +69,12 @@ export default function AboutPage() {
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12">
             СРПСКИ У СРЦУ је платформа која помаже ученицима да се припреме за малу матуру
-            из српског језика. Са професорком Марином Лукић, стручњаком са 15 година
+            из српског језика. Са професорком Марином Лукић, стручњаком са 27 година
             искуства, обезбеђујемо квалитетну наставу која доноси резултате.
           </p>
 
           {/* Stats Bar */}
-          <div ref={statsRef} className="bg-white rounded-[3rem] p-8 shadow-xl max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div ref={statsRef} className="bg-white rounded-[3rem] p-8 shadow-xl max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
             {stats.map((stat, index) => (
               <div key={index} className="text-center border-r last:border-r-0 border-gray-100">
                 <div className="text-4xl font-black text-[#D62828] mb-1">
@@ -90,11 +88,70 @@ export default function AboutPage() {
       </section>
 
       {/* STORY SECTION - Split Layout */}
-      <section className="py-20 overflow-hidden">
+      <section className="py-12 md:py-20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
+          {/* Mobile: Image First with Title Overlay */}
+          <div className="lg:hidden mb-12">
+            <div className="relative">
+              <img
+                src="/Nenaslovljeni dizajn (1).png"
+                alt="Професорка Марина"
+                className="w-full object-contain h-auto rounded-3xl"
+              />
+              {/* Title Overlay on Mobile */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6 rounded-b-3xl">
+                <h2 className="text-3xl md:text-4xl font-bold leading-tight text-white">
+                  Упознајте професорку <br />
+                  <span className="text-[#F2C94C] relative">
+                    Марину Лукић
+                  </span>
+                </h2>
+              </div>
+            </div>
+
+            {/* Mobile: Content Below Image */}
+            <div className="mt-8 space-y-6">
+              <div className="space-y-5 text-base text-gray-600 leading-relaxed">
+                <p>
+                  Наставница Марина Лукић ради 27 година у основној школи са ученицима од петог до осмог разреда.
+                  Завршила је Филолошки факултет у Београду, смер српски језик и књижевност (1994-1999).
+                </p>
+                <p>
+                  Освојила је са својим ученицима многобројне републичке награде на Књижевној олимпијади
+                  у Сремским Карловцима и Републичком такмичењу из српског језика у Тршићу. Редовно похађа
+                  стручна усавршавања и радила је рецензије уџбеника.
+                </p>
+                <p>
+                  Од првог радног дана припрема децу за завршни испит (малу матуру) као и за пријемне испите
+                  за упис на факултете. <strong className="text-[#D62828]">Сви њени ученици су успешно урадили тест и уписали жељене
+                  школе и факултете.</strong>
+                </p>
+                <p>
+                  Дугогодишње искуство као и велика љубав према деци и образовању довела је до јединствене
+                  методологије која комбинује традиционалне технике са модерним приступом.
+                </p>
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 pt-4">
+                {[
+                   'Филолошки факултет',
+                   'Републичке награде',
+                   'Рецензент уџбеника',
+                   'Стручна усавршавања'
+                ].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 bg-gradient-to-r from-[#FFF5F5] to-white p-4 rounded-xl shadow-sm border border-[#D62828]/20">
+                    <CheckCircle className="text-[#D62828] flex-shrink-0" size={20} />
+                    <span className="font-semibold text-[#1A1A1A]">{item}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Desktop: Side by Side Layout */}
+          <div className="hidden lg:grid lg:grid-cols-2 gap-20 items-center">
             {/* Image Side */}
-            <div className="relative order-2 lg:order-1">
+            <div className="relative">
                <img
                  src="/Nenaslovljeni dizajn (1).png"
                  alt="Професорка Марина"
@@ -103,7 +160,7 @@ export default function AboutPage() {
             </div>
 
             {/* Text Side */}
-            <div className="order-1 lg:order-2 space-y-8">
+            <div className="space-y-8">
               <h2 className="text-4xl md:text-5xl font-bold leading-tight">
                 Упознајте професорку <br />
                 <span className="text-[#D62828] relative">
@@ -114,23 +171,31 @@ export default function AboutPage() {
 
               <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
                 <p>
-                  Професорка Марина Лукић посветила је 15 година свог живота образовању и припреми ученика
-                  за малу матуру. Са дугогодишњим искуством и страшћу за предавање, Марина је
-                  развила јединствену методологију која комбинује традиционалне технике са модерним приступом.
+                  Наставница Марина Лукић ради 27 година у основној школи са ученицима од петог до осмог разреда.
+                  Завршила је Филолошки факултет у Београду, смер српски језик и књижевност (1994-1999).
                 </p>
                 <p>
-                  Кроз године рада, Марина је припремила преко 500 ученика, од којих је 98% успешно положило
-                  пријемни испит и уписало жељену средњу школу. Њена посвећеност, стрпљење и разумевање
-                  индивидуалних потреба сваког ученика чини је омиљеном међу родитељима и ученицима.
+                  Освојила је са својим ученицима многобројне републичке награде на Књижевној олимпијади
+                  у Сремским Карловцима и Републичком такмичењу из српског језика у Тршићу. Редовно похађа
+                  стручна усавршавања и радила је рецензије уџбеника.
+                </p>
+                <p>
+                  Од првог радног дана припрема децу за завршни испит (малу матуру) као и за пријемне испите
+                  за упис на факултете. <strong>Сви њени ученици су успешно урадили тест и уписали жељене
+                  школе и факултете.</strong>
+                </p>
+                <p>
+                  Дугогодишње искуство као и велика љубав према деци и образовању довела је до јединствене
+                  методологије која комбинује традиционалне технике са модерним приступом.
                 </p>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
                 {[
-                   'Проверени резултати',
-                   'Персонализован приступ',
-                   'Флексибилност онлајн учења',
-                   'Стална подршка'
+                   'Филолошки факултет',
+                   'Републичке награде',
+                   'Рецензент уџбеника',
+                   'Стручна усавршавања'
                 ].map((item, i) => (
                   <div key={i} className="flex items-center gap-3 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
                     <CheckCircle className="text-[#D62828]" size={20} />

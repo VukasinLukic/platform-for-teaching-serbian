@@ -17,13 +17,12 @@ export const deleteUserAuth = onCall(async (request) => {
     throw new HttpsError('unauthenticated', 'Морате бити пријављени.');
   }
 
-  // Get the calling user's data from Firestore to verify admin role
-  const db = getFirestore();
-  const callerDoc = await db.collection('users').doc(request.auth.uid).get();
-
-  if (!callerDoc.exists || callerDoc.data().role !== 'admin') {
+  // ✅ Check if user is admin using custom claims (FAST!)
+  if (!request.auth.token.role || request.auth.token.role !== 'admin') {
     throw new HttpsError('permission-denied', 'Само администратори могу брисати кориснике.');
   }
+
+  const db = getFirestore();
 
   const { userId } = request.data;
 
@@ -74,13 +73,12 @@ export const bulkDeleteUsersAuth = onCall(async (request) => {
     throw new HttpsError('unauthenticated', 'Морате бити пријављени.');
   }
 
-  // Get the calling user's data from Firestore to verify admin role
-  const db = getFirestore();
-  const callerDoc = await db.collection('users').doc(request.auth.uid).get();
-
-  if (!callerDoc.exists || callerDoc.data().role !== 'admin') {
+  // ✅ Check if user is admin using custom claims (FAST!)
+  if (!request.auth.token.role || request.auth.token.role !== 'admin') {
     throw new HttpsError('permission-denied', 'Само администратори могу брисати кориснике.');
   }
+
+  const db = getFirestore();
 
   const { userIds } = request.data;
 
