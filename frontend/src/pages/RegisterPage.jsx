@@ -82,11 +82,10 @@ export default function RegisterPage() {
       // ✅ Show success message about email verification
       setSuccess('Регистрација успешна! Послали смо вам email са линком за верификацију.');
 
-      // Redirect to dashboard immediately (user is auto-logged in)
-      // The EmailVerificationGate will intercept and show verification screen
+      // Redirect to verify page to wait for email verification
       setTimeout(() => {
-        navigate('/dashboard');
-      }, 2000);
+        navigate('/verify');
+      }, 1500);
     } catch (err) {
       console.error('Registration error:', err);
       if (err.code === 'auth/email-already-in-use') {

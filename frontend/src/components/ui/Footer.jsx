@@ -39,7 +39,7 @@ export default function Footer() {
             <ul className="space-y-4 text-gray-600">
               <li>info@srpskiusrcu.rs</li>
               <li>{contactPhone}</li>
-              <li>Београд, Србија</li>
+              <li>Крушевац, Србија</li>
             </ul>
           </div>
         </div>

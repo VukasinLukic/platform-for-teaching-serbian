@@ -39,7 +39,8 @@
       "Bash(npm run lint)",
       "Bash(node --experimental-modules:*)",
       "Bash(firebase functions:config:get:*)",
-      "Bash(gcloud functions describe:*)"
+      "Bash(gcloud functions describe:*)",
+      "Bash(git checkout:*)"
     ],
     "deny": [],
     "ask": []

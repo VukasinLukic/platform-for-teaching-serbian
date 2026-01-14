@@ -41,9 +41,56 @@ export default function CourseManager() {
     }
   };
 
-  const handleOpenForm = (course = null) => {
+  const handleOpenForm = async (course = null) => {
     if (course) {
       setEditingCourse(course);
+
+      // Load existing modules and lessons from Firestore
+      let existingModules = [];
+      try {
+        console.log('🔵 [CourseManager] Loading modules for editing course:', course.id);
+
+        // Fetch modules
+        const modulesQuery = query(
+          collection(db, 'modules'),
+          where('courseId', '==', course.id)
+        );
+        const modulesSnapshot = await getDocs(modulesQuery);
+
+        // Process each module
+        for (const moduleDoc of modulesSnapshot.docs) {
+          const moduleData = moduleDoc.data();
+
+          // Fetch lessons for this module
+          const lessonsQuery = query(
+            collection(db, 'lessons'),
+            where('moduleId', '==', moduleDoc.id)
+          );
+          const lessonsSnapshot = await getDocs(lessonsQuery);
+
+          const lessons = lessonsSnapshot.docs.map(lessonDoc => {
+            const lessonData = lessonDoc.data();
+            return {
+              title: lessonData.title || '',
+              duration: lessonData.duration || 15,
+              materials: lessonData.materials || []
+            };
+          });
+
+          existingModules.push({
+            title: moduleData.title || '',
+            lessons: lessons
+          });
+        }
+
+        // Sort modules by order
+        existingModules.sort((a, b) => (a.order || 0) - (b.order || 0));
+
+        console.log('✅ [CourseManager] Loaded modules:', existingModules);
+      } catch (error) {
+        console.error('❌ [CourseManager] Error loading modules:', error);
+      }
+
       setFormData({
         title: course.title,
         description: course.description,
@@ -52,7 +99,7 @@ export default function CourseManager() {
         status: course.status,
         thumbnailFile: null,
         thumbnail_url: course.thumbnail_url || '',
-        modules: course.modules || [],
+        modules: existingModules,
       });
     } else {
       setEditingCourse(null);
@@ -121,6 +168,59 @@ export default function CourseManager() {
   const updateLesson = (moduleIndex, lessonIndex, field, value) => {
     const newModules = [...formData.modules];
     newModules[moduleIndex].lessons[lessonIndex][field] = value;
+    setFormData({ ...formData, modules: newModules });
+  };
+
+  const handleMaterialsUpload = async (moduleIndex, lessonIndex, e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    const newModules = [...formData.modules];
+    const lesson = newModules[moduleIndex].lessons[lessonIndex];
+
+    // Initialize materials array if it doesn't exist
+    if (!lesson.materials) {
+      lesson.materials = [];
+    }
+
+    for (const file of files) {
+      // Validate file type
+      const allowedTypes = [
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+        'application/vnd.ms-powerpoint',
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation'
+      ];
+
+      if (!allowedTypes.includes(file.type)) {
+        showToast({ type: 'warning', message: `${file.name}: Dozvoljeni su samo PDF, Word i PowerPoint fajlovi` });
+        continue;
+      }
+
+      // Validate file size (max 10MB)
+      const maxSize = 10 * 1024 * 1024;
+      if (file.size > maxSize) {
+        showToast({ type: 'warning', message: `${file.name}: Fajl je prevelik. Maksimalna veličina je 10MB.` });
+        continue;
+      }
+
+      // Add file metadata to lesson materials (will upload when form is submitted)
+      lesson.materials.push({
+        name: file.name,
+        size: file.size,
+        type: file.type,
+        file: file, // Store actual file for upload later
+        uploading: false
+      });
+    }
+
+    setFormData({ ...formData, modules: newModules });
+  };
+
+  const removeMaterial = (moduleIndex, lessonIndex, materialIndex) => {
+    const newModules = [...formData.modules];
+    newModules[moduleIndex].lessons[lessonIndex].materials.splice(materialIndex, 1);
     setFormData({ ...formData, modules: newModules });
   };
 
@@ -286,7 +386,8 @@ export default function CourseManager() {
 
           console.log(`  📝 Creating lesson ${j + 1}:`, lesson.title);
 
-          await addDoc(collection(db, 'lessons'), {
+          // Create lesson document first to get lesson ID
+          const lessonDoc = await addDoc(collection(db, 'lessons'), {
             courseId: courseId,
             moduleId: moduleDoc.id,
             title: lesson.title,
@@ -294,8 +395,51 @@ export default function CourseManager() {
             order: j + 1,
             videoUrl: '',
             description: '',
+            materials: [],
             created_at: new Date().toISOString(),
           });
+
+          // Upload materials if any
+          if (lesson.materials && lesson.materials.length > 0) {
+            console.log(`  📎 Uploading ${lesson.materials.length} materials...`);
+            const uploadedMaterials = [];
+
+            for (const material of lesson.materials) {
+              if (material.file) {
+                try {
+                  const fileName = `course-materials/${courseId}/${lessonDoc.id}/${Date.now()}_${material.name}`;
+                  const storageRef = ref(storage, fileName);
+                  const uploadTask = await uploadBytesResumable(storageRef, material.file);
+                  const downloadURL = await getDownloadURL(uploadTask.ref);
+
+                  uploadedMaterials.push({
+                    name: material.name,
+                    url: downloadURL,
+                    type: material.type,
+                    size: material.size
+                  });
+
+                  console.log(`    ✅ Material uploaded:`, material.name);
+                } catch (error) {
+                  console.error(`    ❌ Error uploading material ${material.name}:`, error);
+                  showToast({ type: 'warning', message: `Greška pri upload-u: ${material.name}` });
+                }
+              } else if (material.url) {
+                // Existing material (from edit mode)
+                uploadedMaterials.push({
+                  name: material.name,
+                  url: material.url,
+                  type: material.type,
+                  size: material.size
+                });
+              }
+            }
+
+            // Update lesson with materials
+            await updateDoc(doc(db, 'lessons', lessonDoc.id), {
+              materials: uploadedMaterials
+            });
+          }
 
           console.log(`  ✅ Lesson created:`, lesson.title);
         }
@@ -627,33 +771,68 @@ export default function CourseManager() {
                         {/* Lessons */}
                         <div className="space-y-2 ml-4 pl-4 border-l-2 border-gray-300">
                           {module.lessons.map((lesson, lessonIndex) => (
-                            <div key={lessonIndex} className="flex items-center gap-2 bg-white p-2 rounded-lg">
-                              <input
-                                type="text"
-                                value={lesson.title}
-                                onChange={(e) => updateLesson(moduleIndex, lessonIndex, 'title', e.target.value)}
-                                placeholder="Naziv lekcije"
-                                className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black text-sm text-gray-900"
-                              />
-                              <div className="flex items-center gap-1 bg-gray-50 px-2 py-1.5 rounded-lg">
-                                <Clock className="w-4 h-4 text-gray-500" />
+                            <div key={lessonIndex} className="bg-white p-3 rounded-lg border border-gray-200">
+                              <div className="flex items-center gap-2 mb-2">
                                 <input
-                                  type="number"
-                                  value={lesson.duration}
-                                  onChange={(e) => updateLesson(moduleIndex, lessonIndex, 'duration', Number(e.target.value))}
-                                  className="w-12 bg-transparent text-sm text-gray-900 focus:outline-none"
-                                  min="1"
-                                  placeholder="15"
+                                  type="text"
+                                  value={lesson.title}
+                                  onChange={(e) => updateLesson(moduleIndex, lessonIndex, 'title', e.target.value)}
+                                  placeholder="Naziv lekcije"
+                                  className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black text-sm text-gray-900"
                                 />
-                                <span className="text-xs text-gray-500">min</span>
+                                <div className="flex items-center gap-1 bg-gray-50 px-2 py-1.5 rounded-lg">
+                                  <Clock className="w-4 h-4 text-gray-500" />
+                                  <input
+                                    type="number"
+                                    value={lesson.duration}
+                                    onChange={(e) => updateLesson(moduleIndex, lessonIndex, 'duration', Number(e.target.value))}
+                                    className="w-12 bg-transparent text-sm text-gray-900 focus:outline-none"
+                                    min="1"
+                                    placeholder="15"
+                                  />
+                                  <span className="text-xs text-gray-500">min</span>
+                                </div>
+                                <button
+                                  type="button"
+                                  onClick={() => removeLesson(moduleIndex, lessonIndex)}
+                                  className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                                >
+                                  <X className="w-4 h-4" />
+                                </button>
                               </div>
-                              <button
-                                type="button"
-                                onClick={() => removeLesson(moduleIndex, lessonIndex)}
-                                className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                              >
-                                <X className="w-4 h-4" />
-                              </button>
+
+                              {/* Materials Upload Section */}
+                              <div className="mt-2">
+                                <label className="block text-xs font-semibold text-gray-700 mb-1">Материјали за лекцију:</label>
+                                <input
+                                  type="file"
+                                  accept=".pdf,.doc,.docx,.ppt,.pptx"
+                                  multiple
+                                  onChange={(e) => handleMaterialsUpload(moduleIndex, lessonIndex, e)}
+                                  className="block w-full text-xs text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#D62828] file:text-white hover:file:bg-[#B91F1F] cursor-pointer"
+                                />
+                                <p className="text-xs text-gray-500 mt-1">PDF, Word, PowerPoint (max 10MB)</p>
+
+                                {/* Lista postojećih materijala */}
+                                {lesson.materials && lesson.materials.length > 0 && (
+                                  <div className="mt-2 space-y-1">
+                                    {lesson.materials.map((mat, idx) => (
+                                      <div key={idx} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
+                                        <FileText className="w-3 h-3 text-[#D62828] flex-shrink-0" />
+                                        <span className="text-xs flex-1 truncate text-gray-900">{mat.name}</span>
+                                        <span className="text-xs text-gray-500">{(mat.size / 1024).toFixed(0)}KB</span>
+                                        <button
+                                          type="button"
+                                          onClick={() => removeMaterial(moduleIndex, lessonIndex, idx)}
+                                          className="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded transition-colors"
+                                        >
+                                          <X className="w-3 h-3" />
+                                        </button>
+                                      </div>
+                                    ))}
+                                  </div>
+                                )}
+                              </div>
                             </div>
                           ))}
                           <button

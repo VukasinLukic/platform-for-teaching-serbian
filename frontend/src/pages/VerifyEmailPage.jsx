@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '../services/firebase';
+import { useAuthStore } from '../store/authStore';
 
 /**
  * Email Verification Page
@@ -10,7 +11,8 @@ import { functions } from '../services/firebase';
 const VerifyEmailPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const [status, setStatus] = useState('verifying'); // verifying, success, error
+  const { refreshUserProfile } = useAuthStore();
+  const [status, setStatus] = useState('verifying'); // verifying, success, error, waiting
   const [message, setMessage] = useState('');
   const [countdown, setCountdown] = useState(5);
 
@@ -18,9 +20,10 @@ const VerifyEmailPage = () => {
     const verifyEmail = async () => {
       const token = searchParams.get('token');
 
+      // No token = user just registered, show waiting screen
       if (!token) {
-        setStatus('error');
-        setMessage('Nevažeći link za verifikaciju. Token nije pronađen.');
+        setStatus('waiting');
+        setMessage('Послали смо вам email са линком за верификацију. Проверите свој inbox и кликните на линк.');
         return;
       }
 
@@ -35,6 +38,13 @@ const VerifyEmailPage = () => {
         if (result.data.success) {
           setStatus('success');
           setMessage(result.data.message || 'Email uspešno verifikovan! Možete koristiti aplikaciju.');
+
+          // Refresh user profile to get updated emailVerified status
+          try {
+            await refreshUserProfile();
+          } catch (profileError) {
+            console.error('Error refreshing profile:', profileError);
+          }
 
           // Start countdown for redirect
           let seconds = 5;
@@ -105,6 +115,9 @@ const VerifyEmailPage = () => {
       <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-10">
         {/* Verification Status Icon */}
         <div className="text-center mb-6">
+          {status === 'waiting' && (
+            <div className="text-7xl mb-4 animate-pulse">📧</div>
+          )}
           {status === 'verifying' && (
             <div className="inline-block">
               <div className="animate-spin rounded-full h-20 w-20 border-b-4 border-primary"></div>
@@ -120,6 +133,7 @@ const VerifyEmailPage = () => {
 
         {/* Title */}
         <h1 className="text-3xl font-bold text-center mb-4 text-primary">
+          {status === 'waiting' && 'Проверите Ваш Email'}
           {status === 'verifying' && 'Verifikacija u toku...'}
           {status === 'success' && 'Email Verifikovan!'}
           {status === 'error' && 'Greška'}
@@ -144,6 +158,23 @@ const VerifyEmailPage = () => {
 
         {/* Action Buttons */}
         <div className="space-y-3">
+          {status === 'waiting' && (
+            <>
+              <button
+                onClick={handleResendEmail}
+                className="w-full bg-accent text-primary py-4 rounded-2xl font-semibold hover:bg-accent-dark transition-all duration-300 shadow-lg hover:shadow-xl"
+              >
+                Пошаљи поново email
+              </button>
+              <button
+                onClick={() => navigate('/login')}
+                className="w-full bg-gray-200 text-gray-700 py-4 rounded-2xl font-semibold hover:bg-gray-300 transition-all duration-300"
+              >
+                Назад на Пријаву
+              </button>
+            </>
+          )}
+
           {status === 'success' && (
             <button
               onClick={() => navigate('/dashboard')}
@@ -172,6 +203,20 @@ const VerifyEmailPage = () => {
         </div>
 
         {/* Additional Info */}
+        {status === 'waiting' && (
+          <div className="mt-6 p-4 bg-blue-50 border-l-4 border-blue-400 rounded-lg">
+            <p className="text-sm text-blue-800">
+              <strong>💡 Савети:</strong>
+            </p>
+            <ul className="text-sm text-blue-700 mt-2 space-y-1 list-disc list-inside">
+              <li>Проверите spam/junk фолдер у вашем email-у</li>
+              <li>Email би требало да стигне за 1-2 минута</li>
+              <li>Кликните на линк у email-у да верификујете налог</li>
+              <li>Након верификације, моћи ћете да приступите апликацији</li>
+            </ul>
+          </div>
+        )}
+
         {status === 'error' && (
           <div className="mt-6 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-lg">
             <p className="text-sm text-yellow-800">

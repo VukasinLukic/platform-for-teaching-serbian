@@ -174,7 +174,7 @@ export default function ContactPage() {
                </p>
                <Link to="/faq">
                  <button className="bg-white text-[#D62828] px-6 py-3 rounded-full text-sm font-bold hover:bg-gray-100 transition w-full">
-                   Погледајте FAQ
+                   Погледајте честа питања
                  </button>
                </Link>
             </div>

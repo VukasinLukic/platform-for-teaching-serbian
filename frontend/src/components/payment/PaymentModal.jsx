@@ -116,7 +116,7 @@ export default function PaymentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn" onClick={onClose}>
-      <div className="bg-white rounded-2xl max-w-4xl w-full shadow-2xl relative animate-slideUp" onClick={(e) => e.stopPropagation()}>
+      <div className="bg-white rounded-2xl max-w-2xl w-full shadow-2xl relative animate-slideUp" onClick={(e) => e.stopPropagation()}>
         <button
           onClick={onClose}
           className="absolute top-4 right-4 p-2 rounded-full bg-gray-100 hover:bg-gray-200 transition-colors z-10"

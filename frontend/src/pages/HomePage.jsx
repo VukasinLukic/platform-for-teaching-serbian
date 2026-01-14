@@ -142,7 +142,7 @@ export default function HomePage() {
   ];
 
   const stats = [
-    { number: '500+', label: 'Ученика' },
+    { number: '700+', label: 'Ученика' },
     { number: '98%', label: 'Успешност' },
     { number: '27', label: 'Година искуства' },
   ];
@@ -187,7 +187,7 @@ export default function HomePage() {
               </h1>
 
               <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Платформа која гради знање, а не напамет памет. Искусна професорка, доказани резултати.
+                Платформа која гради знање, а не напамет памет. Искусна наставница, доказани резултати.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start pt-4">
@@ -219,78 +219,120 @@ export default function HomePage() {
       {/* 2. HOW IT WORKS SECTION */}
       <section
         ref={howItWorksRef}
-        className={`pt-40 pb-20 bg-white relative overflow-hidden transition-all duration-1000 ${
+        className={`pt-40 pb-20 bg-gradient-to-br from-pink-50 via-white to-blue-50 relative overflow-hidden transition-all duration-1000 ${
           howItWorksVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 relative z-10">
+        {/* Playful Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
+          <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-300 rounded-full blur-3xl animate-pulse"></div>
+          <div className="absolute top-40 right-20 w-24 h-24 bg-blue-300 rounded-full blur-2xl animate-pulse" style={{animationDelay: '1s'}}></div>
+          <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-pink-300 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+        </div>
+
+        <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
+            <h2 className="text-4xl md:text-5xl font-extrabold text-[#1A1A1A] mb-4">
               Како функционише?
             </h2>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-              Једноставан и транспарентан процес — од уписа до првог часа
-            </p>
           </div>
 
-          <div className="relative max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              {/* Step 1 */}
-              <div className="relative group transition-all duration-500 hover:scale-105">
-                <div className="bg-gradient-to-br from-[#FFF5F5] to-white p-8 rounded-3xl border-2 border-[#D62828]/20 hover:border-[#D62828] transition-all hover:shadow-2xl">
-                  <div className="relative w-16 h-16 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
-                    <span className="text-3xl font-black text-white">1</span>
+          {/* Vertical Snake Path Layout */}
+          <div className="relative">
+            {/* Red Curved Path - SVG */}
+            <svg className="absolute left-1/2 top-0 h-full w-full -translate-x-1/2 hidden md:block" style={{zIndex: 1}} preserveAspectRatio="none" viewBox="0 0 400 1200">
+              <path
+                d="M 200 80 Q 100 180, 200 280 Q 300 380, 200 480 Q 100 580, 200 680 Q 300 780, 200 880"
+                stroke="#D62828"
+                strokeWidth="12"
+                fill="none"
+                strokeLinecap="round"
+                opacity="0.8"
+              />
+            </svg>
+
+            <div className="space-y-32 md:space-y-24 relative" style={{zIndex: 2}}>
+
+              {/* Step 1 - Left */}
+              <div className="flex items-center gap-8 md:gap-12">
+                <div className="relative flex-shrink-0">
+                  <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-full flex items-center justify-center shadow-2xl border-8 border-[#D62828] relative z-10">
+                    <BookOpen className="w-12 h-12 md:w-16 md:h-16 text-[#D62828]" />
                   </div>
-                  <h3 className="text-lg font-bold text-[#1A1A1A] mb-3">
+                  <div className="absolute -top-3 -right-3 w-16 h-16 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center shadow-xl z-20">
+                    <span className="text-2xl font-black text-white">1</span>
+                  </div>
+                </div>
+                <div className="flex-1 bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+                  <h3 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-3">
                     Изаберите курс
                   </h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">
+                  <p className="text-gray-600 leading-relaxed">
                     Прегледајте наше курсеве или пакете online наставе и изаберите онај који вам одговара
                   </p>
                 </div>
               </div>
 
-              {/* Step 2 */}
-              <div className="relative group transition-all duration-500 hover:scale-105">
-                <div className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-3xl border-2 border-gray-200 hover:border-[#1A1A1A] transition-all hover:shadow-2xl">
-                  <div className="relative w-16 h-16 bg-gradient-to-br from-[#1A1A1A] to-gray-700 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
-                    <span className="text-3xl font-black text-white">2</span>
+              {/* Step 2 - Right */}
+              <div className="flex items-center gap-8 md:gap-12 flex-row-reverse">
+                <div className="relative flex-shrink-0">
+                  <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-full flex items-center justify-center shadow-2xl border-8 border-[#D62828] relative z-10">
+                    <svg className="w-12 h-12 md:w-16 md:h-16 text-[#D62828]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                    </svg>
                   </div>
-                  <h3 className="text-lg font-bold text-[#1A1A1A] mb-3">
+                  <div className="absolute -top-3 -left-3 w-16 h-16 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center shadow-xl z-20">
+                    <span className="text-2xl font-black text-white">2</span>
+                  </div>
+                </div>
+                <div className="flex-1 bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+                  <h3 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-3">
                     Извршите уплату
                   </h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">
+                  <p className="text-gray-600 leading-relaxed">
                     Пратите упутства за уплату и пошаљите доказ о извршеној трансакцији
                   </p>
                 </div>
               </div>
 
-              {/* Step 3 */}
-              <div className="relative group transition-all duration-500 hover:scale-105">
-                <div className="bg-gradient-to-br from-[#FFF5F5] to-white p-8 rounded-3xl border-2 border-[#D62828]/20 hover:border-[#D62828] transition-all hover:shadow-2xl">
-                  <div className="relative w-16 h-16 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
-                    <span className="text-3xl font-black text-white">3</span>
+              {/* Step 3 - Left */}
+              <div className="flex items-center gap-8 md:gap-12">
+                <div className="relative flex-shrink-0">
+                  <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-full flex items-center justify-center shadow-2xl border-8 border-[#D62828] relative z-10">
+                    <svg className="w-12 h-12 md:w-16 md:h-16 text-[#D62828]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    </svg>
                   </div>
-                  <h3 className="text-lg font-bold text-[#1A1A1A] mb-3">
+                  <div className="absolute -top-3 -right-3 w-16 h-16 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center shadow-xl z-20">
+                    <span className="text-2xl font-black text-white">3</span>
+                  </div>
+                </div>
+                <div className="flex-1 bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+                  <h3 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-3">
                     Потврда уплате
                   </h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">
+                  <p className="text-gray-600 leading-relaxed">
                     Контактираћемо вас email-ом у року од 24h са потврдом и даљим инструкцијама
                   </p>
                 </div>
               </div>
 
-              {/* Step 4 */}
-              <div className="relative group transition-all duration-500 hover:scale-105">
-                <div className="bg-gradient-to-br from-gray-50 to-white p-8 rounded-3xl border-2 border-gray-200 hover:border-[#1A1A1A] transition-all hover:shadow-2xl">
-                  <div className="relative w-16 h-16 bg-gradient-to-br from-[#1A1A1A] to-gray-700 rounded-2xl flex items-center justify-center mb-5 shadow-lg group-hover:scale-110 transition-transform">
-                    <span className="text-3xl font-black text-white">4</span>
+              {/* Step 4 - Right */}
+              <div className="flex items-center gap-8 md:gap-12 flex-row-reverse">
+                <div className="relative flex-shrink-0">
+                  <div className="w-32 h-32 md:w-40 md:h-40 bg-white rounded-full flex items-center justify-center shadow-2xl border-8 border-[#D62828] relative z-10">
+                    <Video className="w-12 h-12 md:w-16 md:h-16 text-[#D62828]" />
                   </div>
-                  <h3 className="text-lg font-bold text-[#1A1A1A] mb-3">
+                  <div className="absolute -top-3 -left-3 w-16 h-16 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center shadow-xl z-20">
+                    <span className="text-2xl font-black text-white">4</span>
+                  </div>
+                </div>
+                <div className="flex-1 bg-white p-6 md:p-8 rounded-2xl shadow-lg">
+                  <h3 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-3">
                     Почните да учите
                   </h3>
-                  <p className="text-gray-600 leading-relaxed text-sm">
-                    Приступите курсевима преко вашег Dashboard-а или придружите се online часовима
+                  <p className="text-gray-600 leading-relaxed">
+                    Приступите курсевима преко вашег панела или придружите се online часовима
                   </p>
                 </div>
               </div>

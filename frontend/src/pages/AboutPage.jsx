@@ -16,7 +16,7 @@ export default function AboutPage() {
   const stats = [
     { key: 'experience', number: 27, suffix: '', label: 'Година искуства' },
     { key: 'awards', number: 10, suffix: '+', label: 'Републичких награда' },
-    { key: 'students', number: 500, suffix: '+', label: 'Ученика' },
+    { key: 'students', number: 700, suffix: '+', label: 'Ученика' },
   ];
 
   useEffect(() => {
@@ -69,8 +69,7 @@ export default function AboutPage() {
           </h1>
           <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12">
             СРПСКИ У СРЦУ је платформа која помаже ученицима да се припреме за малу матуру
-            из српског језика. Са професорком Марином Лукић, стручњаком са 27 година
-            искуства, обезбеђујемо квалитетну наставу која доноси резултате.
+            из српског језика и књижевности. Са наставницом Марином Лукић, која има радно искуство од 27 година, обезбеђујемо квалитетну наставу која доноси резултате.
           </p>
 
           {/* Stats Bar */}
@@ -101,7 +100,7 @@ export default function AboutPage() {
               {/* Title Overlay on Mobile */}
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6 rounded-b-3xl">
                 <h2 className="text-3xl md:text-4xl font-bold leading-tight text-white">
-                  Упознајте професорку <br />
+                  Упознајте наставницу <br />
                   <span className="text-[#F2C94C] relative">
                     Марину Лукић
                   </span>
@@ -114,10 +113,10 @@ export default function AboutPage() {
               <div className="space-y-5 text-base text-gray-600 leading-relaxed">
                 <p>
                   Наставница Марина Лукић ради 27 година у основној школи са ученицима од петог до осмог разреда.
-                  Завршила је Филолошки факултет у Београду, смер српски језик и књижевност (1994-1999).
+                  Завршила је Филолошки факултет у Београду, смер српски језик и књижевност.
                 </p>
                 <p>
-                  Освојила је са својим ученицима многобројне републичке награде на Књижевној олимпијади
+                  Освојила је са својим ученицима бројне републичке награде на Књижевној олимпијади
                   у Сремским Карловцима и Републичком такмичењу из српског језика у Тршићу. Редовно похађа
                   стручна усавршавања и радила је рецензије уџбеника.
                 </p>
@@ -162,7 +161,7 @@ export default function AboutPage() {
             {/* Text Side */}
             <div className="space-y-8">
               <h2 className="text-4xl md:text-5xl font-bold leading-tight">
-                Упознајте професорку <br />
+                Упознајте наставницу <br />
                 <span className="text-[#D62828] relative">
                   Марину Лукић
                   <div className="absolute -bottom-2 left-0 w-full h-1 bg-[#F2C94C]"></div>
@@ -172,10 +171,10 @@ export default function AboutPage() {
               <div className="space-y-6 text-lg text-gray-600 leading-relaxed">
                 <p>
                   Наставница Марина Лукић ради 27 година у основној школи са ученицима од петог до осмог разреда.
-                  Завршила је Филолошки факултет у Београду, смер српски језик и књижевност (1994-1999).
+                  Завршила је Филолошки факултет у Београду, смер српски језик и књижевност.
                 </p>
                 <p>
-                  Освојила је са својим ученицима многобројне републичке награде на Књижевној олимпијади
+                  Освојила је са својим ученицима бројне републичке награде на Књижевној олимпијади
                   у Сремским Карловцима и Републичком такмичењу из српског језика у Тршићу. Редовно похађа
                   стручна усавршавања и радила је рецензије уџбеника.
                 </p>
@@ -227,6 +226,11 @@ export default function AboutPage() {
               <Link to="/courses">
                 <button className="bg-white text-[#D62828] px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition shadow-lg">
                   Погледајте Курсеве
+                </button>
+              </Link>
+              <Link to="/online-nastava">
+                <button className="bg-[#F2C94C] text-[#1A1A1A] px-10 py-4 rounded-full font-bold text-lg hover:bg-[#D4A843] transition shadow-lg">
+                  Online Настава
                 </button>
               </Link>
               <Link to="/contact">
