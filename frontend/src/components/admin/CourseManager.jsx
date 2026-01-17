@@ -61,25 +61,9 @@ export default function CourseManager() {
         for (const moduleDoc of modulesSnapshot.docs) {
           const moduleData = moduleDoc.data();
 
-          // Fetch lessons for this module
-          const lessonsQuery = query(
-            collection(db, 'lessons'),
-            where('moduleId', '==', moduleDoc.id)
-          );
-          const lessonsSnapshot = await getDocs(lessonsQuery);
-
-          const lessons = lessonsSnapshot.docs.map(lessonDoc => {
-            const lessonData = lessonDoc.data();
-            return {
-              title: lessonData.title || '',
-              duration: lessonData.duration || 15,
-              materials: lessonData.materials || []
-            };
-          });
-
           existingModules.push({
             title: moduleData.title || '',
-            lessons: lessons
+            order: moduleData.order || 0,
           });
         }
 
@@ -134,11 +118,11 @@ export default function CourseManager() {
     setUploadProgress(0);
   };
 
-  // Module management functions
+  // Module (Oblast) management functions
   const addModule = () => {
     setFormData({
       ...formData,
-      modules: [...formData.modules, { title: '', lessons: [] }]
+      modules: [...formData.modules, { title: '' }]
     });
   };
 
@@ -150,77 +134,6 @@ export default function CourseManager() {
   const updateModule = (moduleIndex, field, value) => {
     const newModules = [...formData.modules];
     newModules[moduleIndex][field] = value;
-    setFormData({ ...formData, modules: newModules });
-  };
-
-  const addLesson = (moduleIndex) => {
-    const newModules = [...formData.modules];
-    newModules[moduleIndex].lessons.push({ title: '', duration: 15 });
-    setFormData({ ...formData, modules: newModules });
-  };
-
-  const removeLesson = (moduleIndex, lessonIndex) => {
-    const newModules = [...formData.modules];
-    newModules[moduleIndex].lessons = newModules[moduleIndex].lessons.filter((_, idx) => idx !== lessonIndex);
-    setFormData({ ...formData, modules: newModules });
-  };
-
-  const updateLesson = (moduleIndex, lessonIndex, field, value) => {
-    const newModules = [...formData.modules];
-    newModules[moduleIndex].lessons[lessonIndex][field] = value;
-    setFormData({ ...formData, modules: newModules });
-  };
-
-  const handleMaterialsUpload = async (moduleIndex, lessonIndex, e) => {
-    const files = Array.from(e.target.files);
-    if (files.length === 0) return;
-
-    const newModules = [...formData.modules];
-    const lesson = newModules[moduleIndex].lessons[lessonIndex];
-
-    // Initialize materials array if it doesn't exist
-    if (!lesson.materials) {
-      lesson.materials = [];
-    }
-
-    for (const file of files) {
-      // Validate file type
-      const allowedTypes = [
-        'application/pdf',
-        'application/msword',
-        'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-        'application/vnd.ms-powerpoint',
-        'application/vnd.openxmlformats-officedocument.presentationml.presentation'
-      ];
-
-      if (!allowedTypes.includes(file.type)) {
-        showToast({ type: 'warning', message: `${file.name}: Dozvoljeni su samo PDF, Word i PowerPoint fajlovi` });
-        continue;
-      }
-
-      // Validate file size (max 10MB)
-      const maxSize = 10 * 1024 * 1024;
-      if (file.size > maxSize) {
-        showToast({ type: 'warning', message: `${file.name}: Fajl je prevelik. Maksimalna veličina je 10MB.` });
-        continue;
-      }
-
-      // Add file metadata to lesson materials (will upload when form is submitted)
-      lesson.materials.push({
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        file: file, // Store actual file for upload later
-        uploading: false
-      });
-    }
-
-    setFormData({ ...formData, modules: newModules });
-  };
-
-  const removeMaterial = (moduleIndex, lessonIndex, materialIndex) => {
-    const newModules = [...formData.modules];
-    newModules[moduleIndex].lessons[lessonIndex].materials.splice(materialIndex, 1);
     setFormData({ ...formData, modules: newModules });
   };
 
@@ -723,12 +636,12 @@ export default function CourseManager() {
                 </div>
               </div>
 
-              {/* Modules Editor */}
+              {/* Oblasti (Areas) Editor */}
               <div className="border-t-2 border-gray-100 pt-6 mt-6">
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <List className="w-5 h-5 text-gray-700" />
-                    <label className="block text-sm font-medium text-gray-900">Plan i Program (Moduli i Lekcije)</label>
+                    <label className="block text-sm font-medium text-gray-900">Oblasti kursa</label>
                   </div>
                   <button
                     type="button"
@@ -736,118 +649,42 @@ export default function CourseManager() {
                     className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg font-medium text-gray-700 flex items-center gap-1 transition-colors"
                   >
                     <Plus className="w-4 h-4" />
-                    Dodaj modul
+                    Dodaj oblast
                   </button>
                 </div>
 
                 {formData.modules.length === 0 ? (
                   <div className="text-center py-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
                     <List className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                    <p className="text-sm text-gray-500">Još nema modula. Kliknite "Dodaj modul" da započnete.</p>
+                    <p className="text-sm text-gray-500">Još nema oblasti. Kliknite "Dodaj oblast" da započnete.</p>
                   </div>
                 ) : (
-                  <div className="space-y-4">
+                  <div className="space-y-3">
                     {formData.modules.map((module, moduleIndex) => (
                       <div key={moduleIndex} className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-                        {/* Module Header */}
-                        <div className="flex items-start gap-3 mb-3">
+                        <div className="flex items-center gap-3">
+                          <span className="text-sm font-bold text-gray-500 w-6">{moduleIndex + 1}.</span>
                           <input
                             type="text"
                             value={module.title}
                             onChange={(e) => updateModule(moduleIndex, 'title', e.target.value)}
-                            placeholder={`Modul ${moduleIndex + 1}: Naziv modula`}
+                            placeholder={`Naziv oblasti ${moduleIndex + 1}`}
                             className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black text-gray-900 font-medium"
                           />
                           <button
                             type="button"
                             onClick={() => removeModule(moduleIndex)}
                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Obriši modul"
+                            title="Obriši oblast"
                           >
                             <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-
-                        {/* Lessons */}
-                        <div className="space-y-2 ml-4 pl-4 border-l-2 border-gray-300">
-                          {module.lessons.map((lesson, lessonIndex) => (
-                            <div key={lessonIndex} className="bg-white p-3 rounded-lg border border-gray-200">
-                              <div className="flex items-center gap-2 mb-2">
-                                <input
-                                  type="text"
-                                  value={lesson.title}
-                                  onChange={(e) => updateLesson(moduleIndex, lessonIndex, 'title', e.target.value)}
-                                  placeholder="Naziv lekcije"
-                                  className="flex-1 px-3 py-1.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-black focus:border-black text-sm text-gray-900"
-                                />
-                                <div className="flex items-center gap-1 bg-gray-50 px-2 py-1.5 rounded-lg">
-                                  <Clock className="w-4 h-4 text-gray-500" />
-                                  <input
-                                    type="number"
-                                    value={lesson.duration}
-                                    onChange={(e) => updateLesson(moduleIndex, lessonIndex, 'duration', Number(e.target.value))}
-                                    className="w-12 bg-transparent text-sm text-gray-900 focus:outline-none"
-                                    min="1"
-                                    placeholder="15"
-                                  />
-                                  <span className="text-xs text-gray-500">min</span>
-                                </div>
-                                <button
-                                  type="button"
-                                  onClick={() => removeLesson(moduleIndex, lessonIndex)}
-                                  className="p-1.5 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
-                                >
-                                  <X className="w-4 h-4" />
-                                </button>
-                              </div>
-
-                              {/* Materials Upload Section */}
-                              <div className="mt-2">
-                                <label className="block text-xs font-semibold text-gray-700 mb-1">Материјали за лекцију:</label>
-                                <input
-                                  type="file"
-                                  accept=".pdf,.doc,.docx,.ppt,.pptx"
-                                  multiple
-                                  onChange={(e) => handleMaterialsUpload(moduleIndex, lessonIndex, e)}
-                                  className="block w-full text-xs text-gray-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#D62828] file:text-white hover:file:bg-[#B91F1F] cursor-pointer"
-                                />
-                                <p className="text-xs text-gray-500 mt-1">PDF, Word, PowerPoint (max 10MB)</p>
-
-                                {/* Lista postojećih materijala */}
-                                {lesson.materials && lesson.materials.length > 0 && (
-                                  <div className="mt-2 space-y-1">
-                                    {lesson.materials.map((mat, idx) => (
-                                      <div key={idx} className="flex items-center gap-2 p-2 bg-gray-50 rounded-lg">
-                                        <FileText className="w-3 h-3 text-[#D62828] flex-shrink-0" />
-                                        <span className="text-xs flex-1 truncate text-gray-900">{mat.name}</span>
-                                        <span className="text-xs text-gray-500">{(mat.size / 1024).toFixed(0)}KB</span>
-                                        <button
-                                          type="button"
-                                          onClick={() => removeMaterial(moduleIndex, lessonIndex, idx)}
-                                          className="text-red-500 hover:text-red-700 p-1 hover:bg-red-50 rounded transition-colors"
-                                        >
-                                          <X className="w-3 h-3" />
-                                        </button>
-                                      </div>
-                                    ))}
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                          ))}
-                          <button
-                            type="button"
-                            onClick={() => addLesson(moduleIndex)}
-                            className="text-xs text-gray-600 hover:text-black flex items-center gap-1 px-3 py-1.5 hover:bg-white rounded-lg transition-colors w-full"
-                          >
-                            <Plus className="w-3 h-3" />
-                            Dodaj lekciju
                           </button>
                         </div>
                       </div>
                     ))}
                   </div>
                 )}
+                <p className="text-xs text-gray-500 mt-3">* Lekcije se dodaju u sekciji "Lekcije" nakon kreiranja kursa</p>
               </div>
 
               <div className="flex space-x-4 pt-6 border-t border-gray-100 mt-6">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, addDoc, getDocs, query, where, deleteDoc, doc, orderBy, updateDoc } from 'firebase/firestore';
+import { collection, addDoc, getDocs, query, where, deleteDoc, doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { uploadVideoToR2, deleteVideoFromR2 } from '../../services/cloudflare.service';
 import { Plus, Trash2, Loader2, Upload, Video, FileVideo, CheckCircle, ChevronDown, ChevronRight, Tag, FileText, Book, Edit } from 'lucide-react';
@@ -68,12 +68,35 @@ export default function LessonManager() {
     try {
       const q = query(
         collection(db, 'modules'),
-        where('courseId', '==', courseId),
-        orderBy('order', 'asc')
+        where('courseId', '==', courseId)
       );
       const snapshot = await getDocs(q);
-      const modulesData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      setModules(modulesData);
+
+      // For each module, count the lessons
+      const modulesWithLessonCount = await Promise.all(
+        snapshot.docs.map(async (moduleDoc) => {
+          const moduleData = { id: moduleDoc.id, ...moduleDoc.data() };
+
+          // Count lessons for this module
+          const lessonsQuery = query(
+            collection(db, 'lessons'),
+            where('moduleId', '==', moduleDoc.id)
+          );
+          const lessonsSnapshot = await getDocs(lessonsQuery);
+          moduleData.lessonCount = lessonsSnapshot.size;
+
+          return moduleData;
+        })
+      );
+
+      // Sort modules by createdAt
+      modulesWithLessonCount.sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+        const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+        return dateA - dateB;
+      });
+
+      setModules(modulesWithLessonCount);
       setSelectedModule(null);
     } catch (error) {
       console.error('Error loading modules:', error);
@@ -85,11 +108,18 @@ export default function LessonManager() {
     try {
       const q = query(
         collection(db, 'lessons'),
-        where('moduleId', '==', moduleId),
-        orderBy('order', 'asc')
+        where('moduleId', '==', moduleId)
       );
       const snapshot = await getDocs(q);
       const lessonsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+      // Sort lessons by createdAt
+      lessonsData.sort((a, b) => {
+        const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+        const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+        return dateA - dateB;
+      });
+
       setLessons(lessonsData);
     } catch (error) {
       console.error('Error loading lessons:', error);
@@ -327,7 +357,7 @@ export default function LessonManager() {
 
       {selectedCourse && modules.length > 0 && (
         <div className="bg-white rounded-3xl p-6 border border-gray-100">
-          <h3 className="text-xl font-bold mb-4 text-[#1A1A1A]">Модули ({modules.length})</h3>
+          <h3 className="text-xl font-bold mb-4 text-[#1A1A1A]">Области ({modules.length})</h3>
           <div className="space-y-3">
             {modules.map((module, index) => (
               <div key={module.id} className="border-2 border-gray-200 rounded-2xl overflow-hidden">
@@ -341,7 +371,7 @@ export default function LessonManager() {
                     </div>
                     <div className="text-left">
                       <p className="font-bold text-[#1A1A1A]">{module.title}</p>
-                      <p className="text-sm text-gray-600">{module.lessons?.length || 0} лекција</p>
+                      <p className="text-sm text-gray-600">{module.lessonCount || 0} лекција</p>
                     </div>
                   </div>
                   {selectedModule?.id === module.id ? (

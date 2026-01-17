@@ -24,6 +24,7 @@ import TermsPage from './pages/legal/TermsPage';
 import CoursesPage from './pages/CoursesPage';
 import FAQPage from './pages/FAQPage';
 import OnlineNastavaPage from './pages/OnlineNastavaPage';
+import PaymentSlipPage from './pages/PaymentSlipPage';
 import EmailVerificationGate from './components/auth/EmailVerificationGate';
 
 // Protected Route Component
@@ -78,6 +79,7 @@ function App() {
         <Route path="/benefits" element={<BenefitsPage />} />
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
+        <Route path="/uplatnica" element={<PaymentSlipPage />} />
 
         {/* Protected Routes */}
         <Route

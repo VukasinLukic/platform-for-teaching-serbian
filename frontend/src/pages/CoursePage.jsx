@@ -5,25 +5,23 @@ import {
   Video, ArrowRight, FileText, Download
 } from 'lucide-react';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
 import { getCourseById, checkUserAccess, getCourseModulesWithLessons } from '../services/course.service';
 import { useAuthStore } from '../store/authStore';
 import { formatPrice } from '../utils/helpers';
-import { db } from '../services/firebase';
+import { db, functions } from '../services/firebase';
 import Header from '../components/ui/Header';
-import PaymentModal from '../components/payment/PaymentModal';
 
 export default function CoursePage() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { user } = useAuthStore();
+  const { user, userProfile } = useAuthStore();
   const [course, setCourse] = useState(null);
   const [hasAccess, setHasAccess] = useState(false);
   const [modules, setModules] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
   const [activeModuleIndex, setActiveModuleIndex] = useState(0);
   const [selectedLesson, setSelectedLesson] = useState(null);
-  const [paymentReference, setPaymentReference] = useState(null);
 
   useEffect(() => {
     loadCourseData();
@@ -55,13 +53,6 @@ export default function CoursePage() {
     }
   };
 
-  const generatePaymentRef = (userId, courseId) => {
-    const userPart = userId.substring(0, 6).toUpperCase();
-    const coursePart = courseId.substring(0, 4).toUpperCase();
-    const timestamp = Date.now().toString().slice(-4);
-    return `${userPart}-${coursePart}-${timestamp}`;
-  };
-
   const handlePurchaseClick = async () => {
     if (!user) {
       navigate('/login', { state: { returnTo: `/course/${id}` } });
@@ -69,21 +60,28 @@ export default function CoursePage() {
     }
 
     try {
+      // Check if user already has a pending transaction for this course
       const q = query(
         collection(db, 'transactions'),
         where('userId', '==', user.uid),
-        where('courseId', '==', id)
+        where('courseId', '==', id),
+        where('status', '==', 'pending')
       );
       const existingTransactions = await getDocs(q);
 
       let paymentRef;
 
       if (!existingTransactions.empty) {
+        // Use existing payment reference
         const existingTransaction = existingTransactions.docs[0].data();
         paymentRef = existingTransaction.payment_ref;
       } else {
-        paymentRef = generatePaymentRef(user.uid, id);
+        // Generate new payment reference using Cloud Function
+        const generatePaymentRefFunction = httpsCallable(functions, 'generatePaymentReference');
+        const result = await generatePaymentRefFunction();
+        paymentRef = result.data.paymentReference;
 
+        // Create new transaction
         await addDoc(collection(db, 'transactions'), {
           userId: user.uid,
           user_id: user.uid,
@@ -98,8 +96,17 @@ export default function CoursePage() {
         });
       }
 
-      setPaymentReference(paymentRef);
-      setShowPaymentModal(true);
+      // Navigate to payment slip page with payment data
+      navigate('/uplatnica', {
+        state: {
+          paymentData: {
+            amount: course.price,
+            courseName: course.title,
+            paymentReference: paymentRef,
+            userName: userProfile?.ime || '',
+          }
+        }
+      });
     } catch (error) {
       console.error('Error creating transaction:', error);
       alert('Грешка при креирању трансакције. Покушајте поново.');
@@ -247,7 +254,7 @@ export default function CoursePage() {
         <div className="mb-6">
           <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Садржај курса</h3>
           <p className="text-sm text-gray-600">
-            {modules.length} модула • {
+            {modules.length} области • {
               modules.reduce((acc, m) => acc + (m.lessons?.length || 0), 0)
             } лекција
           </p>
@@ -431,7 +438,7 @@ export default function CoursePage() {
               <div className="flex items-center gap-6 pt-4 border-t border-gray-100">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Book className="w-5 h-5 text-[#D62828]" />
-                  <span>{modules.length} модула</span>
+                  <span>{modules.length} области</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Play className="w-5 h-5 text-[#D62828]" />
@@ -461,15 +468,6 @@ export default function CoursePage() {
           </div>
         </div>
       </div>
-
-      {/* Payment Modal */}
-      {showPaymentModal && (
-        <PaymentModal
-          course={course}
-          paymentReference={paymentReference}
-          onClose={() => setShowPaymentModal(false)}
-        />
-      )}
     </div>
   );
 }

@@ -1,17 +1,16 @@
 import { useState, useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Video, Calendar, Users, Clock, CheckCircle, X, BookOpen } from 'lucide-react';
+import { httpsCallable } from 'firebase/functions';
 import { formatPrice } from '../utils/helpers';
 import { useAuthStore } from '../store/authStore';
+import { functions } from '../services/firebase';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
-import PaymentModal from '../components/payment/PaymentModal';
 
 export default function OnlineNastavaPage() {
-  const { user } = useAuthStore();
-  const [selectedPackage, setSelectedPackage] = useState(null);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
-  const [paymentReference, setPaymentReference] = useState('');
+  const navigate = useNavigate();
+  const { user, userProfile } = useAuthStore();
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [visibleSteps, setVisibleSteps] = useState([false, false, false, false]);
@@ -79,17 +78,33 @@ export default function OnlineNastavaPage() {
     }
   };
 
-  const handlePurchase = (pkg) => {
+  const handlePurchase = async (pkg) => {
     if (!user) {
       alert('Молимо вас да се пријавите како бисте купили online часове');
       return;
     }
 
-    setSelectedPackage(pkg);
-    // Generate payment reference
-    const reference = `ONL-${Date.now()}-${pkg.id.toUpperCase()}`;
-    setPaymentReference(reference);
-    setShowPaymentModal(true);
+    try {
+      // Generate payment reference using Cloud Function
+      const generatePaymentRefFunction = httpsCallable(functions, 'generatePaymentReference');
+      const result = await generatePaymentRefFunction();
+      const paymentRef = result.data.paymentReference;
+
+      // Navigate to payment slip page with payment data
+      navigate('/uplatnica', {
+        state: {
+          paymentData: {
+            amount: pkg.price,
+            packageName: pkg.name,
+            paymentReference: paymentRef,
+            userName: userProfile?.ime || '',
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error generating payment reference:', error);
+      alert('Грешка при креирању уплатнице. Покушајте поново.');
+    }
   };
 
   return (
@@ -103,10 +118,10 @@ export default function OnlineNastavaPage() {
             <span className="text-sm font-bold uppercase tracking-wider">Online настава уживо</span>
           </div>
           <h1 className="text-4xl md:text-6xl font-bold mb-6">
-            Интерактивни часови<br />са професором
+            Интерактивни часови<br />са наставницом
           </h1>
           <p className="text-xl text-white/90 max-w-3xl mx-auto">
-            Придружите се нашим online групним часовима уживо преко Google Meet. Максимално 8 ученика по групи за квалитетну интеракцију и пажњу сваком детету.
+            Придружите се нашим online групним часовима уживо преко Google Meet. Учите у интерактивној атмосфери где сваки ученик добија пажњу и подршку коју заслужује.
           </p>
         </div>
       </div>
@@ -235,7 +250,7 @@ export default function OnlineNastavaPage() {
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-[#D62828] flex-shrink-0 mt-1" />
-                    <p className="text-gray-700">Директну интеракцију са професором</p>
+                    <p className="text-gray-700">Директну интеракцију са наставницом</p>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-[#D62828] flex-shrink-0 mt-1" />
@@ -401,19 +416,6 @@ export default function OnlineNastavaPage() {
           </div>
         </div>
       </section>
-
-      {/* Payment Modal */}
-      {showPaymentModal && selectedPackage && (
-        <PaymentModal
-          type="online_package"
-          packageData={selectedPackage}
-          paymentReference={paymentReference}
-          onClose={() => {
-            setShowPaymentModal(false);
-            setSelectedPackage(null);
-          }}
-        />
-      )}
 
       <Footer />
     </div>

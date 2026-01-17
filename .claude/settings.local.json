@@ -40,7 +40,9 @@
       "Bash(node --experimental-modules:*)",
       "Bash(firebase functions:config:get:*)",
       "Bash(gcloud functions describe:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(npm run serve:*)",
+      "Bash(node:*)"
     ],
     "deny": [],
     "ask": []

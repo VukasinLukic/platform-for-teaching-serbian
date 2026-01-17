@@ -173,8 +173,7 @@ export const getCourseModulesWithLessons = async (courseId) => {
     // Get modules for the course
     const modulesQuery = query(
       collection(db, 'modules'),
-      where('courseId', '==', courseId),
-      orderBy('order', 'asc')
+      where('courseId', '==', courseId)
     );
     const modulesSnapshot = await getDocs(modulesQuery);
     console.log('✅ [course.service] Found', modulesSnapshot.docs.length, 'modules');
@@ -188,8 +187,7 @@ export const getCourseModulesWithLessons = async (courseId) => {
         // Get lessons for this module
         const lessonsQuery = query(
           collection(db, 'lessons'),
-          where('moduleId', '==', moduleDoc.id),
-          orderBy('order', 'asc')
+          where('moduleId', '==', moduleDoc.id)
         );
         const lessonsSnapshot = await getDocs(lessonsQuery);
         console.log('    📝 Found', lessonsSnapshot.docs.length, 'lessons for module', moduleData.title);
@@ -199,12 +197,26 @@ export const getCourseModulesWithLessons = async (courseId) => {
           ...lessonDoc.data()
         }));
 
+        // Sort lessons by createdAt
+        lessons.sort((a, b) => {
+          const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+          const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+          return dateA - dateB;
+        });
+
         return {
           ...moduleData,
           lessons
         };
       })
     );
+
+    // Sort modules by createdAt
+    modulesWithLessons.sort((a, b) => {
+      const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
+      const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
+      return dateA - dateB;
+    });
 
     console.log('✅ [course.service] Total modules with lessons:', modulesWithLessons.length);
     return modulesWithLessons;

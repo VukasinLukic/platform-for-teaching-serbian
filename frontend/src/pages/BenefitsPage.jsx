@@ -180,7 +180,7 @@ export default function BenefitsPage() {
                        <div className="text-xs opacity-70 uppercase tracking-wider">Успешност</div>
                      </div>
                      <div>
-                       <div className="text-3xl font-bold text-white">500+</div>
+                       <div className="text-3xl font-bold text-white">700+</div>
                        <div className="text-xs opacity-70 uppercase tracking-wider">Ученика</div>
                      </div>
                   </div>

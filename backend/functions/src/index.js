@@ -30,7 +30,8 @@ export const helloWorld = onCall(async (request) => {
 export { getVideoUrl } from './generateSignedUrl.js';
 export { generateInvoice } from './generateInvoice.js';
 export { confirmPayment, rejectPayment } from './confirmPayment.js';
-export { uploadVideoToR2, deleteVideoFromR2 } from './uploadVideoToR2.js';
+export { generateUploadUrl, uploadVideoToR2, deleteVideoFromR2 } from './uploadVideoToR2.js';
+export { generatePaymentReference } from './generatePaymentReference.js';
 
 // Email functions (replacing EmailJS)
 export {

@@ -27,7 +27,7 @@ const fileToBase64 = (file) => {
 };
 
 /**
- * Upload video file to Cloudflare R2
+ * Upload video file to Cloudflare R2 using presigned URL (direct upload)
  *
  * @param {File} file - The video file to upload
  * @param {string} courseId - The course ID
@@ -52,35 +52,69 @@ export const uploadVideoToR2 = async (file, courseId, moduleId, onProgress) => {
       throw new Error('Nepodržan format videa. Koristi MP4, WebM ili OGG.');
     }
 
-    // Update progress - converting file
+    // Update progress - generating upload URL
     if (onProgress) {
       onProgress(10);
     }
 
-    console.log('🔵 [cloudflare.service] Converting file to base64...');
-    const videoFile = await fileToBase64(file);
+    console.log('🔵 [cloudflare.service] Generating presigned upload URL...');
 
-    // Update progress - uploading
-    if (onProgress) {
-      onProgress(30);
-    }
-
-    console.log('🔵 [cloudflare.service] Calling Firebase Cloud Function...');
-
-    // Call Cloud Function
-    const uploadVideoToR2Function = httpsCallable(functionsInstance, 'uploadVideoToR2');
-
-    // Call Cloud Function
-    const result = await uploadVideoToR2Function({
-      videoFile,
+    // Call Cloud Function to get presigned URL
+    const generateUploadUrlFunction = httpsCallable(functionsInstance, 'generateUploadUrl');
+    const urlResult = await generateUploadUrlFunction({
       fileName: file.name,
       contentType: file.type,
       courseId,
       moduleId,
+      fileSize: file.size,
     });
 
+    const { uploadUrl, videoUrl, videoPath } = urlResult.data;
+
+    // Update progress - uploading file
+    if (onProgress) {
+      onProgress(20);
+    }
+
+    console.log('🔵 [cloudflare.service] Uploading file directly to R2...');
+
+    // Upload file directly to R2 using presigned URL with progress tracking
+    const xhr = new XMLHttpRequest();
+
+    const uploadPromise = new Promise((resolve, reject) => {
+      xhr.upload.addEventListener('progress', (e) => {
+        if (e.lengthComputable && onProgress) {
+          // Progress from 20% to 90%
+          const percentComplete = 20 + Math.round((e.loaded / e.total) * 70);
+          onProgress(percentComplete);
+        }
+      });
+
+      xhr.addEventListener('load', () => {
+        if (xhr.status === 200) {
+          resolve();
+        } else {
+          reject(new Error(`Upload failed with status: ${xhr.status}`));
+        }
+      });
+
+      xhr.addEventListener('error', () => {
+        reject(new Error('Network error during upload'));
+      });
+
+      xhr.addEventListener('abort', () => {
+        reject(new Error('Upload aborted'));
+      });
+
+      xhr.open('PUT', uploadUrl);
+      xhr.setRequestHeader('Content-Type', file.type);
+      xhr.send(file);
+    });
+
+    await uploadPromise;
+
     console.log('✅ [cloudflare.service] Upload successful!');
-    console.log('✅ [cloudflare.service] Video URL:', result.data.videoUrl);
+    console.log('✅ [cloudflare.service] Video URL:', videoUrl);
 
     // Update progress - complete
     if (onProgress) {
@@ -88,8 +122,8 @@ export const uploadVideoToR2 = async (file, courseId, moduleId, onProgress) => {
     }
 
     return {
-      url: result.data.videoUrl,
-      path: result.data.videoPath,
+      url: videoUrl,
+      path: videoPath,
     };
   } catch (error) {
     console.error('❌ [cloudflare.service] Upload failed:', error);
