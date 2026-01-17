@@ -208,12 +208,25 @@ export default function CoursePage() {
                 </h3>
                 <div className="grid gap-3">
                   {selectedLesson.materials.map((material, idx) => (
-                    <a
+                    <button
                       key={idx}
-                      href={material.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group"
+                      onClick={async () => {
+                        try {
+                          const response = await fetch(material.url);
+                          const blob = await response.blob();
+                          const url = window.URL.createObjectURL(blob);
+                          const a = document.createElement('a');
+                          a.href = url;
+                          a.download = material.name;
+                          document.body.appendChild(a);
+                          a.click();
+                          window.URL.revokeObjectURL(url);
+                          document.body.removeChild(a);
+                        } catch (error) {
+                          console.error('Download error:', error);
+                        }
+                      }}
+                      className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group text-left w-full"
                     >
                       <div className="w-12 h-12 bg-[#D62828] rounded-lg flex items-center justify-center flex-shrink-0">
                         <FileText className="w-6 h-6 text-white" />
@@ -223,7 +236,7 @@ export default function CoursePage() {
                         <p className="text-sm text-gray-500">{material.type} • {(material.size / 1024).toFixed(0)} KB</p>
                       </div>
                       <Download className="w-5 h-5 text-gray-400 group-hover:text-[#D62828] transition-colors" />
-                    </a>
+                    </button>
                   ))}
                 </div>
               </div>

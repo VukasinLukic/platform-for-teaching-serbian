@@ -1,13 +1,16 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
 import { CheckCircle, XCircle, AlertCircle, Info, X } from 'lucide-react';
+import { useNotificationStore } from '../../store/notificationStore';
 
 /**
  * Toast Notification System
- * Design: Clean toast notifications with Nauči Srpski brand colors
+ * Design: Clean toast notifications with Srpski u Srcu brand colors
  * Usage:
  *   1. Wrap app with <ToastProvider>
  *   2. Use const { showToast } = useToast() in components
- *   3. Call showToast({ type: 'success', message: 'Uspešno!' })
+ *   3. Call showToast({ type: 'success', message: 'Uspesno!' })
+ *
+ * Sve notifikacije se automatski cuvaju u notificationStore za istoriju
  */
 
 const ToastContext = createContext(null);
@@ -22,13 +25,19 @@ export const useToast = () => {
 
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
+  const addNotification = useNotificationStore((state) => state.addNotification);
 
   const showToast = useCallback(
-    ({ type = 'info', message, duration = 4000, title = null }) => {
+    ({ type = 'info', message, duration = 4000, title = null, saveToHistory = true }) => {
       const id = Date.now() + Math.random();
       const newToast = { id, type, message, title };
 
       setToasts((prev) => [...prev, newToast]);
+
+      // Sacuvaj u istoriju notifikacija (osim ako je eksplicitno iskljuceno)
+      if (saveToHistory) {
+        addNotification({ type, message, title });
+      }
 
       if (duration > 0) {
         setTimeout(() => {
@@ -38,7 +47,7 @@ export const ToastProvider = ({ children }) => {
 
       return id;
     },
-    []
+    [addNotification]
   );
 
   const removeToast = useCallback((id) => {

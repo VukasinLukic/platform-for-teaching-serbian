@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, BookOpen, Video, CreditCard, Users, Settings, Bell, ChevronDown, LogOut, TrendingUp, Clock, Search, Eye, Check, X, Mail, Menu } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Video, CreditCard, Users, Settings, ChevronDown, LogOut, TrendingUp, Clock, Search, Eye, Check, X, Mail, Menu } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { getDashboardStats, getPendingPayments, verifyPayment } from '../services/admin.service';
 import { formatPrice, formatDate } from '../utils/helpers';
@@ -12,6 +12,7 @@ import TransactionHistory from '../components/admin/TransactionHistory';
 import SettingsPanel from '../components/admin/SettingsPanel';
 import OnlineClassManager from '../components/admin/OnlineClassManager';
 import EmailTestingPanel from '../components/admin/EmailTestingPanel';
+import NotificationDropdown from '../components/admin/NotificationDropdown';
 
 export default function AdminPage() {
   const { userProfile, logout } = useAuthStore();
@@ -126,7 +127,7 @@ export default function AdminPage() {
         {/* Logo */}
         <div className="p-8 flex items-center gap-3">
           <BookOpen className="w-8 h-8 text-[#F2C94C]" />
-          <span className="text-xl font-serif font-bold">Nauči Srpski</span>
+          <span className="text-xl font-serif font-bold">Srpski u Srcu</span>
         </div>
 
         {/* Navigation */}
@@ -183,14 +184,11 @@ export default function AdminPage() {
             >
               <Menu size={24} />
             </button>
-            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-[#1A1A1A]">Admin Panel</h1>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif font-bold text-[#1A1A1A]">Administracija</h1>
           </div>
 
           <div className="flex items-center gap-3 md:gap-6">
-             <button className="relative p-2 text-gray-400 hover:text-[#1A1A1A] transition">
-               <Bell size={20} className="md:w-6 md:h-6" />
-               <span className="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span>
-             </button>
+             <NotificationDropdown />
              <div className="hidden md:flex bg-white px-4 py-2 rounded-full shadow-sm items-center gap-2 border border-gray-100">
                 <div className="w-8 h-8 bg-[#1A1A1A] rounded-full flex items-center justify-center text-white text-xs">
                   {userProfile?.ime?.charAt(0) || 'A'}

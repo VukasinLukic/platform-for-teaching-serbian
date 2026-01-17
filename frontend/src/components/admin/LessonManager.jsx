@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { collection, addDoc, getDocs, query, where, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../services/firebase';
+import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { db, storage } from '../../services/firebase';
 import { uploadVideoToR2, deleteVideoFromR2 } from '../../services/cloudflare.service';
-import { Plus, Trash2, Loader2, Upload, Video, FileVideo, CheckCircle, ChevronDown, ChevronRight, Tag, FileText, Book, Edit } from 'lucide-react';
+import { Plus, Trash2, Loader2, Upload, Video, FileVideo, CheckCircle, ChevronDown, ChevronRight, Tag, FileText, Book, Edit, Paperclip, X } from 'lucide-react';
 import { useToast } from '../ui/Toast';
 import ConfirmModal from '../ui/ConfirmModal';
 
@@ -21,6 +22,7 @@ export default function LessonManager() {
     title: '',
     description: '',
     videoFile: null,
+    materials: [], // { file, name, type, size } or { url, name, type, size } for existing
   });
   const [confirmModal, setConfirmModal] = useState({
     isOpen: false,
@@ -142,6 +144,74 @@ export default function LessonManager() {
     }
   };
 
+  const handleMaterialsChange = (e) => {
+    const files = Array.from(e.target.files);
+    const maxSize = 50 * 1024 * 1024; // 50MB per file
+
+    const newMaterials = files.filter(file => {
+      if (file.size > maxSize) {
+        showToast({ type: 'warning', message: `Фајл "${file.name}" је превелик. Максимална величина је 50MB.` });
+        return false;
+      }
+      return true;
+    }).map(file => ({
+      file,
+      name: file.name,
+      type: file.type || 'application/octet-stream',
+      size: file.size
+    }));
+
+    setFormData({
+      ...formData,
+      materials: [...formData.materials, ...newMaterials]
+    });
+
+    // Reset input
+    e.target.value = '';
+  };
+
+  const removeMaterial = (index) => {
+    const newMaterials = formData.materials.filter((_, idx) => idx !== index);
+    setFormData({ ...formData, materials: newMaterials });
+  };
+
+  const uploadMaterials = async (lessonId) => {
+    const uploadedMaterials = [];
+
+    for (const material of formData.materials) {
+      if (material.file) {
+        // New file to upload
+        try {
+          const fileName = `course-materials/${selectedCourse}/${lessonId}/${Date.now()}_${material.name}`;
+          const storageRef = ref(storage, fileName);
+          const uploadTask = await uploadBytesResumable(storageRef, material.file);
+          const downloadURL = await getDownloadURL(uploadTask.ref);
+
+          uploadedMaterials.push({
+            name: material.name,
+            url: downloadURL,
+            type: material.type,
+            size: material.size
+          });
+          console.log('✅ [LessonManager] Material uploaded:', material.name);
+        } catch (error) {
+          console.error('❌ [LessonManager] Error uploading material:', material.name, error);
+          showToast({ type: 'warning', message: `Грешка при upload-у: ${material.name}` });
+        }
+      } else if (material.url) {
+        // Existing material
+        uploadedMaterials.push({
+          name: material.name,
+          url: material.url,
+          type: material.type,
+          size: material.size
+        });
+      }
+    }
+
+    return uploadedMaterials;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -194,12 +264,17 @@ export default function LessonManager() {
           console.log('✅ [LessonManager] Video uploaded:', videoUrl);
         }
 
+        // Upload materials
+        console.log('🔵 [LessonManager] Uploading materials...');
+        const uploadedMaterials = await uploadMaterials(editingLesson.id);
+
         // Update lesson document
         await updateDoc(doc(db, 'lessons', editingLesson.id), {
           title: formData.title,
           description: formData.description,
           videoUrl: videoUrl,
           videoPath: videoPath,
+          materials: uploadedMaterials,
           updatedAt: new Date().toISOString(),
         });
 
@@ -209,6 +284,7 @@ export default function LessonManager() {
           title: '',
           description: '',
           videoFile: null,
+          materials: [],
         });
         setEditingLesson(null);
         setShowForm(false);
@@ -250,7 +326,8 @@ export default function LessonManager() {
         console.log('✅ [LessonManager] Video uploaded:', result.url);
         console.log('🔵 [LessonManager] Creating lesson document...');
 
-        await addDoc(collection(db, 'lessons'), {
+        // Create lesson document first to get ID for materials
+        const lessonDoc = await addDoc(collection(db, 'lessons'), {
           courseId: selectedCourse,
           moduleId: selectedModule.id,
           title: formData.title,
@@ -259,8 +336,18 @@ export default function LessonManager() {
           videoPath: result.path,
           order: lessons.length + 1,
           duration: 0,
+          materials: [],
           createdAt: new Date().toISOString(),
         });
+
+        // Upload materials if any
+        if (formData.materials.length > 0) {
+          console.log('🔵 [LessonManager] Uploading materials...');
+          const uploadedMaterials = await uploadMaterials(lessonDoc.id);
+          await updateDoc(doc(db, 'lessons', lessonDoc.id), {
+            materials: uploadedMaterials
+          });
+        }
 
         console.log('✅ [LessonManager] Lesson created successfully');
 
@@ -268,6 +355,7 @@ export default function LessonManager() {
           title: '',
           description: '',
           videoFile: null,
+          materials: [],
         });
         setShowForm(false);
         setUploading(false);
@@ -290,6 +378,7 @@ export default function LessonManager() {
       title: lesson.title,
       description: lesson.description || '',
       videoFile: null, // Don't load existing video file
+      materials: lesson.materials || [], // Load existing materials
     });
     setShowForm(true);
   };
@@ -388,7 +477,7 @@ export default function LessonManager() {
                       <button
                         onClick={() => {
                           setEditingLesson(null);
-                          setFormData({ title: '', description: '', videoFile: null });
+                          setFormData({ title: '', description: '', videoFile: null, materials: [] });
                           setShowForm(true);
                         }}
                         className="bg-[#D62828] text-white px-6 py-3 rounded-2xl font-bold hover:bg-[#B91F1F] transition-colors flex items-center gap-2 mb-6"
@@ -477,6 +566,63 @@ export default function LessonManager() {
                             </label>
                           </div>
 
+                          {/* Materials Upload Section */}
+                          <div>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                              <Paperclip className="w-4 h-4 inline mr-1" />
+                              Материјали за лекцију (опционо)
+                            </label>
+                            <input
+                              type="file"
+                              multiple
+                              onChange={handleMaterialsChange}
+                              className="hidden"
+                              id="materialsFile"
+                              disabled={uploading}
+                              accept=".pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.txt,.zip,.rar"
+                            />
+                            <label
+                              htmlFor="materialsFile"
+                              className="border-2 border-dashed border-gray-300 rounded-2xl p-4 text-center cursor-pointer block hover:border-[#D62828] hover:bg-gray-50 transition-all"
+                            >
+                              <Paperclip className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                              <p className="font-medium text-gray-700">Кликните да додате материјале</p>
+                              <p className="text-xs text-gray-500">PDF, DOC, PPT, XLS, ZIP (макс 50MB по фајлу)</p>
+                            </label>
+
+                            {/* Materials List */}
+                            {formData.materials.length > 0 && (
+                              <div className="mt-3 space-y-2">
+                                {formData.materials.map((material, index) => (
+                                  <div
+                                    key={index}
+                                    className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200"
+                                  >
+                                    <div className="flex items-center gap-3">
+                                      <div className="w-10 h-10 bg-[#D62828]/10 rounded-lg flex items-center justify-center">
+                                        <FileText className="w-5 h-5 text-[#D62828]" />
+                                      </div>
+                                      <div>
+                                        <p className="font-medium text-[#1A1A1A] text-sm">{material.name}</p>
+                                        <p className="text-xs text-gray-500">
+                                          {(material.size / 1024).toFixed(0)} KB
+                                        </p>
+                                      </div>
+                                    </div>
+                                    <button
+                                      type="button"
+                                      onClick={() => removeMaterial(index)}
+                                      className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                                      disabled={uploading}
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+
                           {uploading && (
                             <div className="space-y-2">
                               <div className="flex justify-between text-sm">
@@ -515,7 +661,7 @@ export default function LessonManager() {
                               onClick={() => {
                                 setShowForm(false);
                                 setEditingLesson(null);
-                                setFormData({ title: '', description: '', videoFile: null });
+                                setFormData({ title: '', description: '', videoFile: null, materials: [] });
                               }}
                               disabled={uploading}
                               className="px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-2xl font-bold hover:bg-gray-50 transition-colors disabled:opacity-50"

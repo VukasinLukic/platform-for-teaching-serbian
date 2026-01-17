@@ -181,8 +181,12 @@ export default function CoursesPage() {
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {courses.map((course) => (
-              <div key={course.id} className="h-full">
-                <div className="bg-white rounded-[2.5rem] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 h-full flex flex-col overflow-hidden">
+              <Link
+                key={course.id}
+                to={course.type === 'live' ? `/online-class/${course.id}` : `/course/${course.id}`}
+                className="h-full block"
+              >
+                <div className="bg-white rounded-[2.5rem] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 h-full flex flex-col overflow-hidden cursor-pointer">
                   {/* Card Header Image */}
                   <div className="h-48 bg-[#F7F7F7] relative overflow-hidden flex items-center justify-center group">
                      {course.thumbnail_url ? (
@@ -247,7 +251,11 @@ export default function CoursesPage() {
                       )}
 
                       <button
-                        onClick={() => setExpandedCards(prev => ({ ...prev, [course.id]: !prev[course.id] }))}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          setExpandedCards(prev => ({ ...prev, [course.id]: !prev[course.id] }));
+                        }}
                         className="text-sm text-[#D62828] font-semibold hover:underline w-full text-left"
                       >
                         {expandedCards[course.id] ? 'Прикажи мање ▲' : 'Прикажи више ▼'}
@@ -257,16 +265,14 @@ export default function CoursesPage() {
                         <div className="text-2xl font-black text-[#D62828]">
                           {formatPrice(course.price)}
                         </div>
-                        <Link to={course.type === 'live' ? `/online-class/${course.id}` : `/course/${course.id}`}>
-                          <Button variant="outline" size="sm" showArrow>
-                            Детаљније
-                          </Button>
-                        </Link>
+                        <Button variant="outline" size="sm" showArrow>
+                          Детаљније
+                        </Button>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         )}
