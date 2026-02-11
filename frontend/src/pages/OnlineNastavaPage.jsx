@@ -7,6 +7,8 @@ import { useAuthStore } from '../store/authStore';
 import { functions } from '../services/firebase';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
+import SEO from '../components/SEO';
+import AuthRequiredModal from '../components/ui/AuthRequiredModal';
 
 export default function OnlineNastavaPage() {
   const navigate = useNavigate();
@@ -14,6 +16,7 @@ export default function OnlineNastavaPage() {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [visibleSteps, setVisibleSteps] = useState([false, false, false, false]);
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const stepRefs = useRef([]);
 
   useEffect(() => {
@@ -69,9 +72,9 @@ export default function OnlineNastavaPage() {
     switch (packageId) {
       case 'basic':
         return 'from-purple-600 to-purple-800';
-      case 'semester':
+      case 'group':
         return 'from-[#D62828] to-[#B91F1F]';
-      case 'annual':
+      case 'individual':
         return 'from-[#1A1A1A] to-gray-800';
       default:
         return 'from-gray-600 to-gray-800';
@@ -80,7 +83,7 @@ export default function OnlineNastavaPage() {
 
   const handlePurchase = async (pkg) => {
     if (!user) {
-      alert('Молимо вас да се пријавите како бисте купили online часове');
+      setShowAuthModal(true);
       return;
     }
 
@@ -108,6 +111,20 @@ export default function OnlineNastavaPage() {
   };
 
   return (
+    <>
+      <SEO
+        title="Online Настава | Месечни Пакети од 1500 дин"
+        description="Видео курсеви од 1500 дин, групни часови 3500 дин, индивидуални 6000 дин месечно. Флексибилни месечни пакети прилагођени вашим потребама."
+        canonical="/online-nastava"
+      />
+
+      {/* Auth Required Modal */}
+      <AuthRequiredModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        message="Молимо вас да се пријавите или направите налог како бисте купили online часове."
+      />
+
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />
 
@@ -223,24 +240,31 @@ export default function OnlineNastavaPage() {
                 <h2 className="text-3xl font-bold mb-6">Распоред часова</h2>
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
-                    <Clock className="w-6 h-6 text-[#F2C94C] flex-shrink-0 mt-1" />
+                    <Calendar className="w-6 h-6 text-[#F2C94C] flex-shrink-0 mt-1" />
                     <div>
-                      <h3 className="font-bold text-lg mb-1">Трајање?</h3>
-                      <p className="text-white/80">90 минута интерактивне наставе</p>
+                      <h3 className="font-bold text-lg mb-1">Групни часови</h3>
+                      <p className="text-white/80">Четвртком у 18:00 - 4 часа месечно (по 1 сат)</p>
+                    </div>
+                  </div>
+                  <div className="flex items-start gap-4">
+                    <Calendar className="w-6 h-6 text-[#27AE60] flex-shrink-0 mt-1" />
+                    <div>
+                      <h3 className="font-bold text-lg mb-1">Индивидуални часови</h3>
+                      <p className="text-white/80">Уторком (по договору) - 4 часа месечно (по 1 сат)</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
                     <Video className="w-6 h-6 text-[#F2C94C] flex-shrink-0 mt-1" />
                     <div>
-                      <h3 className="font-bold text-lg mb-1">Платформа?</h3>
+                      <h3 className="font-bold text-lg mb-1">Платформа</h3>
                       <p className="text-white/80">Google Meet - лако приступ са било ког уређаја</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
                     <Users className="w-6 h-6 text-[#F2C94C] flex-shrink-0 mt-1" />
                     <div>
-                      <h3 className="font-bold text-lg mb-1">Величина групе?</h3>
-                      <p className="text-white/80">Максимум 8 ученика за квалитетну интеракцију</p>
+                      <h3 className="font-bold text-lg mb-1">Величина групе</h3>
+                      <p className="text-white/80">Групни: макс. 8 ученика | Индивидуални: 1-на-1</p>
                     </div>
                   </div>
                 </div>
@@ -282,12 +306,13 @@ export default function OnlineNastavaPage() {
       {/* Pricing Packages */}
       <section className="py-20 bg-white">
         <div className="max-w-7xl mx-auto px-6">
+
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
               Изаберите свој пакет
             </h2>
             <p className="text-gray-600 text-lg">
-              Флексибилни пакети прилагођени вашим потребама
+              Флексибилни месечни пакети прилагођени вашим потребама
             </p>
           </div>
 
@@ -296,7 +321,7 @@ export default function OnlineNastavaPage() {
               <div
                 key={pkg.id}
                 className={`relative bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden border-2 ${
-                  pkg.popular ? 'border-[#D62828]' : 'border-gray-100'
+                  pkg.popular ? 'border-[#D62828] scale-105' : 'border-gray-100'
                 }`}
               >
                 {pkg.popular && (
@@ -374,10 +399,19 @@ export default function OnlineNastavaPage() {
 
             <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
               <h3 className="text-xl font-bold text-[#1A1A1A] mb-3">
-                Могу ли да променим термин часа?
+                Могу ли да откажем претплату?
               </h3>
               <p className="text-gray-600">
-                Да! При упису бирате између суботе у 10:00 или 12:00. Можете променити термин уз предходну најаву.
+                Да! Пошто су пакети месечни, можете отказати у било ком тренутку. Нема обавеза, нема скривених трошкова.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
+              <h3 className="text-xl font-bold text-[#1A1A1A] mb-3">
+                Који термин бирам за групне/индивидуалне часове?
+              </h3>
+              <p className="text-gray-600">
+                <strong>Групни:</strong> Четвртком у 18:00. <strong>Индивидуални:</strong> Уторком, термин бирате при упису.
               </p>
             </div>
 
@@ -403,14 +437,15 @@ export default function OnlineNastavaPage() {
             Придружите се стотинама задовољних ученика који су постигли одличне резултате
           </p>
           <div className="flex gap-4 justify-center flex-wrap">
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="bg-white text-[#D62828] px-12 py-5 rounded-full hover:bg-gray-100 transition-all font-bold text-xl shadow-lg hover:scale-105 transform"
+            >
+              Изабери пакет
+            </button>
             <Link to="/contact">
-              <button className="bg-white text-[#D62828] px-12 py-5 rounded-full hover:bg-gray-100 transition-all font-bold text-xl shadow-lg hover:scale-105 transform">
-                Контактирајте нас
-              </button>
-            </Link>
-            <Link to="/courses">
               <button className="bg-[#1A1A1A] text-white px-12 py-5 rounded-full hover:bg-gray-800 transition-all font-bold text-xl shadow-lg hover:scale-105 transform">
-                Погледај видео курсеве
+                Контактирајте нас
               </button>
             </Link>
           </div>
@@ -419,5 +454,6 @@ export default function OnlineNastavaPage() {
 
       <Footer />
     </div>
+    </>
   );
 }

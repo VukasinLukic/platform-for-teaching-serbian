@@ -19,6 +19,7 @@ import { useAuthStore } from '../store/authStore';
 import { formatPrice } from '../utils/helpers';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
+import SEO from '../components/SEO';
 
 // Counter Animation Component
 function AnimatedCounter({ end, duration = 2000, suffix = '' }) {
@@ -165,22 +166,60 @@ export default function HomePage() {
     },
   ];
 
+  const homeJsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Српски у Срцу",
+      "url": "https://srpskiusrcu.rs",
+      "description": "Online платформа за видео курсеве српског језика и припрему мале матуре",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://srpskiusrcu.rs/courses?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Српски у Срцу",
+      "url": "https://srpskiusrcu.rs",
+      "logo": "https://srpskiusrcu.rs/logoFULL.svg",
+      "founder": {
+        "@type": "Person",
+        "name": "Марина Лукић",
+        "jobTitle": "Наставница српског језика",
+        "description": "Наставница са 27 година искуства, дипломирани филолог"
+      },
+      "description": "Online платформа за видео курсеве српског језика за припрему мале матуре",
+      "areaServed": "RS",
+      "availableLanguage": "sr"
+    }
+  ];
+
   return (
+    <>
+      <SEO
+        title="Припрема Мале Матуре из Српског - Online Видео Курсеви"
+        description="Online видео курсеви за припрему мале матуре из српског језика. Наставница Марина Лукић са 27 година искуства. Учи у своје време, 24/7 приступ. Упис отворен!"
+        canonical="/"
+        jsonLd={homeJsonLd}
+      />
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />
 
       {/* 1. HERO SECTION */}
-      <section className="relative pb-0 flex items-start pt-16 overflow-hidden bg-white">
+      <section className="relative pb-24 flex items-start pt-32 overflow-hidden bg-white">
         <div className="max-w-7xl mx-auto px-6 w-full">
           <div className="grid lg:grid-cols-2 gap-20 items-center">
             {/* Left - Text */}
             <div className="relative z-10 space-y-8 text-center lg:text-left">
-              <h1 className="text-5xl lg:text-7xl font-bold leading-tight text-[#1A1A1A]">
-                Учите српски језик и књижевност <br />
-                са разумевањем и{' '}
-                <span className="relative inline-block">
-                  љубављу.
-                  <svg className="absolute w-full h-3 -bottom-1 left-0 text-[#D62828]" viewBox="0 0 100 10" preserveAspectRatio="none">
+              <h1 className="font-bold leading-tight text-[#1A1A1A] flex flex-col gap-2">
+                <span className="text-4xl lg:text-5xl text-[#1A1A1A] block">Учите српски језик и књижевност</span>
+                <span className="text-4xl lg:text-6xl block">са разумевањем</span>
+                <span className="text-5xl lg:text-8xl block relative inline-block mt-2">
+                  и љубављу.
+                  <svg className="absolute w-full h-4 -bottom-2 left-0 text-[#D62828]" viewBox="0 0 100 10" preserveAspectRatio="none">
                     <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="6" fill="none" />
                   </svg>
                 </span>
@@ -219,15 +258,14 @@ export default function HomePage() {
       {/* 2. HOW IT WORKS SECTION */}
       <section
         ref={howItWorksRef}
-        className={`pt-24 pb-16 bg-gradient-to-br from-pink-50 via-white to-blue-50 relative overflow-hidden transition-all duration-1000 ${
-          howItWorksVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
-        }`}
+        className={`pt-32 pb-24 bg-gradient-to-b from-white via-pink-50/40 to-blue-50/40 relative overflow-hidden transition-all duration-1000 ${howItWorksVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+          }`}
       >
         {/* Playful Background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
           <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-300 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute top-40 right-20 w-24 h-24 bg-blue-300 rounded-full blur-2xl animate-pulse" style={{animationDelay: '1s'}}></div>
-          <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-pink-300 rounded-full blur-3xl animate-pulse" style={{animationDelay: '2s'}}></div>
+          <div className="absolute top-40 right-20 w-24 h-24 bg-blue-300 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
+          <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-pink-300 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
         </div>
 
         <div className="max-w-5xl mx-auto px-6 relative z-10">
@@ -240,7 +278,7 @@ export default function HomePage() {
           {/* Vertical Snake Path Layout */}
           <div className="relative">
             {/* Red Curved Path - SVG */}
-            <svg className="absolute left-1/2 top-0 h-full w-full -translate-x-1/2 hidden md:block" style={{zIndex: 1}} preserveAspectRatio="none" viewBox="0 0 400 900">
+            <svg className="absolute left-1/2 top-0 h-full w-full -translate-x-1/2 hidden md:block" style={{ zIndex: 1 }} preserveAspectRatio="none" viewBox="0 0 400 900">
               <path
                 d="M 200 60 Q 100 140, 200 220 Q 300 300, 200 380 Q 100 460, 200 540 Q 300 620, 200 700"
                 stroke="#D62828"
@@ -251,7 +289,7 @@ export default function HomePage() {
               />
             </svg>
 
-            <div className="space-y-20 md:space-y-16 relative" style={{zIndex: 2}}>
+            <div className="space-y-20 md:space-y-16 relative" style={{ zIndex: 2 }}>
 
               {/* Step 1 - Left */}
               <div className="flex items-center gap-6 md:gap-8">
@@ -379,6 +417,7 @@ export default function HomePage() {
                           src={course.thumbnail_url}
                           alt={course.title}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                          loading="lazy"
                         />
                       ) : (
                         <div className="w-full h-full bg-gradient-to-br from-[#D62828] to-[#B91F1F] flex items-center justify-center">
@@ -600,7 +639,7 @@ export default function HomePage() {
 
         <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
           <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-[#1A1A1A]">
-            Немојте чекати, <br/>
+            Немојте чекати, <br />
             <span className="text-[#D62828]">почните данас.</span>
           </h2>
 
@@ -626,5 +665,6 @@ export default function HomePage() {
       {/* Footer */}
       <Footer />
     </div>
+    </>
   );
 }

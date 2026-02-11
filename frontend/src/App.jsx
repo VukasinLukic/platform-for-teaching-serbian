@@ -26,6 +26,10 @@ import FAQPage from './pages/FAQPage';
 import OnlineNastavaPage from './pages/OnlineNastavaPage';
 import PaymentSlipPage from './pages/PaymentSlipPage';
 import EmailVerificationGate from './components/auth/EmailVerificationGate';
+import QuizListPage from './pages/QuizListPage';
+import QuizRunnerPage from './pages/QuizRunnerPage';
+import BlogPage from './pages/BlogPage';
+import BlogPostPage from './pages/BlogPostPage';
 
 // Protected Route Component
 function ProtectedRoute({ children, adminOnly = false }) {
@@ -80,6 +84,8 @@ function App() {
         <Route path="/privacy" element={<PrivacyPage />} />
         <Route path="/terms" element={<TermsPage />} />
         <Route path="/uplatnica" element={<PaymentSlipPage />} />
+        <Route path="/blog" element={<BlogPage />} />
+        <Route path="/blog/:slug" element={<BlogPostPage />} />
 
         {/* Protected Routes */}
         <Route
@@ -97,6 +103,24 @@ function App() {
           element={
             <ProtectedRoute adminOnly>
               <AdminPage />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Quiz Routes */}
+        <Route
+          path="/quizzes"
+          element={
+            <ProtectedRoute>
+              <QuizListPage />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/quizzes/:quizId"
+          element={
+            <ProtectedRoute>
+              <QuizRunnerPage />
             </ProtectedRoute>
           }
         />

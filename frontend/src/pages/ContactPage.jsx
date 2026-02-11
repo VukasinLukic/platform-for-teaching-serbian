@@ -6,6 +6,7 @@ import Footer from '../components/ui/Footer';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 export default function ContactPage() {
   const contactPhone = import.meta.env.VITE_CONTACT_PHONE || '+381 XX XXX XXXX';
@@ -48,6 +49,12 @@ export default function ContactPage() {
   };
 
   return (
+    <>
+      <SEO
+        title="Контакт | Пишите Нам или Позовите"
+        description="Контактирајте нас за питања о online курсевима српског језика и припреми мале матуре. Одговарамо у року од 24 часа."
+        canonical="/contact"
+      />
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />
 
@@ -185,5 +192,6 @@ export default function ContactPage() {
 
       <Footer />
     </div>
+    </>
   );
 }

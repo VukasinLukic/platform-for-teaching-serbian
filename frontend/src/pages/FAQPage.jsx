@@ -4,6 +4,7 @@ import Accordion from '../components/ui/Accordion';
 import { HelpCircle, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
+import SEO from '../components/SEO';
 
 export default function FAQPage() {
   const faqs = [
@@ -41,7 +42,27 @@ export default function FAQPage() {
     }
   ];
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": faqs.map(faq => ({
+      "@type": "Question",
+      "name": faq.title,
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": faq.content
+      }
+    }))
+  };
+
   return (
+    <>
+      <SEO
+        title="Честа Питања о Онлајн Курсевима Српског | FAQ"
+        description="Одговори на честа питања о online курсевима за малу матуру: начин рада, плаћање, приступ материјалима, трајање курса, подршка."
+        canonical="/faq"
+        jsonLd={[faqJsonLd]}
+      />
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />
 
@@ -89,5 +110,6 @@ export default function FAQPage() {
 
       <Footer />
     </div>
+    </>
   );
 }

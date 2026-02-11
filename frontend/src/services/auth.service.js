@@ -24,9 +24,17 @@ import { auth, db, functions } from './firebase';
  */
 export const registerUser = async (email, password, ime, telefon) => {
   try {
+    console.log('🔵 DEBUG: Starting registration...', {
+      email,
+      authDomain: auth.config.authDomain,
+      apiKey: auth.config.apiKey?.substring(0, 10) + '...',
+    });
+
     // Create user account
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
+
+    console.log('✅ DEBUG: User created successfully:', user.uid);
 
     // Update display name
     await updateProfile(user, { displayName: ime });
@@ -66,10 +74,23 @@ export const registerUser = async (email, password, ime, telefon) => {
  */
 export const loginUser = async (email, password) => {
   try {
+    console.log('🔵 DEBUG: Starting login...', {
+      email,
+      authDomain: auth.config.authDomain,
+      apiKey: auth.config.apiKey?.substring(0, 10) + '...',
+      currentOrigin: window.location.origin,
+    });
+
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
+
+    console.log('✅ DEBUG: Login successful:', userCredential.user.uid);
     return userCredential.user;
   } catch (error) {
-    console.error('Login error:', error);
+    console.error('❌ DEBUG: Login error:', {
+      code: error.code,
+      message: error.message,
+      authDomain: auth.config.authDomain,
+    });
     throw error;
   }
 };

@@ -29,6 +29,7 @@ export default function Footer() {
               <li><Link to="/" className="hover:text-[#D62828] transition-colors">Почетна</Link></li>
               <li><Link to="/courses" className="hover:text-[#D62828] transition-colors">Курсеви</Link></li>
               <li><Link to="/about" className="hover:text-[#D62828] transition-colors">О Нама</Link></li>
+              <li><Link to="/blog" className="hover:text-[#D62828] transition-colors">Блог</Link></li>
               <li><Link to="/contact" className="hover:text-[#D62828] transition-colors">Контакт</Link></li>
               <li><Link to="/register" className="hover:text-[#D62828] transition-colors">Пријави се</Link></li>
             </ul>

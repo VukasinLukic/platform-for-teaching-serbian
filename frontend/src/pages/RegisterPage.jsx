@@ -4,6 +4,7 @@ import { Mail, Lock, User, Phone, ArrowRight, Eye, EyeOff, Sparkles, Award } fro
 import { registerUser } from '../services/auth.service';
 import { sendWelcomeEmail } from '../services/email.service';
 import { isValidEmail, isValidPhone } from '../utils/helpers';
+import SEO from '../components/SEO';
 
 export default function RegisterPage() {
   const [formData, setFormData] = useState({
@@ -103,6 +104,8 @@ export default function RegisterPage() {
   };
 
   return (
+    <>
+      <SEO title="Регистрација" description="Региструјте се на платформу Српски у Срцу." noindex={true} />
     <div className="min-h-screen flex overflow-hidden bg-white font-sans">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
@@ -441,5 +444,6 @@ export default function RegisterPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

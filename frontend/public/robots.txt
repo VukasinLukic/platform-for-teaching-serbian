@@ -1,0 +1,16 @@
+User-agent: *
+Allow: /
+
+# Ne indeksiraj privatne i admin stranice
+Disallow: /dashboard
+Disallow: /admin
+Disallow: /quizzes
+Disallow: /verify
+Disallow: /uplatnica
+Disallow: /login
+Disallow: /register
+Disallow: /reset-password
+Disallow: /online-class/
+
+# Sitemap
+Sitemap: https://srpskiusrcu.rs/sitemap.xml

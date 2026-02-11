@@ -1,11 +1,14 @@
 import Header from '../../components/ui/Header';
 import Card, { CardBody } from '../../components/ui/Card';
+import SEO from '../../components/SEO';
 
 export default function TermsPage() {
   const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@srpskiusrcu.com';
   const contactPhone = import.meta.env.VITE_CONTACT_PHONE || '+381 XX XXX XXXX';
 
   return (
+    <>
+      <SEO title="Услови Коришћења" description="Услови коришћења платформе Српски у Срцу." canonical="/terms" />
     <div className="min-h-screen bg-[#F7F7F7]">
       <Header />
 
@@ -123,5 +126,6 @@ export default function TermsPage() {
         </Card>
       </div>
     </div>
+    </>
   );
 }

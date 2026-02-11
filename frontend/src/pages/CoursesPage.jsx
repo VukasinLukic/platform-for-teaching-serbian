@@ -7,6 +7,7 @@ import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import Card, { CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
+import SEO from '../components/SEO';
 
 export default function CoursesPage() {
   const [courses, setCourses] = useState([]);
@@ -59,7 +60,27 @@ export default function CoursesPage() {
     }
   };
 
+  const coursesJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    "name": "Online Курсеви Српског Језика за Малу Матуру",
+    "description": "Комплетни видео курсеви за припрему завршног испита из српског језика",
+    "url": "https://srpskiusrcu.rs/courses",
+    "provider": {
+      "@type": "EducationalOrganization",
+      "name": "Српски у Срцу",
+      "url": "https://srpskiusrcu.rs"
+    }
+  };
+
   return (
+    <>
+      <SEO
+        title="Online Курсеви Српског | Припрема Мале Матуре из Српског Језика"
+        description="Комплетни видео курсеви за припрему мале матуре из српског језика. Граматика, књижевност, правопис. Учи у своје време са наставницом са 27 год искуства."
+        canonical="/courses"
+        jsonLd={[coursesJsonLd]}
+      />
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />
 
@@ -194,6 +215,7 @@ export default function CoursesPage() {
                          src={course.thumbnail_url}
                          alt={course.title}
                          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                         loading="lazy"
                        />
                      ) : course.type === 'video' ? (
                        <Video className="w-20 h-20 text-[#D62828]/20 group-hover:scale-110 transition-transform duration-500" />
@@ -280,5 +302,6 @@ export default function CoursesPage() {
 
       <Footer />
     </div>
+    </>
   );
 }

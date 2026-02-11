@@ -18,6 +18,14 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
+// DEBUG: Log Firebase config
+console.log('🔥 Firebase Config:', {
+  authDomain: firebaseConfig.authDomain,
+  projectId: firebaseConfig.projectId,
+  currentURL: window.location.href,
+  currentOrigin: window.location.origin,
+});
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 

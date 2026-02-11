@@ -152,7 +152,7 @@ export default function DashboardPage() {
                     {/* Thumbnail or gradient background */}
                     <div className="h-40 bg-gradient-to-br from-[#D62828] to-[#B91F1F] flex items-center justify-center relative overflow-hidden">
                       {course.thumbnail_url ? (
-                        <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" />
+                        <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" loading="lazy" />
                       ) : (
                         <Book className="w-16 h-16 text-white opacity-30" />
                       )}
@@ -179,6 +179,32 @@ export default function DashboardPage() {
           <OnlineClassesSection />
         </div>
 
+        {/* Quizzes Section */}
+        {myCourses.length > 0 && (
+          <div className="mb-16">
+            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2D2D2D] rounded-3xl p-8 md:p-12 text-white relative overflow-hidden group">
+              {/* Background Decoration */}
+              <div className="absolute top-0 right-0 w-64 h-64 bg-[#D62828] rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
+
+              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+                <div className="text-center md:text-left">
+                  <h2 className="text-3xl font-bold mb-4">Квизови Знања</h2>
+                  <p className="text-gray-400 text-lg max-w-xl">
+                    Тестирајте своје знање кроз интерактивне квизове. Пратите свој напредак и утврдите градиво на забаван начин.
+                  </p>
+                </div>
+
+                <Link to="/quizzes">
+                  <button className="bg-[#D62828] text-white px-8 py-4 rounded-2xl font-bold hover:bg-[#B91F1F] transition-all hover:scale-105 transform flex items-center gap-2 shadow-lg shadow-red-900/20">
+                    <Book className="w-5 h-5" />
+                    Погледај Квизове <ArrowRight className="w-5 h-5" />
+                  </button>
+                </Link>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Transactions Section */}
         {transactions.length > 0 && (
           <div className="mb-16">
@@ -203,11 +229,10 @@ export default function DashboardPage() {
                         <td className="px-6 py-5 font-semibold text-[#1A1A1A]">{transaction.courseName || transaction.packageName || transaction.course?.title || 'Непознат курс'}</td>
                         <td className="px-6 py-5 font-bold text-[#D62828] text-lg">{formatPrice(transaction.amount)}</td>
                         <td className="px-6 py-5">
-                          <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold ${
-                            transaction.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                            transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                            'bg-red-100 text-red-800'
-                          }`}>
+                          <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold ${transaction.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                              transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                                'bg-red-100 text-red-800'
+                            }`}>
                             {getStatusIcon(transaction.status)}
                             {getTransactionStatusLabel(transaction.status)}
                           </span>
@@ -254,11 +279,10 @@ export default function DashboardPage() {
                     </div>
                     <div>
                       <div className="text-xs text-gray-500 font-bold uppercase mb-1">Статус</div>
-                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${
-                        transaction.status === 'confirmed' ? 'bg-green-100 text-green-800' :
-                        transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
+                      <span className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold ${transaction.status === 'confirmed' ? 'bg-green-100 text-green-800' :
+                          transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                            'bg-red-100 text-red-800'
+                        }`}>
                         {getStatusIcon(transaction.status)}
                         {getTransactionStatusLabel(transaction.status)}
                       </span>

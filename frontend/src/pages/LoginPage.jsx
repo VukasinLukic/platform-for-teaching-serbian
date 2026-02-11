@@ -3,6 +3,7 @@ import { useNavigate, Link } from 'react-router-dom';
 import { Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { loginUser } from '../services/auth.service';
 import { useAuthStore } from '../store/authStore';
+import SEO from '../components/SEO';
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -56,6 +57,8 @@ export default function LoginPage() {
   };
 
   return (
+    <>
+      <SEO title="Пријава" description="Пријавите се на платформу Српски у Срцу." noindex={true} />
     <div className="min-h-screen flex overflow-hidden bg-white font-sans">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
@@ -301,5 +304,6 @@ export default function LoginPage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

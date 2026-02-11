@@ -8,9 +8,11 @@ import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { getCourseById, checkUserAccess, getCourseModulesWithLessons } from '../services/course.service';
 import { useAuthStore } from '../store/authStore';
+import SEO from '../components/SEO';
 import { formatPrice } from '../utils/helpers';
 import { db, functions } from '../services/firebase';
 import Header from '../components/ui/Header';
+import AuthRequiredModal from '../components/ui/AuthRequiredModal';
 
 export default function CoursePage() {
   const { id } = useParams();
@@ -22,6 +24,7 @@ export default function CoursePage() {
   const [loading, setLoading] = useState(true);
   const [activeModuleIndex, setActiveModuleIndex] = useState(0);
   const [selectedLesson, setSelectedLesson] = useState(null);
+  const [showAuthModal, setShowAuthModal] = useState(false);
 
   useEffect(() => {
     loadCourseData();
@@ -55,7 +58,7 @@ export default function CoursePage() {
 
   const handlePurchaseClick = async () => {
     if (!user) {
-      navigate('/login', { state: { returnTo: `/course/${id}` } });
+      setShowAuthModal(true);
       return;
     }
 
@@ -397,8 +400,43 @@ export default function CoursePage() {
     );
   }
 
+  // SEO schema za Course
+  const courseJsonLd = course ? {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": course.title,
+    "description": course.description || `Online видео курс ${course.title} за припрему мале матуре из српског језика`,
+    "provider": {
+      "@type": "EducationalOrganization",
+      "name": "Српски у Срцу",
+      "url": "https://srpskiusrcu.rs"
+    },
+    "hasCourseInstance": {
+      "@type": "CourseInstance",
+      "courseMode": "online",
+      "courseWorkload": "PT10H"
+    }
+  } : null;
+
   // Unified Course Page
   return (
+    <>
+      {course && (
+        <SEO
+          title={`${course.title} | Online Курс`}
+          description={course.description || `Online видео курс ${course.title} за припрему мале матуре из српског језика. Интерактивне лекције, тестови, материјали за преузимање.`}
+          canonical={`/course/${course.id}`}
+          jsonLd={courseJsonLd ? [courseJsonLd] : []}
+        />
+      )}
+
+      {/* Auth Required Modal */}
+      <AuthRequiredModal
+        isOpen={showAuthModal}
+        onClose={() => setShowAuthModal(false)}
+        message={`Молимо вас да се пријавите или направите налог како бисте купили курс "${course?.title}".`}
+      />
+
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />
 
@@ -413,6 +451,7 @@ export default function CoursePage() {
                   src={course.thumbnail_url}
                   alt={course.title}
                   className="w-full h-auto rounded-3xl shadow-lg"
+                  loading="lazy"
                 />
               ) : (
                 <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl overflow-hidden shadow-lg border border-gray-100">
@@ -482,5 +521,6 @@ export default function CoursePage() {
         </div>
       </div>
     </div>
+    </>
   );
 }

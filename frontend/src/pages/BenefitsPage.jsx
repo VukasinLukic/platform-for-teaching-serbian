@@ -2,6 +2,7 @@ import { CheckCircle, Video, Users, FileText, Award, Clock, BookOpen, Headphones
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import { Link } from 'react-router-dom';
+import SEO from '../components/SEO';
 
 export default function BenefitsPage() {
   const benefits = [
@@ -79,6 +80,12 @@ export default function BenefitsPage() {
   ];
 
   return (
+    <>
+      <SEO
+        title="Зашто Учити Са Нама | Предности Online Курсева за Малу Матуру"
+        description="Откријте зашто је Српски у Срцу најбољи избор за припрему мале матуре: 100+ видео лекција, 24/7 приступ, наставница са 27 год искуства, интерактивни тестови."
+        canonical="/benefits"
+      />
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />
 
@@ -206,5 +213,6 @@ export default function BenefitsPage() {
 
       <Footer />
     </div>
+    </>
   );
 }

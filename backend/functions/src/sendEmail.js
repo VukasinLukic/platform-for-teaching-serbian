@@ -1,29 +1,27 @@
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
-import { defineString } from 'firebase-functions/params';
 import nodemailer from 'nodemailer';
 import { checkRateLimit } from './rate-limiter.js';
 
 /**
  * Gmail + Nodemailer Email Service
+ * Note: Firebase CLI automatically loads .env file during deployment
  * Replaces EmailJS for sending emails
  * 100% free (up to 500 emails/day)
  */
 
-// Define environment parameters (new method for Firebase Functions v7+)
-const gmailUser = defineString('GMAIL_USER', { default: 'vukasin4sports@gmail.com' });
-const gmailPassword = defineString('GMAIL_PASSWORD', { default: 'ltlf ziag mpma chat' });
-
 // Get transporter (created on-demand to avoid issues)
 const getTransporter = () => {
-  const userEmail = gmailUser.value();
-  const userPassword = gmailPassword.value();
+  const userEmail = process.env.GMAIL_USER;
+  const userPassword = process.env.GMAIL_PASSWORD;
 
   if (!userEmail || !userPassword) {
-    console.error('Missing Gmail credentials!');
+    console.error('❌ Missing Gmail credentials in .env file!');
     console.log('GMAIL_USER:', userEmail ? 'SET' : 'MISSING');
     console.log('GMAIL_PASSWORD:', userPassword ? 'SET' : 'MISSING');
-    throw new Error('Gmail credentials not configured');
+    throw new Error('Gmail credentials not configured. Check .env file.');
   }
+
+  console.log('✅ Using Gmail:', userEmail);
 
   // Use .createTransport() not .createTransporter()
   return nodemailer.createTransport({
@@ -472,7 +470,7 @@ export const sendContactFormEmail = onCall({ cors: true }, async (request) => {
     console.log('Generating email template...');
     const template = emailTemplates.contactForm({ name, email, phone, message });
 
-    const userEmail = gmailUser.value();
+    const userEmail = process.env.GMAIL_USER;
     const contactEmail = process.env.CONTACT_EMAIL || userEmail;
 
     console.log('Sending email from:', userEmail, 'to:', contactEmail);
@@ -522,7 +520,7 @@ export const sendPaymentConfirmationEmail = onCall({ cors: true }, async (reques
       transactionId,
     });
 
-    const senderEmail = gmailUser.value();
+    const senderEmail = process.env.GMAIL_USER;
     console.log('Sending email from:', senderEmail, 'to:', userEmail);
 
     await transporter.sendMail({
@@ -562,7 +560,7 @@ export const sendPaymentRejectionEmail = onCall({ cors: true }, async (request) 
       courseTitle,
       reason,
     });
-    const senderEmail = gmailUser.value();
+    const senderEmail = process.env.GMAIL_USER;
 
     await transporter.sendMail({
       from: `"Srpski u Srcu" <${senderEmail}>`,
@@ -591,7 +589,7 @@ export const sendWelcomeEmail = onCall({ cors: true }, async (request) => {
   try {
     const transporter = getTransporter();
     const template = emailTemplates.welcome({ userName, userEmail });
-    const senderEmail = gmailUser.value();
+    const senderEmail = process.env.GMAIL_USER;
 
     await transporter.sendMail({
       from: `"Srpski u Srcu" <${senderEmail}>`,
@@ -628,7 +626,7 @@ export const sendClassReminderEmail = onCall({ cors: true }, async (request) => 
       meetLink,
       groupName,
     });
-    const senderEmail = gmailUser.value();
+    const senderEmail = process.env.GMAIL_USER;
 
     await transporter.sendMail({
       from: `"Srpski u Srcu - Online Časovi" <${senderEmail}>`,
@@ -664,7 +662,7 @@ export const sendVerificationEmail = async ({ userEmail, userName, verificationU
       userName,
       verificationUrl,
     });
-    const senderEmail = gmailUser.value();
+    const senderEmail = process.env.GMAIL_USER;
 
     await transporter.sendMail({
       from: `"Srpski u Srcu" <${senderEmail}>`,
