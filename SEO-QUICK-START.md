@@ -1,173 +1,116 @@
-# ⚡ SEO QUICK START - SLEDEĆI KORACI
+# SEO PLAN - Srpski u Srcu
 
-> **✅ Все је имплементирано!** Ево шта треба урадити одмах пре launch-a.
+> Poslednje azuriranje: Februar 2026
 
+## FAZA 1 - TI RADIS RUCNO (ova nedelja)
 
+### 1. Optimizuj slike - WebP konverzija
+**Ovo je NAJVAZNIJA stvar za mobile performance (trenutni skor: 68/100)**
 
-### 2. ⚠️ OPTIMIZUJ SLIKE - WebP Konverzija (30 min)
+Slike su prevelike i to je glavni razlog sporog FCP (4.7s) i LCP (5.3s) na mobilnom.
 
-**Problem:** Slike su PREVELIKE (heroSekcija3.png = 3.4MB!)
+**Alat:** https://squoosh.app (besplatno, radi u browseru)
 
-**Rešenje:** Konvertuj u WebP format → 70-80% manja veličina
+**Koraci za svaku sliku:**
+1. Otvori squoosh.app
+2. Prevuci sliku
+3. Desna strana: izaberi "WebP", quality 80%
+4. Download
+5. Zameni staru sliku u `frontend/public/` folderu
 
-**Alat:** https://squoosh.app
-
-**Koje slike optimizovati:**
+**Slike za konverziju:**
 ```
-frontend/public/heroSekcija3.png (3.4MB) → hero-main.webp (~150KB)
-frontend/public/heroSekcija2.png (1.5MB) → hero-alt.webp (~80KB)
-frontend/public/slika1BezPozadine.png (1MB) → slika1.webp (~50KB)
-frontend/public/slika2BezPozadine.png (1MB) → slika2.webp (~50KB)
-frontend/public/slika3BezPozadine.png (1MB) → slika3.webp (~50KB)
+heroSekcija.png → heroSekcija.webp (cilj: <200KB)
+heroSekcija2.png → heroSekcija2.webp (cilj: <100KB)
+heroSekcija3.png → heroSekcija3.webp (cilj: <150KB)
+slika1BezPozadine.png → slika1BezPozadine.webp (cilj: <50KB)
+slika2BezPozadine.png → slika2BezPozadine.webp (cilj: <50KB)
+slika3BezPozadine.png → slika3BezPozadine.webp (cilj: <50KB)
 ```
 
-**Koraci:**
-1. Idi na https://squoosh.app
-2. Upload sliku (drag & drop)
-3. Desno: Izaberi "WebP" format
-4. Quality: 80-85%
-5. Download → Preimenuj (npr. `hero-main.webp`)
-6. Zameni referenciraj u React komponentama (npr. HomePage.jsx)
+Nakon konverzije, zameni `.png` sa `.webp` u:
+- `HomePage.jsx` (heroSekcija.png)
+- `AboutPage.jsx` (slike profesorke)
+- Bilo gde drugde gde se koriste ove slike
+
+### 4. Testiraj Rich Results
+1. Idi na: https://search.google.com/test/rich-results
+2. Unesi: https://srpskiusrcu.rs
+3. Proveri da li detektuje: Organization, EducationalOrganization
+4. Testiraj i: https://srpskiusrcu.rs/faq (treba da detektuje FAQPage)
+5. Testiraj i: https://srpskiusrcu.rs/blog/padezi-u-srpskom-jeziku (treba BlogPosting)
 
 ---
 
-### 3. ⚠️ DODAJ LAZY LOADING na slike (10 min)
+## FAZA 2 - JA MOGU DA URADIM (sledeci put kad me pozoves)
 
-U komponentama (HomePage.jsx, AboutPage.jsx, itd.), dodaj `loading="lazy"` atribut:
+### A. Dodavanje novih blog postova (vidi SEO/content-ideas.md)
+Prioritet postovi koji jos nisu napisani:
+1. "Колико времена треба за припрему мале матуре из српског?" (long-tail keyword)
+2. "Мала матура 2026: Датуми, правила и све што треба да знате" (sezonski, HIGH volume)
+3. "Шта се тачно полаже на малој матури из српског?" (informativni, HIGH volume)
+4. "Лектире за малу матуру: листа и кратке анализе" (HIGH volume)
+5. "Реченични чланови: субјекат, предикат, атрибут, апозиција" (gramatika)
+6. "Правопис: велика слова, интерпункција" (gramatika)
 
-```jsx
-// BEFORE:
-<img src="/slika1.webp" alt="..." />
+### F. Internal linking izmedju blog postova
+Povezati blog clanke medjusobno (npr. "padezi" clanak linkuje na "glasovne promene", itd.)
 
-// AFTER:
-<img src="/slika1.webp" alt="Учење српског језика" loading="lazy" width="500" height="400" />
-```
 
----
+## FAZA 3 - TI RADIS (u prvom mesecu)
 
-## 🟡 ВАЖНО - Урадити у првој недељи
+### 1. Backlink strategija
+- Kontaktiraj obrazovne portale i roditelske forume
+- Guest postovi na blogovima o obrazovanju
+- Registruj se na obrazovne direktorijume (edukacija.rs, itd.)
+- Ostavi korisne komentare na forumima sa linkom ka blogu
 
-### 4. Google Search Console (15 min)
-1. Idi na: https://search.google.com/search-console
-2. Klikni "Add Property"
-3. Unesi: `srpskiusrcu.rs` (ili tvoj domen)
-4. Verifikuj domain (DNS TXT rekord ili HTML file upload)
-5. Submit Sitemap: `https://srpskiusrcu.rs/sitemap.xml`
+### 2. Google My Business
+- Kreiraj Google Business Profile (radi i za online biznis)
+- Kategorija: "Online tutoring service" ili "Education"
+- Dodaj slike, radno vreme, opis
+- Podstici ucenike/roditelje da ostave recenzije
 
-### 5. Google Analytics 4 (20 min)
-1. Idi na: https://analytics.google.com
-2. Kreiraj novi property: "Српски у Срцу"
-3. Kopiraj Measurement ID (G-XXXXXXXXX)
-4. Dodaj tracking code u `frontend/index.html` pre `</head>`:
+### 3. Social Media SEO signali
+- Instagram: redovni postovi sa hashtagovima (#маламатура #српскијезик #припрема)
+- Facebook: deli blog postove
+- YouTube: upload preview video lekcija (VideoObject schema ce pomoci)
 
-```html
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXX"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-XXXXXXXXX');
-</script>
-```
-
-### 6. Firebase Hosting Cache Headers (5 min)
-Ažuriraj `firebase.json` sa cache headers - vidi [SEO/technical-seo.md](./SEO/technical-seo.md) sekcija B.5.
-
----
-
-## 🟢 PREPORUČENO - U prvom mesecu
-
-### 7. Kreiraj Blog Sekciju
-- Dodaj `/blog` rutu u App.jsx
-- Kreiraj BlogPage.jsx i BlogPostPage.jsx
-- Piši 2 posta nedeljno
-- Ideje: vidi [SEO/content-ideas.md](./SEO/content-ideas.md)
-
-### 8. Backlink Strategija
-- Kontaktiraj lokalne škole, obrazovne portale
-- Guest postovi na roditeljskim forumima
-- Registruj se na obrazovne direktoriume
-
-### 9. Google My Business
-- Kreirati GMB profil (čak i za online biznis)
-- Kategorija: "Online tutoring service"
+### 4. Pisi 2 blog posta nedeljno
+Pogledaj [SEO/content-ideas.md](./SEO/content-ideas.md) za 38 ideja.
+Fokusiraj se na:
+- Nedeljа 1-2: Informativni ("sta se polaze", "datumi 2026")
+- Nedelja 3-4: Gramatika ("recenični clanovi", "pravopis")
+- Mesec 2+: Roditeljski saveti + online ucenje
 
 ---
 
-## 📊 PROVERA DA LI RADI
+## FAZA 4 - NAPREDNI SEO (mesec 2-3)
 
-### Test 1: Meta Tagovi
-```bash
-# Dev mode
-npm run dev
-# Otvori http://localhost:3000 → View Page Source → Traži "<meta property="
-```
+### 1. Local SEO landing stranice
+Kreirati stranice za kljucne gradove: `/priprema-beograd`, `/priprema-novi-sad`, itd.
+Roditelji pretrazuju po gradovima cak i za online usluge.
 
-### Test 2: Structured Data
-```
-Idi na: https://search.google.com/test/rich-results
-Unesi: https://srpskiusrcu.rs
-Proveri: Organization, FAQPage schemas
-```
+### 2. AggregateRating schema
+Kada skupis dovoljno recenzija (5+), dodati AggregateRating u structured data za zvezdice u Google rezultatima.
 
-### Test 3: Open Graph
-```
-Idi na: https://developers.facebook.com/tools/debug/
-Unesi: https://srpskiusrcu.rs
-Klikni "Scrape Again"
-Proveri da li se prikazuje og-image.png
-```
+### 3. Content hub strategija
+Napraviti "pillar page" za "Pripema male mature" koja linkuje na sve blog clanke.
+Ovo pokazuje Google-u da si autoritet na tu temu.
 
-### Test 4: Core Web Vitals
-```
-Idi na: https://pagespeed.web.dev
-Unesi: https://srpskiusrcu.rs
-Cilj: 90+Score na mobile i desktop
-```
+### 4. Monitoring i optimizacija
+- Google Search Console: prati koje stranice su indeksirane, koje keywords dovode promet
+- GA4: prati conversion events (registracija, kupovina kursa)
+- PageSpeed: ponovo testiraj nakon WebP konverzije (cilj: 90+ mobile)
+- Ahrefs Free: prati backlinks
 
 ---
+## DOKUMENTACIJA
 
-## 📁 DOKUMENTACIJA
-
-Detaljnije informacije:
-- **[SEO/README.md](./SEO/README.md)** - Glavni pregled
-- **[SEO/keyword-research.md](./SEO/keyword-research.md)** - Keyword strategija
-- **[SEO/on-page-seo.md](./SEO/on-page-seo.md)** - Per-page SEO details
-- **[SEO/content-ideas.md](./SEO/content-ideas.md)** - 38 blog post ideja
-- **[SEO/technical-seo.md](./SEO/technical-seo.md)** - Tehničke preporuke
-- **[SEO/action-plan.md](./SEO/action-plan.md)** - 90-day roadmap
-- **[SEO/og-image-guide.md](./SEO/og-image-guide.md)** - OG slika uputstva
-
----
-
-## ✅ CHECKLIST
-
-- [ ] Kreirana OG slika (og-image.png)
-- [ ] Slike konvertovane u WebP
-- [ ] Dodato `loading="lazy"` na slike
-- [ ] Google Search Console setup + sitemap submitted
-- [ ] Google Analytics 4 tracking dodat
-- [ ] Firebase cache headers ažurirani
-- [ ] Testirano sa Google Rich Results Test
-- [ ] Testirano sa PageSpeed Insights
-- [ ] Testirano sa Facebook Sharing Debugger
-
----
-
-## 🎯 CILJEVI (Mesečno praćenje)
-
-| Mesec | Organic Traffic | Top Keyword Ranking | Blog Postova |
-|---|---|---|---|
-| 1 | 0-100 | - | 0-4 |
-| 3 | 500+ | Top 20 | 8+ |
-| 6 | 3,000+ | Top 10 | 20+ |
-
-**Alati za praćenje:** Google Search Console, Google Analytics 4, Ahrefs (free tools)
-
----
-
-## 📞 PITANJA?
-
-Sve je implementirano! Jednostavno prati ovaj checklist i biće odlično. 🚀
-
-**Implementirano:** Februar 2025
+- [SEO/README.md](./SEO/README.md) - Glavni pregled
+- [SEO/keyword-research.md](./SEO/keyword-research.md) - Keyword strategija (150+ keywords)
+- [SEO/on-page-seo.md](./SEO/on-page-seo.md) - Per-page SEO detalji
+- [SEO/content-ideas.md](./SEO/content-ideas.md) - 38 blog post ideja sa strukturom
+- [SEO/technical-seo.md](./SEO/technical-seo.md) - Tehnicke preporuke
+- [SEO/action-plan.md](./SEO/action-plan.md) - 90-dnevni roadmap
+- [SEO/og-image-guide.md](./SEO/og-image-guide.md) - OG slika uputstva

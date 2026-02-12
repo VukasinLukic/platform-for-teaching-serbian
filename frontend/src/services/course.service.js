@@ -197,8 +197,11 @@ export const getCourseModulesWithLessons = async (courseId) => {
           ...lessonDoc.data()
         }));
 
-        // Sort lessons by createdAt
+        // Sort lessons by order field (fallback to createdAt)
         lessons.sort((a, b) => {
+          const orderA = a.order != null ? a.order : 9999;
+          const orderB = b.order != null ? b.order : 9999;
+          if (orderA !== orderB) return orderA - orderB;
           const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
           const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
           return dateA - dateB;
@@ -211,8 +214,11 @@ export const getCourseModulesWithLessons = async (courseId) => {
       })
     );
 
-    // Sort modules by createdAt
+    // Sort modules by order field (fallback to createdAt)
     modulesWithLessons.sort((a, b) => {
+      const orderA = a.order != null ? a.order : 9999;
+      const orderB = b.order != null ? b.order : 9999;
+      if (orderA !== orderB) return orderA - orderB;
       const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
       const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
       return dateA - dateB;

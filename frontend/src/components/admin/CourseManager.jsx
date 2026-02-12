@@ -122,7 +122,7 @@ export default function CourseManager() {
   const addModule = () => {
     setFormData({
       ...formData,
-      modules: [...formData.modules, { title: '' }]
+      modules: [...formData.modules, { title: '', order: formData.modules.length + 1 }]
     });
   };
 
@@ -280,82 +280,13 @@ export default function CourseManager() {
         const moduleDoc = await addDoc(collection(db, 'modules'), {
           courseId: courseId,
           title: module.title,
-          order: i + 1,
+          order: module.order || (i + 1),
           created_at: new Date().toISOString(),
         });
 
         console.log(`✅ [CourseManager] Module created:`, moduleDoc.id);
 
-        // Save lessons for this module
-        console.log(`🔵 [CourseManager] Saving ${module.lessons.length} lessons for module ${moduleDoc.id}...`);
-
-        for (let j = 0; j < module.lessons.length; j++) {
-          const lesson = module.lessons[j];
-
-          if (!lesson.title.trim()) {
-            console.warn(`⚠️ [CourseManager] Skipping lesson with empty title`);
-            continue;
-          }
-
-          console.log(`  📝 Creating lesson ${j + 1}:`, lesson.title);
-
-          // Create lesson document first to get lesson ID
-          const lessonDoc = await addDoc(collection(db, 'lessons'), {
-            courseId: courseId,
-            moduleId: moduleDoc.id,
-            title: lesson.title,
-            duration: lesson.duration || 15,
-            order: j + 1,
-            videoUrl: '',
-            description: '',
-            materials: [],
-            created_at: new Date().toISOString(),
-          });
-
-          // Upload materials if any
-          if (lesson.materials && lesson.materials.length > 0) {
-            console.log(`  📎 Uploading ${lesson.materials.length} materials...`);
-            const uploadedMaterials = [];
-
-            for (const material of lesson.materials) {
-              if (material.file) {
-                try {
-                  const fileName = `course-materials/${courseId}/${lessonDoc.id}/${Date.now()}_${material.name}`;
-                  const storageRef = ref(storage, fileName);
-                  const uploadTask = await uploadBytesResumable(storageRef, material.file);
-                  const downloadURL = await getDownloadURL(uploadTask.ref);
-
-                  uploadedMaterials.push({
-                    name: material.name,
-                    url: downloadURL,
-                    type: material.type,
-                    size: material.size
-                  });
-
-                  console.log(`    ✅ Material uploaded:`, material.name);
-                } catch (error) {
-                  console.error(`    ❌ Error uploading material ${material.name}:`, error);
-                  showToast({ type: 'warning', message: `Greška pri upload-u: ${material.name}` });
-                }
-              } else if (material.url) {
-                // Existing material (from edit mode)
-                uploadedMaterials.push({
-                  name: material.name,
-                  url: material.url,
-                  type: material.type,
-                  size: material.size
-                });
-              }
-            }
-
-            // Update lesson with materials
-            await updateDoc(doc(db, 'lessons', lessonDoc.id), {
-              materials: uploadedMaterials
-            });
-          }
-
-          console.log(`  ✅ Lesson created:`, lesson.title);
-        }
+        // Note: Lessons are managed separately via LessonManager
       }
 
       console.log('✅ [CourseManager] All modules and lessons saved successfully!');
@@ -663,7 +594,14 @@ export default function CourseManager() {
                     {formData.modules.map((module, moduleIndex) => (
                       <div key={moduleIndex} className="bg-gray-50 border border-gray-200 rounded-xl p-4">
                         <div className="flex items-center gap-3">
-                          <span className="text-sm font-bold text-gray-500 w-6">{moduleIndex + 1}.</span>
+                          <input
+                            type="number"
+                            value={module.order || moduleIndex + 1}
+                            onChange={(e) => updateModule(moduleIndex, 'order', Number(e.target.value))}
+                            className="w-14 px-2 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black text-gray-900 font-bold text-center"
+                            min="1"
+                            title="Redosled oblasti"
+                          />
                           <input
                             type="text"
                             value={module.title}

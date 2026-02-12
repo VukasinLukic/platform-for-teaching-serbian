@@ -27,7 +27,9 @@ export default function Header({ transparent = false }) {
               <img
                 src="/icon.png"
                 alt="СРПСКИ У СРЦУ"
-                className="h-20 w-auto py-2"
+                className="h-16 md:h-20 w-auto py-2"
+                width="80"
+                height="80"
               />
             </Link>
 

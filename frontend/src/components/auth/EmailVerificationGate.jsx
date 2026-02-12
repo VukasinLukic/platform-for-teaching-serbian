@@ -60,7 +60,7 @@ export default function EmailVerificationGate() {
                 Email послат на:
               </p>
               <p className="text-lg font-bold text-[#D62828] mb-4">
-                {userProfile?.email}
+                {userProfile?.email || user?.email}
               </p>
 
               {/* Auto-checking indicator */}

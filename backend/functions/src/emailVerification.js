@@ -42,7 +42,9 @@ export const sendVerificationEmail = onCall({
     'https://naucisprski.web.app',
     'https://naucisprski.firebaseapp.com',
     'https://srpskiusrcu.com',
-    'https://www.srpskiusrcu.com'
+    'https://www.srpskiusrcu.com',
+    'https://srpskiusrcu.rs',
+    'https://www.srpskiusrcu.rs'
   ],
   region: 'us-central1',
   invoker: 'public'
@@ -120,7 +122,9 @@ export const verifyEmailToken = onCall({
     'https://naucisprski.web.app',
     'https://naucisprski.firebaseapp.com',
     'https://srpskiusrcu.com',
-    'https://www.srpskiusrcu.com'
+    'https://www.srpskiusrcu.com',
+    'https://srpskiusrcu.rs',
+    'https://www.srpskiusrcu.rs'
   ],
   region: 'us-central1',
   invoker: 'public'
@@ -212,7 +216,9 @@ export const resendVerificationEmail = onCall({
     'https://naucisprski.web.app',
     'https://naucisprski.firebaseapp.com',
     'https://srpskiusrcu.com',
-    'https://www.srpskiusrcu.com'
+    'https://www.srpskiusrcu.com',
+    'https://srpskiusrcu.rs',
+    'https://www.srpskiusrcu.rs'
   ],
   region: 'us-central1',
   invoker: 'public'

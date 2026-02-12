@@ -5,5 +5,26 @@
         "description": "Проверите своје знање о гласовним променама кроз примере: једна, две и три гласовне промене.",
         "fileName": "glasovne-promene.json",
         "difficulty": "Medium"
+    },
+    {
+        "id": "prva-provera-znanja",
+        "title": "Прва провера знања",
+        "description": "Обухвата фонетику, гласовне промене и творбу речи — 20 питања за проверу основних знања из српског језика.",
+        "fileName": "prva-provera-znanja.json",
+        "difficulty": "Medium"
+    },
+    {
+        "id": "tvorba-reci",
+        "title": "Творба речи - Збирка са решењима",
+        "description": "Корен речи, суфикси, префикси, просте, изведене и сложене речи — 20 питања из области творбе речи.",
+        "fileName": "tvorba-reci.json",
+        "difficulty": "Medium"
+    },
+    {
+        "id": "fonetika",
+        "title": "Фонетика",
+        "description": "Самогласници, сугласници, сонанти, подела по звучности и месту изговора, слоготворно Р — 15 питања.",
+        "fileName": "fonetika.json",
+        "difficulty": "Easy"
     }
 ]

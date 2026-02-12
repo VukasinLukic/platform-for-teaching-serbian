@@ -25,6 +25,7 @@ export default function CoursePage() {
   const [activeModuleIndex, setActiveModuleIndex] = useState(0);
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [purchasing, setPurchasing] = useState(false);
 
   useEffect(() => {
     loadCourseData();
@@ -62,6 +63,7 @@ export default function CoursePage() {
       return;
     }
 
+    setPurchasing(true);
     try {
       // Check if user already has a pending transaction for this course
       const q = query(
@@ -113,6 +115,8 @@ export default function CoursePage() {
     } catch (error) {
       console.error('Error creating transaction:', error);
       alert('Грешка при креирању трансакције. Покушајте поново.');
+    } finally {
+      setPurchasing(false);
     }
   };
 
@@ -163,10 +167,20 @@ export default function CoursePage() {
               </p>
               <button
                 onClick={handlePurchaseClick}
-                className="bg-[#D62828] text-white px-12 py-5 rounded-full font-bold hover:bg-[#B91F1F] transition-all shadow-xl hover:scale-105 inline-flex items-center gap-3"
+                disabled={purchasing}
+                className="bg-[#D62828] text-white px-12 py-5 rounded-full font-bold hover:bg-[#B91F1F] transition-all shadow-xl hover:scale-105 inline-flex items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                Купи курс за {formatPrice(course.price)}
-                <ArrowRight className="w-6 h-6" />
+                {purchasing ? (
+                  <>
+                    <div className="w-6 h-6 border-3 border-white border-t-transparent rounded-full animate-spin"></div>
+                    Учитавање...
+                  </>
+                ) : (
+                  <>
+                    Купи курс за {formatPrice(course.price)}
+                    <ArrowRight className="w-6 h-6" />
+                  </>
+                )}
               </button>
             </div>
           </div>
@@ -211,24 +225,12 @@ export default function CoursePage() {
                 </h3>
                 <div className="grid gap-3">
                   {selectedLesson.materials.map((material, idx) => (
-                    <button
+                    <a
                       key={idx}
-                      onClick={async () => {
-                        try {
-                          const response = await fetch(material.url);
-                          const blob = await response.blob();
-                          const url = window.URL.createObjectURL(blob);
-                          const a = document.createElement('a');
-                          a.href = url;
-                          a.download = material.name;
-                          document.body.appendChild(a);
-                          a.click();
-                          window.URL.revokeObjectURL(url);
-                          document.body.removeChild(a);
-                        } catch (error) {
-                          console.error('Download error:', error);
-                        }
-                      }}
+                      href={material.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      download={material.name}
                       className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group text-left w-full"
                     >
                       <div className="w-12 h-12 bg-[#D62828] rounded-lg flex items-center justify-center flex-shrink-0">
@@ -239,7 +241,7 @@ export default function CoursePage() {
                         <p className="text-sm text-gray-500">{material.type} • {(material.size / 1024).toFixed(0)} KB</p>
                       </div>
                       <Download className="w-5 h-5 text-gray-400 group-hover:text-[#D62828] transition-colors" />
-                    </button>
+                    </a>
                   ))}
                 </div>
               </div>
@@ -368,9 +370,17 @@ export default function CoursePage() {
               <p className="text-sm text-white/90 mb-4">Приступите комплетном курсу</p>
               <button
                 onClick={handlePurchaseClick}
-                className="w-full bg-white text-[#D62828] px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition"
+                disabled={purchasing}
+                className="w-full bg-white text-[#D62828] px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
               >
-                Купи за {formatPrice(course.price)}
+                {purchasing ? (
+                  <>
+                    <div className="w-5 h-5 border-2 border-[#D62828] border-t-transparent rounded-full animate-spin"></div>
+                    Учитавање...
+                  </>
+                ) : (
+                  <>Купи за {formatPrice(course.price)}</>
+                )}
               </button>
             </div>
           </div>
@@ -478,10 +488,20 @@ export default function CoursePage() {
                   </div>
                   <button
                     onClick={handlePurchaseClick}
-                    className="bg-[#D62828] text-white px-8 py-4 rounded-full font-bold hover:bg-[#B91F1F] transition-all shadow-lg hover:scale-105 inline-flex items-center gap-3"
+                    disabled={purchasing}
+                    className="bg-[#D62828] text-white px-8 py-4 rounded-full font-bold hover:bg-[#B91F1F] transition-all shadow-lg hover:scale-105 inline-flex items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
-                    Купи курс сада
-                    <ArrowRight className="w-5 h-5" />
+                    {purchasing ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Учитавање...
+                      </>
+                    ) : (
+                      <>
+                        Купи курс сада
+                        <ArrowRight className="w-5 h-5" />
+                      </>
+                    )}
                   </button>
                 </div>
               )}

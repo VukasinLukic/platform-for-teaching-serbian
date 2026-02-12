@@ -247,8 +247,10 @@ export default function HomePage() {
             <div className="relative flex items-center justify-center lg:-mt-8">
               <img
                 src="/heroSekcija.png"
-                alt="Професорка са децом"
-                className="w-[125%] max-w-none h-auto relative z-10"
+                alt="Професорка Марина Лукић са ученицима — онлајн настава српског језика"
+                className="w-full md:w-[125%] max-w-none h-auto relative z-10"
+                width="800"
+                height="600"
               />
             </div>
           </div>

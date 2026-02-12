@@ -43,8 +43,8 @@ function ProtectedRoute({ children, adminOnly = false }) {
     return <Navigate to="/login" replace />;
   }
 
-  // Check if email is verified (except for /verify route)
-  if (userProfile && !userProfile.emailVerified) {
+  // Block access if profile not loaded or email not verified
+  if (!userProfile || !userProfile.emailVerified) {
     return <EmailVerificationGate />;
   }
 
@@ -66,7 +66,8 @@ function App() {
     <BrowserRouter>
       <Toaster />
       <ScrollToTop />
-      <Routes>
+      <main>
+        <Routes>
         {/* Public Routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -127,7 +128,8 @@ function App() {
 
         {/* Catch all - redirect to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+        </Routes>
+      </main>
     </BrowserRouter>
   );
 }

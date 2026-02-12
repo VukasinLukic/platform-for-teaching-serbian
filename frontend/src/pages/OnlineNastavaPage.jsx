@@ -17,6 +17,7 @@ export default function OnlineNastavaPage() {
   const [loading, setLoading] = useState(true);
   const [visibleSteps, setVisibleSteps] = useState([false, false, false, false]);
   const [showAuthModal, setShowAuthModal] = useState(false);
+  const [purchasingId, setPurchasingId] = useState(null);
   const stepRefs = useRef([]);
 
   useEffect(() => {
@@ -87,6 +88,7 @@ export default function OnlineNastavaPage() {
       return;
     }
 
+    setPurchasingId(pkg.id);
     try {
       // Generate payment reference using Cloud Function
       const generatePaymentRefFunction = httpsCallable(functions, 'generatePaymentReference');
@@ -107,6 +109,8 @@ export default function OnlineNastavaPage() {
     } catch (error) {
       console.error('Error generating payment reference:', error);
       alert('Грешка при креирању уплатнице. Покушајте поново.');
+    } finally {
+      setPurchasingId(null);
     }
   };
 
@@ -236,7 +240,7 @@ export default function OnlineNastavaPage() {
         <div className="max-w-7xl mx-auto px-6">
           <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
             <div className="grid md:grid-cols-2">
-              <div className="p-12 bg-gradient-to-br from-[#1A1A1A] to-gray-800 text-white">
+              <div className="p-6 md:p-12 bg-gradient-to-br from-[#1A1A1A] to-gray-800 text-white">
                 <h2 className="text-3xl font-bold mb-6">Распоред часова</h2>
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
@@ -269,7 +273,7 @@ export default function OnlineNastavaPage() {
                   </div>
                 </div>
               </div>
-              <div className="p-12">
+              <div className="p-6 md:p-12">
                 <h2 className="text-3xl font-bold text-[#1A1A1A] mb-6">Шта добијате?</h2>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
@@ -316,12 +320,12 @@ export default function OnlineNastavaPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-4 md:gap-8">
             {packages.map((pkg) => (
               <div
                 key={pkg.id}
                 className={`relative bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden border-2 ${
-                  pkg.popular ? 'border-[#D62828] scale-105' : 'border-gray-100'
+                  pkg.popular ? 'border-[#D62828] md:scale-105' : 'border-gray-100'
                 }`}
               >
                 {pkg.popular && (
@@ -358,9 +362,17 @@ export default function OnlineNastavaPage() {
 
                   <button
                     onClick={() => handlePurchase(pkg)}
-                    className={`w-full bg-gradient-to-r ${getPackageColor(pkg.id)} text-white px-8 py-4 rounded-full hover:shadow-xl transition-all font-bold text-base transform hover:scale-105`}
+                    disabled={purchasingId === pkg.id}
+                    className={`w-full bg-gradient-to-r ${getPackageColor(pkg.id)} text-white px-8 py-4 rounded-full hover:shadow-xl transition-all font-bold text-base transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center justify-center gap-2`}
                   >
-                    Купи пакет
+                    {purchasingId === pkg.id ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                        Учитавање...
+                      </>
+                    ) : (
+                      'Купи пакет'
+                    )}
                   </button>
                 </div>
               </div>

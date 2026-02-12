@@ -21,6 +21,7 @@ export default function LessonManager() {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
+    order: 1,
     videoFile: null,
     materials: [], // { file, name, type, size } or { url, name, type, size } for existing
   });
@@ -91,8 +92,11 @@ export default function LessonManager() {
         })
       );
 
-      // Sort modules by createdAt
+      // Sort modules by order field (fallback to createdAt)
       modulesWithLessonCount.sort((a, b) => {
+        const orderA = a.order != null ? a.order : 9999;
+        const orderB = b.order != null ? b.order : 9999;
+        if (orderA !== orderB) return orderA - orderB;
         const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
         const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
         return dateA - dateB;
@@ -115,8 +119,11 @@ export default function LessonManager() {
       const snapshot = await getDocs(q);
       const lessonsData = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
 
-      // Sort lessons by createdAt
+      // Sort lessons by order field (fallback to createdAt)
       lessonsData.sort((a, b) => {
+        const orderA = a.order != null ? a.order : 9999;
+        const orderB = b.order != null ? b.order : 9999;
+        if (orderA !== orderB) return orderA - orderB;
         const dateA = a.createdAt ? new Date(a.createdAt) : new Date(0);
         const dateB = b.createdAt ? new Date(b.createdAt) : new Date(0);
         return dateA - dateB;
@@ -272,6 +279,7 @@ export default function LessonManager() {
         await updateDoc(doc(db, 'lessons', editingLesson.id), {
           title: formData.title,
           description: formData.description,
+          order: formData.order,
           videoUrl: videoUrl,
           videoPath: videoPath,
           materials: uploadedMaterials,
@@ -283,6 +291,7 @@ export default function LessonManager() {
         setFormData({
           title: '',
           description: '',
+          order: 1,
           videoFile: null,
           materials: [],
         });
@@ -334,7 +343,7 @@ export default function LessonManager() {
           description: formData.description,
           videoUrl: result.url,
           videoPath: result.path,
-          order: lessons.length + 1,
+          order: formData.order,
           duration: 0,
           materials: [],
           createdAt: new Date().toISOString(),
@@ -354,6 +363,7 @@ export default function LessonManager() {
         setFormData({
           title: '',
           description: '',
+          order: lessons.length + 2,
           videoFile: null,
           materials: [],
         });
@@ -377,6 +387,7 @@ export default function LessonManager() {
     setFormData({
       title: lesson.title,
       description: lesson.description || '',
+      order: lesson.order || 1,
       videoFile: null, // Don't load existing video file
       materials: lesson.materials || [], // Load existing materials
     });
@@ -477,7 +488,7 @@ export default function LessonManager() {
                       <button
                         onClick={() => {
                           setEditingLesson(null);
-                          setFormData({ title: '', description: '', videoFile: null, materials: [] });
+                          setFormData({ title: '', description: '', order: lessons.length + 1, videoFile: null, materials: [] });
                           setShowForm(true);
                         }}
                         className="bg-[#D62828] text-white px-6 py-3 rounded-2xl font-bold hover:bg-[#B91F1F] transition-colors flex items-center gap-2 mb-6"
@@ -495,17 +506,31 @@ export default function LessonManager() {
                         </h4>
 
                         <form onSubmit={handleSubmit} className="space-y-4">
-                          <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-2">Назив лекције</label>
-                            <input
-                              type="text"
-                              value={formData.title}
-                              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                              className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-[#D62828] focus:outline-none transition-colors"
-                              placeholder="нпр. Лекција 1: Увод у граматику"
-                              required
-                              disabled={uploading}
-                            />
+                          <div className="flex gap-4">
+                            <div className="flex-1">
+                              <label className="block text-sm font-medium text-gray-700 mb-2">Назив лекције</label>
+                              <input
+                                type="text"
+                                value={formData.title}
+                                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                                className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-[#D62828] focus:outline-none transition-colors"
+                                placeholder="нпр. Лекција 1: Увод у граматику"
+                                required
+                                disabled={uploading}
+                              />
+                            </div>
+                            <div className="w-28">
+                              <label className="block text-sm font-medium text-gray-700 mb-2">Редослед</label>
+                              <input
+                                type="number"
+                                value={formData.order}
+                                onChange={(e) => setFormData({ ...formData, order: Number(e.target.value) })}
+                                className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-[#D62828] focus:outline-none transition-colors text-center font-bold"
+                                min="1"
+                                required
+                                disabled={uploading}
+                              />
+                            </div>
                           </div>
 
                           <div>
@@ -661,7 +686,7 @@ export default function LessonManager() {
                               onClick={() => {
                                 setShowForm(false);
                                 setEditingLesson(null);
-                                setFormData({ title: '', description: '', videoFile: null, materials: [] });
+                                setFormData({ title: '', description: '', order: 1, videoFile: null, materials: [] });
                               }}
                               disabled={uploading}
                               className="px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-2xl font-bold hover:bg-gray-50 transition-colors disabled:opacity-50"
@@ -686,7 +711,7 @@ export default function LessonManager() {
                           >
                             <div className="flex items-center gap-3">
                               <div className="bg-[#F2C94C]/20 w-10 h-10 rounded-full flex items-center justify-center">
-                                <span className="font-bold text-[#1A1A1A]">{idx + 1}</span>
+                                <span className="font-bold text-[#1A1A1A]">{lesson.order || idx + 1}</span>
                               </div>
                               <div>
                                 <p className="font-bold text-[#1A1A1A]">{lesson.title}</p>

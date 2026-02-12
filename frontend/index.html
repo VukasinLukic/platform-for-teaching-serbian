@@ -43,9 +43,19 @@
     <meta name="twitter:description" content="Online видео курсеви за припрему мале матуре из српског језика. Учи у своје време, 24/7 приступ." />
     <meta name="twitter:image" content="https://srpskiusrcu.rs/og-image.png" />
 
-    <!-- Preconnect za Firebase i Google Fonts ako su potrebni -->
+    <!-- Preconnect za Firebase i Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://firestore.googleapis.com" />
+    <link rel="preconnect" href="https://www.googletagmanager.com" />
+
+    <!-- Preload hero image for faster LCP -->
+    <link rel="preload" href="/heroSekcija.png" as="image" />
+    <link rel="preload" href="/icon.png" as="image" />
+
+    <!-- DNS prefetch for third-party resources -->
+    <link rel="dns-prefetch" href="https://firebaseinstallations.googleapis.com" />
+    <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com" />
 
     <!-- JSON-LD: EducationalOrganization Schema -->
     <script type="application/ld+json">
@@ -67,10 +77,26 @@
         "contactType": "customer service",
         "availableLanguage": "Serbian"
       },
-      "sameAs": [],
+      "sameAs": [
+        "https://www.instagram.com/srpskiusrcu"
+      ],
       "offers": {
         "@type": "Offer",
         "category": "Online курсеви српског језика"
+      },
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Курсеви за малу матуру",
+        "itemListElement": [
+          {
+            "@type": "OfferCatalog",
+            "name": "Видео курсеви"
+          },
+          {
+            "@type": "OfferCatalog",
+            "name": "Online настава уживо"
+          }
+        ]
       }
     }
     </script>

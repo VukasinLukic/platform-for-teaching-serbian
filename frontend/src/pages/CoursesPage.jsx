@@ -209,7 +209,7 @@ export default function CoursesPage() {
               >
                 <div className="bg-white rounded-[2.5rem] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 h-full flex flex-col overflow-hidden cursor-pointer">
                   {/* Card Header Image */}
-                  <div className="h-48 bg-[#F7F7F7] relative overflow-hidden flex items-center justify-center group">
+                  <div className="h-40 md:h-48 bg-[#F7F7F7] relative overflow-hidden flex items-center justify-center group">
                      {course.thumbnail_url ? (
                        <img
                          src={course.thumbnail_url}
@@ -227,7 +227,7 @@ export default function CoursesPage() {
                      </div>
                   </div>
 
-                  <div className="p-8 flex flex-col flex-grow">
+                  <div className="p-5 md:p-8 flex flex-col flex-grow">
                     <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">{course.title}</h3>
                     <p className={`text-gray-600 text-sm mb-6 leading-relaxed ${expandedCards[course.id] ? '' : 'line-clamp-3'}`}>
                       {course.description}

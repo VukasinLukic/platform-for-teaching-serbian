@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Check, ArrowLeft } from 'lucide-react';
+import { Check, ArrowLeft, Upload } from 'lucide-react';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 
@@ -218,11 +218,41 @@ export default function PaymentSlipPage() {
                   </div>
                   <div>
                     <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">
-                      Курсеви ће бити доступни након што уплата легне на рачун
+                      {courseName
+                        ? 'Курсеви ће бити доступни након што уплата легне на рачун'
+                        : 'Часови ће бити доступни након што уплата легне на рачун'
+                      }
                     </h3>
                     <p className="text-gray-600 text-sm leading-relaxed">
-                      Приступ курсу ће бити активиран у року од 24 сата након верификације уплате.
+                      {courseName
+                        ? 'Приступ курсу ће бити активиран у року од 24 сата након верификације уплате.'
+                        : 'Приступ часовима ће бити активиран у року од 24 сата након верификације уплате.'
+                      }
                     </p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div className="bg-white rounded-2xl shadow-lg p-6 border-2 border-gray-100">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#F2C94C] to-[#F2994A] flex items-center justify-center flex-shrink-0">
+                    <span className="text-2xl font-black text-white">3</span>
+                  </div>
+                  <div>
+                    <h3 className="text-lg font-bold text-[#1A1A1A] mb-2">
+                      Поставите потврду уплате
+                    </h3>
+                    <p className="text-gray-600 text-sm leading-relaxed mb-3">
+                      Након уплате, поставите слику уплатнице на свом панелу како бисмо брже верификовали уплату.
+                    </p>
+                    <button
+                      onClick={() => navigate('/dashboard')}
+                      className="inline-flex items-center gap-2 bg-[#D62828] text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-[#B91F1F] transition-colors"
+                    >
+                      <Upload className="w-4 h-4" />
+                      Отвори мој панел
+                    </button>
                   </div>
                 </div>
               </div>
@@ -233,16 +263,16 @@ export default function PaymentSlipPage() {
                   <Check className="w-6 h-6 text-[#D62828] flex-shrink-0 mt-0.5" />
                   <div>
                     <h4 className="font-bold text-[#1A1A1A] mb-2">
-                      Уколико су вам курсеви хитно потребни
+                      Уколико су вам {courseName ? 'курсеви' : 'часови'} хитно потребни
                     </h4>
                     <p className="text-sm text-gray-600 mb-3">
                       Проследите доказ о уплати на следећи имејл:
                     </p>
                     <a
-                      href={`mailto:${contactEmail}`}
+                      href="mailto:profesorka.marinalukic@gmail.com"
                       className="inline-block bg-[#D62828] text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-[#B91F1F] transition-colors"
                     >
-                      {contactEmail}
+                      profesorka.marinalukic@gmail.com
                     </a>
                   </div>
                 </div>

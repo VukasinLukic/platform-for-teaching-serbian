@@ -6,14 +6,17 @@ export default function Footer() {
   return (
     <footer className="bg-white text-[#1A1A1A] pt-20 pb-10 border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-12 mb-16">
+        <div className="grid md:grid-cols-4 gap-8 md:gap-12 mb-16">
           <div className="col-span-1 md:col-span-2">
             <div className="mb-6">
               <Link to="/" className="inline-block">
                 <img
                   src="/footer.png"
-                  alt="СРПСКИ У СРЦУ"
+                  alt="СРПСКИ У СРЦУ — платформа за учење српског језика"
                   className="h-40 md:h-64 w-auto"
+                  width="256"
+                  height="256"
+                  loading="lazy"
                 />
               </Link>
             </div>
