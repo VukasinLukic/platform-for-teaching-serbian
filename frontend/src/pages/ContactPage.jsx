@@ -146,7 +146,7 @@ export default function ContactPage() {
                 <Mail />
               </div>
               <div>
-                <div className="font-bold text-[#1A1A1A]">info@srpskiusrcu.rs</div>
+                <div className="font-bold text-[#1A1A1A]">profesorka.marinalukic@gmail.com</div>
                 <div className="text-sm text-gray-500">Одговарамо у року од 24ч</div>
               </div>
             </div>

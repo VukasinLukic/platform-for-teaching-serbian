@@ -607,18 +607,6 @@ export default function HomePage() {
             </div>
           </div>
 
-          {/* Scroll Indicator Arrow */}
-          <div className="flex justify-center mt-6 animate-bounce">
-            <div className="flex items-center gap-2 text-gray-500 text-sm">
-              <span>Prevucite levo-desno</span>
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16l-4-4m0 0l4-4m-4 4h18" />
-              </svg>
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-              </svg>
-            </div>
-          </div>
         </div>
 
         <style>{`

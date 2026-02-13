@@ -13,6 +13,7 @@ import { formatPrice } from '../utils/helpers';
 import { db, functions } from '../services/firebase';
 import Header from '../components/ui/Header';
 import AuthRequiredModal from '../components/ui/AuthRequiredModal';
+import VideoPlayer from '../components/course/VideoPlayer';
 
 export default function CoursePage() {
   const { id } = useParams();
@@ -190,20 +191,30 @@ export default function CoursePage() {
       // Show video if has access or is first lesson
       return (
         <>
-          {/* Video Player */}
-          <div className="bg-[#1A1A1A] rounded-3xl overflow-hidden shadow-xl aspect-video">
-            {selectedLesson.videoUrl ? (
-              <video
-                key={selectedLesson.id}
-                controls
-                className="w-full h-full"
-                src={selectedLesson.videoUrl}
-                controlsList="nodownload"
-              >
-                Ваш претраживач не подржава видео.
-              </video>
+          {/* Secure Video Player - uses signed URLs, no direct video access */}
+          <div className="bg-[#1A1A1A] rounded-3xl overflow-hidden shadow-xl max-w-full">
+            {selectedLesson.videoUrl || selectedLesson.video_key ? (
+              user ? (
+                <VideoPlayer
+                  key={selectedLesson.id}
+                  lessonId={selectedLesson.id}
+                />
+              ) : (
+                <div className="aspect-video flex items-center justify-center text-white">
+                  <div className="text-center px-8">
+                    <Video className="w-16 h-16 opacity-30 mx-auto mb-4" />
+                    <p className="text-lg mb-4">Пријавите се да бисте гледали видео</p>
+                    <button
+                      onClick={() => setShowAuthModal(true)}
+                      className="bg-[#D62828] text-white px-8 py-3 rounded-full font-bold hover:bg-[#B91F1F] transition-all"
+                    >
+                      Пријави се
+                    </button>
+                  </div>
+                </div>
+              )
             ) : (
-              <div className="w-full h-full flex items-center justify-center text-white">
+              <div className="aspect-video flex items-center justify-center text-white">
                 <Video className="w-20 h-20 opacity-30" />
               </div>
             )}
@@ -447,10 +458,10 @@ export default function CoursePage() {
         message={`Молимо вас да се пријавите или направите налог како бисте купили курс "${course?.title}".`}
       />
 
-    <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+    <div className="min-h-screen bg-white font-sans text-[#1A1A1A] overflow-x-hidden">
       <Header />
 
-      <div className="max-w-[1600px] mx-auto px-6 py-8">
+      <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-8">
         {/* Course Header with Thumbnail */}
         <div className="mb-8">
           <div className="grid lg:grid-cols-[380px_1fr] gap-8 items-start">
@@ -530,7 +541,7 @@ export default function CoursePage() {
         {/* Main Grid: Left = Video/CTA, Right = Lessons List */}
         <div className="grid lg:grid-cols-[1fr_400px] gap-8">
           {/* LEFT SIDE - Video Player or CTA */}
-          <div className="space-y-6">
+          <div className="space-y-6 min-w-0">
             {renderMainContent()}
           </div>
 

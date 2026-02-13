@@ -41,7 +41,7 @@ export default function Footer() {
           <div>
             <h4 className="font-bold text-lg mb-6 text-[#D62828]">Контакт</h4>
             <ul className="space-y-4 text-gray-600">
-              <li>info@srpskiusrcu.rs</li>
+              <li>profesorka.marinalukic@gmail.com</li>
               <li>{contactPhone}</li>
               <li>Крушевац, Србија</li>
             </ul>

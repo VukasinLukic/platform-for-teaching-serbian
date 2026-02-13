@@ -41,16 +41,42 @@ export const getVideoUrl = onCall({ region: 'europe-west1' }, async (request) =>
 
     const lesson = lessonDoc.data();
 
-    // Check if user has access to the course
-    const userCoursesDoc = await db.collection('user_courses').doc(userId).get();
+    // Check if this is a free preview lesson (first lesson of first module)
+    let isFreePreview = false;
+    if (lesson.moduleId && lesson.course_id) {
+      const modulesQuery = db.collection('modules')
+        .where('courseId', '==', lesson.course_id)
+        .orderBy('order', 'asc')
+        .limit(1);
+      const modulesSnap = await modulesQuery.get();
 
-    const userCourses = userCoursesDoc.exists ? userCoursesDoc.data().courses : {};
+      if (!modulesSnap.empty) {
+        const firstModule = modulesSnap.docs[0];
+        if (firstModule.id === lesson.moduleId) {
+          const lessonsQuery = db.collection('lessons')
+            .where('moduleId', '==', firstModule.id)
+            .orderBy('order', 'asc')
+            .limit(1);
+          const lessonsSnap = await lessonsQuery.get();
 
-    if (!userCourses[lesson.course_id]) {
-      throw new HttpsError(
-        'permission-denied',
-        'Nemate pristup ovom kursu. Molimo kupite kurs da biste pristupili lekcijama.'
-      );
+          if (!lessonsSnap.empty && lessonsSnap.docs[0].id === lessonId) {
+            isFreePreview = true;
+          }
+        }
+      }
+    }
+
+    // Check if user has access to the course (skip for free preview lessons)
+    if (!isFreePreview) {
+      const userCoursesDoc = await db.collection('user_courses').doc(userId).get();
+      const userCourses = userCoursesDoc.exists ? userCoursesDoc.data().courses : {};
+
+      if (!userCourses[lesson.course_id]) {
+        throw new HttpsError(
+          'permission-denied',
+          'Nemate pristup ovom kursu. Molimo kupite kurs da biste pristupili lekcijama.'
+        );
+      }
     }
 
     // Generate signed URL with 1 hour expiration
