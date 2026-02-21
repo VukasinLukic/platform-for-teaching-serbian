@@ -34,6 +34,7 @@ export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
 export const functions = getFunctions(app, 'us-central1');
+export const functionsEU = getFunctions(app, 'europe-west1');
 
 // Connect to emulators in development (optional)
 const USE_EMULATORS = import.meta.env.VITE_USE_EMULATORS === 'true';
@@ -43,6 +44,7 @@ if (USE_EMULATORS && import.meta.env.DEV) {
   connectFirestoreEmulator(db, 'localhost', 8080);
   connectStorageEmulator(storage, 'localhost', 9199);
   connectFunctionsEmulator(functions, 'localhost', 5001);
+  connectFunctionsEmulator(functionsEU, 'localhost', 5001);
   console.log('🔧 Connected to Firebase Emulators');
 }
 

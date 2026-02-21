@@ -64,7 +64,7 @@ export default function Header({ transparent = false }) {
                     to="/dashboard"
                     className="text-[#1A1A1A] hover:text-[#D62828] transition text-sm font-medium"
                   >
-                    Ваш Панел
+                    Ваш панел
                   </Link>
                   {userProfile?.role === 'admin' && (
                     <Link
@@ -179,7 +179,7 @@ export default function Header({ transparent = false }) {
                     onClick={() => setMobileMenuOpen(false)}
                     className="text-[#1A1A1A] bg-gray-50 hover:bg-gray-100 px-5 py-4 rounded-2xl transition font-semibold text-base border-l-4 border-[#D62828]"
                   >
-                    Ваш Панел
+                    Ваш панел
                   </Link>
                   {userProfile?.role === 'admin' && (
                     <Link

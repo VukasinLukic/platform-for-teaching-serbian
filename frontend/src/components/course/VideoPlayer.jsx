@@ -1,21 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
-import videojs from 'video.js';
-import 'video.js/dist/video-js.css';
 import { httpsCallable } from 'firebase/functions';
-import { functions } from '../../services/firebase';
+import { functionsEU } from '../../services/firebase';
 import { Loader2, AlertCircle, Play } from 'lucide-react';
 
-/**
- * VideoPlayer Component
- * Plays protected video content using signed URLs from Cloud Functions
- * @param {string} lessonId - The ID of the lesson to play
- * @param {function} onProgress - Optional callback for tracking video progress
- */
 export default function VideoPlayer({ lessonId, onProgress }) {
   const videoRef = useRef(null);
-  const playerRef = useRef(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [videoUrl, setVideoUrl] = useState(null);
   const [lessonTitle, setLessonTitle] = useState('');
 
   useEffect(() => {
@@ -26,102 +18,40 @@ export default function VideoPlayer({ lessonId, onProgress }) {
     }
 
     loadVideo();
+  }, [lessonId]);
 
-    // Cleanup on unmount
-    return () => {
-      if (playerRef.current) {
-        playerRef.current.dispose();
-        playerRef.current = null;
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video || !onProgress) return;
+
+    const handleTimeUpdate = () => {
+      const currentTime = video.currentTime;
+      const duration = video.duration;
+      if (duration > 0 && Math.floor(currentTime) % 5 === 0) {
+        onProgress(lessonId, (currentTime / duration) * 100, currentTime);
       }
     };
-  }, [lessonId]);
+
+    video.addEventListener('timeupdate', handleTimeUpdate);
+    return () => video.removeEventListener('timeupdate', handleTimeUpdate);
+  }, [videoUrl, onProgress, lessonId]);
 
   const loadVideo = async () => {
     try {
       setLoading(true);
       setError(null);
+      setVideoUrl(null);
 
-      // Call Cloud Function to get signed URL
-      const getVideoUrl = httpsCallable(functions, 'getVideoUrl');
+      const getVideoUrl = httpsCallable(functionsEU, 'getVideoUrl');
       const result = await getVideoUrl({ lessonId });
 
       if (!result.data || !result.data.url) {
         throw new Error('Video URL nije dostupan');
       }
 
-      const { url, lessonTitle: title } = result.data;
-      setLessonTitle(title || 'Video lekcija');
-
-      // Dispose existing player if any
-      if (playerRef.current) {
-        playerRef.current.dispose();
-      }
-
-      // Initialize Video.js player
-      playerRef.current = videojs(videoRef.current, {
-        controls: true,
-        autoplay: false,
-        preload: 'auto',
-        fluid: true,
-        responsive: true,
-        playbackRates: [0.5, 0.75, 1, 1.25, 1.5, 2],
-        controlBar: {
-          volumePanel: {
-            inline: false,
-          },
-          pictureInPictureToggle: true,
-          fullscreenToggle: true,
-        },
-        // Disable right-click and download
-        html5: {
-          vhs: {
-            overrideNative: true,
-          },
-          nativeVideoTracks: false,
-          nativeAudioTracks: false,
-          nativeTextTracks: false,
-        },
-        sources: [
-          {
-            src: url,
-            type: 'video/mp4',
-          },
-        ],
-      });
-
-      // Disable download attribute
-      const videoElement = playerRef.current.el().querySelector('video');
-      if (videoElement) {
-        videoElement.controlsList = 'nodownload';
-        videoElement.disablePictureInPicture = false;
-        videoElement.oncontextmenu = (e) => e.preventDefault();
-      }
-
-      // Track video progress
-      if (onProgress) {
-        playerRef.current.on('timeupdate', () => {
-          const currentTime = playerRef.current.currentTime();
-          const duration = playerRef.current.duration();
-          const progress = (currentTime / duration) * 100;
-
-          // Call progress callback every 5 seconds
-          if (Math.floor(currentTime) % 5 === 0) {
-            onProgress(lessonId, progress, currentTime);
-          }
-        });
-      }
-
-      // Handle player ready
-      playerRef.current.ready(() => {
-        setLoading(false);
-      });
-
-      // Handle errors
-      playerRef.current.on('error', (err) => {
-        console.error('Video player error:', err);
-        setError('Greška pri učitavanju videa. Molimo pokušajte ponovo.');
-        setLoading(false);
-      });
+      setVideoUrl(result.data.url);
+      setLessonTitle(result.data.lessonTitle || 'Video lekcija');
+      setLoading(false);
     } catch (err) {
       console.error('Error loading video:', err);
 
@@ -167,18 +97,23 @@ export default function VideoPlayer({ lessonId, onProgress }) {
   return (
     <div className="glass-card rounded-2xl overflow-hidden">
       {lessonTitle && (
-        <div className="px-6 py-4 border-b border-border">
-          <h3 className="text-lg font-bold text-foreground flex items-center">
-            <Play className="h-5 w-5 text-primary mr-2" />
+        <div className="px-6 py-4 bg-[#1A1A1A]">
+          <h3 className="text-lg font-bold text-white flex items-center">
+            <Play className="h-5 w-5 text-white mr-2" />
             {lessonTitle}
           </h3>
         </div>
       )}
-      <div data-vjs-player className="bg-black">
+      <div className="bg-black">
         <video
           ref={videoRef}
-          className="video-js vjs-big-play-centered vjs-16-9"
+          src={videoUrl}
+          controls
+          controlsList="nodownload"
           playsInline
+          className="w-full"
+          style={{ maxHeight: '70vh' }}
+          onContextMenu={(e) => e.preventDefault()}
         />
       </div>
     </div>

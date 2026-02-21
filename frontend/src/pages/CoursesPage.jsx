@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { Book, Video, Users, Clock, ArrowRight, CheckCircle } from 'lucide-react';
+import { Book, Video, Users, ArrowRight, CheckCircle } from 'lucide-react';
 import { getAllCourses } from '../services/course.service';
 import { formatPrice } from '../utils/helpers';
 import Header from '../components/ui/Header';
@@ -76,7 +76,7 @@ export default function CoursesPage() {
   return (
     <>
       <SEO
-        title="Online Курсеви Српског | Припрема Мале Матуре из Српског Језика"
+        title="ОНЛАЈН КУРСЕВИ СРПСКОГ | ПРИПРЕМА МАЛЕ МАТУРЕ ИЗ СРПСКОГ ЈЕЗИКА"
         description="Комплетни видео курсеви за припрему мале матуре из српског језика. Граматика, књижевност, правопис. Учи у своје време са наставницом са 27 год искуства."
         canonical="/courses"
         jsonLd={[coursesJsonLd]}
@@ -209,21 +209,21 @@ export default function CoursesPage() {
               >
                 <div className="bg-white rounded-[2.5rem] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 h-full flex flex-col overflow-hidden cursor-pointer">
                   {/* Card Header Image */}
-                  <div className="h-40 md:h-48 bg-[#F7F7F7] relative overflow-hidden flex items-center justify-center group">
+                  <div className="h-40 md:h-48 bg-[#F7F7F7] relative overflow-hidden flex items-center justify-center">
                      {course.thumbnail_url ? (
                        <img
                          src={course.thumbnail_url}
                          alt={course.title}
-                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                         className="w-full h-full object-cover"
                          loading="lazy"
                        />
                      ) : course.type === 'video' ? (
-                       <Video className="w-20 h-20 text-[#D62828]/20 group-hover:scale-110 transition-transform duration-500" />
+                       <Video className="w-20 h-20 text-[#D62828]/20" />
                      ) : (
-                       <Users className="w-20 h-20 text-[#D62828]/20 group-hover:scale-110 transition-transform duration-500" />
+                       <Users className="w-20 h-20 text-[#D62828]/20" />
                      )}
-                     <div className="absolute top-4 right-4 bg-[#F2C94C] text-[#1A1A1A] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
-                       {course.type === 'video' ? 'Видео Курс' : 'Уживо Настава'}
+                     <div className="absolute top-4 right-4 bg-gray-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                       {course.type === 'video' ? 'Видео курс' : 'Уживо настава'}
                      </div>
                   </div>
 
@@ -239,35 +239,16 @@ export default function CoursesPage() {
                         <span>Комплетан материјал</span>
                       </div>
 
-                      {/* Expandable Section */}
                       {expandedCards[course.id] && (
                         <div className="space-y-3 py-4 border-t border-gray-100">
                           <h4 className="font-bold text-[#1A1A1A] text-sm mb-3">Шта добијате уз курс:</h4>
                           <div className="space-y-2">
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <CheckCircle className="w-4 h-4 text-[#D62828] flex-shrink-0" />
-                              <span>HD видео лекције</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <CheckCircle className="w-4 h-4 text-[#D62828] flex-shrink-0" />
-                              <span>Материјали који прате сваку лекцију</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <CheckCircle className="w-4 h-4 text-[#D62828] flex-shrink-0" />
-                              <span>Задаци за вежбање са решењима</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <CheckCircle className="w-4 h-4 text-[#D62828] flex-shrink-0" />
-                              <span>Пробни пријемни и online квизови</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <CheckCircle className="w-4 h-4 text-[#D62828] flex-shrink-0" />
-                              <span>Подршка наставнице</span>
-                            </div>
-                            <div className="flex items-center gap-2 text-sm text-gray-600">
-                              <CheckCircle className="w-4 h-4 text-[#D62828] flex-shrink-0" />
-                              <span>Трајан приступ</span>
-                            </div>
+                            {['HD видео лекције', 'Материјали који прате сваку лекцију', 'Задаци за вежбање са решењима', 'Пробни пријемни и online квизови', 'Подршка наставнице', 'Трајан приступ'].map((f, i) => (
+                              <div key={i} className="flex items-center gap-2 text-sm text-gray-600">
+                                <CheckCircle className="w-4 h-4 text-[#D62828] flex-shrink-0" />
+                                <span>{f}</span>
+                              </div>
+                            ))}
                           </div>
                         </div>
                       )}
@@ -284,8 +265,10 @@ export default function CoursesPage() {
                       </button>
 
                       <div className="pt-6 border-t border-gray-100 flex items-center justify-between">
-                        <div className="text-2xl font-black text-[#D62828]">
-                          {formatPrice(course.price)}
+                        <div>
+                          <div className="text-2xl font-black text-[#D62828]">
+                            {formatPrice(course.price)}
+                          </div>
                         </div>
                         <Button variant="outline" size="sm" showArrow>
                           Детаљније
@@ -296,6 +279,80 @@ export default function CoursesPage() {
                 </div>
               </Link>
             ))}
+
+            {/* Coming Soon - Курс за 5. разред */}
+            <div className="relative h-full">
+              <div className="bg-white rounded-[2.5rem] shadow-lg border border-gray-100 h-full flex flex-col overflow-hidden">
+                <div className="h-40 md:h-48 bg-gradient-to-br from-[#D62828]/5 to-[#F2C94C]/10 relative flex items-center justify-center">
+                  <div className="text-center">
+                    <Book className="w-14 h-14 text-[#D62828]/20 mx-auto mb-2" />
+                    <span className="text-[#D62828]/30 text-xs font-bold uppercase tracking-wider">5. разред</span>
+                  </div>
+                  <div className="absolute top-4 right-4 bg-[#F2C94C] text-[#1A1A1A] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                    Видео курс
+                  </div>
+                </div>
+
+                <div className="p-5 md:p-8 flex flex-col flex-grow">
+                  <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">Курс за 5. разред</h3>
+                  <p className="text-gray-600 text-sm mb-6 leading-relaxed">
+                    Комплетно градиво српског језика за пети разред - граматика, правопис, књижевност и лектира.
+                  </p>
+
+                  <div className="space-y-3 mb-6">
+                    {['Видео лекције за 5. разред', 'Граматика и правопис', 'Књижевност и лектира', 'Задаци за вежбање', 'Подршка наставнице', 'Трајан приступ'].map((f, i) => (
+                      <div key={i} className="flex items-center gap-2 text-sm text-gray-500">
+                        <CheckCircle className="w-4 h-4 text-[#D62828]/40 flex-shrink-0" />
+                        <span>{f}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] rounded-[2.5rem] flex flex-col items-center justify-center gap-2">
+                <h4 className="text-3xl font-black text-[#D62828]">Ускоро</h4>
+                <p className="text-[#1A1A1A] text-sm font-semibold">Курс је у изради</p>
+              </div>
+            </div>
+
+            {/* Coming Soon - Курс за 6. разред */}
+            <div className="relative h-full">
+              <div className="bg-white rounded-[2.5rem] shadow-lg border border-gray-100 h-full flex flex-col overflow-hidden">
+                <div className="h-40 md:h-48 bg-gradient-to-br from-[#1A1A1A]/5 to-[#D62828]/5 relative flex items-center justify-center">
+                  <div className="text-center">
+                    <Book className="w-14 h-14 text-[#1A1A1A]/15 mx-auto mb-2" />
+                    <span className="text-[#1A1A1A]/25 text-xs font-bold uppercase tracking-wider">6. разред</span>
+                  </div>
+                  <div className="absolute top-4 right-4 bg-[#F2C94C] text-[#1A1A1A] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                    Видео курс
+                  </div>
+                </div>
+
+                <div className="p-5 md:p-8 flex flex-col flex-grow">
+                  <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">Курс за 6. разред</h3>
+                  <p className="text-gray-600 text-sm mb-6 leading-relaxed">
+                    Комплетно градиво српског језика за шести разред - граматика, правопис, књижевност и лектира.
+                  </p>
+
+                  <div className="space-y-3 mb-6">
+                    {['Видео лекције за 6. разред', 'Граматика и правопис', 'Књижевност и лектира', 'Задаци за вежбање', 'Подршка наставнице', 'Трајан приступ'].map((f, i) => (
+                      <div key={i} className="flex items-center gap-2 text-sm text-gray-500">
+                        <CheckCircle className="w-4 h-4 text-[#1A1A1A]/30 flex-shrink-0" />
+                        <span>{f}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Overlay */}
+              <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] rounded-[2.5rem] flex flex-col items-center justify-center gap-2">
+                <h4 className="text-3xl font-black text-[#1A1A1A]">Ускоро</h4>
+                <p className="text-[#1A1A1A] text-sm font-semibold">Курс је у изради</p>
+              </div>
+            </div>
           </div>
         )}
       </div>

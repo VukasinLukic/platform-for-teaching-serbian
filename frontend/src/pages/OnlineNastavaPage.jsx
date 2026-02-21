@@ -95,11 +95,14 @@ export default function OnlineNastavaPage() {
       const result = await generatePaymentRefFunction();
       const paymentRef = result.data.paymentReference;
 
+      // For group package, first month is discounted to 1500 RSD
+      const amount = pkg.id === 'group' ? 1500 : pkg.price;
+
       // Navigate to payment slip page with payment data
       navigate('/uplatnica', {
         state: {
           paymentData: {
-            amount: pkg.price,
+            amount,
             packageName: pkg.name,
             paymentReference: paymentRef,
             userName: userProfile?.ime || '',
@@ -117,7 +120,7 @@ export default function OnlineNastavaPage() {
   return (
     <>
       <SEO
-        title="Online Настава | Месечни Пакети од 1500 дин"
+        title="ОНЛАЈН НАСТАВА | МЕСЕЧНИ ПАКЕТИ ОД 1500 ДИН"
         description="Видео курсеви од 1500 дин, групни часови 3500 дин, индивидуални 6000 дин месечно. Флексибилни месечни пакети прилагођени вашим потребама."
         canonical="/online-nastava"
       />
@@ -286,7 +289,7 @@ export default function OnlineNastavaPage() {
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-[#D62828] flex-shrink-0 mt-1" />
-                    <p className="text-gray-700">Снимке свих часова за касније прегледање</p>
+                    <p className="text-gray-700">Снимљени часови на платформи и вежбања са наставницом</p>
                   </div>
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-[#D62828] flex-shrink-0 mt-1" />
@@ -308,7 +311,7 @@ export default function OnlineNastavaPage() {
       </section>
 
       {/* Pricing Packages */}
-      <section className="py-20 bg-white">
+      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-6">
 
           <div className="text-center mb-16">
@@ -320,63 +323,170 @@ export default function OnlineNastavaPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-4 md:gap-8">
-            {packages.map((pkg) => (
-              <div
-                key={pkg.id}
-                className={`relative bg-white rounded-3xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 overflow-hidden border-2 ${
-                  pkg.popular ? 'border-[#D62828] md:scale-105' : 'border-gray-100'
-                }`}
-              >
-                {pkg.popular && (
-                  <div className="absolute top-6 -right-12 bg-[#F2C94C] text-[#1A1A1A] px-12 py-2 rotate-45 text-xs font-bold uppercase tracking-wider shadow-lg">
+          <div className="grid md:grid-cols-3 gap-5 md:gap-6 items-stretch max-w-5xl mx-auto">
+
+            {/* LEFT - Individual Package */}
+            {(() => {
+              const pkg = packages.find(p => p.id === 'individual');
+              if (!pkg) return null;
+              return (
+                <div className="relative bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden border border-[#669BBC]/30 flex flex-col">
+                  <div className="bg-[#669BBC]/10 p-6">
+                    <h3 className="text-lg font-bold mb-1 text-[#669BBC]">Индивидуални часови</h3>
+                    <p className="text-[#669BBC]/70 text-xs mb-4">Индивидуална настава 1-на-1</p>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-3xl font-black text-[#4a7a96]">{formatPrice(pkg.price)}</span>
+                    </div>
+                    <p className="text-[#669BBC]/60 text-xs mt-1">месечно</p>
+                  </div>
+
+                  <div className="p-6 flex flex-col flex-1">
+                    <div className="mb-4 pb-4 border-b border-[#669BBC]/15">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600 font-medium text-sm">Број часова:</span>
+                        <span className="font-bold text-[#4a7a96] text-base">{pkg.sessions}</span>
+                      </div>
+                    </div>
+
+                    <div className="space-y-3 mb-6 flex-1">
+                      {pkg.features.map((feature, idx) => (
+                        <div key={idx} className="flex items-start gap-2">
+                          <CheckCircle className="w-4 h-4 text-[#669BBC] flex-shrink-0 mt-0.5" />
+                          <span className="text-gray-600 text-xs">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={() => handlePurchase(pkg)}
+                      disabled={purchasingId === pkg.id}
+                      className="w-full bg-[#669BBC] hover:bg-[#5689a8] text-white px-6 py-3 rounded-full hover:shadow-md transition-all font-bold text-sm transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center justify-center gap-2 mt-auto"
+                    >
+                      {purchasingId === pkg.id ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          Учитавање...
+                        </>
+                      ) : (
+                        'Купи пакет'
+                      )}
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* CENTER - Group Package (Featured) */}
+            {(() => {
+              const pkg = packages.find(p => p.id === 'group');
+              if (!pkg) return null;
+              return (
+                <div className="relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden border-2 border-[#CE1919]/40 md:scale-105 z-10 flex flex-col">
+                  {/* Most Popular Banner */}
+                  <div className="absolute top-5 -right-10 bg-[#CE1919] text-white px-10 py-1.5 rotate-45 text-[10px] font-bold uppercase tracking-wider shadow-md z-20">
                     Најпопуларније
                   </div>
-                )}
 
-                <div className={`bg-gradient-to-br ${getPackageColor(pkg.id)} p-8 text-white`}>
-                  <h3 className="text-2xl font-bold mb-2">{pkg.name}</h3>
-                  <p className="text-white/80 text-sm mb-6">{pkg.description}</p>
-                  <div className="flex items-baseline gap-2">
-                    <span className="text-5xl font-black">{formatPrice(pkg.price)}</span>
-                  </div>
-                  <p className="text-white/70 text-sm mt-2">{pkg.duration}</p>
-                </div>
-
-                <div className="p-8">
-                  <div className="mb-6 pb-6 border-b border-gray-200">
-                    <div className="flex items-center justify-between">
-                      <span className="text-gray-700 font-medium">Број часова:</span>
-                      <span className="font-bold text-[#1A1A1A] text-lg">{pkg.sessions}</span>
+                  <div className="bg-[#CE1919]/10 p-6">
+                    <h3 className="text-lg font-bold mb-1 text-[#CE1919]">Групни часови</h3>
+                    <p className="text-[#CE1919]/70 text-xs mb-3">Групна настава уживо</p>
+                    <div className="flex items-baseline gap-2">
+                      <span className="text-base line-through text-[#CE1919]/50">{formatPrice(pkg.price)}</span>
+                      <span className="text-3xl font-black text-[#a01313] whitespace-nowrap">1.500 дин</span>
                     </div>
+                    <p className="text-[#CE1919]/80 text-xs mt-1 font-medium">1 месец</p>
+                    <p className="text-[#CE1919]/50 text-[11px] mt-0.5">Остали месеци: {formatPrice(pkg.price)}</p>
                   </div>
 
-                  <div className="space-y-4 mb-8">
-                    {pkg.features.map((feature, idx) => (
-                      <div key={idx} className="flex items-start gap-3">
-                        <CheckCircle className="w-5 h-5 text-[#D62828] flex-shrink-0 mt-0.5" />
-                        <span className="text-gray-700 text-sm">{feature}</span>
+                  <div className="p-6 flex flex-col flex-1">
+                    <div className="mb-4 pb-4 border-b border-[#CE1919]/15">
+                      <div className="flex items-center justify-between">
+                        <span className="text-gray-600 font-medium text-sm">Број часова:</span>
+                        <span className="font-bold text-[#a01313] text-base">{pkg.sessions}</span>
                       </div>
-                    ))}
-                  </div>
+                    </div>
 
-                  <button
-                    onClick={() => handlePurchase(pkg)}
-                    disabled={purchasingId === pkg.id}
-                    className={`w-full bg-gradient-to-r ${getPackageColor(pkg.id)} text-white px-8 py-4 rounded-full hover:shadow-xl transition-all font-bold text-base transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center justify-center gap-2`}
-                  >
-                    {purchasingId === pkg.id ? (
-                      <>
-                        <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                        Учитавање...
-                      </>
-                    ) : (
-                      'Купи пакет'
-                    )}
-                  </button>
+                    <div className="space-y-3 mb-6 flex-1">
+                      {pkg.features.map((feature, idx) => (
+                        <div key={idx} className="flex items-start gap-2">
+                          <CheckCircle className="w-4 h-4 text-[#CE1919] flex-shrink-0 mt-0.5" />
+                          <span className="text-gray-600 text-xs">{feature}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <button
+                      onClick={() => handlePurchase(pkg)}
+                      disabled={purchasingId === pkg.id}
+                      className="w-full bg-[#CE1919] hover:bg-[#b01515] text-white px-6 py-3 rounded-full hover:shadow-md transition-all font-bold text-sm transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center justify-center gap-2 mt-auto"
+                    >
+                      {purchasingId === pkg.id ? (
+                        <>
+                          <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                          Учитавање...
+                        </>
+                      ) : (
+                        'Купи пакет'
+                      )}
+                    </button>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {/* RIGHT - Create Your Own Group */}
+            <div className="relative bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden border border-[#780000]/25 flex flex-col">
+              <div className="bg-[#780000]/10 p-6">
+                <h3 className="text-lg font-bold mb-1 text-[#780000]">Направи своју групу</h3>
+                <p className="text-[#780000]/60 text-xs mb-4">Учите заједно по повољнијој цени</p>
+                <div className="flex items-center gap-3">
+                  <Users className="w-10 h-10 text-[#780000]/50" />
+                  <div>
+                    <div className="text-base font-bold text-[#780000]">По договору</div>
+                    <div className="text-xs text-[#780000]/50">Прилагођено вама</div>
+                  </div>
                 </div>
               </div>
-            ))}
+
+              <div className="p-6 flex flex-col flex-1">
+                <div className="mb-4 pb-4 border-b border-[#780000]/15">
+                  <div className="flex items-center justify-between">
+                    <span className="text-gray-600 font-medium text-sm">Број часова:</span>
+                    <span className="font-bold text-[#780000] text-base">По договору</span>
+                  </div>
+                </div>
+
+                <div className="space-y-3 mb-6 flex-1">
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-[#780000]/70 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-600 text-xs">Флексибилан термин часова</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-[#780000]/70 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-600 text-xs">Прилагођен програм за групу</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-[#780000]/70 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-600 text-xs">Посебне цене за групе</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-[#780000]/70 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-600 text-xs">Снимљени часови на платформи</span>
+                  </div>
+                  <div className="flex items-start gap-2">
+                    <CheckCircle className="w-4 h-4 text-[#780000]/70 flex-shrink-0 mt-0.5" />
+                    <span className="text-gray-600 text-xs">Интерактивна настава уживо</span>
+                  </div>
+                </div>
+
+                <Link to="/contact" className="mt-auto">
+                  <button className="w-full bg-[#780000] hover:bg-[#600000] text-white px-6 py-3 rounded-full hover:shadow-md transition-all font-bold text-sm transform hover:scale-105">
+                    Контактирајте нас
+                  </button>
+                </Link>
+              </div>
+            </div>
+
           </div>
         </div>
       </section>

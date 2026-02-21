@@ -58,7 +58,7 @@ export default function LoginPage() {
 
   return (
     <>
-      <SEO title="Пријава" description="Пријавите се на платформу Српски у Срцу." noindex={true} />
+      <SEO title="ПРИЈАВА" description="Пријавите се на платформу Српски у Срцу." noindex={true} />
     <div className="min-h-screen flex overflow-hidden bg-white font-sans">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');

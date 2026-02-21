@@ -105,7 +105,7 @@ export default function OnlineClassesSection() {
           <div>
             <div className="text-sm text-gray-600 mb-1">Активан пакет</div>
             <div className="text-xl font-bold text-[#1A1A1A]">
-              {packageData?.name || 'Online Настава'}
+              {packageData?.name || 'Online настава'}
             </div>
             <div className="text-sm text-gray-500 mt-1">
               Важи до: {enrollment.endDate ? new Date(enrollment.endDate.toDate ? enrollment.endDate.toDate() : enrollment.endDate).toLocaleDateString('sr-RS') : '-'}

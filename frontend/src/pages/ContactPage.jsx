@@ -51,7 +51,7 @@ export default function ContactPage() {
   return (
     <>
       <SEO
-        title="Контакт | Пишите Нам или Позовите"
+        title="КОНТАКТ | ПИШИТЕ НАМ ИЛИ ПОЗОВИТЕ"
         description="Контактирајте нас за питања о online курсевима српског језика и припреми мале матуре. Одговарамо у року од 24 часа."
         canonical="/contact"
       />

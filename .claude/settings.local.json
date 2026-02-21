@@ -47,7 +47,11 @@
       "Bash(npx eslint:*)",
       "Bash(npx firebase deploy:*)",
       "WebFetch(domain:search.google.com)",
-      "WebFetch(domain:developers.google.com)"
+      "WebFetch(domain:developers.google.com)",
+      "Bash(npm run:*)",
+      "Bash(npx firebase:*)",
+      "Bash(git stash:*)",
+      "Bash(FUNCTIONS_DISCOVERY_TIMEOUT=60000 npx firebase deploy:*)"
     ],
     "deny": [],
     "ask": []

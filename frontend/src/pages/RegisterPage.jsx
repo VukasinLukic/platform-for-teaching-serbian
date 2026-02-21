@@ -105,7 +105,7 @@ export default function RegisterPage() {
 
   return (
     <>
-      <SEO title="Регистрација" description="Региструјте се на платформу Српски у Срцу." noindex={true} />
+      <SEO title="РЕГИСТРАЦИЈА" description="Региструјте се на платформу Српски у Срцу." noindex={true} />
     <div className="min-h-screen flex overflow-hidden bg-white font-sans">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');

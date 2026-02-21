@@ -2,16 +2,25 @@ import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { getFirestore } from 'firebase-admin/firestore';
+import { defineString } from 'firebase-functions/params';
 
-// Initialize S3 Client for Cloudflare R2
-const s3Client = new S3Client({
-  region: 'auto',
-  endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
-  credentials: {
-    accessKeyId: process.env.R2_ACCESS_KEY_ID,
-    secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
-  },
-});
+// Define environment parameters for Cloudflare R2
+const cloudflareAccountId = defineString('CLOUDFLARE_ACCOUNT_ID');
+const cloudflareAccessKeyId = defineString('CLOUDFLARE_R2_ACCESS_KEY_ID');
+const cloudflareSecretAccessKey = defineString('CLOUDFLARE_R2_SECRET_ACCESS_KEY');
+const cloudflareBucketName = defineString('CLOUDFLARE_R2_BUCKET_NAME');
+
+// Create R2 client (lazy initialization)
+const createR2Client = () => {
+  return new S3Client({
+    region: 'auto',
+    endpoint: `https://${cloudflareAccountId.value()}.r2.cloudflarestorage.com`,
+    credentials: {
+      accessKeyId: cloudflareAccessKeyId.value(),
+      secretAccessKey: cloudflareSecretAccessKey.value(),
+    },
+  });
+};
 
 /**
  * Cloud Function to generate signed URL for video access
@@ -40,12 +49,16 @@ export const getVideoUrl = onCall({ region: 'europe-west1' }, async (request) =>
     }
 
     const lesson = lessonDoc.data();
+    console.log('Lesson data fields:', Object.keys(lesson), 'videoPath:', lesson.videoPath);
+
+    // Support both field names: courseId (camelCase) and course_id (underscore)
+    const lessonCourseId = lesson.courseId || lesson.course_id;
 
     // Check if this is a free preview lesson (first lesson of first module)
     let isFreePreview = false;
-    if (lesson.moduleId && lesson.course_id) {
+    if (lesson.moduleId && lessonCourseId) {
       const modulesQuery = db.collection('modules')
-        .where('courseId', '==', lesson.course_id)
+        .where('courseId', '==', lessonCourseId)
         .orderBy('order', 'asc')
         .limit(1);
       const modulesSnap = await modulesQuery.get();
@@ -71,7 +84,7 @@ export const getVideoUrl = onCall({ region: 'europe-west1' }, async (request) =>
       const userCoursesDoc = await db.collection('user_courses').doc(userId).get();
       const userCourses = userCoursesDoc.exists ? userCoursesDoc.data().courses : {};
 
-      if (!userCourses[lesson.course_id]) {
+      if (!userCourses[lessonCourseId]) {
         throw new HttpsError(
           'permission-denied',
           'Nemate pristup ovom kursu. Molimo kupite kurs da biste pristupili lekcijama.'
@@ -80,9 +93,10 @@ export const getVideoUrl = onCall({ region: 'europe-west1' }, async (request) =>
     }
 
     // Generate signed URL with 1 hour expiration
+    const s3Client = createR2Client();
     const command = new GetObjectCommand({
-      Bucket: process.env.R2_BUCKET_NAME,
-      Key: lesson.video_key,
+      Bucket: cloudflareBucketName.value(),
+      Key: lesson.videoPath,
     });
 
     const signedUrl = await getSignedUrl(s3Client, command, {

@@ -16,9 +16,9 @@ export default function PaymentModal({
   const navigate = useNavigate();
   const { user, userProfile } = useAuthStore();
   const [isProcessing, setIsProcessing] = useState(false);
-  const bankAccount = import.meta.env.VITE_BANK_ACCOUNT || '160-00000000000-00';
-  const companyName = import.meta.env.VITE_COMPANY_NAME || 'Nauči Srpski';
-  const companyAddress = import.meta.env.VITE_COMPANY_ADDRESS || 'Beograd, Srbija';
+  const bankAccount = import.meta.env.VITE_BANK_ACCOUNT || '1701009451800050';
+  const companyName = import.meta.env.VITE_COMPANY_NAME || 'Marina Lukic';
+  const companyAddress = import.meta.env.VITE_COMPANY_ADDRESS || 'Krusevac';
 
   // Determine data based on type
   const itemData = type === 'course' ? course : packageData;
@@ -160,7 +160,7 @@ export default function PaymentModal({
             <div className="border-b-2 border-[#1A1A1A] p-3 bg-white grid grid-cols-5 gap-3">
               <div className="border-2 border-[#1A1A1A] p-2 rounded">
                 <label className="text-[10px] font-bold uppercase text-gray-500 block">шифра плаћања</label>
-                <div className="font-bold text-[#1A1A1A] text-center mt-1">189</div>
+                <div className="font-bold text-[#1A1A1A] text-center mt-1">289</div>
               </div>
               <div className="border-2 border-[#1A1A1A] p-2 rounded">
                 <label className="text-[10px] font-bold uppercase text-gray-500 block">валута</label>
@@ -213,7 +213,7 @@ export default function PaymentModal({
               </li>
               <li className="flex items-start gap-3">
                 <span className="font-bold text-[#D62828] flex-shrink-0 text-lg">3.</span>
-                <span className="leading-relaxed">Одите на <strong>Ваш Панел → Трансакције</strong> и отпремите слику потврде</span>
+                <span className="leading-relaxed">Одите на <strong>Ваш панел → Трансакције</strong> и отпремите слику потврде</span>
               </li>
               <li className="flex items-start gap-3">
                 <span className="font-bold text-[#D62828] flex-shrink-0 text-lg">4.</span>
@@ -245,7 +245,7 @@ export default function PaymentModal({
               <>
                 <Link to="/dashboard" onClick={onClose}>
                   <button className="bg-[#D62828] text-white px-10 py-3 rounded-full font-bold hover:bg-[#B91F1F] transition-all shadow-lg hover:shadow-xl transform hover:scale-105">
-                    Иди на Ваш Панел
+                    Иди на Ваш панел
                   </button>
                 </Link>
                 <button

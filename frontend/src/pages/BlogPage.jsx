@@ -93,7 +93,7 @@ export default function BlogPage() {
   return (
     <>
       <SEO
-        title="Блог | Савети и Водичи за Малу Матуру"
+        title="БЛОГ | САВЕТИ И ВОДИЧИ ЗА МАЛУ МАТУРУ"
         description="Чланци, савети и водичи за припрему мале матуре из српског језика. Граматика, књижевност, савети за родитеље и ученике."
         canonical="/blog"
         jsonLd={[blogJsonLd]}

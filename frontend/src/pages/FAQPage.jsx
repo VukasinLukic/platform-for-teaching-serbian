@@ -58,7 +58,7 @@ export default function FAQPage() {
   return (
     <>
       <SEO
-        title="Честа Питања о Онлајн Курсевима Српског | FAQ"
+        title="ЧЕСТА ПИТАЊА О ОНЛАЈН КУРСЕВИМА СРПСКОГ | FAQ"
         description="Одговори на честа питања о online курсевима за малу матуру: начин рада, плаћање, приступ материјалима, трајање курса, подршка."
         canonical="/faq"
         jsonLd={[faqJsonLd]}

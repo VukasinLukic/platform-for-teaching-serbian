@@ -8,7 +8,7 @@ export default function TermsPage() {
 
   return (
     <>
-      <SEO title="Услови Коришћења" description="Услови коришћења платформе Српски у Срцу." canonical="/terms" />
+      <SEO title="УСЛОВИ КОРИШЋЕЊА" description="Услови коришћења платформе Српски у Срцу." canonical="/terms" />
     <div className="min-h-screen bg-[#F7F7F7]">
       <Header />
 

@@ -1,6 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { ArrowRight, CheckCircle, XCircle } from 'lucide-react';
 import QuizResult from './QuizResult';
+
+// Fisher-Yates shuffle
+function shuffleArray(array) {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+}
 
 export default function QuizRunner({ quiz, onExit }) {
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -9,8 +19,16 @@ export default function QuizRunner({ quiz, onExit }) {
     const [showResult, setShowResult] = useState(false);
     const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
 
-    const currentQuestion = quiz[currentQuestionIndex];
-    const isLastQuestion = currentQuestionIndex === quiz.length - 1;
+    // Shuffle answers for all questions once on mount
+    const shuffledQuiz = useMemo(() => {
+        return quiz.map(q => ({
+            ...q,
+            answers: shuffleArray(q.answers)
+        }));
+    }, [quiz]);
+
+    const currentQuestion = shuffledQuiz[currentQuestionIndex];
+    const isLastQuestion = currentQuestionIndex === shuffledQuiz.length - 1;
 
     const handleAnswerSelect = (answer) => {
         if (isAnswerSubmitted) return;
@@ -45,18 +63,18 @@ export default function QuizRunner({ quiz, onExit }) {
     };
 
     if (showResult) {
-        return <QuizResult score={score} totalQuestions={quiz.length} onRetry={handleRetry} />;
+        return <QuizResult score={score} totalQuestions={shuffledQuiz.length} onRetry={handleRetry} />;
     }
 
     // Calculate progress percentage
-    const progress = ((currentQuestionIndex + 1) / quiz.length) * 100;
+    const progress = ((currentQuestionIndex + 1) / shuffledQuiz.length) * 100;
 
     return (
         <div className="max-w-3xl mx-auto">
             {/* Progress Bar */}
             <div className="mb-8">
                 <div className="flex justify-between text-sm font-bold text-gray-500 mb-2">
-                    <span>{currentQuestionIndex + 1} / {quiz.length}</span>
+                    <span>{currentQuestionIndex + 1} / {shuffledQuiz.length}</span>
                     <span>{Math.round(progress)}%</span>
                 </div>
                 <div className="h-3 bg-gray-100 rounded-full overflow-hidden">

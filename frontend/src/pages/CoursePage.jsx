@@ -249,7 +249,7 @@ export default function CoursePage() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="font-semibold text-[#1A1A1A] truncate">{material.name}</p>
-                        <p className="text-sm text-gray-500">{material.type} • {(material.size / 1024).toFixed(0)} KB</p>
+                        <p className="text-sm text-gray-500">{(material.size / 1024).toFixed(0)} KB</p>
                       </div>
                       <Download className="w-5 h-5 text-gray-400 group-hover:text-[#D62828] transition-colors" />
                     </a>

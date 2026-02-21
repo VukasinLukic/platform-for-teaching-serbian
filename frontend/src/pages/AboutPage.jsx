@@ -78,7 +78,7 @@ export default function AboutPage() {
   return (
     <>
       <SEO
-        title="О нама | Марина Лукић - Наставница Са 27 Година Искуства"
+        title="О НАМА | МАРИНА ЛУКИЋ - НАСТАВНИЦА СА 27 ГОДИНА ИСКУСТВА"
         description="Упознајте наставницу Марину Лукић - дипломирани филолог са 27 година искуства, добитницу републичких награда. Сви ученици су успешно положили малу матуру."
         canonical="/about"
         jsonLd={[aboutJsonLd]}
@@ -253,17 +253,17 @@ export default function AboutPage() {
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/courses">
                   <button className="bg-white text-[#D62828] px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition shadow-lg">
-                    Погледајте Курсеве
+                    Погледајте курсеве
                   </button>
                 </Link>
                 <Link to="/online-nastava">
                   <button className="bg-[#F2C94C] text-[#1A1A1A] px-10 py-4 rounded-full font-bold text-lg hover:bg-[#D4A843] transition shadow-lg">
-                    Online Настава
+                    Online настава
                   </button>
                 </Link>
                 <Link to="/contact">
                   <button className="bg-transparent border-2 border-white text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-[#D62828] transition">
-                    Контактирајте Нас
+                    Контактирајте нас
                   </button>
                 </Link>
               </div>

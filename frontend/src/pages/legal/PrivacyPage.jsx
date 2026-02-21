@@ -8,7 +8,7 @@ export default function PrivacyPage() {
 
   return (
     <>
-      <SEO title="Политика Приватности" description="Политика приватности платформе Српски у Срцу." canonical="/privacy" noindex={false} />
+      <SEO title="ПОЛИТИКА ПРИВАТНОСТИ" description="Политика приватности платформе Српски у Срцу." canonical="/privacy" noindex={false} />
     <div className="min-h-screen bg-[#F7F7F7]">
       <Header />
 

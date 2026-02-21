@@ -16,6 +16,8 @@ const DOMAIN = 'https://srpskiusrcu.rs';
  * @param {Array} jsonLd - Niz JSON-LD strukturiranih podataka
  * @param {boolean} noindex - Da li se stranica indeksira
  */
+const DEFAULT_KEYWORDS = 'srpski u srcu, Српски у Срцу, mala matura, мала матура, srpski jezik, српски језик, priprema za malu maturu, припрема мале матуре, online kursevi srpskog, video lekcije srpski';
+
 export default function SEO({
   title,
   description,
@@ -24,15 +26,18 @@ export default function SEO({
   ogType = 'website',
   jsonLd = [],
   noindex = false,
+  keywords,
 }) {
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} | Online Курсеви за Малу Матуру из Српског`;
+  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} | ОНЛАЈН КУРСЕВИ ЗА МАЛУ МАТУРУ ИЗ СРПСКОГ`;
   const canonicalUrl = canonical ? `${DOMAIN}${canonical}` : undefined;
+  const metaKeywords = keywords ? `${keywords}, ${DEFAULT_KEYWORDS}` : DEFAULT_KEYWORDS;
 
   return (
     <Helmet>
       {/* Osnovni meta tagovi */}
       <title>{fullTitle}</title>
       {description && <meta name="description" content={description} />}
+      <meta name="keywords" content={metaKeywords} />
       {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
       {noindex && <meta name="robots" content="noindex, nofollow" />}
 
