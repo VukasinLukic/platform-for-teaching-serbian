@@ -7,7 +7,7 @@ import { onCall } from 'firebase-functions/v2/https';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { getAuth } from 'firebase-admin/auth';
 import { HttpsError } from 'firebase-functions/v2/https';
-import { sendVerificationEmail as sendEmail } from './sendEmail.js';
+import { sendVerificationEmail as sendEmail, sendWelcomeEmailInternal } from './sendEmail.js';
 import crypto from 'crypto';
 
 const db = getFirestore();
@@ -22,12 +22,14 @@ function generateVerificationToken() {
 
 /**
  * Send welcome email after successful verification
- * TODO: Implement welcome email using sendEmail.js template
  */
 async function sendWelcomeEmailAfterVerification(userEmail, userName) {
-  console.log(`📧 TODO: Send welcome email to ${userEmail} for ${userName}`);
-  // Will implement after CORS is fixed
-  return Promise.resolve();
+  try {
+    await sendWelcomeEmailInternal({ userEmail, userName });
+    console.log(`✅ Welcome email sent to ${userEmail}`);
+  } catch (error) {
+    console.error(`❌ Failed to send welcome email to ${userEmail}:`, error);
+  }
 }
 
 /**

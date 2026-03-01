@@ -90,7 +90,7 @@ export default function DashboardPage() {
         {/* Welcome Section */}
         <div className="mb-16">
           <h1 className="text-5xl font-bold mb-3 text-[#1A1A1A]">
-            Добродошли, {userProfile?.ime?.split(' ')[0] || 'Ученик'}!
+            Добро дошли, {userProfile?.ime?.split(' ')[0] || 'Ученик'}!
           </h1>
           <p className="text-gray-600 text-xl">Наставите тамо где сте стали или истражите нове курсеве</p>
         </div>

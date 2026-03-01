@@ -164,7 +164,7 @@ export default function LoginPage() {
           {/* Header */}
           <div className="mb-12 animate-fade-in-up">
             <h2 className="text-[#1A1A1A] mb-3" style={{fontFamily: "'Playfair Display', serif", fontSize: '3rem', fontWeight: '700', lineHeight: '1.1'}}>
-              Добродошли<br />назад
+              Добро дошли<br />назад
             </h2>
             <p className="text-gray-600" style={{fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '1.125rem', fontWeight: '400'}}>
               Пријавите се на свој налог

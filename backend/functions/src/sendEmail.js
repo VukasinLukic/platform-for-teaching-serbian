@@ -136,7 +136,7 @@ const emailTemplates = {
             <p>Možete odmah započeti učenje! Prijavite se na platformu i pristupite svim lekcijama.</p>
 
             <center>
-              <a href="https://srpskiusrcu.com/dashboard" class="button">Pristupi kursu</a>
+              <a href="https://srpskiusrcu.rs/dashboard" class="button">Pristupi kursu</a>
             </center>
 
             <p style="margin-top: 30px;">Srećno učenje! 📚</p>
@@ -198,7 +198,7 @@ const emailTemplates = {
             <p>Možete ponovo otpremiti potvrdu o uplati nakon što ispravite problem.</p>
 
             <center>
-              <a href="https://srpskiusrcu.com/dashboard" class="button">Otpremi ponovo</a>
+              <a href="https://srpskiusrcu.rs/dashboard" class="button">Otpremi ponovo</a>
             </center>
 
             <p style="margin-top: 30px;">Za dodatna pitanja, slobodno nas kontaktirajte.</p>
@@ -279,7 +279,7 @@ const emailTemplates = {
             <p style="margin-top: 30px; text-align: center; font-size: 16px;">Кликните на дугме испод да се придружите часу:</p>
 
             <center>
-              <a href="${meetLink || 'https://srpskiusrcu.com/dashboard'}" class="button">🎥 Придружи се часу</a>
+              <a href="${meetLink || 'https://srpskiusrcu.rs/dashboard'}" class="button">🎥 Придружи се часу</a>
             </center>
 
             <p style="margin-top: 40px; text-align: center;">Видимо се на часу! 📚</p>
@@ -296,7 +296,7 @@ const emailTemplates = {
   }),
 
   welcome: ({ userName, userEmail }) => ({
-    subject: '🎉 Dobrodošli na Srpski u Srcu platformu!',
+    subject: '🎉 Dobro došli na Srpski u Srcu platformu!',
     html: `
       <!DOCTYPE html>
       <html>
@@ -319,11 +319,11 @@ const emailTemplates = {
         <div class="container">
           <div class="header">
             <div class="emoji">🎉</div>
-            <h1>Dobrodošli!</h1>
+            <h1>Dobro došli!</h1>
           </div>
           <div class="content">
             <p>Poštovani/a <strong>${userName}</strong>,</p>
-            <p>Dobrodošli na <strong>Srpski u Srcu</strong> platformu! Drago nam je što ste se pridružili našoj zajednici učenika.</p>
+            <p>Dobro došli na <strong>Srpski u Srcu</strong> platformu! Drago nam je što ste se pridružili našoj zajednici učenika.</p>
 
             <div class="feature-list">
               <div class="feature-item">
@@ -357,7 +357,7 @@ const emailTemplates = {
             </ol>
 
             <center>
-              <a href="https://srpskiusrcu.com/courses" class="button">Pregledaj kurseve</a>
+              <a href="https://srpskiusrcu.rs/courses" class="button">Pregledaj kurseve</a>
             </center>
 
             <p style="margin-top: 30px;">Srećno učenje i vidimo se u lekcijama! 📖</p>
@@ -677,4 +677,28 @@ export const sendVerificationEmail = async ({ userEmail, userName, verificationU
     console.error('Error sending verification email:', error);
     throw new Error(`Failed to send verification email: ${error.message}`);
   }
+};
+
+/**
+ * Helper function: Send Welcome Email (internal, not a Cloud Function)
+ * Used by emailVerification.js after successful verification
+ */
+export const sendWelcomeEmailInternal = async ({ userEmail, userName }) => {
+  if (!userEmail || !userName) {
+    throw new Error('Missing required parameters for welcome email');
+  }
+
+  const transporter = getTransporter();
+  const template = emailTemplates.welcome({ userName, userEmail });
+  const senderEmail = process.env.GMAIL_USER;
+
+  await transporter.sendMail({
+    from: `"Srpski u Srcu" <${senderEmail}>`,
+    to: userEmail,
+    subject: template.subject,
+    html: template.html,
+  });
+
+  console.log('✅ Welcome email sent successfully to:', userEmail);
+  return { success: true };
 };
