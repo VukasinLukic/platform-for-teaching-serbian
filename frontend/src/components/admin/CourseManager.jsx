@@ -57,11 +57,12 @@ export default function CourseManager() {
         );
         const modulesSnapshot = await getDocs(modulesQuery);
 
-        // Process each module
+        // Process each module (keep id for smart update)
         for (const moduleDoc of modulesSnapshot.docs) {
           const moduleData = moduleDoc.data();
 
           existingModules.push({
+            id: moduleDoc.id,
             title: moduleData.title || '',
             order: moduleData.order || 0,
           });
@@ -155,34 +156,62 @@ export default function CourseManager() {
     }
   };
 
-  // Helper function to delete old modules and lessons
-  const deleteOldModulesAndLessons = async (courseId) => {
-    console.log('🔵 [CourseManager] Deleting old modules/lessons for course:', courseId);
+  // Smart sync: update existing modules, add new ones, remove only deleted ones (preserves lessons)
+  const syncModules = async (courseId, formModules) => {
+    console.log('🔵 [CourseManager] Syncing modules for course:', courseId);
 
-    // Delete old modules
+    // Get current modules from Firestore
     const modulesQuery = query(
       collection(db, 'modules'),
       where('courseId', '==', courseId)
     );
     const modulesSnapshot = await getDocs(modulesQuery);
+    const existingModuleIds = new Set(modulesSnapshot.docs.map(d => d.id));
 
+    // IDs that are still in the form
+    const formModuleIds = new Set(formModules.filter(m => m.id).map(m => m.id));
+
+    // 1. Delete modules that were removed from the form (and their lessons)
     for (const moduleDoc of modulesSnapshot.docs) {
-      // First delete lessons of this module
-      const lessonsQuery = query(
-        collection(db, 'lessons'),
-        where('moduleId', '==', moduleDoc.id)
-      );
-      const lessonsSnapshot = await getDocs(lessonsQuery);
-
-      for (const lessonDoc of lessonsSnapshot.docs) {
-        await deleteDoc(lessonDoc.ref);
+      if (!formModuleIds.has(moduleDoc.id)) {
+        console.log('🗑️ [CourseManager] Removing deleted module:', moduleDoc.id);
+        const lessonsQuery = query(
+          collection(db, 'lessons'),
+          where('moduleId', '==', moduleDoc.id)
+        );
+        const lessonsSnapshot = await getDocs(lessonsQuery);
+        for (const lessonDoc of lessonsSnapshot.docs) {
+          await deleteDoc(lessonDoc.ref);
+        }
+        await deleteDoc(moduleDoc.ref);
       }
-
-      // Then delete the module
-      await deleteDoc(moduleDoc.ref);
     }
 
-    console.log('✅ [CourseManager] Old modules/lessons deleted');
+    // 2. Update existing modules and create new ones
+    for (let i = 0; i < formModules.length; i++) {
+      const module = formModules[i];
+      if (!module.title.trim()) continue;
+
+      if (module.id && existingModuleIds.has(module.id)) {
+        // Update existing module
+        console.log('🔄 [CourseManager] Updating module:', module.id, module.title);
+        await updateDoc(doc(db, 'modules', module.id), {
+          title: module.title,
+          order: module.order || (i + 1),
+        });
+      } else {
+        // Create new module
+        console.log('➕ [CourseManager] Creating new module:', module.title);
+        await addDoc(collection(db, 'modules'), {
+          courseId: courseId,
+          title: module.title,
+          order: module.order || (i + 1),
+          created_at: new Date().toISOString(),
+        });
+      }
+    }
+
+    console.log('✅ [CourseManager] Modules synced successfully');
   };
 
   const handleSubmit = async (e) => {
@@ -251,8 +280,8 @@ export default function CourseManager() {
         await updateDoc(doc(db, 'courses', editingCourse.id), dataToSave);
         courseId = editingCourse.id;
 
-        // Delete old modules and lessons before creating new ones
-        await deleteOldModulesAndLessons(courseId);
+        // Smart sync: update/add/remove modules without destroying lessons
+        await syncModules(courseId, formData.modules);
       } else {
         // Create new course
         console.log('🔵 [CourseManager] Creating new course...');
@@ -262,31 +291,19 @@ export default function CourseManager() {
         });
         courseId = courseDoc.id;
         console.log('✅ [CourseManager] Course created:', courseId);
-      }
 
-      // Save modules to separate collection
-      console.log('🔵 [CourseManager] Saving', formData.modules.length, 'modules...');
+        // Create modules for new course
+        for (let i = 0; i < formData.modules.length; i++) {
+          const module = formData.modules[i];
+          if (!module.title.trim()) continue;
 
-      for (let i = 0; i < formData.modules.length; i++) {
-        const module = formData.modules[i];
-
-        if (!module.title.trim()) {
-          console.warn('⚠️ [CourseManager] Skipping module with empty title');
-          continue;
+          await addDoc(collection(db, 'modules'), {
+            courseId: courseId,
+            title: module.title,
+            order: module.order || (i + 1),
+            created_at: new Date().toISOString(),
+          });
         }
-
-        console.log(`🔵 [CourseManager] Creating module ${i + 1}:`, module.title);
-
-        const moduleDoc = await addDoc(collection(db, 'modules'), {
-          courseId: courseId,
-          title: module.title,
-          order: module.order || (i + 1),
-          created_at: new Date().toISOString(),
-        });
-
-        console.log(`✅ [CourseManager] Module created:`, moduleDoc.id);
-
-        // Note: Lessons are managed separately via LessonManager
       }
 
       console.log('✅ [CourseManager] All modules and lessons saved successfully!');

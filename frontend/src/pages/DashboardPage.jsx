@@ -9,9 +9,12 @@ import PaymentConfirmationUpload from '../components/payment/PaymentConfirmation
 import Header from '../components/ui/Header';
 import Modal from '../components/ui/Modal';
 import OnlineClassesSection from '../components/dashboard/OnlineClassesSection';
+import HelpButton from '../components/ui/HelpButton';
+import { useOnboarding } from '../context/OnboardingContext';
 
 export default function DashboardPage() {
   const { user, userProfile, logout } = useAuthStore();
+  const { checkAndStartTutorial } = useOnboarding();
   const [myCourses, setMyCourses] = useState([]);
   const [allCourses, setAllCourses] = useState([]);
   const [transactions, setTransactions] = useState([]);
@@ -24,6 +27,12 @@ export default function DashboardPage() {
       loadUserData();
     }
   }, [user]);
+
+  useEffect(() => {
+    if (!loading) {
+      checkAndStartTutorial('dashboard');
+    }
+  }, [loading, checkAndStartTutorial]);
 
   const loadUserData = async () => {
     try {
@@ -88,7 +97,7 @@ export default function DashboardPage() {
 
       <div className="max-w-7xl mx-auto px-6 py-16">
         {/* Welcome Section */}
-        <div className="mb-16">
+        <div className="mb-16" data-tour="welcome">
           <h1 className="text-5xl font-bold mb-3 text-[#1A1A1A]">
             Добро дошли, {userProfile?.ime?.split(' ')[0] || 'Ученик'}!
           </h1>
@@ -97,7 +106,7 @@ export default function DashboardPage() {
 
         {/* Available Courses Section - FIRST */}
         {availableForPurchase.length > 0 && (
-          <div className="mb-16">
+          <div className="mb-16" data-tour="available-courses">
             <div className="flex items-center justify-between mb-8">
               <h2 className="text-3xl font-bold text-[#1A1A1A]">Доступни Курсеви</h2>
               <Link to="/courses" className="text-[#D62828] hover:text-[#B91F1F] font-medium flex items-center gap-2">
@@ -128,7 +137,7 @@ export default function DashboardPage() {
         )}
 
         {/* My Courses Section - SECOND */}
-        <div className="mb-16">
+        <div className="mb-16" data-tour="my-courses">
           <h2 className="text-3xl font-bold mb-8 text-[#1A1A1A]">Моји Курсеви</h2>
 
           {myCourses.length === 0 ? (
@@ -181,7 +190,7 @@ export default function DashboardPage() {
 
         {/* Quizzes Section */}
         {myCourses.length > 0 && (
-          <div className="mb-16">
+          <div className="mb-16" data-tour="quizzes">
             <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2D2D2D] rounded-3xl p-8 md:p-12 text-white relative overflow-hidden group">
               {/* Background Decoration */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#D62828] rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
@@ -328,6 +337,9 @@ export default function DashboardPage() {
           />
         )}
       </Modal>
+
+      {/* Help Button */}
+      <HelpButton pageKey="dashboard" />
     </div>
   );
 }

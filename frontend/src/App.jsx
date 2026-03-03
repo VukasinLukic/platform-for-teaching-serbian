@@ -4,6 +4,8 @@ import { useAuthStore } from './store/authStore';
 import ScrollToTop from './components/ScrollToTop';
 import { FullScreenSpinner } from './components/ui/Spinner';
 import { Toaster } from 'react-hot-toast';
+import { OnboardingProvider } from './context/OnboardingContext';
+import TutorialTooltip from './components/ui/TutorialTooltip';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -64,10 +66,12 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Toaster />
-      <ScrollToTop />
-      <main>
-        <Routes>
+      <OnboardingProvider>
+        <Toaster />
+        <ScrollToTop />
+        <TutorialTooltip />
+        <main>
+          <Routes>
         {/* Public Routes */}
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -126,10 +130,11 @@ function App() {
           }
         />
 
-        {/* Catch all - redirect to home */}
-        <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Catch all - redirect to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-      </main>
+        </main>
+      </OnboardingProvider>
     </BrowserRouter>
   );
 }

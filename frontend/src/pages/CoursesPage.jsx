@@ -280,13 +280,13 @@ export default function CoursesPage() {
               </Link>
             ))}
 
-            {/* Coming Soon - Курс за 5. разред */}
+            {/* Coming Soon - Припрема за малу матуру 2. део */}
             <div className="relative h-full">
               <div className="bg-white rounded-[2.5rem] shadow-lg border border-gray-100 h-full flex flex-col overflow-hidden">
                 <div className="h-40 md:h-48 bg-gradient-to-br from-[#D62828]/5 to-[#F2C94C]/10 relative flex items-center justify-center">
                   <div className="text-center">
                     <Book className="w-14 h-14 text-[#D62828]/20 mx-auto mb-2" />
-                    <span className="text-[#D62828]/30 text-xs font-bold uppercase tracking-wider">5. разред</span>
+                    <span className="text-[#D62828]/30 text-xs font-bold uppercase tracking-wider">Мала матура</span>
                   </div>
                   <div className="absolute top-4 right-4 bg-[#F2C94C] text-[#1A1A1A] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                     Видео курс
@@ -294,13 +294,13 @@ export default function CoursesPage() {
                 </div>
 
                 <div className="p-5 md:p-8 flex flex-col flex-grow">
-                  <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">Курс за 5. разред</h3>
+                  <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">Припрема за малу матуру 2. део</h3>
                   <p className="text-gray-600 text-sm mb-6 leading-relaxed">
-                    Комплетно градиво српског језика за пети разред - граматика, правопис, књижевност и лектира.
+                    Други део припреме за малу матуру из српског језика - напредно градиво, додатни задаци и пробни тестови.
                   </p>
 
                   <div className="space-y-3 mb-6">
-                    {['Видео лекције за 5. разред', 'Граматика и правопис', 'Књижевност и лектира', 'Задаци за вежбање', 'Подршка наставнице', 'Трајан приступ'].map((f, i) => (
+                    {['HD видео лекције', 'Напредно градиво', 'Пробни тестови', 'Задаци за вежбање', 'Подршка наставнице', 'Трајан приступ'].map((f, i) => (
                       <div key={i} className="flex items-center gap-2 text-sm text-gray-500">
                         <CheckCircle className="w-4 h-4 text-[#D62828]/40 flex-shrink-0" />
                         <span>{f}</span>
@@ -317,13 +317,13 @@ export default function CoursesPage() {
               </div>
             </div>
 
-            {/* Coming Soon - Курс за 6. разред */}
+            {/* Coming Soon - Потпун курс за малу матуру */}
             <div className="relative h-full">
               <div className="bg-white rounded-[2.5rem] shadow-lg border border-gray-100 h-full flex flex-col overflow-hidden">
                 <div className="h-40 md:h-48 bg-gradient-to-br from-[#1A1A1A]/5 to-[#D62828]/5 relative flex items-center justify-center">
                   <div className="text-center">
                     <Book className="w-14 h-14 text-[#1A1A1A]/15 mx-auto mb-2" />
-                    <span className="text-[#1A1A1A]/25 text-xs font-bold uppercase tracking-wider">6. разред</span>
+                    <span className="text-[#1A1A1A]/25 text-xs font-bold uppercase tracking-wider">Комплетан курс</span>
                   </div>
                   <div className="absolute top-4 right-4 bg-[#F2C94C] text-[#1A1A1A] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                     Видео курс
@@ -331,13 +331,13 @@ export default function CoursesPage() {
                 </div>
 
                 <div className="p-5 md:p-8 flex flex-col flex-grow">
-                  <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">Курс за 6. разред</h3>
+                  <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">Потпун курс за малу матуру</h3>
                   <p className="text-gray-600 text-sm mb-6 leading-relaxed">
-                    Комплетно градиво српског језика за шести разред - граматика, правопис, књижевност и лектира.
+                    Комплетна припрема за малу матуру из српског језика - све области, сви задаци, сви пробни тестови на једном месту.
                   </p>
 
                   <div className="space-y-3 mb-6">
-                    {['Видео лекције за 6. разред', 'Граматика и правопис', 'Књижевност и лектира', 'Задаци за вежбање', 'Подршка наставнице', 'Трајан приступ'].map((f, i) => (
+                    {['Комплетно градиво', 'HD видео лекције', 'Пробни тестови', 'Задаци са решењима', 'Подршка наставнице', 'Трајан приступ'].map((f, i) => (
                       <div key={i} className="flex items-center gap-2 text-sm text-gray-500">
                         <CheckCircle className="w-4 h-4 text-[#1A1A1A]/30 flex-shrink-0" />
                         <span>{f}</span>

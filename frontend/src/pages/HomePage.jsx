@@ -13,7 +13,8 @@ import {
   Target,
   GraduationCap,
   MessageCircle,
-  Clock
+  Clock,
+  Play
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import Header from '../components/ui/Header';
@@ -321,15 +322,58 @@ export default function HomePage() {
         canonical="/"
         jsonLd={homeJsonLd}
       />
-    <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+    <div className="min-h-screen bg-[#fdfafc] font-sans text-[#1A1A1A]">
       <Header />
 
       {/* 1. HERO SECTION */}
-      <section className="relative pb-24 flex items-start pt-32 overflow-hidden bg-white">
+      <section className="relative pb-24 flex items-start pt-32 overflow-hidden min-h-[700px]">
+        {/* Background image as positioned element (full size, right-bottom) */}
+        <div className="absolute right-0 bottom-0 hidden lg:block group" style={{ width: '55%' }}>
+          <div className="relative">
+            <img
+              src="/pozadinaHeroSekcija.png"
+              alt=""
+              className="w-full h-auto"
+              draggable={false}
+            />
+
+            {/* Badge top-left (outside overflow-hidden) */}
+            <div className="absolute z-10 flex items-center gap-1.5 bg-white/10 backdrop-blur-md rounded-full px-3 py-1.5 border border-white/20" style={{ top: '13%', left: '38%' }}>
+              <Video className="w-3 h-3 text-white" />
+              <span className="text-white text-[10px] lg:text-xs font-medium">Погледај како функционише</span>
+            </div>
+
+            {/* Video overlay on monitor screen */}
+            <div
+              className="absolute overflow-hidden"
+              style={{ top: '15%', left: '37%', width: '52%', height: '45%', borderRadius: '0.5%', backgroundColor: 'black' }}
+            >
+
+              {/* Play Button Center */}
+              <Link to="/course/BuaFnF8uh6azrPmvioJt" className="absolute inset-0 flex items-center justify-center pb-[8%]">
+                <div className="w-16 h-16 lg:w-20 lg:h-20 bg-[#D62828] rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-300">
+                  <Play className="w-7 h-7 lg:w-9 lg:h-9 text-white ml-1" fill="white" />
+                </div>
+              </Link>
+
+              {/* Info Bar Bottom */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-3 py-2 lg:px-4 lg:py-3">
+                <div className="flex items-center justify-center gap-2 lg:gap-4 text-white/90 text-[9px] lg:text-xs font-medium">
+                  <span>120+ видео лекција</span>
+                  <span className="w-1 h-1 bg-white/50 rounded-full"></span>
+                  <span>6 курсева</span>
+                  <span className="w-1 h-1 bg-white/50 rounded-full"></span>
+                  <span>Часови уживо</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Text content */}
         <div className="max-w-7xl mx-auto px-6 w-full">
-          <div className="grid lg:grid-cols-2 gap-20 items-center">
-            {/* Left - Text */}
-            <div className="relative z-10 space-y-8 text-center lg:text-left">
+          <div className="max-w-2xl">
+            <div className="relative z-10 space-y-7 text-center lg:text-left">
               <h1 className="font-bold leading-tight text-[#1A1A1A] flex flex-col gap-2">
                 <span className="text-4xl lg:text-5xl text-[#1A1A1A] block">Учите српски језик и књижевност</span>
                 <span className="text-4xl lg:text-6xl block">са разумевањем</span>
@@ -345,29 +389,67 @@ export default function HomePage() {
                 Платформа која гради трајно знање кроз видео материјале и online часове.
               </p>
 
-              <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start pt-4">
-                <Link to="/register">
+              {/* Trust Elements */}
+              <div className="flex flex-wrap gap-x-6 gap-y-3 justify-center lg:justify-start">
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-[#D62828]" />
+                  <span className="text-sm font-medium text-gray-700">Видео лекције 24/7</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-[#D62828]" />
+                  <span className="text-sm font-medium text-gray-700">Припрема за малу матуру</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <CheckCircle className="w-5 h-5 text-[#D62828]" />
+                  <span className="text-sm font-medium text-gray-700">Online часови уживо</span>
+                </div>
+              </div>
+
+              {/* CTA Buttons */}
+              <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start pt-2">
+                <Link to="/courses">
                   <button className="bg-[#D62828] text-white px-10 py-4 rounded-full hover:bg-[#B91F1F] transition-all transform hover:scale-105 shadow-xl text-lg font-bold">
-                    Започни учење
+                    Приступи курсевима
                   </button>
                 </Link>
-                <Link to="/about">
-                  <button className="px-10 py-4 rounded-full border-2 border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white transition-all text-lg font-bold">
-                    Сазнај више
-                  </button>
-                </Link>
+                <button
+                  onClick={() => document.getElementById('kako-funkcionise')?.scrollIntoView({ behavior: 'smooth' })}
+                  className="px-10 py-4 rounded-full border-2 border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white transition-all text-lg font-bold"
+                >
+                  Како функционише?
+                </button>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
 
-            {/* Right - Hero Image */}
-            <div className="relative flex items-center justify-center lg:-mt-8">
-              <img
-                src="/heroSekcija.png"
-                alt="Професорка Марина Лукић са ученицима — онлајн настава српског језика"
-                className="w-full md:w-[125%] max-w-none h-auto relative z-10"
-                width="800"
-                height="600"
-              />
+      {/* STATS BAR - hidden on mobile */}
+      <section className="hidden sm:block py-8 bg-white/60 border-y border-gray-100">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="flex flex-col sm:flex-row items-center justify-around gap-6 sm:gap-4">
+            <div className="flex items-center gap-3">
+              <Users className="w-6 h-6 text-[#D62828]" />
+              <div>
+                <div className="text-2xl font-black text-[#1A1A1A]">700+</div>
+                <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">Ученика</div>
+              </div>
+            </div>
+            <div className="hidden sm:block w-px h-12 bg-gray-200"></div>
+            <div className="flex items-center gap-3">
+              <Award className="w-6 h-6 text-[#D62828]" />
+              <div>
+                <div className="text-2xl font-black text-[#1A1A1A]">98%</div>
+                <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">Успешности</div>
+              </div>
+            </div>
+            <div className="hidden sm:block w-px h-12 bg-gray-200"></div>
+            <div className="flex items-center gap-3">
+              <Star className="w-6 h-6 text-[#F2C94C]" fill="#F2C94C" />
+              <div>
+                <div className="text-2xl font-black text-[#1A1A1A]">27</div>
+                <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">Година искуства</div>
+              </div>
             </div>
           </div>
         </div>
@@ -375,8 +457,9 @@ export default function HomePage() {
 
       {/* 2. HOW IT WORKS SECTION */}
       <section
+        id="kako-funkcionise"
         ref={howItWorksRef}
-        className={`pt-32 pb-24 bg-gradient-to-b from-white via-pink-50/40 to-blue-50/40 relative overflow-hidden transition-all duration-1000 ${howItWorksVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+        className={`pt-32 pb-24 bg-[#fdfafc] relative overflow-hidden transition-all duration-1000 ${howItWorksVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
           }`}
       >
         {/* Playful Background */}
@@ -498,7 +581,7 @@ export default function HomePage() {
       </section>
 
       {/* 3. COURSES SECTION */}
-      <section className="py-20 bg-white overflow-hidden">
+      <section className="py-20 bg-[#fdfafc] overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
           <FadeInSection>
             <div className="text-center mb-16">
@@ -516,7 +599,7 @@ export default function HomePage() {
       </section>
 
       {/* 4. STATS SECTION */}
-      <section className="py-20 bg-white relative overflow-hidden">
+      <section className="py-20 bg-[#fdfafc] relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <FadeInSection>
             <div className="text-center mb-14">
@@ -573,7 +656,7 @@ export default function HomePage() {
       </section>
 
       {/* 5. TESTIMONIALS SECTION */}
-      <section className="py-20 bg-[#F7F7F7] overflow-hidden">
+      <section className="py-20 bg-[#fdfafc] overflow-hidden">
         <FadeInSection>
           <div className="mb-12 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4">Речи наших ученика</h2>
@@ -666,7 +749,7 @@ export default function HomePage() {
       </section>
 
       {/* 6. CTA SECTION */}
-      <section className="py-16 md:py-24 bg-white relative overflow-hidden">
+      <section className="py-16 md:py-24 bg-[#fdfafc] relative overflow-hidden">
         <div className="absolute top-0 left-0 w-full h-full opacity-5">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#D62828] rounded-full blur-3xl"></div>
           <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#F2C94C] rounded-full blur-3xl"></div>

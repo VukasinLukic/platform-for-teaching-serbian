@@ -26,5 +26,47 @@
         "description": "Самогласници, сугласници, сонанти, подела по звучности и месту изговора, слоготворно Р — 15 питања.",
         "fileName": "fonetika.json",
         "difficulty": "Easy"
+    },
+    {
+        "id": "oblici-kazivanja",
+        "title": "Облици казивања",
+        "description": "Нарација, описивање, дијалог, монолог — препознавање облика казивања у књижевним делима. 10 питања.",
+        "fileName": "oblici-kazivanja.json",
+        "difficulty": "Medium"
+    },
+    {
+        "id": "stilske-figure",
+        "title": "Стилске фигуре",
+        "description": "Метафора, хипербола, градација, анафора, алитерација — провера знања о стилским фигурама. 10 питања.",
+        "fileName": "stilske-figure.json",
+        "difficulty": "Medium"
+    },
+    {
+        "id": "padezi",
+        "title": "Падежи",
+        "description": "Деклинација, значења падежа, употреба падежа са предлозима — 10 питања.",
+        "fileName": "padezi.json",
+        "difficulty": "Easy"
+    },
+    {
+        "id": "glagoli",
+        "title": "Глаголи",
+        "description": "Глаголски облици, видови, аорист, имперфекат, футур, императив — 10 питања.",
+        "fileName": "glagoli.json",
+        "difficulty": "Hard"
+    },
+    {
+        "id": "nepromenljive-reci",
+        "title": "Непроменљиве речи",
+        "description": "Прилози, предлози, везници, речце, узвици — 10 питања о непроменљивим врстама речи.",
+        "fileName": "nepromenljive-reci.json",
+        "difficulty": "Easy"
+    },
+    {
+        "id": "imenicke-reci",
+        "title": "Именичке речи",
+        "description": "Именице, придеви, заменице, бројеви — подврсте и употреба. 10 питања.",
+        "fileName": "imenicke-reci.json",
+        "difficulty": "Medium"
     }
 ]

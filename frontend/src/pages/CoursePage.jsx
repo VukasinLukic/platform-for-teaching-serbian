@@ -221,8 +221,8 @@ export default function CoursePage() {
           </div>
 
           {/* Lesson Details + Materials */}
-          <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
-            <h2 className="text-3xl font-bold mb-4 text-[#1A1A1A]">{selectedLesson.title}</h2>
+          <div className="bg-white rounded-3xl p-4 sm:p-8 shadow-sm border border-gray-100 overflow-hidden">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-[#1A1A1A]">{selectedLesson.title}</h2>
             {selectedLesson.description && (
               <p className="text-gray-600 text-lg mb-6">{selectedLesson.description}</p>
             )}
@@ -242,7 +242,7 @@ export default function CoursePage() {
                       target="_blank"
                       rel="noopener noreferrer"
                       download={material.name}
-                      className="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group text-left w-full"
+                      className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group text-left w-full overflow-hidden"
                     >
                       <div className="w-12 h-12 bg-[#D62828] rounded-lg flex items-center justify-center flex-shrink-0">
                         <FileText className="w-6 h-6 text-white" />
@@ -283,7 +283,7 @@ export default function CoursePage() {
         <div className="mb-6">
           <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Садржај курса</h3>
           <p className="text-sm text-gray-600">
-            {modules.length} области • {
+            {modules.length} наслова • {
               modules.reduce((acc, m) => acc + (m.lessons?.length || 0), 0)
             } лекција
           </p>
@@ -521,7 +521,7 @@ export default function CoursePage() {
               <div className="flex items-center gap-6 pt-4 border-t border-gray-100">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Book className="w-5 h-5 text-[#D62828]" />
-                  <span>{modules.length} области</span>
+                  <span>{modules.length} наслова</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Play className="w-5 h-5 text-[#D62828]" />
