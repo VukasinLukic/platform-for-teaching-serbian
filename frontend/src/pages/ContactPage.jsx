@@ -124,7 +124,7 @@ export default function ContactPage() {
                      disabled={loading}
                      className="w-full bg-[#D62828] text-white font-bold py-4 rounded-full hover:bg-[#B91F1F] transition shadow-lg hover:shadow-xl disabled:opacity-70"
                    >
-                     {loading ? 'Слање...' : 'Пошаљи Поруку'}
+                     {loading ? 'Слање...' : 'Пошаљи порику'}
                    </button>
                  </form>
                )}

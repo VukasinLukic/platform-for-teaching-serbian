@@ -108,7 +108,7 @@ export default function DashboardPage() {
         {availableForPurchase.length > 0 && (
           <div className="mb-16" data-tour="available-courses">
             <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold text-[#1A1A1A]">Доступни Курсеви</h2>
+              <h2 className="text-3xl font-bold text-[#1A1A1A]">Доступни курсеви</h2>
               <Link to="/courses" className="text-[#D62828] hover:text-[#B91F1F] font-medium flex items-center gap-2">
                 Види све <ArrowRight className="w-4 h-4" />
               </Link>
@@ -138,7 +138,7 @@ export default function DashboardPage() {
 
         {/* My Courses Section - SECOND */}
         <div className="mb-16" data-tour="my-courses">
-          <h2 className="text-3xl font-bold mb-8 text-[#1A1A1A]">Моји Курсеви</h2>
+          <h2 className="text-3xl font-bold mb-8 text-[#1A1A1A]">Моји курсеви</h2>
 
           {myCourses.length === 0 ? (
             <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-16 text-center border border-gray-100">
@@ -197,7 +197,7 @@ export default function DashboardPage() {
 
               <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
                 <div className="text-center md:text-left">
-                  <h2 className="text-3xl font-bold mb-4">Квизови Знања</h2>
+                  <h2 className="text-3xl font-bold mb-4">Квизови знања</h2>
                   <p className="text-gray-400 text-lg max-w-xl">
                     Тестирајте своје знање кроз интерактивне квизове. Пратите свој напредак и утврдите градиво на забаван начин.
                   </p>
