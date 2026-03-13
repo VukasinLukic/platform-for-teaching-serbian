@@ -149,7 +149,7 @@ export default function DashboardPage() {
               <p className="text-gray-600 mb-8 text-lg">Изаберите курс и започните своје учење данас</p>
               <Link to="/courses">
                 <button className="bg-[#D62828] text-white px-8 py-4 rounded-full font-bold hover:bg-[#B91F1F] transition-all hover:scale-105 transform flex items-center gap-2 mx-auto">
-                  Погледај Курсеве <ArrowRight className="w-5 h-5" />
+                  Погледај курсеве <ArrowRight className="w-5 h-5" />
                 </button>
               </Link>
             </div>

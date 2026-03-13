@@ -12,6 +12,7 @@
   "dependencies": {
     "@firebase/functions": "^0.13.1",
     "firebase": "^12.5.0",
+    "html-react-parser": "^5.2.17",
     "html2canvas": "^1.4.1",
     "lucide-react": "^0.553.0",
     "react": "^18.3.1",

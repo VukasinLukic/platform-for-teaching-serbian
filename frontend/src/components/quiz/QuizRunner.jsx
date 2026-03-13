@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react';
 import { ArrowRight, CheckCircle, XCircle } from 'lucide-react';
+import parse from 'html-react-parser';
 import QuizResult from './QuizResult';
 
 // Fisher-Yates shuffle
@@ -87,9 +88,9 @@ export default function QuizRunner({ quiz, onExit }) {
 
             {/* Question Card */}
             <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mb-8">
-                <h2 className="text-2xl font-bold text-[#1A1A1A] mb-8">
-                    {currentQuestion.question}
-                </h2>
+                <div className="text-xl font-normal text-[#1A1A1A] mb-8 whitespace-pre-line leading-relaxed">
+                    {parse(currentQuestion.question)}
+                </div>
 
                 <div className="space-y-4">
                     {currentQuestion.answers.map((answer, index) => {
