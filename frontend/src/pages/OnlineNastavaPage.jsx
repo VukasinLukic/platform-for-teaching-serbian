@@ -95,8 +95,8 @@ export default function OnlineNastavaPage() {
       const result = await generatePaymentRefFunction();
       const paymentRef = result.data.paymentReference;
 
-      // For group package, first month is discounted to 1500 RSD
-      const amount = pkg.id === 'group' ? 1500 : pkg.price;
+      // For group package, first month is discounted to 2500 RSD
+      const amount = pkg.id === 'group' ? 2500 : pkg.price;
 
       // Navigate to payment slip page with payment data
       navigate('/uplatnica', {
@@ -120,8 +120,8 @@ export default function OnlineNastavaPage() {
   return (
     <>
       <SEO
-        title="ОНЛАЈН НАСТАВА | МЕСЕЧНИ ПАКЕТИ ОД 1500 ДИН"
-        description="Видео курсеви од 1500 дин, групни часови 3500 дин, индивидуални 6000 дин месечно. Флексибилни месечни пакети прилагођени вашим потребама."
+        title="ОНЛАЈН НАСТАВА | МЕСЕЧНИ ПАКЕТИ ОД 2500 ДИН"
+        description="Видео курсеви од 2500 дин, групни часови 3500 дин, индивидуални 6000 дин месечно. Флексибилни месечни пакети прилагођени вашим потребама."
         canonical="/online-nastava"
       />
 
@@ -392,7 +392,7 @@ export default function OnlineNastavaPage() {
                     <p className="text-[#CE1919]/70 text-xs mb-3">Групна настава уживо</p>
                     <div className="flex items-baseline gap-2">
                       <span className="text-base line-through text-[#CE1919]/50">{formatPrice(pkg.price)}</span>
-                      <span className="text-3xl font-black text-[#a01313] whitespace-nowrap">1.500 дин</span>
+                      <span className="text-3xl font-black text-[#a01313] whitespace-nowrap">2.500 дин</span>
                     </div>
                     <p className="text-[#CE1919]/80 text-xs mt-1 font-medium">1 месец</p>
                     <p className="text-[#CE1919]/50 text-[11px] mt-0.5">Остали месеци: {formatPrice(pkg.price)}</p>
