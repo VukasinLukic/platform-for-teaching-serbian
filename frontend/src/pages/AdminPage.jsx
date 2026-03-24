@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { LayoutDashboard, BookOpen, Video, CreditCard, Users, Settings, ChevronDown, LogOut, TrendingUp, Clock, Search, Eye, Check, X, Mail, Menu } from 'lucide-react';
+import { LayoutDashboard, BookOpen, Video, CreditCard, Users, Settings, ChevronDown, LogOut, TrendingUp, Clock, Search, Eye, Check, X, Mail, Menu, Gift } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { getDashboardStats, getPendingPayments, verifyPayment } from '../services/admin.service';
 import { formatPrice, formatDate } from '../utils/helpers';
@@ -13,6 +13,7 @@ import SettingsPanel from '../components/admin/SettingsPanel';
 import OnlineClassManager from '../components/admin/OnlineClassManager';
 import EmailTestingPanel from '../components/admin/EmailTestingPanel';
 import NotificationDropdown from '../components/admin/NotificationDropdown';
+import PromotionsManager from '../components/admin/PromotionsManager';
 
 export default function AdminPage() {
   const { userProfile, logout } = useAuthStore();
@@ -52,6 +53,7 @@ export default function AdminPage() {
     { id: 'payments', label: 'Uplate', icon: CreditCard },
     { id: 'online', label: 'Onlajn časovi', icon: Video },
     { id: 'students', label: 'Učenici', icon: Users },
+    { id: 'promotions', label: 'Промоције', icon: Gift },
     { id: 'settings', label: 'Podešavanja', icon: Settings },
   ];
 
@@ -252,6 +254,8 @@ export default function AdminPage() {
               {activeTab === 'students' && <UsersList />}
 
               {activeTab === 'online' && <OnlineClassManager />}
+
+              {activeTab === 'promotions' && <PromotionsManager />}
 
               {activeTab === 'settings' && <SettingsPanel />}
            </div>

@@ -6,6 +6,9 @@ import { FullScreenSpinner } from './components/ui/Spinner';
 import { Toaster } from 'react-hot-toast';
 import { OnboardingProvider } from './context/OnboardingContext';
 import TutorialTooltip from './components/ui/TutorialTooltip';
+import { PromoProvider } from './context/PromoContext';
+import PromoQuizModal from './components/promo/PromoQuizModal';
+import PromoFloatingButton from './components/promo/PromoFloatingButton';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -32,6 +35,7 @@ import QuizListPage from './pages/QuizListPage';
 import QuizRunnerPage from './pages/QuizRunnerPage';
 import BlogPage from './pages/BlogPage';
 import BlogPostPage from './pages/BlogPostPage';
+import PromoQuizPage from './pages/PromoQuizPage';
 
 // Protected Route Component
 function ProtectedRoute({ children, adminOnly = false }) {
@@ -66,10 +70,13 @@ function App() {
 
   return (
     <BrowserRouter>
+      <PromoProvider>
       <OnboardingProvider>
         <Toaster />
         <ScrollToTop />
         <TutorialTooltip />
+        <PromoQuizModal />
+        <PromoFloatingButton />
         <main>
           <Routes>
         {/* Public Routes */}
@@ -91,6 +98,7 @@ function App() {
         <Route path="/uplatnica" element={<PaymentSlipPage />} />
         <Route path="/blog" element={<BlogPage />} />
         <Route path="/blog/:slug" element={<BlogPostPage />} />
+        <Route path="/probni-prijemni" element={<PromoQuizPage />} />
 
         {/* Protected Routes */}
         <Route
@@ -135,6 +143,7 @@ function App() {
         </Routes>
         </main>
       </OnboardingProvider>
+      </PromoProvider>
     </BrowserRouter>
   );
 }
