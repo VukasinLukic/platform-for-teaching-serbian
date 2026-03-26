@@ -64,54 +64,56 @@ function ProtectedRoute({ children, adminOnly = false }) {
 
 function AppContent() {
   const initAuth = useAuthStore((state) => state.initAuth);
-  const { updateAvailable, checkVersion, silentReload } = useVersionCheck();
+  // TEMPORARILY DISABLED - Version check causing reload loop
+  // const { updateAvailable, checkVersion, silentReload } = useVersionCheck();
   const location = useLocation();
-  const isFirstRender = useRef(true);
-  const hasReloaded = useRef(false);
 
   useEffect(() => {
     initAuth();
   }, [initAuth]);
 
-  // Tihi reload na promeni rute (ne na prvom renderovanju)
-  useEffect(() => {
-    console.log('[APP] Route change effect', {
-      isFirstRender: isFirstRender.current,
-      updateAvailable,
-      hasReloaded: hasReloaded.current,
-      pathname: location.pathname
-    });
+  // DISABLED - These useEffects were causing constant page reloads
+  // Will re-enable with proper fix later
 
-    if (isFirstRender.current) {
-      isFirstRender.current = false;
-      console.log('[APP] First render, skipping reload');
-      return;
-    }
+  // // Tihi reload na promeni rute (ne na prvom renderovanju)
+  // useEffect(() => {
+  //   console.log('[APP] Route change effect', {
+  //     isFirstRender: isFirstRender.current,
+  //     updateAvailable,
+  //     hasReloaded: hasReloaded.current,
+  //     pathname: location.pathname
+  //   });
 
-    if (updateAvailable && !hasReloaded.current) {
-      console.warn('[APP] UPDATE AVAILABLE - CALLING SILENT RELOAD ON ROUTE CHANGE!');
-      hasReloaded.current = true;
-      silentReload();
-    }
-  }, [location.pathname, updateAvailable]);
+  //   if (isFirstRender.current) {
+  //     isFirstRender.current = false;
+  //     console.log('[APP] First render, skipping reload');
+  //     return;
+  //   }
 
-  // Tihi reload kad korisnik vrati tab u fokus
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      console.log('[APP] Visibility change', {
-        visibilityState: document.visibilityState,
-        updateAvailable,
-        hasReloaded: hasReloaded.current
-      });
-      if (document.visibilityState === 'visible' && updateAvailable && !hasReloaded.current) {
-        console.warn('[APP] TAB FOCUS + UPDATE AVAILABLE - CALLING SILENT RELOAD!');
-        hasReloaded.current = true;
-        silentReload();
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [updateAvailable]);
+  //   if (updateAvailable && !hasReloaded.current) {
+  //     console.warn('[APP] UPDATE AVAILABLE - CALLING SILENT RELOAD ON ROUTE CHANGE!');
+  //     hasReloaded.current = true;
+  //     silentReload();
+  //   }
+  // }, [location.pathname, updateAvailable]);
+
+  // // Tihi reload kad korisnik vrati tab u fokus
+  // useEffect(() => {
+  //   const handleVisibilityChange = () => {
+  //     console.log('[APP] Visibility change', {
+  //       visibilityState: document.visibilityState,
+  //       updateAvailable,
+  //       hasReloaded: hasReloaded.current
+  //     });
+  //     if (document.visibilityState === 'visible' && updateAvailable && !hasReloaded.current) {
+  //       console.warn('[APP] TAB FOCUS + UPDATE AVAILABLE - CALLING SILENT RELOAD!');
+  //       hasReloaded.current = true;
+  //       silentReload();
+  //     }
+  //   };
+  //   document.addEventListener('visibilitychange', handleVisibilityChange);
+  //   return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  // }, [updateAvailable]);
 
   return (
     <OnboardingProvider>
