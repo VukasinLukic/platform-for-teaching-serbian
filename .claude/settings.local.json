@@ -51,7 +51,9 @@
       "Bash(npm run:*)",
       "Bash(npx firebase:*)",
       "Bash(git stash:*)",
-      "Bash(FUNCTIONS_DISCOVERY_TIMEOUT=60000 npx firebase deploy:*)"
+      "Bash(FUNCTIONS_DISCOVERY_TIMEOUT=60000 npx firebase deploy:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)"
     ],
     "deny": [],
     "ask": []

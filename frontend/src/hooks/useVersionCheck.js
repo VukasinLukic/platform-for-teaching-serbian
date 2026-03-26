@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
 
-const CHECK_INTERVAL = 5 * 60 * 1000; // 5 minuta
+const CHECK_INTERVAL = 24 * 60 * 60 * 1000; // 24 sata (jednom dnevno)
 const CURRENT_VERSION = typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : null;
 
 export function useVersionCheck() {
