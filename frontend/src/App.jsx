@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { useEffect, useRef } from 'react';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
 import ScrollToTop from './components/ScrollToTop';
 import { FullScreenSpinner } from './components/ui/Spinner';
@@ -9,6 +9,7 @@ import TutorialTooltip from './components/ui/TutorialTooltip';
 import { PromoProvider } from './context/PromoContext';
 import PromoQuizModal from './components/promo/PromoQuizModal';
 import PromoFloatingButton from './components/promo/PromoFloatingButton';
+import { useVersionCheck } from './hooks/useVersionCheck';
 
 // Pages
 import HomePage from './pages/HomePage';
@@ -61,88 +62,119 @@ function ProtectedRoute({ children, adminOnly = false }) {
   return children;
 }
 
-function App() {
+function AppContent() {
   const initAuth = useAuthStore((state) => state.initAuth);
+  const { updateAvailable, checkVersion, silentReload } = useVersionCheck();
+  const location = useLocation();
+  const isFirstRender = useRef(true);
 
   useEffect(() => {
     initAuth();
   }, [initAuth]);
 
+  // Tihi reload na promeni rute (ne na prvom renderovanju)
+  useEffect(() => {
+    if (isFirstRender.current) {
+      isFirstRender.current = false;
+      return;
+    }
+    if (updateAvailable) {
+      silentReload();
+    }
+  }, [location.pathname, updateAvailable, silentReload]);
+
+  // Tihi reload kad korisnik vrati tab u fokus
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && updateAvailable) {
+        silentReload();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, [updateAvailable, silentReload]);
+
   return (
-    <BrowserRouter>
-      <PromoProvider>
-      <OnboardingProvider>
-        <Toaster />
-        <ScrollToTop />
-        <TutorialTooltip />
-        <PromoQuizModal />
-        <PromoFloatingButton />
-        <main>
-          <Routes>
-        {/* Public Routes */}
-        <Route path="/" element={<HomePage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/reset-password" element={<ResetPasswordPage />} />
-        <Route path="/verify" element={<VerifyEmailPage />} />
-        <Route path="/course/:id" element={<CoursePage />} />
-        <Route path="/online-class/:id" element={<OnlineClassPage />} />
-        <Route path="/courses" element={<CoursesPage />} />
-        <Route path="/online-nastava" element={<OnlineNastavaPage />} />
-        <Route path="/faq" element={<FAQPage />} />
-        <Route path="/contact" element={<ContactPage />} />
-        <Route path="/about" element={<AboutPage />} />
-        <Route path="/benefits" element={<BenefitsPage />} />
-        <Route path="/privacy" element={<PrivacyPage />} />
-        <Route path="/terms" element={<TermsPage />} />
-        <Route path="/uplatnica" element={<PaymentSlipPage />} />
-        <Route path="/blog" element={<BlogPage />} />
-        <Route path="/blog/:slug" element={<BlogPostPage />} />
-        <Route path="/probni-prijemni" element={<PromoQuizPage />} />
+    <OnboardingProvider>
+      <Toaster />
+      <ScrollToTop />
+      <TutorialTooltip />
+      <PromoQuizModal />
+      <PromoFloatingButton />
+      <main>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route path="/reset-password" element={<ResetPasswordPage />} />
+          <Route path="/verify" element={<VerifyEmailPage />} />
+          <Route path="/course/:id" element={<CoursePage />} />
+          <Route path="/online-class/:id" element={<OnlineClassPage />} />
+          <Route path="/courses" element={<CoursesPage />} />
+          <Route path="/online-nastava" element={<OnlineNastavaPage />} />
+          <Route path="/faq" element={<FAQPage />} />
+          <Route path="/contact" element={<ContactPage />} />
+          <Route path="/about" element={<AboutPage />} />
+          <Route path="/benefits" element={<BenefitsPage />} />
+          <Route path="/privacy" element={<PrivacyPage />} />
+          <Route path="/terms" element={<TermsPage />} />
+          <Route path="/uplatnica" element={<PaymentSlipPage />} />
+          <Route path="/blog" element={<BlogPage />} />
+          <Route path="/blog/:slug" element={<BlogPostPage />} />
+          <Route path="/probni-prijemni" element={<PromoQuizPage />} />
 
-        {/* Protected Routes */}
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <DashboardPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* Protected Routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <DashboardPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Admin Routes */}
-        <Route
-          path="/admin"
-          element={
-            <ProtectedRoute adminOnly>
-              <AdminPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* Admin Routes */}
+          <Route
+            path="/admin"
+            element={
+              <ProtectedRoute adminOnly>
+                <AdminPage />
+              </ProtectedRoute>
+            }
+          />
 
-        {/* Quiz Routes */}
-        <Route
-          path="/quizzes"
-          element={
-            <ProtectedRoute>
-              <QuizListPage />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path="/quizzes/:quizId"
-          element={
-            <ProtectedRoute>
-              <QuizRunnerPage />
-            </ProtectedRoute>
-          }
-        />
+          {/* Quiz Routes */}
+          <Route
+            path="/quizzes"
+            element={
+              <ProtectedRoute>
+                <QuizListPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/quizzes/:quizId"
+            element={
+              <ProtectedRoute>
+                <QuizRunnerPage />
+              </ProtectedRoute>
+            }
+          />
 
           {/* Catch all - redirect to home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
-        </main>
-      </OnboardingProvider>
+      </main>
+    </OnboardingProvider>
+  );
+}
+
+function App() {
+  return (
+    <BrowserRouter>
+      <PromoProvider>
+        <AppContent />
       </PromoProvider>
     </BrowserRouter>
   );

@@ -28,10 +28,10 @@ export default function ResetPasswordPage() {
                 <h3 className="font-bold text-[#1A1A1A]">Email</h3>
               </div>
               <a
-                href="mailto:kontakt@srpskiusrcu.com"
+                href="mailto:profesorka.marinalukic@gmail.com"
                 className="text-[#D62828] hover:text-[#B91F1F] font-semibold transition text-lg"
               >
-                kontakt@srpskiusrcu.com
+                profesorka.marinalukic@gmail.com
               </a>
             </div>
 
@@ -44,10 +44,10 @@ export default function ResetPasswordPage() {
                 <h3 className="font-bold text-[#1A1A1A]">Телефон</h3>
               </div>
               <a
-                href="tel:+381XXXXXXXXX"
+                href="tel:+381604933680"
                 className="text-[#D62828] hover:text-[#B91F1F] font-semibold transition text-lg"
               >
-                +381 XX XXX XXXX
+                0604933680
               </a>
             </div>
           </div>

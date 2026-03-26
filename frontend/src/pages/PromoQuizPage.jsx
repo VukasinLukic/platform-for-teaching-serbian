@@ -1,9 +1,13 @@
-import { useState, useMemo } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, CheckCircle, XCircle, Trophy, Copy, Check, Gift } from 'lucide-react';
+import { ArrowLeft, ArrowRight, CheckCircle, XCircle, Trophy, Copy, Check, Gift, Lock, UserPlus } from 'lucide-react';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import { promoQuizQuestions, PROMO_QUIZ_INTRO_TEXT } from '../data/promoQuizData';
+import { useAuthStore } from '../store/authStore';
+import { usePromo } from '../context/PromoContext';
+
+const RETURN_TO_KEY = 'srpskiusrcu_return_to';
 
 // Fisher-Yates shuffle
 function shuffleArray(array) {
@@ -23,14 +27,27 @@ function generateDiscountCode(score) {
   return `POPUST-${score}-${year}${month}${day}`;
 }
 
+function generateDiscountCodeFromDate(score, dateString) {
+  const date = new Date(dateString);
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `POPUST-${score}-${year}${month}${day}`;
+}
+
 export default function PromoQuizPage() {
   const navigate = useNavigate();
+  const { user } = useAuthStore();
+  const { saveQuizResult, getQuizResult, clearQuizResult } = usePromo();
+  const isLoggedIn = !!user;
+
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState(null);
   const [score, setScore] = useState(0);
   const [showResult, setShowResult] = useState(false);
   const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [savedResult, setSavedResult] = useState(null);
 
   // Shuffle answers once on mount
   const shuffledQuestions = useMemo(() => {
@@ -39,6 +56,15 @@ export default function PromoQuizPage() {
       answers: shuffleArray(q.answers)
     }));
   }, []);
+
+  // Proveri da li korisnik ima sacuvan rezultat (vratio se nakon logina)
+  useEffect(() => {
+    const result = getQuizResult();
+    if (result && isLoggedIn) {
+      setSavedResult(result);
+      setShowResult(true);
+    }
+  }, [isLoggedIn, getQuizResult]);
 
   const currentQuestion = shuffledQuestions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === shuffledQuestions.length - 1;
@@ -60,6 +86,7 @@ export default function PromoQuizPage() {
   const handleNextQuestion = () => {
     if (isLastQuestion) {
       setShowResult(true);
+      saveQuizResult(score, shuffledQuestions.length);
     } else {
       setCurrentQuestionIndex(prev => prev + 1);
       setSelectedAnswer(null);
@@ -74,18 +101,36 @@ export default function PromoQuizPage() {
     setSelectedAnswer(null);
     setIsAnswerSubmitted(false);
     setCopied(false);
+    setSavedResult(null);
+    clearQuizResult();
   };
 
   const handleCopyCode = () => {
-    const code = generateDiscountCode(score);
+    const code = effectiveDiscountCode;
     navigator.clipboard.writeText(code).then(() => {
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
+      clearQuizResult();
+      localStorage.removeItem(RETURN_TO_KEY);
     });
   };
 
-  const discountCode = generateDiscountCode(score);
-  const percentage = Math.round((score / shuffledQuestions.length) * 100);
+  const handleGoToRegister = () => {
+    localStorage.setItem(RETURN_TO_KEY, '/probni-prijemni');
+    navigate('/register');
+  };
+
+  const handleGoToLogin = () => {
+    localStorage.setItem(RETURN_TO_KEY, '/probni-prijemni');
+    navigate('/login');
+  };
+
+  const effectiveScore = savedResult ? savedResult.score : score;
+  const effectiveTotal = savedResult ? savedResult.totalQuestions : shuffledQuestions.length;
+  const effectiveDiscountCode = savedResult
+    ? generateDiscountCodeFromDate(savedResult.score, savedResult.quizDate)
+    : generateDiscountCode(score);
+  const percentage = Math.round((effectiveScore / effectiveTotal) * 100);
 
   // RESULT VIEW
   if (showResult) {
@@ -107,7 +152,7 @@ export default function PromoQuizPage() {
             <p className="text-gray-500 text-sm mb-3">Ваш резултат:</p>
 
             <div className="text-4xl font-black text-[#D62828] mb-6">
-              {score} <span className="text-lg text-gray-400 font-medium">/ {shuffledQuestions.length}</span>
+              {effectiveScore} <span className="text-lg text-gray-400 font-medium">/ {effectiveTotal}</span>
             </div>
 
             {/* 20% Discount Highlight */}
@@ -121,31 +166,68 @@ export default function PromoQuizPage() {
               </p>
             </div>
 
-            {/* Discount Code */}
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6 mb-8">
-              <p className="text-sm font-bold text-green-700 mb-3">
-                Ваш код за попуст:
-              </p>
-              <div className="bg-white rounded-xl p-4 flex items-center justify-between gap-3 border border-green-200">
-                <code className="text-xl md:text-2xl font-black text-[#1A1A1A] tracking-wider">
-                  {discountCode}
-                </code>
-                <button
-                  onClick={handleCopyCode}
-                  className="p-2 rounded-lg hover:bg-green-50 transition-colors flex-shrink-0"
-                  title="Копирај код"
-                >
-                  {copied ? (
-                    <Check className="w-5 h-5 text-green-600" />
-                  ) : (
-                    <Copy className="w-5 h-5 text-gray-400" />
-                  )}
-                </button>
+            {isLoggedIn ? (
+              /* Ulogovan korisnik - prikaži kupon kod */
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-2xl p-6 mb-8">
+                <p className="text-sm font-bold text-green-700 mb-3">
+                  Ваш код за попуст:
+                </p>
+                <div className="bg-white rounded-xl p-4 flex items-center justify-between gap-3 border border-green-200">
+                  <code className="text-xl md:text-2xl font-black text-[#1A1A1A] tracking-wider">
+                    {effectiveDiscountCode}
+                  </code>
+                  <button
+                    onClick={handleCopyCode}
+                    className="p-2 rounded-lg hover:bg-green-50 transition-colors flex-shrink-0"
+                    title="Копирај код"
+                  >
+                    {copied ? (
+                      <Check className="w-5 h-5 text-green-600" />
+                    ) : (
+                      <Copy className="w-5 h-5 text-gray-400" />
+                    )}
+                  </button>
+                </div>
+                <p className="text-sm md:text-base text-green-700 font-semibold mt-3 leading-relaxed">
+                  Упишите овај код у опис трансакције на уплатници приликом плаћања курса, или нам пошаљите на мејл{' '}
+                  <a
+                    href="mailto:profesorka.marinalukic@gmail.com"
+                    className="underline hover:text-green-800 transition-colors"
+                  >
+                    profesorka.marinalukic@gmail.com
+                  </a>
+                  {' '}овај купон.
+                </p>
               </div>
-              <p className="text-sm md:text-base text-green-700 font-semibold mt-3 leading-relaxed">
-                Упишите овај код у опис трансакције на уплатници приликом плаћања курса.
-              </p>
-            </div>
+            ) : (
+              /* Nije ulogovan - CTA za registraciju */
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200 rounded-2xl p-6 mb-8">
+                <div className="bg-blue-100 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-3">
+                  <Lock className="w-6 h-6 text-blue-600" />
+                </div>
+                <p className="text-lg font-bold text-blue-800 mb-2">
+                  Желите да добијете свој код за попуст?
+                </p>
+                <p className="text-sm text-blue-700 mb-6">
+                  Направите налог или се пријавите да бисте добили свој персонализовани код за 20% попуста.
+                </p>
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                  <button
+                    onClick={handleGoToRegister}
+                    className="px-8 py-4 rounded-xl bg-[#D62828] text-white font-bold hover:bg-[#B91F1F] transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                  >
+                    <UserPlus className="w-5 h-5" />
+                    Региструј се
+                  </button>
+                  <button
+                    onClick={handleGoToLogin}
+                    className="px-8 py-4 rounded-xl border-2 border-gray-200 font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                  >
+                    Већ имам налог
+                  </button>
+                </div>
+              </div>
+            )}
 
             <div className="flex flex-col md:flex-row gap-4 justify-center">
               <button

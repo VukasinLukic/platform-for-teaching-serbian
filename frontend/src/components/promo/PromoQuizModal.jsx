@@ -76,6 +76,9 @@ export default function PromoQuizModal() {
             Решите 20 питања из српског језика и књижевности и проверите колико сте спремни за малу матуру.
             На крају добијате код за попуст који можете искористити при уплати курса.
           </p>
+          <p className="text-gray-500 text-xs mb-6 max-w-lg mx-auto leading-relaxed italic">
+            Напомена: Ако затворите овај прозор, можете касније приступити квизу путем дугмета у доњем левом углу екрана.
+          </p>
 
           {/* 20% Discount Highlight */}
           <div className="bg-gradient-to-r from-[#D62828] to-[#B91F1F] rounded-xl p-5 mb-8 max-w-md mx-auto shadow-lg">

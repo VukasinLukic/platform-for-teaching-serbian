@@ -5,6 +5,7 @@ import { db } from '../services/firebase';
 const PromoContext = createContext(null);
 
 const STORAGE_PREFIX = 'srpskiusrcu_promo_seen_';
+const QUIZ_RESULT_KEY = 'srpskiusrcu_promo_quiz_result';
 
 export function PromoProvider({ children }) {
   const [promotions, setPromotions] = useState({});
@@ -56,6 +57,43 @@ export function PromoProvider({ children }) {
     return promotions[promoId]?.active === true;
   }, [promotions]);
 
+  const saveQuizResult = useCallback((score, totalQuestions) => {
+    try {
+      const data = {
+        score,
+        totalQuestions,
+        quizDate: new Date().toISOString(),
+        timestamp: Date.now(),
+      };
+      localStorage.setItem(QUIZ_RESULT_KEY, JSON.stringify(data));
+    } catch (error) {
+      console.error('Error saving quiz result:', error);
+    }
+  }, []);
+
+  const getQuizResult = useCallback(() => {
+    try {
+      const stored = localStorage.getItem(QUIZ_RESULT_KEY);
+      if (!stored) return null;
+      const data = JSON.parse(stored);
+      if (Date.now() - data.timestamp > 7 * 24 * 60 * 60 * 1000) {
+        localStorage.removeItem(QUIZ_RESULT_KEY);
+        return null;
+      }
+      return data;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  const clearQuizResult = useCallback(() => {
+    try {
+      localStorage.removeItem(QUIZ_RESULT_KEY);
+    } catch (error) {
+      console.error('Error clearing quiz result:', error);
+    }
+  }, []);
+
   const value = {
     promotions,
     loading,
@@ -64,6 +102,9 @@ export function PromoProvider({ children }) {
     hasSeenPromo,
     markPromoSeen,
     isPromoActive,
+    saveQuizResult,
+    getQuizResult,
+    clearQuizResult,
   };
 
   return (
