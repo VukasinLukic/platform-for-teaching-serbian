@@ -74,11 +74,19 @@ function AppContent() {
 
   // Tihi reload na promeni rute (ne na prvom renderovanju)
   useEffect(() => {
+    console.log('[APP] Route change effect', {
+      isFirstRender: isFirstRender.current,
+      updateAvailable,
+      pathname: location.pathname
+    });
+
     if (isFirstRender.current) {
       isFirstRender.current = false;
+      console.log('[APP] First render, skipping reload');
       return;
     }
     if (updateAvailable) {
+      console.warn('[APP] UPDATE AVAILABLE - CALLING SILENT RELOAD ON ROUTE CHANGE!');
       silentReload();
     }
   }, [location.pathname, updateAvailable, silentReload]);
@@ -86,7 +94,12 @@ function AppContent() {
   // Tihi reload kad korisnik vrati tab u fokus
   useEffect(() => {
     const handleVisibilityChange = () => {
+      console.log('[APP] Visibility change', {
+        visibilityState: document.visibilityState,
+        updateAvailable
+      });
       if (document.visibilityState === 'visible' && updateAvailable) {
+        console.warn('[APP] TAB FOCUS + UPDATE AVAILABLE - CALLING SILENT RELOAD!');
         silentReload();
       }
     };
