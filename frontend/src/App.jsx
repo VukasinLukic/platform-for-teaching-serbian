@@ -67,6 +67,7 @@ function AppContent() {
   const { updateAvailable, checkVersion, silentReload } = useVersionCheck();
   const location = useLocation();
   const isFirstRender = useRef(true);
+  const hasReloaded = useRef(false);
 
   useEffect(() => {
     initAuth();
@@ -77,6 +78,7 @@ function AppContent() {
     console.log('[APP] Route change effect', {
       isFirstRender: isFirstRender.current,
       updateAvailable,
+      hasReloaded: hasReloaded.current,
       pathname: location.pathname
     });
 
@@ -85,27 +87,31 @@ function AppContent() {
       console.log('[APP] First render, skipping reload');
       return;
     }
-    if (updateAvailable) {
+
+    if (updateAvailable && !hasReloaded.current) {
       console.warn('[APP] UPDATE AVAILABLE - CALLING SILENT RELOAD ON ROUTE CHANGE!');
+      hasReloaded.current = true;
       silentReload();
     }
-  }, [location.pathname, updateAvailable, silentReload]);
+  }, [location.pathname, updateAvailable]);
 
   // Tihi reload kad korisnik vrati tab u fokus
   useEffect(() => {
     const handleVisibilityChange = () => {
       console.log('[APP] Visibility change', {
         visibilityState: document.visibilityState,
-        updateAvailable
+        updateAvailable,
+        hasReloaded: hasReloaded.current
       });
-      if (document.visibilityState === 'visible' && updateAvailable) {
+      if (document.visibilityState === 'visible' && updateAvailable && !hasReloaded.current) {
         console.warn('[APP] TAB FOCUS + UPDATE AVAILABLE - CALLING SILENT RELOAD!');
+        hasReloaded.current = true;
         silentReload();
       }
     };
     document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
-  }, [updateAvailable, silentReload]);
+  }, [updateAvailable]);
 
   return (
     <OnboardingProvider>
