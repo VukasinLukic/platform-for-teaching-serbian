@@ -66,6 +66,13 @@ export default function PromoQuizPage() {
     }
   }, [isLoggedIn, getQuizResult]);
 
+  // Scroll to top kada se prikazuju rezultati
+  useEffect(() => {
+    if (showResult) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  }, [showResult]);
+
   const currentQuestion = shuffledQuestions[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === shuffledQuestions.length - 1;
   const progress = ((currentQuestionIndex + 1) / shuffledQuestions.length) * 100;
@@ -162,7 +169,7 @@ export default function PromoQuizPage() {
                 <span className="text-2xl md:text-3xl font-black text-white">20% ПОПУСТ</span>
               </div>
               <p className="text-white/90 text-sm">
-                Честитамо! Остварили сте попуст од 20% на било који курс.
+                Честитамо! Остварили сте попуст од 20% на било коју куповину.
               </p>
             </div>
 

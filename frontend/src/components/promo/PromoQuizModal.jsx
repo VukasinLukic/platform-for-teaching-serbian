@@ -66,18 +66,12 @@ export default function PromoQuizModal() {
             <GraduationCap className="w-7 h-7 md:w-10 md:h-10 text-white" />
           </div>
 
-          <h2 className="text-xl md:text-3xl font-bold text-[#1A1A1A] mb-2 md:mb-3">
-            Пробни пријемни 2025/2026
-          </h2>
-          <p className="text-gray-600 text-base md:text-lg mb-3 md:mb-4">
+          <h2 className="text-xl md:text-3xl font-bold text-[#1A1A1A] mb-3 md:mb-4">
             Тестирајте своје знање бесплатно!
-          </p>
+          </h2>
           <p className="text-gray-500 text-xs md:text-sm mb-4 md:mb-6 max-w-lg mx-auto leading-relaxed">
             Решите 20 питања из српског језика и књижевности и проверите колико сте спремни за малу матуру.
             На крају добијате код за попуст који можете искористити при уплати курса.
-          </p>
-          <p className="text-gray-500 text-xs mb-4 md:mb-6 max-w-lg mx-auto leading-relaxed italic">
-            Напомена: Ако затворите овај прозор, можете касније приступити квизу путем дугмета у доњем левом углу екрана.
           </p>
 
           {/* 20% Discount Highlight */}
@@ -91,18 +85,7 @@ export default function PromoQuizModal() {
             </p>
           </div>
 
-          <div className="grid grid-cols-2 gap-3 md:gap-4 max-w-xs mx-auto mb-5 md:mb-8">
-            <div className="bg-red-50 rounded-lg p-2 md:p-3">
-              <div className="text-lg md:text-xl font-black text-[#D62828]">20</div>
-              <div className="text-xs text-gray-500">питања</div>
-            </div>
-            <div className="bg-red-50 rounded-lg p-2 md:p-3">
-              <div className="text-lg md:text-xl font-black text-[#D62828]">попуст</div>
-              <div className="text-xs text-gray-500">на крају</div>
-            </div>
-          </div>
-
-          <div className="flex flex-col sm:flex-row gap-2 md:gap-3 justify-center">
+          <div className="flex flex-col sm:flex-row gap-2 md:gap-3 justify-center mb-4">
             <button
               onClick={handleStartQuiz}
               className="px-6 py-3 md:px-8 md:py-4 bg-[#D62828] text-white rounded-lg font-bold hover:bg-[#B91F1F] transition-all shadow-lg hover:shadow-xl flex items-center justify-center gap-2 text-base md:text-lg"
@@ -116,6 +99,10 @@ export default function PromoQuizModal() {
               Не хвала
             </button>
           </div>
+
+          <p className="text-gray-500 text-sm md:text-base max-w-lg mx-auto leading-relaxed">
+            Квиз можете покренути касније путем дугмета у доњем левом углу.
+          </p>
         </div>
       </div>
     </div>
