@@ -68,5 +68,26 @@
         "description": "Именице, придеви, заменице, бројеви — подврсте и употреба. 10 питања.",
         "fileName": "imenicke-reci.json",
         "difficulty": "Medium"
+    },
+    {
+        "id": "knjizevnost-1",
+        "title": "Књижевност 1",
+        "description": "Књижевни родови, епски циклуси, лирске народне песме, хајдуци и ускоци — 10 питања из књижевности.",
+        "fileName": "knjizevnost-1.json",
+        "difficulty": "Medium"
+    },
+    {
+        "id": "knjizevnost-2",
+        "title": "Књижевност 2",
+        "description": "Сеобе, Сумњиво лице, строфе, стихови, риме, сатирична дела, лирски субјект — 10 питања.",
+        "fileName": "knjizevnost-2.json",
+        "difficulty": "Medium"
+    },
+    {
+        "id": "dela-i-pisci",
+        "title": "Дела и писци",
+        "description": "Препознавање аутора познатих књижевних дела српске књижевности — 10 питања.",
+        "fileName": "dela-i-pisci.json",
+        "difficulty": "Easy"
     }
 ]
