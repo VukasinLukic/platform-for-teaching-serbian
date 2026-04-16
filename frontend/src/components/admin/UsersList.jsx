@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { collection, getDocs, query, where, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db, functions } from '../../services/firebase';
 import { httpsCallable } from 'firebase/functions';
-import { Users, Mail, Phone, Calendar, BookOpen, Search, Ban, Trash2, ChevronLeft, ChevronRight, UserCheck, ShieldAlert } from 'lucide-react';
+import { Users, Mail, Phone, Calendar, BookOpen, Search, Ban, Trash2, ChevronLeft, ChevronRight, UserCheck, ShieldAlert, Eye } from 'lucide-react';
 import Card, { CardBody } from '../ui/Card';
 import { showToast } from '../../utils/toast';
 import { useConfirm } from '../../hooks/useConfirm';
+import UserDetailModal from './UserDetailModal';
 
 export default function UsersList() {
   const { confirm, ConfirmDialog } = useConfirm();
@@ -15,6 +16,8 @@ export default function UsersList() {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showDetailModal, setShowDetailModal] = useState(false);
   const itemsPerPage = 10;
 
   useEffect(() => {
@@ -207,6 +210,21 @@ export default function UsersList() {
     }
   };
 
+  const handleViewUser = (user) => {
+    setSelectedUser(user);
+    setShowDetailModal(true);
+  };
+
+  const handleCloseDetailModal = () => {
+    setShowDetailModal(false);
+    setSelectedUser(null);
+  };
+
+  const handleUserUpdate = () => {
+    // Reload users to reflect changes
+    loadUsers();
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
@@ -228,6 +246,13 @@ export default function UsersList() {
   return (
     <>
       <ConfirmDialog />
+      {showDetailModal && (
+        <UserDetailModal
+          user={selectedUser}
+          onClose={handleCloseDetailModal}
+          onUpdate={handleUserUpdate}
+        />
+      )}
       <div className="space-y-6">
         {/* Header with search */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
@@ -324,6 +349,13 @@ export default function UsersList() {
                   </td>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => handleViewUser(user)}
+                        className="p-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                        title="Прегледај и управљај курсевима"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
                       <button
                         onClick={() => handleBlockUser(user.id, user.blocked)}
                         className={`p-2 rounded-lg transition-colors ${

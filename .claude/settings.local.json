@@ -74,7 +74,11 @@
       "Bash(CLOUDSDK_CONFIG=/c/Users/INSOMNIA/AppData/Roaming/gcloud CLOUDSDK_PYTHON=$\\(which py\\) /c/Users/INSOMNIA/google-cloud-sdk/bin/gcloud auth list)",
       "Bash(HOME=/c/Users/INSOMNIA CLOUDSDK_PYTHON=$\\(which py\\) /c/Users/INSOMNIA/google-cloud-sdk/bin/gcloud auth list)",
       "Bash(CLOUDSDK_PYTHON=$\\(which py\\) /c/Users/INSOMNIA/google-cloud-sdk/bin/gcloud info)",
-      "Bash(firebase login:list)"
+      "Bash(firebase login:list)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "WebSearch",
+      "Bash(git -c core.editor=true commit -m \"merge origin/main into main\")"
     ],
     "deny": [],
     "ask": []

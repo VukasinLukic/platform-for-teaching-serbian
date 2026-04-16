@@ -103,7 +103,8 @@ service cloud.firestore {
 
     // Settings collection
     match /settings/{settingId} {
-      allow read: if isAdmin();
+      // Allow everyone to read promotions settings
+      allow read: if settingId == 'promotions' || isAdmin();
       allow write: if isAdmin();
     }
 

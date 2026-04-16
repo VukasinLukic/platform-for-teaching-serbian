@@ -18,7 +18,13 @@ export default function LoginPage() {
 
   useEffect(() => {
     if (user) {
-      navigate('/dashboard', { replace: true });
+      const returnTo = localStorage.getItem('srpskiusrcu_return_to');
+      if (returnTo) {
+        localStorage.removeItem('srpskiusrcu_return_to');
+        navigate(returnTo, { replace: true });
+      } else {
+        navigate('/dashboard', { replace: true });
+      }
     }
   }, [user, navigate]);
 
@@ -37,7 +43,13 @@ export default function LoginPage() {
 
     try {
       await loginUser(formData.email, formData.password);
-      navigate('/dashboard');
+      const returnTo = localStorage.getItem('srpskiusrcu_return_to');
+      if (returnTo) {
+        localStorage.removeItem('srpskiusrcu_return_to');
+        navigate(returnTo);
+      } else {
+        navigate('/dashboard');
+      }
     } catch (err) {
       console.error('Login error:', err);
       if (err.code === 'auth/user-not-found') {

@@ -39,7 +39,7 @@
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "max-age=31536000"
+            "value": "max-age=31536000, immutable"
           }
         ]
       },
@@ -53,11 +53,29 @@
         ]
       },
       {
+        "source": "index.html",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "version.json",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
+      {
         "source": "/",
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "no-cache"
+            "value": "no-cache, no-store, must-revalidate"
           }
         ]
       }

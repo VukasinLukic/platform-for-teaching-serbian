@@ -224,15 +224,25 @@ export default function CoursePage() {
                 />
               ) : (
                 <div className="aspect-video flex items-center justify-center text-white">
-                  <div className="text-center px-8">
+                  <div className="text-center px-8 max-w-md">
                     <Video className="w-16 h-16 opacity-30 mx-auto mb-4" />
-                    <p className="text-lg mb-4">Пријавите се да бисте гледали видео</p>
-                    <button
-                      onClick={() => setShowAuthModal(true)}
-                      className="bg-[#D62828] text-white px-8 py-3 rounded-full font-bold hover:bg-[#B91F1F] transition-all"
-                    >
-                      Пријави се
-                    </button>
+                    <p className="text-base md:text-lg mb-6">
+                      Први видео можете да погледате бесплатно. Само је потребно да се пријавите.
+                    </p>
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                      <Link
+                        to="/login"
+                        className="bg-[#D62828] text-white px-8 py-3 rounded-full font-bold hover:bg-[#B91F1F] transition-all"
+                      >
+                        Пријави се
+                      </Link>
+                      <Link
+                        to="/register"
+                        className="bg-white text-[#D62828] px-8 py-3 rounded-full font-bold hover:bg-gray-50 transition-all"
+                      >
+                        Направи налог
+                      </Link>
+                    </div>
                   </div>
                 </div>
               )

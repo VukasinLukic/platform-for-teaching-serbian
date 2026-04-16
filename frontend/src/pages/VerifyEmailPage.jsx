@@ -7,11 +7,21 @@ import { useAuthStore } from '../store/authStore';
 const RESEND_COOLDOWN = 60; // seconds
 const MAX_RESEND_ATTEMPTS = 5;
 const STORAGE_KEY = 'verify_resend';
+const RETURN_TO_KEY = 'srpskiusrcu_return_to';
+
+const getRedirectPath = () => {
+  const returnTo = localStorage.getItem(RETURN_TO_KEY);
+  if (returnTo) {
+    localStorage.removeItem(RETURN_TO_KEY);
+    return returnTo;
+  }
+  return '/dashboard';
+};
 
 const VerifyEmailPage = () => {
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { refreshUserProfile } = useAuthStore();
+  const { user, refreshUserProfile } = useAuthStore();
   const [status, setStatus] = useState('verifying'); // verifying, success, error, waiting
   const [message, setMessage] = useState('');
   const [cooldown, setCooldown] = useState(0);
@@ -52,14 +62,31 @@ const VerifyEmailPage = () => {
   // Listen for verification from another tab
   useEffect(() => {
     const channel = new BroadcastChannel('email_verification');
-    channel.onmessage = (event) => {
+
+    const handleMessage = (event) => {
       if (event.data?.type === 'verified') {
-        setStatus('success');
-        setMessage('Ваш налог је успешно активиран!');
-        setTimeout(() => navigate('/dashboard'), 3000);
+        const action = event.data?.action;
+
+        if (action === 'redirect_to_login') {
+          // Korisnik nije bio ulogovan u drugom tab-u
+          setStatus('success');
+          setMessage('Email верификован! Преусмеравамо вас на пријаву...');
+          setTimeout(() => navigate('/login'), 2000);
+        } else {
+          // Korisnik je bio ulogovan ili default ponašanje
+          setStatus('success');
+          setMessage('Ваш налог је успешно активиран!');
+          setTimeout(() => navigate(getRedirectPath()), 3000);
+        }
       }
     };
-    return () => channel.close();
+
+    channel.addEventListener('message', handleMessage);
+
+    return () => {
+      channel.removeEventListener('message', handleMessage);
+      channel.close();
+    };
   }, [navigate]);
 
   // Verify token on mount
@@ -81,22 +108,41 @@ const VerifyEmailPage = () => {
         const result = await verifyEmailToken({ token });
 
         if (result.data.success) {
-          setStatus('success');
-          setMessage('Ваш налог је успешно активиран!');
+          // Proveri da li je korisnik ulogovan
+          const currentUser = useAuthStore.getState().user;
 
-          // Notify the original waiting tab
-          try {
-            const channel = new BroadcastChannel('email_verification');
-            channel.postMessage({ type: 'verified' });
-            channel.close();
-          } catch (e) { /* ignore */ }
+          if (!currentUser) {
+            // Korisnik NIJE ulogovan - prikaži dugme za login
+            setStatus('success_not_logged_in');
+            setMessage('Успешно сте верификовали email! Сада се можете пријавити.');
 
-          try {
-            await refreshUserProfile();
-          } catch (e) { /* ignore */ }
+            // Obavesti originalni tab da redirect na /login
+            try {
+              const channel = new BroadcastChannel('email_verification');
+              channel.postMessage({ type: 'verified', action: 'redirect_to_login' });
+              // Delay close to ensure message is sent
+              setTimeout(() => channel.close(), 100);
+            } catch (e) { /* ignore */ }
+          } else {
+            // Korisnik JE ulogovan - trenutno ponašanje
+            setStatus('success');
+            setMessage('Ваш налог је успешно активиран!');
 
-          // Redirect to dashboard after 3s
-          setTimeout(() => navigate('/dashboard'), 3000);
+            // Obavesti originalni tab da redirect na /dashboard
+            try {
+              const channel = new BroadcastChannel('email_verification');
+              channel.postMessage({ type: 'verified', action: 'redirect_to_dashboard' });
+              // Delay close to ensure message is sent
+              setTimeout(() => channel.close(), 100);
+            } catch (e) { /* ignore */ }
+
+            try {
+              await refreshUserProfile();
+            } catch (e) { /* ignore */ }
+
+            // Redirect after 3s
+            setTimeout(() => navigate(getRedirectPath()), 3000);
+          }
         } else {
           setStatus('error');
           setMessage('Грешка приликом верификације. Покушајте поново.');
@@ -109,7 +155,7 @@ const VerifyEmailPage = () => {
           setMessage('Неважећи или истекао токен. Молимо затражите нови email за верификацију.');
         } else if (error.code === 'already-exists') {
           setMessage('Ваш email је већ верификован.');
-          setTimeout(() => navigate('/dashboard'), 3000);
+          setTimeout(() => navigate(getRedirectPath()), 3000);
         } else if (error.code === 'deadline-exceeded') {
           setMessage('Токен је истекао. Молимо затражите нови email за верификацију.');
         } else {
@@ -191,8 +237,26 @@ const VerifyEmailPage = () => {
           {message}
         </p>
 
+        {/* Success Not Logged In - show login button */}
+        {status === 'success_not_logged_in' && (
+          <div className="text-center mb-6 p-4 bg-green-50 rounded-2xl">
+            <p className="text-green-700 text-lg font-semibold mb-2">
+              Успешно сте верификовали email!
+            </p>
+            <p className="text-green-600 text-sm mb-4">
+              Ваш налог је активиран. Сада се можете пријавити.
+            </p>
+            <button
+              onClick={() => navigate('/login')}
+              className="w-full bg-primary text-white py-4 rounded-2xl font-semibold hover:bg-primary-dark transition-all duration-300 shadow-lg hover:shadow-xl"
+            >
+              Пријавите се
+            </button>
+          </div>
+        )}
+
         {/* Success - redirect info */}
-        {status === 'success' && (
+        {status === 'success' && user && (
           <div className="text-center mb-6 p-4 bg-green-50 rounded-2xl">
             <p className="text-green-700 text-sm">
               Ускоро ћете поново унети email и шифру. Приступили сте платформи.
@@ -254,7 +318,7 @@ const VerifyEmailPage = () => {
 
           {status === 'success' && (
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={() => navigate(getRedirectPath())}
               className="w-full bg-primary text-white py-4 rounded-2xl font-semibold hover:bg-primary-dark transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               Иди на Ваш Панел
