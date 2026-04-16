@@ -54,6 +54,15 @@ export default function ContactPage() {
         title="КОНТАКТ | ПИШИТЕ НАМ ИЛИ ПОЗОВИТЕ"
         description="Контактирајте нас за питања о online курсевима српског језика и припреми мале матуре. Одговарамо у року од 24 часа."
         canonical="/contact"
+        jsonLd={[{
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            { "@type": "ListItem", "position": 1, "name": "Почетна", "item": "https://srpskiusrcu.rs/" },
+            { "@type": "ListItem", "position": 2, "name": "Контакт", "item": "https://srpskiusrcu.rs/contact" }
+          ]
+        }]}
+        keywords="kontakt srpski u srcu, kontakt online nastava, pitanja o kursevima, email profesorka Marina"
       />
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />

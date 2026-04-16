@@ -78,6 +78,15 @@ const blogPosts = [
 ];
 
 export default function BlogPage() {
+  const blogBreadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Почетна", "item": "https://srpskiusrcu.rs/" },
+      { "@type": "ListItem", "position": 2, "name": "Блог", "item": "https://srpskiusrcu.rs/blog" }
+    ]
+  };
+
   const blogJsonLd = {
     "@context": "https://schema.org",
     "@type": "Blog",
@@ -96,7 +105,8 @@ export default function BlogPage() {
         title="БЛОГ | САВЕТИ И ВОДИЧИ ЗА МАЛУ МАТУРУ"
         description="Чланци, савети и водичи за припрему мале матуре из српског језика. Граматика, књижевност, савети за родитеље и ученике."
         canonical="/blog"
-        jsonLd={[blogJsonLd]}
+        jsonLd={[blogJsonLd, blogBreadcrumbJsonLd]}
+        keywords="blog srpski jezik, saveti za malu maturu, gramatika srpski, knjizevnost osnovna skola, padezi srpski jezik, stilske figure, glasovne promene"
       />
       <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
         <Header />

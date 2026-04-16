@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   Play, Book, CheckCircle, Lock, ChevronDown,
-  Video, ArrowRight, FileText, Download
+  Video, ArrowRight, FileText, Download, Loader2
 } from 'lucide-react';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
@@ -27,6 +27,29 @@ export default function CoursePage() {
   const [selectedLesson, setSelectedLesson] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
+  const [downloadingIdx, setDownloadingIdx] = useState(null);
+
+  const handleDownloadMaterial = async (material, idx) => {
+    setDownloadingIdx(idx);
+    try {
+      const response = await fetch(material.url);
+      if (!response.ok) throw new Error('Download failed');
+      const blob = await response.blob();
+      const blobUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = blobUrl;
+      a.download = material.name;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(blobUrl);
+    } catch (error) {
+      console.error('Download error:', error);
+      window.open(material.url, '_blank');
+    } finally {
+      setDownloadingIdx(null);
+    }
+  };
 
   useEffect(() => {
     loadCourseData();
@@ -236,13 +259,11 @@ export default function CoursePage() {
                 </h3>
                 <div className="grid gap-3">
                   {selectedLesson.materials.map((material, idx) => (
-                    <a
+                    <button
                       key={idx}
-                      href={material.url}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      download={material.name}
-                      className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group text-left w-full overflow-hidden"
+                      onClick={() => handleDownloadMaterial(material, idx)}
+                      disabled={downloadingIdx === idx}
+                      className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group text-left w-full overflow-hidden disabled:opacity-60 disabled:cursor-wait"
                     >
                       <div className="w-12 h-12 bg-[#D62828] rounded-lg flex items-center justify-center flex-shrink-0">
                         <FileText className="w-6 h-6 text-white" />
@@ -251,8 +272,12 @@ export default function CoursePage() {
                         <p className="font-semibold text-[#1A1A1A] truncate">{material.name}</p>
                         <p className="text-sm text-gray-500">{(material.size / 1024).toFixed(0)} KB</p>
                       </div>
-                      <Download className="w-5 h-5 text-gray-400 group-hover:text-[#D62828] transition-colors" />
-                    </a>
+                      {downloadingIdx === idx ? (
+                        <Loader2 className="w-5 h-5 text-[#D62828] animate-spin" />
+                      ) : (
+                        <Download className="w-5 h-5 text-gray-400 group-hover:text-[#D62828] transition-colors" />
+                      )}
+                    </button>
                   ))}
                 </div>
               </div>

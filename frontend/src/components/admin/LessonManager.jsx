@@ -191,7 +191,10 @@ export default function LessonManager() {
         try {
           const fileName = `course-materials/${selectedCourse}/${lessonId}/${Date.now()}_${material.name}`;
           const storageRef = ref(storage, fileName);
-          const uploadTask = await uploadBytesResumable(storageRef, material.file);
+          const metadata = {
+            contentDisposition: `attachment; filename="${material.name}"`,
+          };
+          const uploadTask = await uploadBytesResumable(storageRef, material.file, metadata);
           const downloadURL = await getDownloadURL(uploadTask.ref);
 
           uploadedMaterials.push({

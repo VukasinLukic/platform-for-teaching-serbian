@@ -31,8 +31,11 @@ export default function Footer() {
             <ul className="space-y-4 text-gray-600">
               <li><Link to="/" className="hover:text-[#D62828] transition-colors">Почетна</Link></li>
               <li><Link to="/courses" className="hover:text-[#D62828] transition-colors">Курсеви</Link></li>
+              <li><Link to="/online-nastava" className="hover:text-[#D62828] transition-colors">Online настава</Link></li>
+              <li><Link to="/benefits" className="hover:text-[#D62828] transition-colors">Предности</Link></li>
               <li><Link to="/about" className="hover:text-[#D62828] transition-colors">О Нама</Link></li>
               <li><Link to="/blog" className="hover:text-[#D62828] transition-colors">Блог</Link></li>
+              <li><Link to="/faq" className="hover:text-[#D62828] transition-colors">Честа питања</Link></li>
               <li><Link to="/contact" className="hover:text-[#D62828] transition-colors">Контакт</Link></li>
               <li><Link to="/register" className="hover:text-[#D62828] transition-colors">Пријави се</Link></li>
             </ul>
@@ -49,7 +52,7 @@ export default function Footer() {
         </div>
 
         <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
-          <p>&copy; 2025 СРПСКИ У СРЦУ. Сва права задржана.</p>
+          <p>&copy; 2026 СРПСКИ У СРЦУ. Сва права задржана.</p>
           <div className="flex gap-6">
             <Link to="/privacy" className="hover:text-[#D62828] transition-colors">Политика приватности</Link>
             <Link to="/terms" className="hover:text-[#D62828] transition-colors">Услови коришћења</Link>

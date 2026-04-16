@@ -79,12 +79,23 @@ export default function BenefitsPage() {
     'Редовни update-ови садржаја',
   ];
 
+  const benefitsBreadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Почетна", "item": "https://srpskiusrcu.rs/" },
+      { "@type": "ListItem", "position": 2, "name": "Предности", "item": "https://srpskiusrcu.rs/benefits" }
+    ]
+  };
+
   return (
     <>
       <SEO
         title="ЗАШТО УЧИТИ СА НАМА | ПРЕДНОСТИ ОНЛАЈН КУРСЕВА ЗА МАЛУ МАТУРУ"
         description="Откријте зашто је Српски у Срцу најбољи избор за припрему мале матуре: 100+ видео лекција, 24/7 приступ, наставница са 27 год искуства, интерактивни тестови."
         canonical="/benefits"
+        jsonLd={[benefitsBreadcrumbJsonLd]}
+        keywords="prednosti online kurseva, zasto online nastava srpskog, video lekcije srpski jezik, priprema za malu maturu prednosti, online ucenje srpski"
       />
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />

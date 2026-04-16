@@ -57,6 +57,15 @@ export default function AboutPage() {
     return () => observer.disconnect();
   }, [hasAnimated]);
 
+  const aboutBreadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Почетна", "item": "https://srpskiusrcu.rs/" },
+      { "@type": "ListItem", "position": 2, "name": "О нама", "item": "https://srpskiusrcu.rs/about" }
+    ]
+  };
+
   const aboutJsonLd = {
     "@context": "https://schema.org",
     "@type": "Person",
@@ -81,7 +90,8 @@ export default function AboutPage() {
         title="О НАМА | МАРИНА ЛУКИЋ - НАСТАВНИЦА СА 27 ГОДИНА ИСКУСТВА"
         description="Упознајте наставницу Марину Лукић - дипломирани филолог са 27 година искуства, добитницу републичких награда. Сви ученици су успешно положили малу матуру."
         canonical="/about"
-        jsonLd={[aboutJsonLd]}
+        jsonLd={[aboutJsonLd, aboutBreadcrumbJsonLd]}
+        keywords="Marina Lukic nastavnica, profesorka srpskog jezika, nastavnica sa iskustvom, republicke nagrade srpski jezik, filoloska fakultet Beograd"
       />
       <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
         <Header />

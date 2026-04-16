@@ -489,7 +489,8 @@ export default function BlogPostPage() {
     "description": post.excerpt,
     "author": {
       "@type": "Person",
-      "name": post.author
+      "name": post.author,
+      "jobTitle": "Наставница српског језика и књижевности"
     },
     "datePublished": post.date,
     "publisher": {
@@ -503,7 +504,19 @@ export default function BlogPostPage() {
     "mainEntityOfPage": {
       "@type": "WebPage",
       "@id": `https://srpskiusrcu.rs/blog/${slug}`
-    }
+    },
+    "inLanguage": "sr",
+    "keywords": post.category
+  };
+
+  const blogPostBreadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Почетна", "item": "https://srpskiusrcu.rs/" },
+      { "@type": "ListItem", "position": 2, "name": "Блог", "item": "https://srpskiusrcu.rs/blog" },
+      { "@type": "ListItem", "position": 3, "name": post.title, "item": `https://srpskiusrcu.rs/blog/${slug}` }
+    ]
   };
 
   return (
@@ -513,7 +526,7 @@ export default function BlogPostPage() {
         description={post.excerpt}
         canonical={`/blog/${slug}`}
         ogType="article"
-        jsonLd={[articleJsonLd]}
+        jsonLd={[articleJsonLd, blogPostBreadcrumbJsonLd]}
       />
       <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
         <Header />

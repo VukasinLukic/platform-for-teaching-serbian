@@ -310,7 +310,57 @@ export default function HomePage() {
       },
       "description": "Online платформа за видео курсеве српског језика за припрему мале матуре",
       "areaServed": "RS",
-      "availableLanguage": "sr"
+      "availableLanguage": "sr",
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "4.9",
+        "bestRating": "5",
+        "ratingCount": "700",
+        "reviewCount": "3"
+      },
+      "review": [
+        {
+          "@type": "Review",
+          "author": { "@type": "Person", "name": "Јелена М." },
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+          "reviewBody": "Видео лекције су нас спасиле. Дете све разуме из прве, без драме и без мог живцирања."
+        },
+        {
+          "@type": "Review",
+          "author": { "@type": "Person", "name": "Марина Т." },
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+          "reviewBody": "Купили смо курс и за недељу дана дете само седне и учи. Не морам ништа да објашњавам. Вреди сваки динар."
+        },
+        {
+          "@type": "Review",
+          "author": { "@type": "Person", "name": "Стефан К." },
+          "reviewRating": { "@type": "Rating", "ratingValue": "5", "bestRating": "5" },
+          "reviewBody": "Уписао сам жељену гимназију. Лекције су ми биле јасне, а задаци су ме стварно спремили за пријемни."
+        }
+      ]
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "EducationalOrganization",
+      "name": "Српски у Срцу",
+      "url": "https://srpskiusrcu.rs",
+      "description": "Online платформа за припрему мале матуре из српског језика — видео курсеви, online часови уживо, пробни тестови",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Крушевац",
+        "addressCountry": "RS"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "43.58",
+        "longitude": "21.33"
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Београд" },
+        { "@type": "City", "name": "Крушевац" },
+        { "@type": "City", "name": "Нови Сад" },
+        { "@type": "Country", "name": "Србија" }
+      ]
     }
   ];
 
@@ -321,6 +371,7 @@ export default function HomePage() {
         description="Srpski u Srcu - Online видео курсеви за припрему мале матуре (mala matura) из српског језика. Наставница Марина Лукић са 27 година искуства. Учи у своје време, 24/7 приступ."
         canonical="/"
         jsonLd={homeJsonLd}
+        keywords="mala matura srpski jezik, priprema za malu maturu, online kursevi srpskog, video lekcije srpski jezik, zavrsni ispit 8 razred, srpski jezik online nastava, kurs srpskog za malu maturu"
       />
     <div className="min-h-screen bg-[#fdfafc] font-sans text-[#1A1A1A]">
       <Header />

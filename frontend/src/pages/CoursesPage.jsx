@@ -73,13 +73,48 @@ export default function CoursesPage() {
     }
   };
 
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Почетна", "item": "https://srpskiusrcu.rs/" },
+      { "@type": "ListItem", "position": 2, "name": "Курсеви", "item": "https://srpskiusrcu.rs/courses" }
+    ]
+  };
+
+  const courseSchemaJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "Припрема за малу матуру из српског језика",
+    "description": "Комплетни видео курсеви за припрему мале матуре из српског језика — граматика, књижевност, правопис. HD видео лекције, задаци са решењима, пробни тестови.",
+    "provider": {
+      "@type": "EducationalOrganization",
+      "name": "Српски у Срцу",
+      "url": "https://srpskiusrcu.rs",
+      "sameAs": "https://www.instagram.com/srpskiusrcu"
+    },
+    "educationalLevel": "Основна школа (5-8. разред)",
+    "inLanguage": "sr",
+    "teaches": "Српски језик и књижевност — граматика, правопис, стилске фигуре, анализа књижевних дела, припрема за завршни испит",
+    "hasCourseInstance": {
+      "@type": "CourseInstance",
+      "courseMode": "online",
+      "instructor": {
+        "@type": "Person",
+        "name": "Марина Лукић",
+        "jobTitle": "Наставница српског језика и књижевности"
+      }
+    }
+  };
+
   return (
     <>
       <SEO
         title="ОНЛАЈН КУРСЕВИ СРПСКОГ | ПРИПРЕМА МАЛЕ МАТУРЕ ИЗ СРПСКОГ ЈЕЗИКА"
         description="Комплетни видео курсеви за припрему мале матуре из српског језика. Граматика, књижевност, правопис. Учи у своје време са наставницом са 27 год искуства."
         canonical="/courses"
-        jsonLd={[coursesJsonLd]}
+        jsonLd={[coursesJsonLd, breadcrumbJsonLd, courseSchemaJsonLd]}
+        keywords="online kursevi srpskog jezika, priprema za malu maturu, video lekcije srpski, gramatika srpski jezik, knjizevnost 8 razred, zavrsni ispit srpski, kurs srpskog online"
       />
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />

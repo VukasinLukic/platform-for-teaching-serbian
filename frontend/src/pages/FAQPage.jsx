@@ -42,6 +42,15 @@ export default function FAQPage() {
     }
   ];
 
+  const faqBreadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Почетна", "item": "https://srpskiusrcu.rs/" },
+      { "@type": "ListItem", "position": 2, "name": "Честа питања", "item": "https://srpskiusrcu.rs/faq" }
+    ]
+  };
+
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -61,7 +70,8 @@ export default function FAQPage() {
         title="ЧЕСТА ПИТАЊА О ОНЛАЈН КУРСЕВИМА СРПСКОГ | FAQ"
         description="Одговори на честа питања о online курсевима за малу матуру: начин рада, плаћање, приступ материјалима, трајање курса, подршка."
         canonical="/faq"
-        jsonLd={[faqJsonLd]}
+        jsonLd={[faqJsonLd, faqBreadcrumbJsonLd]}
+        keywords="cesta pitanja online kursevi, kako funkcionise online nastava, placanje kursa srpski, pristup video lekcijama, podrska tokom kursa"
       />
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />

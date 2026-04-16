@@ -117,12 +117,65 @@ export default function OnlineNastavaPage() {
     }
   };
 
+  const onlineFaqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      { "@type": "Question", "name": "Шта ако пропустим час?", "acceptedAnswer": { "@type": "Answer", "text": "Сви часови се снимају и биће доступни 48 сати након одржавања часа. Можете их погледати у своје време." } },
+      { "@type": "Question", "name": "Који разреди могу да се пријаве?", "acceptedAnswer": { "@type": "Answer", "text": "Online настава је намењена ученицима од 5. до 8. разреда основне школе који се припремају за малу матуру из српског језика." } },
+      { "@type": "Question", "name": "Могу ли да откажем претплату?", "acceptedAnswer": { "@type": "Answer", "text": "Да! Пошто су пакети месечни, можете отказати у било ком тренутку. Нема обавеза, нема скривених трошкова." } },
+      { "@type": "Question", "name": "Који термин бирам за групне/индивидуалне часове?", "acceptedAnswer": { "@type": "Answer", "text": "Групни: Четвртком у 18:00. Индивидуални: Уторком, термин бирате при упису." } },
+      { "@type": "Question", "name": "Шта ми треба за online часове?", "acceptedAnswer": { "@type": "Answer", "text": "Потребан вам је компјутер, таблет или телефон са интернетом, камером и микрофоном. Користимо Google Meet који је бесплатан." } }
+    ]
+  };
+
+  const onlineBreadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      { "@type": "ListItem", "position": 1, "name": "Почетна", "item": "https://srpskiusrcu.rs/" },
+      { "@type": "ListItem", "position": 2, "name": "Online настава", "item": "https://srpskiusrcu.rs/online-nastava" }
+    ]
+  };
+
+  const onlineCourseJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    "name": "Online настава српског језика уживо",
+    "description": "Интерактивни online часови српског језика са наставницом уживо преко Google Meet. Групни и индивидуални часови за припрему мале матуре.",
+    "provider": {
+      "@type": "EducationalOrganization",
+      "name": "Српски у Срцу",
+      "url": "https://srpskiusrcu.rs"
+    },
+    "educationalLevel": "Основна школа (5-8. разред)",
+    "inLanguage": "sr",
+    "hasCourseInstance": [
+      {
+        "@type": "CourseInstance",
+        "courseMode": "online",
+        "name": "Групни часови",
+        "instructor": { "@type": "Person", "name": "Марина Лукић" },
+        "courseSchedule": { "@type": "Schedule", "repeatFrequency": "P1W", "byDay": "Thursday", "startTime": "18:00" }
+      },
+      {
+        "@type": "CourseInstance",
+        "courseMode": "online",
+        "name": "Индивидуални часови",
+        "instructor": { "@type": "Person", "name": "Марина Лукић" },
+        "courseSchedule": { "@type": "Schedule", "repeatFrequency": "P1W", "byDay": "Tuesday" }
+      }
+    ]
+  };
+
   return (
     <>
       <SEO
-        title="ОНЛАЈН НАСТАВА | МЕСЕЧНИ ПАКЕТИ ОД 2500 ДИН"
-        description="Видео курсеви од 2500 дин, групни часови 3500 дин, индивидуални 6000 дин месечно. Флексибилни месечни пакети прилагођени вашим потребама."
+        title="ОНЛАЈН НАСТАВА СРПСКОГ ЈЕЗИКА | ЧАСОВИ УЖИВО ОД 2500 ДИН"
+        description="Online часови српског језика уживо са наставницом. Групни часови 3500 дин, индивидуални 6000 дин месечно. Припрема за малу матуру 5-8. разред."
         canonical="/online-nastava"
+        jsonLd={[onlineFaqJsonLd, onlineBreadcrumbJsonLd, onlineCourseJsonLd]}
+        keywords="online nastava srpskog jezika, casovi uzivo srpski, grupni casovi srpski, individualni casovi srpski jezik, priprema mala matura online, online profesor srpski"
       />
 
       {/* Auth Required Modal */}
