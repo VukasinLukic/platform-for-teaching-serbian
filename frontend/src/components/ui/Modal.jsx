@@ -65,7 +65,7 @@ const Modal = ({
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
-      aria-labelledby="modal-title"
+      {...(title ? { 'aria-labelledby': 'modal-title' } : { 'aria-label': 'Дијалог' })}
     >
       <div
         className={`relative w-full ${modalWidth} bg-white rounded-3xl shadow-2xl max-h-[90vh] overflow-hidden animate-slideUp`}
@@ -84,7 +84,7 @@ const Modal = ({
             <button
               onClick={onClose}
               className="ml-auto p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
-              aria-label="Close modal"
+              aria-label="Затвори прозор"
             >
               <X className="w-6 h-6 text-gray-600" />
             </button>

@@ -11,7 +11,7 @@ export default function Footer() {
             <div className="mb-6">
               <Link to="/" className="inline-block">
                 <img
-                  src="/footer.png"
+                  src="/footer.webp"
                   alt="СРПСКИ У СРЦУ — платформа за учење српског језика"
                   className="h-40 md:h-64 w-auto"
                   width="256"

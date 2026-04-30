@@ -25,7 +25,7 @@ export default function Header({ transparent = false }) {
             {/* Logo */}
             <Link to="/" className="flex items-center group transition-transform hover:scale-105">
               <img
-                src="/icon.png"
+                src="/icon.webp"
                 alt="СРПСКИ У СРЦУ"
                 className="h-16 md:h-20 w-auto py-2"
                 width="80"
@@ -98,7 +98,8 @@ export default function Header({ transparent = false }) {
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="lg:hidden p-2 text-[#1A1A1A] hover:text-[#D62828] transition"
-              aria-label="Toggle menu"
+              aria-label={mobileMenuOpen ? 'Затвори мени' : 'Отвори мени'}
+              aria-expanded={mobileMenuOpen}
             >
               {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
             </button>
@@ -117,12 +118,13 @@ export default function Header({ transparent = false }) {
             {/* Menu Header */}
             <div className="bg-gradient-to-r from-[#D62828] to-[#B91F1F] p-6 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <img src="/icon.png" alt="Logo" className="h-12 w-auto" />
+                <img src="/icon.webp" alt="Logo" className="h-12 w-auto" />
                 <span className="text-white font-bold text-lg">Мени</span>
               </div>
               <button
                 onClick={() => setMobileMenuOpen(false)}
                 className="text-white hover:bg-white/20 p-2 rounded-lg transition"
+                aria-label="Затвори мени"
               >
                 <X size={24} />
               </button>

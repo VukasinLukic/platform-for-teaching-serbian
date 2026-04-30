@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, ArrowRight, CheckCircle, XCircle, Trophy, Copy, Check, Gift, Lock, UserPlus } from 'lucide-react';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
+import SEO from '../components/SEO';
 import { promoQuizQuestions, PROMO_QUIZ_INTRO_TEXT } from '../data/promoQuizData';
 import { useAuthStore } from '../store/authStore';
 import { usePromo } from '../context/PromoContext';
@@ -143,6 +144,12 @@ export default function PromoQuizPage() {
   if (showResult) {
     return (
       <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+        <SEO
+          title="Пробни Пријемни 2025/2026 — Резултат"
+          description="Урадите пробни пријемни тест из српског и добијте 20% попуст на курс. Бесплатно, без регистрације."
+          canonical="/probni-prijemni"
+          noindex={true}
+        />
         <Header />
         <div className="max-w-2xl mx-auto px-6 py-12">
           <div className="bg-white rounded-3xl p-8 md:p-12 border border-gray-100 shadow-xl text-center">
@@ -158,9 +165,13 @@ export default function PromoQuizPage() {
             </h2>
             <p className="text-gray-500 text-sm mb-3">Ваш резултат:</p>
 
-            <div className="text-4xl font-black text-[#D62828] mb-6">
+            <div className="text-4xl font-black text-[#D62828] mb-3">
               {effectiveScore} <span className="text-lg text-gray-400 font-medium">/ {effectiveTotal}</span>
             </div>
+
+            <p className="text-sm text-gray-500 mb-6">
+              Prosek naših učenika je <span className="font-bold text-[#1A1A1A]">15</span> / {effectiveTotal} poena.
+            </p>
 
             {/* 20% Discount Highlight */}
             <div className="bg-gradient-to-r from-[#D62828] to-[#B91F1F] rounded-2xl p-5 mb-6 shadow-lg">
@@ -261,6 +272,12 @@ export default function PromoQuizPage() {
   // QUIZ VIEW
   return (
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+      <SEO
+        title="Пробни Пријемни 2025/2026 — Тест из Српског"
+        description="Урадите пробни пријемни тест из српског и добијте 20% попуст на курс. Бесплатно, без регистрације."
+        canonical="/probni-prijemni"
+        keywords="probni prijemni srpski, pробни тест српски, priprema za malu maturu test"
+      />
       <Header />
 
       <div className="max-w-4xl mx-auto px-6 py-12">

@@ -382,7 +382,7 @@ export default function HomePage() {
         <div className="absolute right-0 bottom-0 hidden lg:block group" style={{ width: '55%' }}>
           <div className="relative">
             <img
-              src="/pozadinaHeroSekcija.png"
+              src="/pozadinaHeroSekcija.webp"
               alt=""
               className="w-full h-auto"
               draggable={false}

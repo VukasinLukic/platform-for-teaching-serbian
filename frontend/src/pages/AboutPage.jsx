@@ -129,7 +129,7 @@ export default function AboutPage() {
             <div className="lg:hidden mb-12">
               <div className="relative">
                 <img
-                  src="/profesorkaMarina.jpg"
+                  src="/profesorkaMarina.webp"
                   alt="Професорка Марина"
                   className="w-full object-contain h-auto rounded-3xl"
                   loading="lazy"
@@ -189,7 +189,7 @@ export default function AboutPage() {
               {/* Image Side */}
               <div className="relative">
                 <img
-                  src="/profesorkaMarina.jpg"
+                  src="/profesorkaMarina.webp"
                   alt="Професорка Марина"
                   className="w-full object-contain h-auto"
                   loading="lazy"

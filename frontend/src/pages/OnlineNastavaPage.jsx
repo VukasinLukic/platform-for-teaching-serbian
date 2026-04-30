@@ -303,7 +303,7 @@ export default function OnlineNastavaPage() {
                     <Calendar className="w-6 h-6 text-[#F2C94C] flex-shrink-0 mt-1" />
                     <div>
                       <h3 className="font-bold text-lg mb-1">Групни часови</h3>
-                      <p className="text-white/80">Четвртком у 18:00 - 4 часа месечно (по 1 сат)</p>
+                      <p className="text-white/80">4 часа месечно (по 1 сат)</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
