@@ -35,6 +35,7 @@ const TermsPage = lazy(() => import('./pages/legal/TermsPage'));
 const FAQPage = lazy(() => import('./pages/FAQPage'));
 const OnlineNastavaPage = lazy(() => import('./pages/OnlineNastavaPage'));
 const PaymentSlipPage = lazy(() => import('./pages/PaymentSlipPage'));
+const InicijalniTestPage = lazy(() => import('./pages/InicijalniTestPage'));
 const QuizListPage = lazy(() => import('./pages/QuizListPage'));
 const QuizRunnerPage = lazy(() => import('./pages/QuizRunnerPage'));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
@@ -147,6 +148,7 @@ function AppContent() {
             <Route path="/blog" element={<BlogPage />} />
             <Route path="/blog/:slug" element={<BlogPostPage />} />
             <Route path="/probni-prijemni" element={<PromoQuizPage />} />
+            <Route path="/inicijalni-test/:razred" element={<InicijalniTestPage />} />
 
             {/* SEO Test Stranice */}
             <Route path="/srpski-jezik/:kategorija/:slug" element={<SEOTestPage />} />

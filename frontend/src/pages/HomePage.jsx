@@ -14,9 +14,12 @@ import {
   GraduationCap,
   MessageCircle,
   Clock,
-  Play
+  Play,
+  Sparkles,
+  ClipboardList
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
+import { inicijalniTestoviList } from '../data/inicijalniTestovi';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import SEO from '../components/SEO';
@@ -503,6 +506,85 @@ export default function HomePage() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* 1.5 INICIJALNI TESTOVI SECTION — full screen */}
+      <section
+        id="inicijalni-testovi"
+        className="min-h-screen flex flex-col justify-center py-20 bg-gradient-to-b from-[#fdfafc] via-white to-[#fdfafc] relative overflow-hidden scroll-mt-24"
+      >
+        {/* Playful background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-25">
+          <div className="absolute top-16 left-8 w-40 h-40 bg-[#D62828] rounded-full blur-3xl animate-pulse"></div>
+          <div
+            className="absolute top-1/3 right-10 w-28 h-28 bg-yellow-300 rounded-full blur-2xl animate-pulse"
+            style={{ animationDelay: '1s' }}
+          ></div>
+          <div
+            className="absolute bottom-16 left-1/3 w-52 h-52 bg-blue-300 rounded-full blur-3xl animate-pulse"
+            style={{ animationDelay: '2s' }}
+          ></div>
+        </div>
+
+        <div className="max-w-6xl mx-auto px-6 relative z-10 w-full">
+          <FadeInSection>
+            <div className="text-center mb-4">
+              <span className="inline-flex items-center gap-2 bg-red-50 text-[#D62828] text-sm font-bold px-4 py-1.5 rounded-full">
+                <Sparkles className="w-4 h-4" />
+                Бесплатно · без регистрације
+              </span>
+            </div>
+            <h2 className="text-3xl md:text-5xl font-extrabold text-[#1A1A1A] text-center mb-4">
+              Припреми се за иницијалне тестове
+            </h2>
+            <p className="text-gray-600 text-lg md:text-xl text-center max-w-2xl mx-auto mb-14">
+              Провери своје знање из српског језика пре почетка школске године. Одабери свој
+              разред и уради иницијални тест — тачне одговоре видиш одмах.
+            </p>
+          </FadeInSection>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
+            {inicijalniTestoviList.map((test, i) => (
+              <FadeInSection key={test.razred} delay={i * 120}>
+                <Link
+                  to={`/inicijalni-test/${test.razred}`}
+                  className="group flex flex-col h-full bg-white rounded-3xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-2xl hover:border-[#D62828]/40 hover:-translate-y-1.5 transition-all duration-300"
+                >
+                  <div className="flex items-center justify-between mb-5">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#D62828] to-[#B91F1F] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                      <span className="text-2xl font-black text-white">{test.razred}</span>
+                    </div>
+                    <ClipboardList className="w-6 h-6 text-gray-300 group-hover:text-[#D62828] transition-colors" />
+                  </div>
+
+                  <h3 className="text-xl font-bold text-[#1A1A1A] mb-1">
+                    {test.razred}. разред
+                  </h3>
+                  <p className="text-sm text-gray-500 leading-relaxed mb-4 flex-1">
+                    {test.kratakOpis}
+                  </p>
+
+                  <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-gray-400 mb-5">
+                    <span>{test.pitanja.length} питања</span>
+                    <span className="w-1 h-1 rounded-full bg-gray-300"></span>
+                    <span>~5 мин</span>
+                  </div>
+
+                  <span className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-full bg-[#1A1A1A] text-white text-sm font-bold group-hover:bg-[#D62828] transition-colors">
+                    Уради тест
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                </Link>
+              </FadeInSection>
+            ))}
+          </div>
+
+          <FadeInSection delay={200}>
+            <p className="text-center text-sm text-gray-400 mt-10">
+              Тестови за 5, 6, 7. и 8. разред — граматика, правопис и књижевност.
+            </p>
+          </FadeInSection>
         </div>
       </section>
 

@@ -66,6 +66,32 @@
     <priority>0.8</priority>
   </url>
 
+  <!-- Inicijalni testovi 5-8. razred -->
+  <url>
+    <loc>https://srpskiusrcu.rs/inicijalni-test/5</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://srpskiusrcu.rs/inicijalni-test/6</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://srpskiusrcu.rs/inicijalni-test/7</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://srpskiusrcu.rs/inicijalni-test/8</loc>
+    <lastmod>2026-09-06</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- Privatnost -->
   <url>
     <loc>https://srpskiusrcu.rs/privacy</loc>
