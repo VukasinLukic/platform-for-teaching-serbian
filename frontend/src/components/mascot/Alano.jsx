@@ -78,9 +78,10 @@ export default function Alano({ pose = 'idle', size = 72, className = '', onPose
           src={SRC[p]}
           alt=""
           draggable={false}
-          className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-300 ease-out ${
+          className={`absolute inset-0 w-full h-full object-contain select-none transition-opacity duration-300 ease-out ${
             activeImg === p ? `opacity-100 ${animClass}` : 'opacity-0 pointer-events-none'
           }`}
+          style={{ WebkitTouchCallout: 'none' }}
         />
       ))}
 
