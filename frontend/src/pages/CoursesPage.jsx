@@ -120,30 +120,30 @@ export default function CoursesPage() {
       <Header />
 
       {/* Hero */}
-      <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] text-white py-20 rounded-b-[3rem]">
+      <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] text-white py-14 md:py-20 rounded-b-[2rem] md:rounded-b-[3rem]">
         <div className="max-w-7xl mx-auto px-6 text-center">
-          <h1 className="text-5xl md:text-7xl font-bold mb-6">
+          <h1 className="text-4xl md:text-7xl font-bold mb-4 md:mb-6">
             Наши курсеви
           </h1>
-          <p className="text-2xl text-white/90 max-w-3xl mx-auto">
+          <p className="text-base md:text-2xl text-white/90 max-w-3xl mx-auto">
             Изаберите програм који вам највише одговара и започните припрему за малу матуру на време.
           </p>
         </div>
       </div>
 
       {/* How It Works Section */}
-      <div className="bg-gradient-to-br from-[#F7F7F7] to-white py-20">
+      <div className="bg-gradient-to-br from-[#F7F7F7] to-white py-14 md:py-20">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
+          <div className="text-center mb-10 md:mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-[#1A1A1A] mb-3 md:mb-4">
               Како функционише?
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-base md:text-xl text-gray-600">
               Једноставан процес од уписа до учења
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-8">
             {/* Step 1 */}
             <div
               ref={el => stepRefs.current[0] = el}
@@ -220,7 +220,7 @@ export default function CoursesPage() {
       </div>
 
       {/* Courses Grid */}
-      <div className="max-w-7xl mx-auto px-6 py-20">
+      <div className="max-w-7xl mx-auto px-6 py-14 md:py-20">
         {loading ? (
           <div className="flex justify-center py-20">
             <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#D62828] border-t-transparent"></div>
@@ -294,7 +294,7 @@ export default function CoursesPage() {
                           e.stopPropagation();
                           setExpandedCards(prev => ({ ...prev, [course.id]: !prev[course.id] }));
                         }}
-                        className="text-sm text-[#D62828] font-semibold hover:underline w-full text-left"
+                        className="text-sm text-[#D62828] font-semibold hover:underline w-full text-left py-2 -my-2"
                       >
                         {expandedCards[course.id] ? 'Прикажи мање ▲' : 'Прикажи више ▼'}
                       </button>

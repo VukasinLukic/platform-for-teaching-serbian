@@ -191,7 +191,7 @@ export default function PromoQuizPage() {
                   Ваш код за попуст:
                 </p>
                 <div className="bg-white rounded-xl p-4 flex items-center justify-between gap-3 border border-green-200">
-                  <code className="text-xl md:text-2xl font-black text-[#1A1A1A] tracking-wider">
+                  <code className="min-w-0 break-all text-lg md:text-2xl font-black text-[#1A1A1A] tracking-wider">
                     {effectiveDiscountCode}
                   </code>
                   <button

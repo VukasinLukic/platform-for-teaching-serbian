@@ -87,14 +87,14 @@ export default function QuizRunner({ quiz, onExit }) {
             </div>
 
             {/* Question Card */}
-            <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100 mb-8">
-                <div className="text-xl font-normal text-[#1A1A1A] mb-8 whitespace-pre-line leading-relaxed">
+            <div className="bg-white rounded-3xl p-5 md:p-8 shadow-sm border border-gray-100 mb-8">
+                <div className="text-lg md:text-xl font-normal text-[#1A1A1A] mb-8 whitespace-pre-line leading-relaxed">
                     {parse(currentQuestion.question)}
                 </div>
 
                 <div className="space-y-4">
                     {currentQuestion.answers.map((answer, index) => {
-                        let buttonClass = "w-full text-left p-4 rounded-xl border-2 transition-all font-medium text-lg ";
+                        let buttonClass = "w-full text-left p-4 rounded-xl border-2 transition-all font-medium text-base md:text-lg ";
 
                         if (isAnswerSubmitted) {
                             if (answer === currentQuestion.correctAnswer) {
@@ -119,13 +119,13 @@ export default function QuizRunner({ quiz, onExit }) {
                                 className={buttonClass}
                                 disabled={isAnswerSubmitted}
                             >
-                                <div className="flex justify-between items-center">
-                                    <span>{answer}</span>
+                                <div className="flex justify-between items-start gap-3">
+                                    <span className="flex-1">{answer}</span>
                                     {isAnswerSubmitted && answer === currentQuestion.correctAnswer && (
-                                        <CheckCircle className="w-6 h-6 text-green-500" />
+                                        <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-0.5" />
                                     )}
                                     {isAnswerSubmitted && answer === selectedAnswer && answer !== currentQuestion.correctAnswer && (
-                                        <XCircle className="w-6 h-6 text-red-500" />
+                                        <XCircle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
                                     )}
                                 </div>
                             </button>

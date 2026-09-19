@@ -141,9 +141,9 @@ export default function BlogPage() {
       <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
         <Header />
 
-        <div className="max-w-4xl mx-auto px-6 pt-28 pb-20">
-          <h1 className="text-3xl md:text-4xl font-bold mb-2">Блог</h1>
-          <p className="text-gray-500 mb-12">Чланци о српском језику, припреми за испит и савети за родитеље.</p>
+        <div className="max-w-4xl mx-auto px-6 pt-16 pb-12 md:pt-28 md:pb-20">
+          <h1 className="text-2xl md:text-4xl font-bold mb-2">Блог</h1>
+          <p className="text-gray-500 mb-8 md:mb-12">Чланци о српском језику, припреми за испит и савети за родитеље.</p>
 
           <div className="space-y-0 divide-y divide-gray-200">
             {blogPosts.map((post) => (

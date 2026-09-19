@@ -299,7 +299,7 @@ export default function CoursePage() {
 
     // If no lesson is selected
     return (
-      <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-16 text-center border border-gray-100 aspect-video flex items-center justify-center">
+      <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-6 md:p-16 text-center border border-gray-100 aspect-video flex items-center justify-center">
         <div>
           <div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
             <Play className="w-12 h-12 text-[#D62828]" />
@@ -499,7 +499,7 @@ export default function CoursePage() {
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-8">
         {/* Course Header with Thumbnail */}
         <div className="mb-8">
-          <div className="grid lg:grid-cols-[380px_1fr] gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-[380px_1fr] gap-6 lg:gap-8 items-start">
             {/* Thumbnail */}
             <div className="relative lg:ml-[25%]">
               {course.thumbnail_url ? (
@@ -520,22 +520,22 @@ export default function CoursePage() {
 
             {/* Course Info */}
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-5xl font-bold text-[#1A1A1A]">{course.title}</h1>
-              <p className="text-gray-600 text-lg leading-relaxed">{course.description}</p>
+              <h1 className="text-3xl md:text-5xl font-bold text-[#1A1A1A]">{course.title}</h1>
+              <p className="text-gray-600 text-base md:text-lg leading-relaxed">{course.description}</p>
 
               {/* Price and CTA */}
               {!hasAccess && (
-                <div className="flex items-center gap-6 pt-4">
+                <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 pt-4">
                   <div>
                     <div className="text-sm text-gray-500 mb-1">Цена курса:</div>
-                    <div className="text-4xl font-black text-[#D62828]">
+                    <div className="text-3xl md:text-4xl font-black text-[#D62828]">
                       {formatPrice(course.price)}
                     </div>
                   </div>
                   <button
                     onClick={handlePurchaseClick}
                     disabled={purchasing}
-                    className="bg-[#D62828] text-white px-8 py-4 rounded-full font-bold hover:bg-[#B91F1F] transition-all shadow-lg hover:scale-105 inline-flex items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    className="w-full sm:w-auto bg-[#D62828] text-white px-8 py-4 rounded-full font-bold hover:bg-[#B91F1F] transition-all shadow-lg hover:scale-105 inline-flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     {purchasing ? (
                       <>
@@ -553,7 +553,7 @@ export default function CoursePage() {
               )}
 
               {/* Course Stats */}
-              <div className="flex items-center gap-6 pt-4 border-t border-gray-100">
+              <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-4 border-t border-gray-100">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Book className="w-5 h-5 text-[#D62828]" />
                   <span>{modules.length} наслова</span>
@@ -574,7 +574,7 @@ export default function CoursePage() {
         </div>
 
         {/* Main Grid: Left = Video/CTA, Right = Lessons List */}
-        <div className="grid lg:grid-cols-[1fr_400px] gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-6 lg:gap-8">
           {/* LEFT SIDE - Video Player or CTA */}
           <div className="space-y-6 min-w-0">
             {renderMainContent()}

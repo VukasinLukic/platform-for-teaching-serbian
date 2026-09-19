@@ -101,12 +101,12 @@ export default function BenefitsPage() {
       <Header />
 
       {/* VALUES SECTION - Minimal */}
-      <section className="pt-24 pb-12 px-6">
+      <section className="pt-14 pb-8 md:pt-24 md:pb-12 px-6">
         <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-3xl font-bold mb-3 text-[#1A1A1A]">Наше вредности</h2>
-          <p className="text-gray-600 mb-16">Зашто нас бирају ученици</p>
+          <h2 className="text-2xl md:text-3xl font-bold mb-3 text-[#1A1A1A]">Наше вредности</h2>
+          <p className="text-gray-600 mb-10 md:mb-16">Зашто нас бирају ученици</p>
 
-          <div className="grid md:grid-cols-3 gap-10">
+          <div className="grid md:grid-cols-3 gap-8 md:gap-10">
             <div className="text-center">
               <h3 className="text-lg font-bold mb-3 text-[#1A1A1A]">Учење с разумевањем</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
@@ -140,7 +140,7 @@ export default function BenefitsPage() {
               return (
                 <div
                   key={index}
-                  className="bg-white rounded-[2.5rem] p-8 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col items-center text-center group border border-gray-100"
+                  className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col items-center text-center group border border-gray-100"
                 >
                   <div className={`w-16 h-16 rounded-2xl ${benefit.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                     <Icon className={`w-8 h-8 ${benefit.color}`} />
@@ -157,13 +157,13 @@ export default function BenefitsPage() {
       </section>
 
       {/* DETAILED FEATURES SPLIT */}
-      <section className="py-24 bg-[#F7F7F7] mt-12">
+      <section className="py-14 md:py-24 bg-[#F7F7F7] mt-8 md:mt-12">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="grid lg:grid-cols-2 gap-16">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
             {/* Left: Checklist */}
             <div>
-              <h2 className="text-4xl font-bold mb-8">Шта је све укључено?</h2>
-              <div className="bg-white rounded-[3rem] p-10 shadow-lg">
+              <h2 className="text-2xl md:text-4xl font-bold mb-5 md:mb-8">Шта је све укључено?</h2>
+              <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-lg">
                 <div className="grid sm:grid-cols-2 gap-y-4 gap-x-8">
                   {includedFeatures.map((feature, index) => (
                     <div key={index} className="flex items-start gap-3">
@@ -180,7 +180,7 @@ export default function BenefitsPage() {
             {/* Right: Guarantee & CTA */}
             <div className="space-y-8">
               {/* Guarantee Card */}
-              <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] text-white rounded-[3rem] p-10 shadow-xl relative overflow-hidden">
+              <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] text-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-xl relative overflow-hidden">
                 <div className="relative z-10">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="bg-[#F2C94C] p-3 rounded-xl text-[#1A1A1A]">
@@ -208,7 +208,7 @@ export default function BenefitsPage() {
               </div>
 
               {/* Simple CTA Card */}
-              <div className="bg-white border-2 border-[#D62828] rounded-[3rem] p-10 text-center shadow-lg">
+              <div className="bg-white border-2 border-[#D62828] rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 text-center shadow-lg">
                 <h3 className="text-xl font-bold mb-2">Једнократна уплата</h3>
                 <p className="text-gray-500 text-sm mb-6">Без скривених месечних трошкова</p>
                 <Link to="/register">

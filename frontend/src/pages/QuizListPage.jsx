@@ -36,21 +36,21 @@ export default function QuizListPage() {
         <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
             <Header />
 
-            <div className="max-w-7xl mx-auto px-6 py-16">
-                <div className="mb-12 text-center md:text-left">
-                    <h1 className="text-4xl font-bold mb-4 text-[#1A1A1A]">
+            <div className="max-w-7xl mx-auto px-6 py-8 md:py-16">
+                <div className="mb-8 md:mb-12 text-center md:text-left">
+                    <h1 className="text-2xl md:text-4xl font-bold mb-3 md:mb-4 text-[#1A1A1A]">
                         Квизови знања
                     </h1>
-                    <p className="text-xl text-gray-600 max-w-3xl">
+                    <p className="text-base md:text-xl text-gray-600 max-w-3xl">
                         Тестирајте своје знање кроз наше интерактивне квизове.
                     </p>
                 </div>
 
                 {quizzes.length === 0 ? (
-                    <div className="bg-gray-50 rounded-3xl p-16 text-center border border-gray-100 flex flex-col items-center">
+                    <div className="bg-gray-50 rounded-3xl p-8 md:p-16 text-center border border-gray-100 flex flex-col items-center">
                         <HelpCircle className="w-16 h-16 text-gray-400 mb-6" />
-                        <h3 className="text-2xl font-bold mb-3 text-[#1A1A1A]">Тренутно нема доступних квизова</h3>
-                        <p className="text-gray-600 text-lg">Вратите се касније, ускоро додајемо нове изазове!</p>
+                        <h3 className="text-xl md:text-2xl font-bold mb-3 text-[#1A1A1A]">Тренутно нема доступних квизова</h3>
+                        <p className="text-gray-600 text-base md:text-lg">Вратите се касније, ускоро додајемо нове изазове!</p>
                     </div>
                 ) : (
                     <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">

@@ -109,7 +109,7 @@ export default function Header({ transparent = false }) {
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-40 lg:hidden animate-fade-in">
+        <div className="fixed inset-0 z-[60] lg:hidden animate-fade-in">
           <div
             className="absolute inset-0 bg-black/60 backdrop-blur-md"
             onClick={() => setMobileMenuOpen(false)}

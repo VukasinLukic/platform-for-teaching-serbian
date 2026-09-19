@@ -17,7 +17,7 @@ export default function PaymentSlipPage() {
     if (location.state?.paymentData) {
       setPaymentData(location.state.paymentData);
     } else {
-      navigate('/kursevi');
+      navigate('/courses');
     }
   }, [location, navigate]);
 
@@ -62,7 +62,7 @@ export default function PaymentSlipPage() {
     <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50">
       <Header />
 
-      <div className="pt-32 pb-20 px-4 sm:px-6">
+      <div className="pt-20 pb-12 md:pt-32 md:pb-20 px-4 sm:px-6">
         <div className="max-w-7xl mx-auto">
           <button
             onClick={() => navigate(-1)}
@@ -72,7 +72,7 @@ export default function PaymentSlipPage() {
             <span>Назад</span>
           </button>
 
-          <div className="grid lg:grid-cols-[3fr,1fr] gap-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[3fr,1fr] gap-6 lg:gap-8">
             {/* LEFT SIDE - Payment Slip */}
             <div className="bg-white rounded-3xl shadow-2xl border-2 border-gray-100 overflow-hidden">
               {/* Header with title + buttons */}
