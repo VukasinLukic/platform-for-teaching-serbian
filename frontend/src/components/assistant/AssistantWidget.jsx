@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { httpsCallable } from 'firebase/functions';
 import { doc, updateDoc } from 'firebase/firestore';
-import { X, Send, ThumbsUp } from 'lucide-react';
+import { X, ArrowUp, ThumbsUp, BookOpen, ClipboardList, CreditCard, MessageCircle } from 'lucide-react';
 import Alano from '../mascot/Alano';
 import usePrefersReducedMotion from '../../hooks/usePrefersReducedMotion';
 import { useAuthStore } from '../../store/authStore';
+import { useAssistantUiStore } from '../../store/assistantUiStore';
 import { getUserCourses } from '../../services/course.service';
 import { functions, db } from '../../services/firebase';
 
@@ -111,10 +112,20 @@ function buildGreeting({ isLoggedIn, firstName, razred, owned, navigate, onPickG
   };
 }
 
+function buildQuickActions({ navigate, onQuickAsk }) {
+  return [
+    { key: 'courses', label: 'Курсеви', icon: BookOpen, bg: 'bg-red-50', fg: 'text-[#D62828]', onClick: () => navigate('/courses') },
+    { key: 'tests', label: 'Тестови', icon: ClipboardList, bg: 'bg-amber-50', fg: 'text-amber-600', onClick: () => navigate('/#inicijalni-testovi') },
+    { key: 'payment', label: 'Плаћање', icon: CreditCard, bg: 'bg-emerald-50', fg: 'text-emerald-600', onClick: () => onQuickAsk('Како да платим курс?') },
+    { key: 'contact', label: 'Контакт', icon: MessageCircle, bg: 'bg-blue-50', fg: 'text-blue-600', onClick: () => navigate('/contact') },
+  ];
+}
+
 export default function AssistantWidget() {
   const { user, userProfile, refreshUserProfile } = useAuthStore();
   const navigate = useNavigate();
   const reducedMotion = usePrefersReducedMotion();
+  const setAssistantOpen = useAssistantUiStore((s) => s.setAssistantOpen);
 
   const [isOpen, setIsOpen] = useState(false);
   const [panelRendered, setPanelRendered] = useState(false);
@@ -130,6 +141,11 @@ export default function AssistantWidget() {
   const nudgeCountRef = useRef(0);
   const scrollRef = useRef(null);
   const inputRef = useRef(null);
+
+  // Obavesti ostale floating elemente (npr. HelpButton) da se sklone dok je chat otvoren
+  useEffect(() => {
+    setAssistantOpen(isOpen);
+  }, [isOpen, setAssistantOpen]);
 
   // Da li je korisnik ikad ranije otvorio Alana — ako nije, prikaži "Ново" bedž na launcheru
   useEffect(() => {
@@ -305,16 +321,33 @@ export default function AssistantWidget() {
     setMessages((m) => m.map((msg) => (msg.id === id ? { ...msg, rated: true } : msg)));
   };
 
+  // Mobilni: klizi odozdo na gore. Desktop/tablet: klizi sa DESNE IVICE prozora ka svom
+  // mestu (translate-x-full = potpuno van ekrana, pa uklizi ka centru/uglu) — i zatvara se
+  // istim putem unazad.
   const panelVisibilityClass = reducedMotion
     ? panelShown
       ? 'opacity-100'
       : 'opacity-0'
     : panelShown
-    ? 'opacity-100 translate-y-0 sm:scale-100'
-    : 'opacity-0 translate-y-6 scale-[0.98] sm:translate-y-3 sm:scale-95';
+    ? 'opacity-100 translate-y-0 scale-100 sm:translate-x-0'
+    : 'opacity-0 translate-y-8 scale-[0.97] sm:translate-y-0 sm:scale-100 sm:translate-x-full';
+
+  const quickActions = buildQuickActions({ navigate, onQuickAsk: (text) => handleSend(text) });
+  const showQuickActions = messages.length <= 1 && !sending;
 
   return (
     <>
+      {/* Zatamnjena pozadina na mobilnom — tap za zatvaranje (na desktopu widget ne blokira stranicu) */}
+      {panelRendered && (
+        <div
+          onClick={() => setIsOpen(false)}
+          aria-hidden="true"
+          className={`fixed inset-0 z-30 bg-black/25 backdrop-blur-[2px] sm:hidden transition-opacity ${
+            reducedMotion ? 'duration-100' : 'duration-300'
+          } ${panelShown ? 'opacity-100' : 'opacity-0 pointer-events-none'}`}
+        />
+      )}
+
       {!isOpen && (
         <button
           onClick={openWidget}
@@ -352,10 +385,19 @@ export default function AssistantWidget() {
           aria-modal="true"
           aria-label="Алано — помоћник"
           aria-hidden={!panelShown}
-          className={`fixed inset-x-0 bottom-0 sm:inset-auto sm:bottom-6 sm:right-6 z-40 w-full sm:w-[380px] md:w-[400px] lg:w-[420px] h-[85dvh] sm:h-[600px] md:h-[640px] lg:h-[680px] sm:max-h-[80vh] bg-white sm:rounded-3xl rounded-t-3xl shadow-2xl ring-1 ring-black/5 flex flex-col overflow-hidden border border-gray-100 sm:origin-bottom-right transition-all ${
-            reducedMotion ? 'duration-100' : 'duration-300'
-          } ease-out ${panelVisibilityClass} ${panelShown ? 'pointer-events-auto' : 'pointer-events-none'}`}
+          className={`fixed inset-x-0 bottom-0 sm:inset-auto sm:bottom-6 sm:right-6 z-40 w-full sm:w-[380px] md:w-[400px] lg:w-[420px] h-[85dvh] sm:h-[600px] md:h-[640px] lg:h-[680px] sm:max-h-[80vh] bg-gradient-to-b from-white via-white to-red-50/40 sm:rounded-[28px] rounded-t-[28px] shadow-2xl ring-1 ring-black/5 flex flex-col overflow-hidden border border-gray-100 ${
+            reducedMotion ? 'alano-panel-transition-reduced' : 'alano-panel-transition'
+          } ${panelVisibilityClass} ${panelShown ? 'pointer-events-auto' : 'pointer-events-none'}`}
         >
+          {/* Drag handle (samo mobilni, dekorativno + tap za zatvaranje) */}
+          <button
+            onClick={() => setIsOpen(false)}
+            className="sm:hidden flex-shrink-0 flex justify-center pt-2.5 pb-1 focus-visible:outline-none"
+            aria-label="Затвори"
+          >
+            <span className="h-1.5 w-10 rounded-full bg-gray-300" />
+          </button>
+
           {/* Header */}
           <div className="flex items-center gap-3 px-4 py-3 bg-gradient-to-r from-[#D62828] to-[#B91F1F] flex-shrink-0">
             <Alano pose={panelPose} size={40} onPoseEnd={() => setPanelPose('idle')} />
@@ -365,7 +407,7 @@ export default function AssistantWidget() {
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="w-10 h-10 flex items-center justify-center rounded-full text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 transition-colors flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#D62828]"
+              className="hidden sm:flex w-10 h-10 items-center justify-center rounded-full text-white/80 hover:text-white hover:bg-white/10 active:bg-white/20 transition-colors flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70 focus-visible:ring-offset-2 focus-visible:ring-offset-[#D62828]"
               aria-label="Затвори"
             >
               <X className="w-5 h-5" />
@@ -377,7 +419,7 @@ export default function AssistantWidget() {
             ref={scrollRef}
             role="log"
             aria-live="polite"
-            className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 space-y-4 bg-[#fdfafc]"
+            className="flex-1 overflow-y-auto overscroll-contain px-4 py-4 space-y-4"
           >
             {messages.map((m) => (
               <div key={m.id} className={`flex ${m.role === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -430,32 +472,70 @@ export default function AssistantWidget() {
             )}
           </div>
 
+          {/* Brze radnje — vidljivo dok je razgovor tek počeo */}
+          {showQuickActions && (
+            <div className="flex-shrink-0 flex items-stretch justify-between gap-1.5 px-4 pt-1 pb-2.5">
+              {quickActions.map((qa) => {
+                const Icon = qa.icon;
+                return (
+                  <button
+                    key={qa.key}
+                    onClick={qa.onClick}
+                    className="flex-1 flex flex-col items-center gap-1.5 group focus-visible:outline-none"
+                  >
+                    <span
+                      className={`w-11 h-11 rounded-2xl flex items-center justify-center ${qa.bg} ${qa.fg} shadow-sm group-hover:scale-105 group-active:scale-95 group-focus-visible:ring-2 group-focus-visible:ring-[#D62828]/40 transition-transform`}
+                    >
+                      <Icon className="w-5 h-5" />
+                    </span>
+                    <span className="text-[10px] font-semibold text-gray-500 group-hover:text-[#1A1A1A] transition-colors">
+                      {qa.label}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          )}
+
           {/* Input */}
           <form
             onSubmit={(e) => {
               e.preventDefault();
               handleSend();
             }}
-            className="flex items-center gap-2 px-3 pt-3 border-t border-gray-100 bg-white flex-shrink-0"
+            className="flex items-center gap-2 px-3 pt-3 border-t border-gray-100 bg-white/80 backdrop-blur-sm flex-shrink-0"
             style={{ paddingBottom: 'max(0.75rem, env(safe-area-inset-bottom, 0px))' }}
           >
             <input
               ref={inputRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
-              placeholder="Постави питање..."
+              placeholder="Питај ме било шта..."
               disabled={sending}
               className="flex-1 px-4 py-2.5 rounded-full bg-gray-50 border border-gray-200 text-sm focus:outline-none focus:border-[#D62828] focus-visible:ring-2 focus-visible:ring-[#D62828]/20 disabled:opacity-60"
             />
             <button
               type="submit"
               disabled={sending || !input.trim()}
-              className="w-11 h-11 rounded-full bg-[#D62828] text-white flex items-center justify-center disabled:opacity-40 hover:bg-[#B91F1F] active:scale-95 transition-all flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2C94C] focus-visible:ring-offset-2"
+              className="w-11 h-11 rounded-full bg-gradient-to-br from-[#D62828] to-[#F2825C] text-white flex items-center justify-center disabled:opacity-40 disabled:grayscale hover:shadow-lg active:scale-95 transition-all flex-shrink-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#F2C94C] focus-visible:ring-offset-2"
               aria-label="Пошаљи"
             >
-              <Send className="w-4 h-4" />
+              <ArrowUp className="w-4 h-4" strokeWidth={2.5} />
             </button>
           </form>
+
+          <style>{`
+            .alano-panel-transition {
+              transition-property: opacity, transform;
+              transition-duration: 420ms;
+              transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            .alano-panel-transition-reduced {
+              transition-property: opacity;
+              transition-duration: 100ms;
+              transition-timing-function: ease-out;
+            }
+          `}</style>
         </div>
       )}
     </>

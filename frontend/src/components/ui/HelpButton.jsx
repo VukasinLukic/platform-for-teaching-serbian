@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { HelpCircle, X, RotateCcw } from 'lucide-react';
 import { useOnboarding, PAGE_TUTORIALS } from '../../context/OnboardingContext';
+import { useAssistantUiStore } from '../../store/assistantUiStore';
 
 export default function HelpButton({ pageKey }) {
   const { startTutorial, resetTutorial, hasSeenTutorial } = useOnboarding();
+  const isAssistantOpen = useAssistantUiStore((s) => s.isOpen);
   const [isOpen, setIsOpen] = useState(false);
 
   const tutorial = PAGE_TUTORIALS[pageKey];
-  if (!tutorial) return null;
+  // Sklanjamo dugme dok je AI asistent (Alano) otvoren — ne sme da mu se prikazuje preko chata
+  if (!tutorial || isAssistantOpen) return null;
 
   const handleStartTutorial = () => {
     setIsOpen(false);
