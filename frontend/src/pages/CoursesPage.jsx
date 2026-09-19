@@ -8,8 +8,11 @@ import Footer from '../components/ui/Footer';
 import Card, { CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import SEO from '../components/SEO';
+import { useOnboarding } from '../context/OnboardingContext';
+import HelpButton from '../components/ui/HelpButton';
 
 export default function CoursesPage() {
+  const { checkAndStartTutorial } = useOnboarding();
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [visibleSteps, setVisibleSteps] = useState([false, false, false, false]);
@@ -19,6 +22,12 @@ export default function CoursesPage() {
   useEffect(() => {
     loadCourses();
   }, []);
+
+  useEffect(() => {
+    if (!loading) {
+      checkAndStartTutorial('courses');
+    }
+  }, [loading, checkAndStartTutorial]);
 
   useEffect(() => {
     const observers = stepRefs.current.map((ref, index) => {
@@ -143,7 +152,7 @@ export default function CoursesPage() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div data-tour="courses-how-it-works" className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
             {/* Step 1 */}
             <div
               ref={el => stepRefs.current[0] = el}
@@ -236,11 +245,12 @@ export default function CoursesPage() {
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {courses.map((course) => (
+            {courses.map((course, index) => (
               <Link
                 key={course.id}
                 to={course.type === 'live' ? `/online-class/${course.id}` : `/course/${course.id}`}
                 className="h-full block"
+                {...(index === 0 ? { 'data-tour': 'courses-first-card' } : {})}
               >
                 <div className="bg-white rounded-[2.5rem] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 h-full flex flex-col overflow-hidden cursor-pointer">
                   {/* Card Header Image */}
@@ -393,6 +403,8 @@ export default function CoursesPage() {
       </div>
 
       <Footer />
+
+      <HelpButton pageKey="courses" />
     </div>
     </>
   );

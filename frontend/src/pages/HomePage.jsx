@@ -20,6 +20,8 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { inicijalniTestoviList } from '../data/inicijalniTestovi';
+import { useOnboarding } from '../context/OnboardingContext';
+import HelpButton from '../components/ui/HelpButton';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import SEO from '../components/SEO';
@@ -209,8 +211,13 @@ function FeaturedCourseCard() {
 
 export default function HomePage() {
   const { user } = useAuthStore();
+  const { checkAndStartTutorial } = useOnboarding();
   const [howItWorksVisible, setHowItWorksVisible] = useState(false);
   const howItWorksRef = useRef(null);
+
+  useEffect(() => {
+    checkAndStartTutorial('home');
+  }, [checkAndStartTutorial]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -461,7 +468,7 @@ export default function HomePage() {
 
               {/* CTA Buttons */}
               <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start pt-2">
-                <Link to="/courses">
+                <Link to="/courses" data-tour="home-hero-cta">
                   <button className="bg-[#D62828] text-white px-10 py-4 rounded-full hover:bg-[#B91F1F] transition-all transform hover:scale-105 shadow-xl text-lg font-bold">
                     Приступи курсевима
                   </button>
@@ -919,6 +926,8 @@ export default function HomePage() {
 
       {/* Footer */}
       <Footer />
+
+      <HelpButton pageKey="home" />
     </div>
     </>
   );

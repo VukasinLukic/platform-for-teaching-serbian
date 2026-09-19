@@ -18,7 +18,7 @@ export default function HelpButton({ pageKey }) {
   };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50">
+    <div className="fixed bottom-24 right-6 z-40">
       {/* Dropdown */}
       {isOpen && (
         <div className="absolute bottom-14 right-0 w-72 bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden mb-2 animate-in fade-in slide-in-from-bottom-2">

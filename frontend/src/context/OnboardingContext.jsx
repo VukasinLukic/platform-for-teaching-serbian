@@ -1,6 +1,55 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
 const PAGE_TUTORIALS = {
+  home: {
+    pageKey: 'home',
+    pageName: 'Почетна страна',
+    description: 'Кратак водич кроз платформу.',
+    tooltips: [
+      {
+        id: 'home-hero-cta',
+        targetSelector: '[data-tour="home-hero-cta"]',
+        title: 'Крени одавде',
+        description: 'Кликни овде да видиш све курсеве и изабереш онај који ти одговара.',
+        position: 'bottom',
+      },
+      {
+        id: 'home-inicijalni-testovi',
+        targetSelector: '#inicijalni-testovi',
+        title: 'Бесплатни иницијални тестови',
+        description: 'Овде можеш бесплатно да урадиш иницијални тест за свој разред, без региструовања.',
+        position: 'top',
+      },
+      {
+        id: 'home-how-it-works',
+        targetSelector: '#kako-funkcionise',
+        title: 'Како функционише',
+        description: 'Овде видиш тачно које кораке пролазиш од одабира курса до почетка учења.',
+        position: 'top',
+      },
+    ],
+  },
+  courses: {
+    pageKey: 'courses',
+    pageName: 'Курсеви',
+    description: 'Како да изабереш и купиш курс.',
+    tooltips: [
+      {
+        id: 'courses-how-it-works',
+        targetSelector: '[data-tour="courses-how-it-works"]',
+        title: 'Процес у 4 корака',
+        description: 'Од одабира курса до почетка учења — овде видиш сваки корак и шта те очекује.',
+        position: 'bottom',
+      },
+      {
+        id: 'courses-first-card',
+        targetSelector: '[data-tour="courses-first-card"]',
+        title: 'Изабери курс',
+        description: 'Кликни на картицу курса за детаље, а дугме „Прикажи више" отвара шта тачно добијаш уз курс.',
+        position: 'top',
+      },
+    ],
+  },
   dashboard: {
     pageKey: 'dashboard',
     pageName: 'Ваш панел',

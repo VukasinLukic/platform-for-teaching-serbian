@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Phone, MapPin, Send, CheckCircle, MessageSquare, Instagram } from 'lucide-react';
+import { Mail, Phone, MapPin, Send, CheckCircle, MessageSquare, MessageCircle, Instagram } from 'lucide-react';
 import { sendContactFormEmail } from '../services/email.service';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
@@ -10,6 +10,7 @@ import SEO from '../components/SEO';
 
 export default function ContactPage() {
   const contactPhone = import.meta.env.VITE_CONTACT_PHONE || '+381 XX XXX XXXX';
+  const viberNumber = contactPhone.replace(/[^\d+]/g, '');
 
   const [formData, setFormData] = useState({
     ime: '',
@@ -170,6 +171,20 @@ export default function ContactPage() {
                 <div className="text-sm text-gray-500">Пон-Пет: 10:00 - 18:00</div>
               </div>
             </div>
+
+            {/* Viber Card */}
+            <a
+              href={`viber://chat?number=${encodeURIComponent(viberNumber)}`}
+              className="bg-white p-6 rounded-[2rem] shadow-md flex items-center gap-6 hover:shadow-lg transition-shadow border border-gray-100"
+            >
+              <div className="bg-[#7360F2] w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 text-white">
+                <MessageCircle />
+              </div>
+              <div>
+                <div className="font-bold text-[#1A1A1A]">Пошаљите нам Viber поруку</div>
+                <div className="text-sm text-gray-500">Брз одговор, {contactPhone}</div>
+              </div>
+            </a>
 
             {/* Location Card */}
             <div className="bg-white p-6 rounded-[2rem] shadow-md flex items-center gap-6 hover:shadow-lg transition-shadow border border-gray-100">

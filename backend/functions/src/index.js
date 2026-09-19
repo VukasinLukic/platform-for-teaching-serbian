@@ -58,6 +58,9 @@ export {
   resendVerificationEmail,
 } from './emailVerification.js';
 
+// Алано — AI асистент (OpenRouter)
+export { askAsistent } from './assistant.js';
+
 // User role management with custom claims
 export { setUserRole } from './setUserRole.js';
 
