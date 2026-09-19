@@ -97,21 +97,21 @@ export default function AboutPage() {
         <Header />
 
         {/* HERO SECTION */}
-        <section className="pt-16 pb-24 px-6 bg-gradient-to-b from-white to-[#F7F7F7]">
+        <section className="pt-12 pb-16 md:pt-16 md:pb-24 px-6 bg-gradient-to-b from-white to-[#F7F7F7]">
           <div className="max-w-7xl mx-auto text-center">
-            <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-tight">
+            <h1 className="text-4xl md:text-7xl font-bold mb-5 md:mb-8 leading-tight">
               Више од наставе, <br />
               <span className="text-[#D62828]">пут ка успеху.</span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-12">
+            <p className="text-base md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-8 md:mb-12">
               СРПСКИ У СРЦУ је платформа која помаже ученицима да се припреме за малу матуру
               из српског језика и књижевности. Са наставницом Марином Лукић, која има радно искуство од 27 година, обезбеђујемо квалитетну наставу која доноси резултате.
             </p>
 
             {/* Stats Bar */}
-            <div ref={statsRef} className="bg-white rounded-[3rem] p-8 shadow-xl max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div ref={statsRef} className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 shadow-xl max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {stats.map((stat, index) => (
-                <div key={index} className="text-center border-r last:border-r-0 border-gray-100">
+                <div key={index} className="text-center pb-6 md:pb-0 border-b md:border-b-0 md:border-r last:border-b-0 last:border-r-0 border-gray-100">
                   <div className="text-4xl font-black text-[#D62828] mb-1">
                     {counters[stat.key]}{stat.suffix}
                   </div>
@@ -246,33 +246,33 @@ export default function AboutPage() {
         </section>
 
         {/* CTA SECTION */}
-        <section className="py-20 px-6 bg-white">
-          <div className="max-w-5xl mx-auto bg-[#D62828] rounded-[3rem] p-12 md:p-20 text-center relative overflow-hidden">
+        <section className="py-14 md:py-20 px-6 bg-white">
+          <div className="max-w-5xl mx-auto bg-[#D62828] rounded-[2rem] md:rounded-[3rem] p-8 md:p-20 text-center relative overflow-hidden">
             {/* Decorative Circles */}
             <div className="absolute top-0 left-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full translate-x-1/3 translate-y-1/3"></div>
 
             <div className="relative z-10">
-              <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+              <h2 className="text-2xl md:text-5xl font-bold text-white mb-4 md:mb-6">
                 Придружите се успешним ученицима
               </h2>
-              <p className="text-white/90 text-xl mb-10 max-w-2xl mx-auto">
+              <p className="text-base md:text-xl text-white/90 mb-8 md:mb-10 max-w-2xl mx-auto">
                 Започните наставу данас и остварите најбоље резултате на малој матури.
                 Упис је у току!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/courses">
-                  <button className="bg-white text-[#D62828] px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition shadow-lg">
+                <Link to="/courses" className="w-full sm:w-auto">
+                  <button className="w-full sm:w-auto bg-white text-[#D62828] px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition shadow-lg">
                     Погледајте курсеве
                   </button>
                 </Link>
-                <Link to="/online-nastava">
-                  <button className="bg-[#F2C94C] text-[#1A1A1A] px-10 py-4 rounded-full font-bold text-lg hover:bg-[#D4A843] transition shadow-lg">
+                <Link to="/online-nastava" className="w-full sm:w-auto">
+                  <button className="w-full sm:w-auto bg-[#F2C94C] text-[#1A1A1A] px-10 py-4 rounded-full font-bold text-lg hover:bg-[#D4A843] transition shadow-lg">
                     Online настава
                   </button>
                 </Link>
-                <Link to="/contact">
-                  <button className="bg-transparent border-2 border-white text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-[#D62828] transition">
+                <Link to="/contact" className="w-full sm:w-auto">
+                  <button className="w-full sm:w-auto bg-transparent border-2 border-white text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-[#D62828] transition">
                     Контактирајте нас
                   </button>
                 </Link>

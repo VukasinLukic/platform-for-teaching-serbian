@@ -387,7 +387,7 @@ export default function HomePage() {
       <Header />
 
       {/* 1. HERO SECTION */}
-      <section className="relative pb-24 flex items-start pt-32 overflow-hidden min-h-[700px]">
+      <section className="relative pb-16 md:pb-24 flex items-start pt-20 md:pt-32 overflow-hidden md:min-h-[700px]">
         {/* Background image as positioned element (full size, right-bottom) */}
         <div className="absolute right-0 bottom-0 hidden lg:block group" style={{ width: '55%' }}>
           <div className="relative">
@@ -519,7 +519,7 @@ export default function HomePage() {
       {/* 1.5 INICIJALNI TESTOVI SECTION — full screen */}
       <section
         id="inicijalni-testovi"
-        className="min-h-screen flex flex-col justify-center py-20 bg-gradient-to-b from-[#fdfafc] via-white to-[#fdfafc] relative overflow-hidden scroll-mt-24"
+        className="md:min-h-screen flex flex-col justify-center py-14 md:py-20 bg-gradient-to-b from-[#fdfafc] via-white to-[#fdfafc] relative overflow-hidden scroll-mt-24"
       >
         {/* Playful background */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-25">
@@ -599,7 +599,7 @@ export default function HomePage() {
       <section
         id="kako-funkcionise"
         ref={howItWorksRef}
-        className={`pt-32 pb-24 bg-[#fdfafc] relative overflow-hidden transition-all duration-1000 ${howItWorksVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+        className={`pt-16 pb-12 md:pt-32 md:pb-24 bg-[#fdfafc] relative overflow-hidden transition-all duration-1000 ${howItWorksVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
           }`}
       >
         {/* Playful Background */}
@@ -630,13 +630,13 @@ export default function HomePage() {
               />
             </svg>
 
-            <div className="space-y-20 md:space-y-16 relative" style={{ zIndex: 2 }}>
+            <div className="space-y-10 md:space-y-16 relative" style={{ zIndex: 2 }}>
 
               {/* Step 1 - Left */}
-              <div className="flex items-center gap-6 md:gap-8">
+              <div className="flex items-center gap-4 md:gap-8">
                 <div className="relative flex-shrink-0">
-                  <div className="w-24 h-24 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-6 border-[#D62828] relative z-10">
-                    <BookOpen className="w-10 h-10 md:w-12 md:h-12 text-[#D62828]" />
+                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-[#D62828] relative z-10">
+                    <BookOpen className="w-8 h-8 md:w-12 md:h-12 text-[#D62828]" />
                   </div>
                   <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center shadow-lg z-20">
                     <span className="text-xl font-black text-white">1</span>
@@ -653,10 +653,10 @@ export default function HomePage() {
               </div>
 
               {/* Step 2 - Right */}
-              <div className="flex items-center gap-6 md:gap-8 flex-row-reverse">
+              <div className="flex items-center gap-4 md:gap-8 flex-row-reverse">
                 <div className="relative flex-shrink-0">
-                  <div className="w-24 h-24 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-6 border-[#D62828] relative z-10">
-                    <svg className="w-10 h-10 md:w-12 md:h-12 text-[#D62828]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-[#D62828] relative z-10">
+                    <svg className="w-8 h-8 md:w-12 md:h-12 text-[#D62828]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                     </svg>
                   </div>
@@ -675,10 +675,10 @@ export default function HomePage() {
               </div>
 
               {/* Step 3 - Left */}
-              <div className="flex items-center gap-6 md:gap-8">
+              <div className="flex items-center gap-4 md:gap-8">
                 <div className="relative flex-shrink-0">
-                  <div className="w-24 h-24 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-6 border-[#D62828] relative z-10">
-                    <svg className="w-10 h-10 md:w-12 md:h-12 text-[#D62828]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-[#D62828] relative z-10">
+                    <svg className="w-8 h-8 md:w-12 md:h-12 text-[#D62828]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
@@ -697,10 +697,10 @@ export default function HomePage() {
               </div>
 
               {/* Step 4 - Right */}
-              <div className="flex items-center gap-6 md:gap-8 flex-row-reverse">
+              <div className="flex items-center gap-4 md:gap-8 flex-row-reverse">
                 <div className="relative flex-shrink-0">
-                  <div className="w-24 h-24 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-6 border-[#D62828] relative z-10">
-                    <Video className="w-10 h-10 md:w-12 md:h-12 text-[#D62828]" />
+                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-[#D62828] relative z-10">
+                    <Video className="w-8 h-8 md:w-12 md:h-12 text-[#D62828]" />
                   </div>
                   <div className="absolute -top-2 -left-2 w-12 h-12 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center shadow-lg z-20">
                     <span className="text-xl font-black text-white">4</span>
@@ -721,7 +721,7 @@ export default function HomePage() {
       </section>
 
       {/* 3. COURSES SECTION */}
-      <section className="py-20 bg-[#fdfafc] overflow-hidden">
+      <section className="py-14 md:py-20 bg-[#fdfafc] overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
           <FadeInSection>
             <div className="text-center mb-16">
@@ -739,11 +739,11 @@ export default function HomePage() {
       </section>
 
       {/* 4. STATS SECTION */}
-      <section className="py-20 bg-[#fdfafc] relative overflow-hidden">
+      <section className="py-14 md:py-20 bg-[#fdfafc] relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <FadeInSection>
             <div className="text-center mb-14">
-              <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
+              <h2 className="text-3xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
                 Наш успех у бројкама
               </h2>
               <p className="text-gray-600 text-xl">
@@ -757,8 +757,8 @@ export default function HomePage() {
             <FadeInSection delay={0}>
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                <div className="relative bg-white border-2 border-[#D62828]/30 rounded-3xl p-10 text-center hover:border-[#D62828] transition-all hover:shadow-2xl">
-                  <div className="text-6xl font-black bg-gradient-to-br from-[#D62828] to-[#B91F1F] bg-clip-text text-transparent mb-2">
+                <div className="relative bg-white border-2 border-[#D62828]/30 rounded-3xl p-6 md:p-10 text-center hover:border-[#D62828] transition-all hover:shadow-2xl">
+                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-[#D62828] to-[#B91F1F] bg-clip-text text-transparent mb-2">
                     <AnimatedCounter end="700" suffix="+" />
                   </div>
                   <div className="text-base font-bold uppercase tracking-wider text-gray-600">Ученика</div>
@@ -770,8 +770,8 @@ export default function HomePage() {
             <FadeInSection delay={150}>
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#1A1A1A] to-gray-700 rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                <div className="relative bg-white border-2 border-gray-300 rounded-3xl p-10 text-center hover:border-[#1A1A1A] transition-all hover:shadow-2xl">
-                  <div className="text-6xl font-black bg-gradient-to-br from-[#1A1A1A] to-gray-700 bg-clip-text text-transparent mb-2">
+                <div className="relative bg-white border-2 border-gray-300 rounded-3xl p-6 md:p-10 text-center hover:border-[#1A1A1A] transition-all hover:shadow-2xl">
+                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-[#1A1A1A] to-gray-700 bg-clip-text text-transparent mb-2">
                     <AnimatedCounter end="98" suffix="%" />
                   </div>
                   <div className="text-base font-bold uppercase tracking-wider text-gray-600">Успешност</div>
@@ -783,8 +783,8 @@ export default function HomePage() {
             <FadeInSection delay={300}>
               <div className="relative group">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                <div className="relative bg-white border-2 border-[#D62828]/30 rounded-3xl p-10 text-center hover:border-[#D62828] transition-all hover:shadow-2xl">
-                  <div className="text-6xl font-black bg-gradient-to-br from-[#D62828] to-[#B91F1F] bg-clip-text text-transparent mb-2">
+                <div className="relative bg-white border-2 border-[#D62828]/30 rounded-3xl p-6 md:p-10 text-center hover:border-[#D62828] transition-all hover:shadow-2xl">
+                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-[#D62828] to-[#B91F1F] bg-clip-text text-transparent mb-2">
                     <AnimatedCounter end="27" />
                   </div>
                   <div className="text-base font-bold uppercase tracking-wider text-gray-600">Година искуства</div>
@@ -796,7 +796,7 @@ export default function HomePage() {
       </section>
 
       {/* 5. TESTIMONIALS SECTION */}
-      <section className="py-20 bg-[#fdfafc] overflow-hidden">
+      <section className="py-14 md:py-20 bg-[#fdfafc] overflow-hidden">
         <FadeInSection>
           <div className="mb-12 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4">Речи наших ученика</h2>

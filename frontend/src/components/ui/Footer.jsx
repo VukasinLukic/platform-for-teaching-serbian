@@ -4,9 +4,9 @@ export default function Footer() {
   const contactPhone = import.meta.env.VITE_CONTACT_PHONE || '+381 XX XXX XXXX';
 
   return (
-    <footer className="bg-white text-[#1A1A1A] pt-20 pb-10 border-t border-gray-100">
+    <footer className="bg-white text-[#1A1A1A] pt-12 pb-8 md:pt-20 md:pb-10 border-t border-gray-100">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-8 md:gap-12 mb-16">
+        <div className="grid md:grid-cols-4 gap-8 md:gap-12 mb-10 md:mb-16">
           <div className="col-span-1 md:col-span-2">
             <div className="mb-6">
               <Link to="/" className="inline-block">

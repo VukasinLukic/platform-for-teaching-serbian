@@ -64,7 +64,7 @@ export default function QuizRunnerPage() {
         <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
             <Header />
 
-            <div className="max-w-4xl mx-auto px-6 py-12">
+            <div className="max-w-4xl mx-auto px-6 py-8 md:py-12">
                 <button
                     onClick={handleExitQuiz}
                     className="mb-8 flex items-center gap-2 text-gray-500 hover:text-[#D62828] font-medium transition-colors"

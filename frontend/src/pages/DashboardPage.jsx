@@ -95,20 +95,20 @@ export default function DashboardPage() {
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />
 
-      <div className="max-w-7xl mx-auto px-6 py-16">
+      <div className="max-w-7xl mx-auto px-6 py-8 md:py-16">
         {/* Welcome Section */}
-        <div className="mb-16" data-tour="welcome">
-          <h1 className="text-5xl font-bold mb-3 text-[#1A1A1A]">
+        <div className="mb-10 md:mb-16" data-tour="welcome">
+          <h1 className="text-3xl md:text-5xl font-bold mb-3 text-[#1A1A1A]">
             Добро дошли, {userProfile?.ime?.split(' ')[0] || 'Ученик'}!
           </h1>
-          <p className="text-gray-600 text-xl">Наставите тамо где сте стали или истражите нове курсеве</p>
+          <p className="text-gray-600 text-base md:text-xl">Наставите тамо где сте стали или истражите нове курсеве</p>
         </div>
 
         {/* Available Courses Section - FIRST */}
         {availableForPurchase.length > 0 && (
-          <div className="mb-16" data-tour="available-courses">
-            <div className="flex items-center justify-between mb-8">
-              <h2 className="text-3xl font-bold text-[#1A1A1A]">Доступни курсеви</h2>
+          <div className="mb-10 md:mb-16" data-tour="available-courses">
+            <div className="flex items-center justify-between mb-6 md:mb-8 gap-3">
+              <h2 className="text-xl md:text-3xl font-bold text-[#1A1A1A]">Доступни курсеви</h2>
               <Link to="/courses" className="text-[#D62828] hover:text-[#B91F1F] font-medium flex items-center gap-2">
                 Види све <ArrowRight className="w-4 h-4" />
               </Link>
@@ -137,16 +137,16 @@ export default function DashboardPage() {
         )}
 
         {/* My Courses Section - SECOND */}
-        <div className="mb-16" data-tour="my-courses">
-          <h2 className="text-3xl font-bold mb-8 text-[#1A1A1A]">Моји курсеви</h2>
+        <div className="mb-10 md:mb-16" data-tour="my-courses">
+          <h2 className="text-xl md:text-3xl font-bold mb-6 md:mb-8 text-[#1A1A1A]">Моји курсеви</h2>
 
           {myCourses.length === 0 ? (
-            <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-16 text-center border border-gray-100">
+            <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-8 md:p-16 text-center border border-gray-100">
               <div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
                 <Book className="w-12 h-12 text-gray-400" />
               </div>
-              <h3 className="text-2xl font-bold mb-3 text-[#1A1A1A]">Још увек немате курсеве</h3>
-              <p className="text-gray-600 mb-8 text-lg">Изаберите курс и започните своје учење данас</p>
+              <h3 className="text-xl md:text-2xl font-bold mb-3 text-[#1A1A1A]">Још увек немате курсеве</h3>
+              <p className="text-gray-600 mb-8 text-base md:text-lg">Изаберите курс и започните своје учење данас</p>
               <Link to="/courses">
                 <button className="bg-[#D62828] text-white px-8 py-4 rounded-full font-bold hover:bg-[#B91F1F] transition-all hover:scale-105 transform flex items-center gap-2 mx-auto">
                   Погледај курсеве <ArrowRight className="w-5 h-5" />
@@ -184,27 +184,27 @@ export default function DashboardPage() {
         </div>
 
         {/* Online Classes Section */}
-        <div className="mb-16">
+        <div className="mb-10 md:mb-16">
           <OnlineClassesSection />
         </div>
 
         {/* Quizzes Section */}
         {myCourses.length > 0 && (
-          <div className="mb-16" data-tour="quizzes">
-            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2D2D2D] rounded-3xl p-8 md:p-12 text-white relative overflow-hidden group">
+          <div className="mb-10 md:mb-16" data-tour="quizzes">
+            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2D2D2D] rounded-3xl p-6 md:p-12 text-white relative overflow-hidden group">
               {/* Background Decoration */}
               <div className="absolute top-0 right-0 w-64 h-64 bg-[#D62828] rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
 
-              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
                 <div className="text-center md:text-left">
-                  <h2 className="text-3xl font-bold mb-4">Квизови знања</h2>
-                  <p className="text-gray-400 text-lg max-w-xl">
+                  <h2 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">Квизови знања</h2>
+                  <p className="text-gray-400 text-base md:text-lg max-w-xl">
                     Тестирајте своје знање кроз интерактивне квизове. Пратите свој напредак и утврдите градиво на забаван начин.
                   </p>
                 </div>
 
-                <Link to="/quizzes">
-                  <button className="bg-[#D62828] text-white px-8 py-4 rounded-2xl font-bold hover:bg-[#B91F1F] transition-all hover:scale-105 transform flex items-center gap-2 shadow-lg shadow-red-900/20">
+                <Link to="/quizzes" className="w-full md:w-auto">
+                  <button className="w-full md:w-auto bg-[#D62828] text-white px-8 py-4 rounded-2xl font-bold hover:bg-[#B91F1F] transition-all hover:scale-105 transform flex items-center justify-center gap-2 shadow-lg shadow-red-900/20">
                     <Book className="w-5 h-5" />
                     Погледај Квизове <ArrowRight className="w-5 h-5" />
                   </button>
@@ -216,8 +216,8 @@ export default function DashboardPage() {
 
         {/* Transactions Section */}
         {transactions.length > 0 && (
-          <div className="mb-16">
-            <h2 className="text-3xl font-bold mb-8 text-[#1A1A1A]">Трансакције</h2>
+          <div className="mb-10 md:mb-16">
+            <h2 className="text-xl md:text-3xl font-bold mb-6 md:mb-8 text-[#1A1A1A]">Трансакције</h2>
 
             {/* Desktop Table View */}
             <div className="hidden md:block bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm">

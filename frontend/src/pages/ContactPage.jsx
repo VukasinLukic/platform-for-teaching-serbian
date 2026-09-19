@@ -68,8 +68,8 @@ export default function ContactPage() {
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />
 
-      <div className="max-w-7xl mx-auto px-6 py-20">
-        <div className="grid lg:grid-cols-12 gap-12 items-start">
+      <div className="max-w-7xl mx-auto px-6 py-10 md:py-20">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
           {/* Left Side - Form (Span 7) */}
           <div className="lg:col-span-7 relative">
@@ -80,9 +80,9 @@ export default function ContactPage() {
                </div>
             </div>
 
-            <div className="bg-white rounded-[3rem] p-8 md:p-12 shadow-xl relative z-10 border border-gray-100">
+            <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 shadow-xl relative z-10 border border-gray-100">
                {success ? (
-                  <div className="text-center py-20">
+                  <div className="text-center py-12 md:py-20">
                     <div className="bg-[#D62828]/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                       <CheckCircle className="w-10 h-10 text-[#D62828]" />
                     </div>
@@ -155,8 +155,8 @@ export default function ContactPage() {
               <div className="bg-[#D62828] w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 text-white">
                 <Mail />
               </div>
-              <div>
-                <div className="font-bold text-[#1A1A1A]">profesorka.marinalukic@gmail.com</div>
+              <div className="min-w-0">
+                <div className="font-bold text-[#1A1A1A] break-all">profesorka.marinalukic@gmail.com</div>
                 <div className="text-sm text-gray-500">Одговарамо у року од 24ч</div>
               </div>
             </div>

@@ -94,24 +94,24 @@ export default function OnlineClassPage() {
       <Header />
 
       {/* HERO SECTION */}
-      <section className="bg-gradient-to-br from-[#1A1A1A] to-[#002244] text-white pt-16 pb-32 relative overflow-hidden">
+      <section className="bg-gradient-to-br from-[#1A1A1A] to-[#002244] text-white pt-12 pb-20 md:pt-16 md:pb-32 relative overflow-hidden">
         {/* Background Decor */}
         <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#F2C94C] opacity-10 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2"></div>
         <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#D62828] opacity-10 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/2"></div>
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left Content */}
-            <div className="space-y-8">
+            <div className="space-y-6 md:space-y-8">
               <div className="inline-flex items-center gap-2 bg-[#D62828] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-fade-in-up">
                 <Video className="w-4 h-4" /> Uživo Časovi
               </div>
 
-              <h1 className="text-5xl md:text-6xl font-serif font-bold leading-tight">
+              <h1 className="text-3xl md:text-6xl font-serif font-bold leading-tight">
                 {course.title}
               </h1>
 
-              <p className="text-xl text-gray-300 leading-relaxed">
+              <p className="text-base md:text-xl text-gray-300 leading-relaxed">
                 {course.description}
               </p>
 
@@ -174,13 +174,13 @@ export default function OnlineClassPage() {
       </section>
 
       {/* CONTENT SECTION */}
-      <div className="max-w-7xl mx-auto px-6 py-16 -mt-20 relative z-20">
-        <div className="grid lg:grid-cols-[2fr_1fr] gap-8">
+      <div className="max-w-7xl mx-auto px-6 py-10 md:py-16 -mt-20 relative z-20">
+        <div className="grid grid-cols-1 lg:grid-cols-[2fr_1fr] gap-6 lg:gap-8">
           {/* Left Column */}
-          <div className="space-y-8">
+          <div className="space-y-6 md:space-y-8">
             {/* Schedule Card */}
             <Card variant="elevated">
-              <CardBody className="p-10">
+              <CardBody className="p-5 md:p-10">
                 <div className="flex items-center gap-4 mb-8">
                   <div className="bg-[#F7F7F7] p-3 rounded-2xl">
                     <Calendar className="w-8 h-8 text-[#1A1A1A]" />
@@ -228,7 +228,7 @@ export default function OnlineClassPage() {
 
             {/* Benefits Card */}
             <Card variant="elevated">
-              <CardBody className="p-10">
+              <CardBody className="p-5 md:p-10">
                 <h2 className="text-2xl font-serif font-bold mb-6">Šta dobijate?</h2>
 
                 <div className="space-y-4">
@@ -302,7 +302,7 @@ export default function OnlineClassPage() {
       {/* Registration Modal */}
       {showRegistrationForm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8 shadow-2xl relative">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-5 md:p-8 shadow-2xl relative">
             <button
               onClick={() => setShowRegistrationForm(false)}
               className="absolute top-6 right-6 p-2 hover:bg-gray-100 rounded-full transition-colors"

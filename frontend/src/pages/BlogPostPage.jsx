@@ -672,8 +672,8 @@ export default function BlogPostPage() {
     return (
       <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
         <Header />
-        <div className="max-w-4xl mx-auto px-6 py-32 text-center">
-          <h1 className="text-4xl font-bold mb-4">Чланак није пронађен</h1>
+        <div className="max-w-4xl mx-auto px-6 py-20 md:py-32 text-center">
+          <h1 className="text-2xl md:text-4xl font-bold mb-4">Чланак није пронађен</h1>
           <Link to="/blog" className="text-[#D62828] hover:underline flex items-center justify-center gap-2">
             <ArrowLeft size={20} />
             Назад на блог
@@ -733,7 +733,7 @@ export default function BlogPostPage() {
       <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
         <Header />
 
-        <article className="max-w-4xl mx-auto px-6 pt-28 pb-20">
+        <article className="max-w-4xl mx-auto px-6 pt-16 pb-12 md:pt-28 md:pb-20">
           {/* Back link */}
           <Link
             to="/blog"
@@ -778,7 +778,7 @@ export default function BlogPostPage() {
           <div className="mt-14 pt-8 border-t border-gray-200 text-center">
             <p className="text-gray-600 mb-4">Погледајте наше курсеве и припремите се за испит.</p>
             <Link
-              to="/kursevi"
+              to="/courses"
               className="inline-block bg-[#D62828] text-white px-6 py-3 rounded-full font-semibold text-sm hover:bg-[#B91F1F] transition"
             >
               Погледајте курсеве

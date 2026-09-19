@@ -189,33 +189,33 @@ export default function OnlineNastavaPage() {
       <Header />
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] text-white py-20 rounded-b-[3rem]">
+      <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] text-white py-14 md:py-20 rounded-b-[2rem] md:rounded-b-[3rem]">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="inline-block bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full mb-6">
             <span className="text-sm font-bold uppercase tracking-wider">Online настава уживо</span>
           </div>
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+          <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6">
             Интерактивни часови<br />са наставницом
           </h1>
-          <p className="text-xl text-white/90 max-w-3xl mx-auto">
+          <p className="text-base md:text-xl text-white/90 max-w-3xl mx-auto">
             Придружите се нашим online групним часовима уживо преко Google Meet. Учите у интерактивној атмосфери где сваки ученик добија пажњу и подршку коју заслужује.
           </p>
         </div>
       </div>
 
       {/* How It Works */}
-      <section className="py-20 bg-gradient-to-br from-[#F7F7F7] to-white">
+      <section className="py-14 md:py-20 bg-gradient-to-br from-[#F7F7F7] to-white">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
+          <div className="text-center mb-10 md:mb-16">
+            <h2 className="text-3xl md:text-5xl font-bold text-[#1A1A1A] mb-3 md:mb-4">
               Како функционише?
             </h2>
-            <p className="text-xl text-gray-600">
+            <p className="text-base md:text-xl text-gray-600">
               Једноставан процес од уписа до учења
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-y-10 gap-x-8">
             {/* Step 1 */}
             <div
               ref={el => stepRefs.current[0] = el}
@@ -292,12 +292,12 @@ export default function OnlineNastavaPage() {
       </section>
 
       {/* Schedule Info */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
+      <section className="py-14 md:py-20 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-6">
           <div className="bg-white rounded-3xl shadow-xl overflow-hidden">
-            <div className="grid md:grid-cols-2">
+            <div className="grid grid-cols-1 md:grid-cols-2">
               <div className="p-6 md:p-12 bg-gradient-to-br from-[#1A1A1A] to-gray-800 text-white">
-                <h2 className="text-3xl font-bold mb-6">Распоред часова</h2>
+                <h2 className="text-2xl md:text-3xl font-bold mb-6">Распоред часова</h2>
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
                     <Calendar className="w-6 h-6 text-[#F2C94C] flex-shrink-0 mt-1" />
@@ -330,7 +330,7 @@ export default function OnlineNastavaPage() {
                 </div>
               </div>
               <div className="p-6 md:p-12">
-                <h2 className="text-3xl font-bold text-[#1A1A1A] mb-6">Шта добијате?</h2>
+                <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-6">Шта добијате?</h2>
                 <div className="space-y-4">
                   <div className="flex items-start gap-3">
                     <CheckCircle className="w-5 h-5 text-[#D62828] flex-shrink-0 mt-1" />
@@ -364,14 +364,14 @@ export default function OnlineNastavaPage() {
       </section>
 
       {/* Pricing Packages */}
-      <section className="py-20 bg-gradient-to-b from-gray-50 to-white">
+      <section className="py-14 md:py-20 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-7xl mx-auto px-6">
 
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
+          <div className="text-center mb-10 md:mb-16">
+            <h2 className="text-2xl md:text-5xl font-bold text-[#1A1A1A] mb-3 md:mb-4">
               Изаберите свој пакет
             </h2>
-            <p className="text-gray-600 text-lg">
+            <p className="text-gray-600 text-base md:text-lg">
               Флексибилни месечни пакети прилагођени вашим потребама
             </p>
           </div>
@@ -545,17 +545,17 @@ export default function OnlineNastavaPage() {
       </section>
 
       {/* FAQ */}
-      <section className="py-20 bg-gradient-to-br from-gray-50 to-white">
+      <section className="py-14 md:py-20 bg-gradient-to-br from-gray-50 to-white">
         <div className="max-w-4xl mx-auto px-6">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
+          <div className="text-center mb-10 md:mb-16">
+            <h2 className="text-2xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
               Често постављана питања
             </h2>
           </div>
 
-          <div className="space-y-6">
-            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
-              <h3 className="text-xl font-bold text-[#1A1A1A] mb-3">
+          <div className="space-y-4 md:space-y-6">
+            <div className="bg-white rounded-2xl p-5 md:p-8 shadow-lg border border-gray-100">
+              <h3 className="text-lg md:text-xl font-bold text-[#1A1A1A] mb-3">
                 Шта ако пропустим час?
               </h3>
               <p className="text-gray-600">
@@ -563,8 +563,8 @@ export default function OnlineNastavaPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
-              <h3 className="text-xl font-bold text-[#1A1A1A] mb-3">
+            <div className="bg-white rounded-2xl p-5 md:p-8 shadow-lg border border-gray-100">
+              <h3 className="text-lg md:text-xl font-bold text-[#1A1A1A] mb-3">
                 Који разреди могу да се пријаве?
               </h3>
               <p className="text-gray-600">
@@ -572,8 +572,8 @@ export default function OnlineNastavaPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
-              <h3 className="text-xl font-bold text-[#1A1A1A] mb-3">
+            <div className="bg-white rounded-2xl p-5 md:p-8 shadow-lg border border-gray-100">
+              <h3 className="text-lg md:text-xl font-bold text-[#1A1A1A] mb-3">
                 Могу ли да откажем претплату?
               </h3>
               <p className="text-gray-600">
@@ -581,8 +581,8 @@ export default function OnlineNastavaPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
-              <h3 className="text-xl font-bold text-[#1A1A1A] mb-3">
+            <div className="bg-white rounded-2xl p-5 md:p-8 shadow-lg border border-gray-100">
+              <h3 className="text-lg md:text-xl font-bold text-[#1A1A1A] mb-3">
                 Који термин бирам за групне/индивидуалне часове?
               </h3>
               <p className="text-gray-600">
@@ -590,8 +590,8 @@ export default function OnlineNastavaPage() {
               </p>
             </div>
 
-            <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100">
-              <h3 className="text-xl font-bold text-[#1A1A1A] mb-3">
+            <div className="bg-white rounded-2xl p-5 md:p-8 shadow-lg border border-gray-100">
+              <h3 className="text-lg md:text-xl font-bold text-[#1A1A1A] mb-3">
                 Шта ми треба за online часове?
               </h3>
               <p className="text-gray-600">
@@ -603,23 +603,23 @@ export default function OnlineNastavaPage() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 bg-gradient-to-br from-[#D62828] to-[#B91F1F] text-white">
+      <section className="py-14 md:py-20 bg-gradient-to-br from-[#D62828] to-[#B91F1F] text-white">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h2 className="text-3xl md:text-5xl font-bold mb-6">
+          <h2 className="text-2xl md:text-5xl font-bold mb-4 md:mb-6">
             Спремни за успех?
           </h2>
-          <p className="text-xl text-white/90 mb-8">
+          <p className="text-base md:text-xl text-white/90 mb-8">
             Придружите се стотинама задовољних ученика који су постигли одличне резултате
           </p>
-          <div className="flex gap-4 justify-center flex-wrap">
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="bg-white text-[#D62828] px-12 py-5 rounded-full hover:bg-gray-100 transition-all font-bold text-xl shadow-lg hover:scale-105 transform"
+              className="w-full sm:w-auto bg-white text-[#D62828] px-8 md:px-12 py-4 md:py-5 rounded-full hover:bg-gray-100 transition-all font-bold text-base md:text-xl shadow-lg hover:scale-105 transform"
             >
               Изабери пакет
             </button>
-            <Link to="/contact">
-              <button className="bg-[#1A1A1A] text-white px-12 py-5 rounded-full hover:bg-gray-800 transition-all font-bold text-xl shadow-lg hover:scale-105 transform">
+            <Link to="/contact" className="w-full sm:w-auto">
+              <button className="w-full sm:w-auto bg-[#1A1A1A] text-white px-8 md:px-12 py-4 md:py-5 rounded-full hover:bg-gray-800 transition-all font-bold text-base md:text-xl shadow-lg hover:scale-105 transform">
                 Контактирајте нас
               </button>
             </Link>
