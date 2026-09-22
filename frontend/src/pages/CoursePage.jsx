@@ -2,11 +2,12 @@ import { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import {
   Play, Book, CheckCircle, Lock, ChevronDown,
-  Video, ArrowRight, FileText, Download, Loader2
+  Video, ArrowRight, FileText, Download, Loader2, ClipboardCheck
 } from 'lucide-react';
 import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { getCourseById, checkUserAccess, getCourseModulesWithLessons } from '../services/course.service';
+import { getAvailableQuizzes } from '../services/quiz.service';
 import { useAuthStore } from '../store/authStore';
 import SEO from '../components/SEO';
 import { formatPrice } from '../utils/helpers';
@@ -28,6 +29,17 @@ export default function CoursePage() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [purchasing, setPurchasing] = useState(false);
   const [downloadingIdx, setDownloadingIdx] = useState(null);
+  const [quizManifest, setQuizManifest] = useState([]);
+
+  // Kvizovi su statican JSON manifest — ako fetch ne uspe, sekcija ispod
+  // videa jednostavno izostaje (ne pucamo stranicu zbog toga).
+  useEffect(() => {
+    getAvailableQuizzes().then(setQuizManifest).catch(() => setQuizManifest([]));
+  }, []);
+
+  const linkedQuizzes = (selectedLesson?.quizIds || [])
+    .map((quizId) => quizManifest.find((quiz) => quiz.id === quizId))
+    .filter(Boolean);
 
   const handleDownloadMaterial = async (material, idx) => {
     setDownloadingIdx(idx);
@@ -288,6 +300,31 @@ export default function CoursePage() {
                         <Download className="w-5 h-5 text-gray-400 group-hover:text-[#D62828] transition-colors" />
                       )}
                     </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Linked Quizzes Section */}
+            {linkedQuizzes.length > 0 && (
+              <div className="mt-8 pt-8 border-t border-gray-100">
+                <h3 className="text-xl font-bold mb-1 flex items-center gap-2 text-[#1A1A1A]">
+                  <ClipboardCheck className="w-5 h-5 text-[#D62828]" />
+                  Испробај знање
+                </h3>
+                <p className="text-gray-500 text-sm mb-4">
+                  Провери колико си усвојио/-ла градиво из ове лекције.
+                </p>
+                <div className="flex flex-col sm:flex-row sm:flex-wrap gap-3">
+                  {linkedQuizzes.map((quiz) => (
+                    <Link
+                      key={quiz.id}
+                      to={`/quizzes/${quiz.id}`}
+                      className="flex items-center justify-between gap-3 sm:flex-1 sm:min-w-[220px] bg-gradient-to-r from-[#D62828] to-[#B91F1F] text-white px-5 py-4 rounded-2xl font-bold shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                    >
+                      <span className="min-w-0 truncate">Испробај: {quiz.title}</span>
+                      <ArrowRight className="w-5 h-5 flex-shrink-0" />
+                    </Link>
                   ))}
                 </div>
               </div>

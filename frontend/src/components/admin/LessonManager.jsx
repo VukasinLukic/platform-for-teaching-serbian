@@ -3,7 +3,8 @@ import { collection, addDoc, getDocs, query, where, deleteDoc, doc, updateDoc } 
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../services/firebase';
 import { uploadVideoToR2, deleteVideoFromR2 } from '../../services/cloudflare.service';
-import { Plus, Trash2, Loader2, Upload, Video, FileVideo, CheckCircle, ChevronDown, ChevronRight, Tag, FileText, Book, Edit, Paperclip, X } from 'lucide-react';
+import { getAvailableQuizzes } from '../../services/quiz.service';
+import { Plus, Trash2, Loader2, Upload, Video, FileVideo, CheckCircle, ChevronDown, ChevronRight, Tag, FileText, Book, Edit, Paperclip, X, ClipboardList } from 'lucide-react';
 import { useToast } from '../ui/Toast';
 import ConfirmModal from '../ui/ConfirmModal';
 
@@ -24,7 +25,9 @@ export default function LessonManager() {
     order: 1,
     videoFile: null,
     materials: [], // { file, name, type, size } or { url, name, type, size } for existing
+    quizIds: [], // ID-jevi povezanih kvizova iz /data/quizzes/manifest.json
   });
+  const [availableQuizzes, setAvailableQuizzes] = useState([]);
   const [confirmModal, setConfirmModal] = useState({
     isOpen: false,
     title: '',
@@ -35,6 +38,9 @@ export default function LessonManager() {
 
   useEffect(() => {
     loadCourses();
+    // Kvizovi su statican JSON manifest, ne Firestore — ako fetch ne uspe,
+    // sekcija za povezivanje kvizova se jednostavno neće prikazati (bez pucanja forme).
+    getAvailableQuizzes().then(setAvailableQuizzes).catch(() => setAvailableQuizzes([]));
   }, []);
 
   useEffect(() => {
@@ -182,6 +188,18 @@ export default function LessonManager() {
     setFormData({ ...formData, materials: newMaterials });
   };
 
+  const toggleQuizLink = (quizId) => {
+    setFormData((prev) => {
+      const alreadyLinked = prev.quizIds.includes(quizId);
+      return {
+        ...prev,
+        quizIds: alreadyLinked
+          ? prev.quizIds.filter((id) => id !== quizId)
+          : [...prev.quizIds, quizId],
+      };
+    });
+  };
+
   const uploadMaterials = async (lessonId) => {
     const uploadedMaterials = [];
 
@@ -286,6 +304,7 @@ export default function LessonManager() {
           videoUrl: videoUrl,
           videoPath: videoPath,
           materials: uploadedMaterials,
+          quizIds: formData.quizIds || [],
           updatedAt: new Date().toISOString(),
         });
 
@@ -297,6 +316,7 @@ export default function LessonManager() {
           order: 1,
           videoFile: null,
           materials: [],
+          quizIds: [],
         });
         setEditingLesson(null);
         setShowForm(false);
@@ -349,6 +369,7 @@ export default function LessonManager() {
           order: formData.order,
           duration: 0,
           materials: [],
+          quizIds: formData.quizIds || [],
           createdAt: new Date().toISOString(),
         });
 
@@ -369,6 +390,7 @@ export default function LessonManager() {
           order: lessons.length + 2,
           videoFile: null,
           materials: [],
+          quizIds: [],
         });
         setShowForm(false);
         setUploading(false);
@@ -393,6 +415,7 @@ export default function LessonManager() {
       order: lesson.order || 1,
       videoFile: null, // Don't load existing video file
       materials: lesson.materials || [], // Load existing materials
+      quizIds: lesson.quizIds || [],
     });
     setShowForm(true);
   };
@@ -491,7 +514,7 @@ export default function LessonManager() {
                       <button
                         onClick={() => {
                           setEditingLesson(null);
-                          setFormData({ title: '', description: '', order: lessons.length + 1, videoFile: null, materials: [] });
+                          setFormData({ title: '', description: '', order: lessons.length + 1, videoFile: null, materials: [], quizIds: [] });
                           setShowForm(true);
                         }}
                         className="bg-[#D62828] text-white px-6 py-3 rounded-2xl font-bold hover:bg-[#B91F1F] transition-colors flex items-center gap-2 mb-6"
@@ -651,6 +674,54 @@ export default function LessonManager() {
                             )}
                           </div>
 
+                          {/* Quiz Linking Section */}
+                          {availableQuizzes.length > 0 && (
+                            <div>
+                              <label className="block text-sm font-medium text-gray-700 mb-2">
+                                <ClipboardList className="w-4 h-4 inline mr-1" />
+                                Повежи квизове (опционо)
+                              </label>
+                              <p className="text-xs text-gray-500 mb-3">
+                                Изабрани квизови ће се приказати као дугмад испод видеа на овој лекцији —
+                                „Испробај знање". Ако ништа не изабереш, дугме се неће приказати.
+                              </p>
+                              <div className="grid gap-2 max-h-64 overflow-y-auto pr-1">
+                                {availableQuizzes.map((quiz) => {
+                                  const checked = formData.quizIds.includes(quiz.id);
+                                  return (
+                                    <label
+                                      key={quiz.id}
+                                      className={`flex items-start gap-3 p-3 rounded-xl border-2 cursor-pointer transition-colors ${
+                                        checked
+                                          ? 'border-[#D62828] bg-[#D62828]/5'
+                                          : 'border-gray-200 hover:border-gray-300'
+                                      }`}
+                                    >
+                                      <input
+                                        type="checkbox"
+                                        checked={checked}
+                                        onChange={() => toggleQuizLink(quiz.id)}
+                                        disabled={uploading}
+                                        className="mt-1 h-4 w-4 accent-[#D62828] flex-shrink-0"
+                                      />
+                                      <span className="min-w-0">
+                                        <span className="block font-semibold text-[#1A1A1A] text-sm">{quiz.title}</span>
+                                        {quiz.description && (
+                                          <span className="block text-xs text-gray-500 line-clamp-2">{quiz.description}</span>
+                                        )}
+                                      </span>
+                                    </label>
+                                  );
+                                })}
+                              </div>
+                              {formData.quizIds.length > 0 && (
+                                <p className="text-xs font-semibold text-[#D62828] mt-2">
+                                  Изабрано: {formData.quizIds.length}
+                                </p>
+                              )}
+                            </div>
+                          )}
+
                           {uploading && (
                             <div className="space-y-2">
                               <div className="flex justify-between text-sm">
@@ -689,7 +760,7 @@ export default function LessonManager() {
                               onClick={() => {
                                 setShowForm(false);
                                 setEditingLesson(null);
-                                setFormData({ title: '', description: '', order: 1, videoFile: null, materials: [] });
+                                setFormData({ title: '', description: '', order: 1, videoFile: null, materials: [], quizIds: [] });
                               }}
                               disabled={uploading}
                               className="px-6 py-3 border-2 border-gray-200 text-gray-700 rounded-2xl font-bold hover:bg-gray-50 transition-colors disabled:opacity-50"
