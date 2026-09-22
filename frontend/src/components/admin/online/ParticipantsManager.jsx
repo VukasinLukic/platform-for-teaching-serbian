@@ -266,7 +266,7 @@ export default function ParticipantsManager() {
                     <td className="px-6 py-4">
                       <button
                         onClick={() => handleAssignToGroup(enrollment)}
-                        className="p-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                        className="p-2 bg-red-100 text-[#D62828] rounded-lg hover:bg-red-200 transition-colors"
                         title="Додели групу"
                       >
                         <Edit2 className="w-4 h-4" />

@@ -40,7 +40,7 @@ export default function NotificationDropdown() {
       case 'warning':
         return <AlertCircle className="w-5 h-5 text-yellow-600" />;
       default:
-        return <Info className="w-5 h-5 text-blue-600" />;
+        return <Info className="w-5 h-5 text-gray-500" />;
     }
   };
 
@@ -55,7 +55,7 @@ export default function NotificationDropdown() {
       case 'warning':
         return 'bg-yellow-50';
       default:
-        return 'bg-blue-50';
+        return 'bg-gray-50';
     }
   };
 

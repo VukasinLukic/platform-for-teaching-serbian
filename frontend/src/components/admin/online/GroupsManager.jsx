@@ -226,7 +226,7 @@ export default function GroupsManager() {
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <h4 className="text-lg font-bold text-[#1A1A1A] mb-1">{group.name}</h4>
-                  <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                  <span className="inline-block px-3 py-1 bg-red-100 text-[#D62828] text-xs font-semibold rounded-full">
                     {getLevelName(group.level)}
                   </span>
                 </div>
@@ -272,7 +272,7 @@ export default function GroupsManager() {
               <div className="flex gap-2">
                 <button
                   onClick={() => handleOpenModal(group)}
-                  className="flex-1 bg-blue-100 text-blue-700 px-4 py-2 rounded-lg hover:bg-blue-200 transition-colors flex items-center justify-center gap-2"
+                  className="flex-1 bg-red-100 text-[#D62828] px-4 py-2 rounded-lg hover:bg-red-200 transition-colors flex items-center justify-center gap-2"
                 >
                   <Edit2 className="w-4 h-4" />
                   Измени

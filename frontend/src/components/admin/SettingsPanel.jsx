@@ -253,8 +253,8 @@ export default function SettingsPanel() {
           {/* Email Notifications */}
           <div className="flex items-start justify-between pb-6 border-b border-gray-100">
             <div className="flex items-start gap-3">
-              <div className="p-2 bg-blue-50 rounded-lg">
-                <Mail className="w-5 h-5 text-blue-600" />
+              <div className="p-2 bg-red-50 rounded-lg">
+                <Mail className="w-5 h-5 text-[#D62828]" />
               </div>
               <div>
                 <h4 className="font-bold text-[#1A1A1A] mb-1">Емаил нотификације</h4>

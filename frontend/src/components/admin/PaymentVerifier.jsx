@@ -264,7 +264,7 @@ export default function PaymentVerifier() {
               </div>
 
               {/* Payment Reference */}
-              <div className="bg-blue-50/50 rounded-2xl p-4 mb-6">
+              <div className="bg-red-50/50 rounded-2xl p-4 mb-6">
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="text-sm text-gray-500 mb-1">Позив на број</p>

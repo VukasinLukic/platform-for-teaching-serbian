@@ -726,10 +726,10 @@ export default function LessonManager() {
                             <div className="flex items-center gap-2">
                               <button
                                 onClick={() => handleEdit(lesson)}
-                                className="p-2 bg-blue-100 hover:bg-blue-200 rounded-xl transition-colors"
+                                className="p-2 bg-red-100 hover:bg-red-200 rounded-xl transition-colors"
                                 title="Измени лекцију"
                               >
-                                <Edit className="w-5 h-5 text-blue-700" />
+                                <Edit className="w-5 h-5 text-[#D62828]" />
                               </button>
                               <button
                                 onClick={() => handleDelete(lesson)}

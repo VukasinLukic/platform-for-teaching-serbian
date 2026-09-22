@@ -1,8 +1,30 @@
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { Menu, X } from 'lucide-react';
+import {
+  Menu,
+  X,
+  Home,
+  BookOpen,
+  Video,
+  Info,
+  Mail,
+  LayoutDashboard,
+  ShieldCheck,
+  LogOut,
+  LogIn,
+  UserPlus,
+  ChevronRight,
+} from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import Button from './Button';
+
+const NAV_LINKS = [
+  { to: '/', label: 'Почетна', icon: Home },
+  { to: '/courses', label: 'Курсеви', icon: BookOpen },
+  { to: '/online-nastava', label: 'Online настава', icon: Video },
+  { to: '/about', label: 'О нама', icon: Info },
+  { to: '/contact', label: 'Контакт', icon: Mail },
+];
 
 export default function Header({ transparent = false }) {
   const { user, logout, userProfile } = useAuthStore();
@@ -109,133 +131,122 @@ export default function Header({ transparent = false }) {
 
       {/* Mobile Menu Overlay */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-[60] lg:hidden animate-fade-in">
+        <div className="fixed inset-0 z-[60] lg:hidden">
           <div
-            className="absolute inset-0 bg-black/60 backdrop-blur-md"
+            className="absolute inset-0 bg-[#1A1A1A]/55 backdrop-blur-sm menu-backdrop-in"
             onClick={() => setMobileMenuOpen(false)}
           />
-          <div className="absolute top-0 right-0 h-full w-full bg-white shadow-2xl animate-slide-in-right">
+          <div className="absolute top-0 right-0 flex h-full w-[86%] max-w-sm flex-col bg-white shadow-2xl menu-panel-in">
             {/* Menu Header */}
-            <div className="bg-gradient-to-r from-[#D62828] to-[#B91F1F] p-6 flex items-center justify-between">
+            <div className="flex items-center justify-between bg-gradient-to-r from-[#D62828] to-[#B91F1F] px-5 py-5 flex-shrink-0">
               <div className="flex items-center gap-3">
-                <img src="/icon.webp" alt="Logo" className="h-12 w-auto" />
-                <span className="text-white font-bold text-lg">Мени</span>
+                <img src="/icon.webp" alt="" className="h-11 w-11 rounded-xl bg-white/15 p-1" />
+                <span className="text-white font-bold text-lg leading-tight">Мени</span>
               </div>
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="text-white hover:bg-white/20 p-2 rounded-lg transition"
+                className="text-white/85 hover:text-white hover:bg-white/15 p-2 rounded-full transition-colors"
                 aria-label="Затвори мени"
               >
-                <X size={24} />
+                <X size={22} />
               </button>
             </div>
 
+            {/* Profile chip */}
+            {user && (
+              <Link
+                to="/dashboard"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-3 mx-5 mt-5 p-3 rounded-2xl bg-[#FFF5F5] border border-[#D62828]/10 flex-shrink-0 menu-item-in"
+                style={{ animationDelay: '40ms' }}
+              >
+                <span className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-gradient-to-br from-[#D62828] to-[#B91F1F] text-white font-bold text-lg">
+                  {userProfile?.ime?.charAt(0)?.toUpperCase() || 'У'}
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate font-bold text-[#1A1A1A] text-sm">
+                    {userProfile?.ime || 'Твој налог'}
+                  </span>
+                  <span className="block text-xs text-gray-500">Отвори свој панел</span>
+                </span>
+                <ChevronRight className="h-4 w-4 flex-none text-[#D62828]" />
+              </Link>
+            )}
+
             {/* Menu Content */}
-            <nav className="flex flex-col p-6 space-y-2 overflow-y-auto h-[calc(100%-88px)]">
-              <Link
-                to="/"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-[#1A1A1A] hover:bg-gradient-to-r hover:from-[#FFF5F5] hover:to-white px-5 py-4 rounded-2xl transition font-semibold text-base border-l-4 border-transparent hover:border-[#D62828]"
-              >
-                Почетна
-              </Link>
+            <nav className="flex flex-1 flex-col overflow-y-auto px-5 py-5 gap-1">
+              {NAV_LINKS.map(({ to, label, icon: Icon }, index) => (
+                <Link
+                  key={to}
+                  to={to}
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="group flex items-center gap-3.5 rounded-2xl px-4 py-3.5 font-semibold text-[15px] text-[#1A1A1A] transition-colors hover:bg-[#FFF5F5] menu-item-in"
+                  style={{ animationDelay: `${80 + index * 45}ms` }}
+                >
+                  <span className="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-gray-100 text-gray-500 transition-colors group-hover:bg-[#D62828]/10 group-hover:text-[#D62828]">
+                    <Icon size={17} />
+                  </span>
+                  {label}
+                </Link>
+              ))}
 
-              <Link
-                to="/courses"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-[#1A1A1A] hover:bg-gradient-to-r hover:from-[#FFF5F5] hover:to-white px-5 py-4 rounded-2xl transition font-semibold text-base border-l-4 border-transparent hover:border-[#D62828]"
-              >
-                Курсеви
-              </Link>
+              {userProfile?.role === 'admin' && (
+                <Link
+                  to="/admin"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="group flex items-center gap-3.5 rounded-2xl px-4 py-3.5 font-semibold text-[15px] text-[#1A1A1A] transition-colors hover:bg-[#FFF5F5] menu-item-in"
+                  style={{ animationDelay: `${80 + NAV_LINKS.length * 45}ms` }}
+                >
+                  <span className="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-gray-100 text-gray-500 transition-colors group-hover:bg-[#D62828]/10 group-hover:text-[#D62828]">
+                    <ShieldCheck size={17} />
+                  </span>
+                  Админ
+                </Link>
+              )}
 
-              <Link
-                to="/online-nastava"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-[#1A1A1A] hover:bg-gradient-to-r hover:from-[#FFF5F5] hover:to-white px-5 py-4 rounded-2xl transition font-semibold text-base border-l-4 border-transparent hover:border-[#D62828]"
-              >
-                Online настава
-              </Link>
+              <div className="flex-1" />
 
-              <Link
-                to="/about"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-[#1A1A1A] hover:bg-gradient-to-r hover:from-[#FFF5F5] hover:to-white px-5 py-4 rounded-2xl transition font-semibold text-base border-l-4 border-transparent hover:border-[#D62828]"
-              >
-                О нама
-              </Link>
-
-              <Link
-                to="/contact"
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-[#1A1A1A] hover:bg-gradient-to-r hover:from-[#FFF5F5] hover:to-white px-5 py-4 rounded-2xl transition font-semibold text-base border-l-4 border-transparent hover:border-[#D62828]"
-              >
-                Контакт
-              </Link>
-
-              <div className="border-t-2 border-gray-200 my-6" />
-
-              {user ? (
-                <>
-                  <Link
-                    to="/dashboard"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-[#1A1A1A] bg-gray-50 hover:bg-gray-100 px-5 py-4 rounded-2xl transition font-semibold text-base border-l-4 border-[#D62828]"
-                  >
-                    Ваш панел
-                  </Link>
-                  {userProfile?.role === 'admin' && (
-                    <Link
-                      to="/admin"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="text-[#1A1A1A] bg-gray-50 hover:bg-gray-100 px-5 py-4 rounded-2xl transition font-semibold text-base border-l-4 border-[#D62828]"
-                    >
-                      Админ
-                    </Link>
-                  )}
+              <div className="border-t border-gray-100 pt-4 mt-4 menu-item-in" style={{ animationDelay: '340ms' }}>
+                {user ? (
                   <button
                     onClick={handleLogout}
-                    className="text-left text-white bg-gradient-to-r from-[#D62828] to-[#B91F1F] hover:shadow-xl px-5 py-4 rounded-2xl transition font-bold text-base mt-4"
+                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gray-50 px-5 py-3.5 font-bold text-[#1A1A1A] transition-colors hover:bg-gray-100"
                   >
-                    Одјави се
+                    <LogOut size={17} /> Одјави се
                   </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    to="/login"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-[#1A1A1A] bg-gray-50 hover:bg-gray-100 px-5 py-4 rounded-2xl transition font-semibold text-base text-center border-2 border-gray-200"
-                  >
-                    Пријави се
-                  </Link>
-                  <Link
-                    to="/register"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="text-white bg-gradient-to-r from-[#D62828] to-[#B91F1F] hover:shadow-xl px-5 py-4 rounded-2xl transition font-bold text-base text-center mt-2"
-                  >
-                    Региструј се
-                  </Link>
-                </>
-              )}
+                ) : (
+                  <div className="flex flex-col gap-2.5">
+                    <Link
+                      to="/login"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center justify-center gap-2 rounded-2xl border-2 border-gray-200 px-5 py-3.5 font-semibold text-[#1A1A1A] transition-colors hover:bg-gray-50"
+                    >
+                      <LogIn size={17} /> Пријави се
+                    </Link>
+                    <Link
+                      to="/register"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#D62828] to-[#B91F1F] px-5 py-3.5 font-bold text-white shadow-lg shadow-[#D62828]/20 transition-shadow hover:shadow-xl"
+                    >
+                      <UserPlus size={17} /> Региструј се
+                    </Link>
+                  </div>
+                )}
+              </div>
             </nav>
           </div>
         </div>
       )}
 
       <style>{`
-        @keyframes fade-in {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
-        @keyframes slide-in-right {
-          from { transform: translateX(100%); }
-          to { transform: translateX(0); }
-        }
-        .animate-fade-in {
-          animation: fade-in 0.3s ease-out;
-        }
-        .animate-slide-in-right {
-          animation: slide-in-right 0.3s ease-out;
+        @keyframes menu-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes menu-panel-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
+        @keyframes menu-item-in { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
+        .menu-backdrop-in { animation: menu-backdrop-in 220ms ease-out; }
+        .menu-panel-in { animation: menu-panel-in 320ms cubic-bezier(0.16, 1, 0.3, 1); }
+        .menu-item-in { animation: menu-item-in 320ms ease-out backwards; }
+        @media (prefers-reduced-motion: reduce) {
+          .menu-backdrop-in, .menu-panel-in, .menu-item-in { animation-duration: 1ms; }
         }
       `}</style>
     </>

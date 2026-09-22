@@ -77,10 +77,10 @@ export default function PromotionsManager() {
   return (
     <div className="space-y-8">
       {/* Header Info */}
-      <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-2xl p-6 border border-purple-100">
+      <div className="bg-gradient-to-r from-red-50 to-amber-50 rounded-2xl p-6 border border-red-100">
         <div className="flex items-start gap-4">
-          <div className="p-3 bg-purple-100 rounded-xl">
-            <Gift className="w-6 h-6 text-purple-600" />
+          <div className="p-3 bg-white rounded-xl shadow-sm">
+            <Gift className="w-6 h-6 text-[#D62828]" />
           </div>
           <div>
             <h3 className="text-lg font-bold text-[#1A1A1A] mb-1">Управљање промоцијама</h3>

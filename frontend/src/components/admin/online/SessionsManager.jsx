@@ -198,7 +198,7 @@ export default function SessionsManager() {
 
   const getStatusBadge = (status) => {
     const badges = {
-      scheduled: { bg: 'bg-blue-100', text: 'text-blue-700', label: 'Заказано' },
+      scheduled: { bg: 'bg-amber-100', text: 'text-amber-700', label: 'Заказано' },
       ongoing: { bg: 'bg-green-100', text: 'text-green-700', label: 'У току' },
       completed: { bg: 'bg-gray-100', text: 'text-gray-700', label: 'Завршено' },
       cancelled: { bg: 'bg-red-100', text: 'text-red-700', label: 'Отказано' }
@@ -339,7 +339,7 @@ export default function SessionsManager() {
                   <div className="flex gap-2 ml-4">
                     <button
                       onClick={() => handleOpenModal(session)}
-                      className="p-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                      className="p-2 bg-red-100 text-[#D62828] rounded-lg hover:bg-red-200 transition-colors"
                       title="Измени"
                     >
                       <Edit2 className="w-4 h-4" />

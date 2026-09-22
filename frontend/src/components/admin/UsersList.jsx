@@ -351,7 +351,7 @@ export default function UsersList() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleViewUser(user)}
-                        className="p-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
+                        className="p-2 bg-red-100 text-[#D62828] rounded-lg hover:bg-red-200 transition-colors"
                         title="Прегледај и управљај курсевима"
                       >
                         <Eye className="w-4 h-4" />
