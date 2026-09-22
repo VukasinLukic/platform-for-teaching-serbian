@@ -140,6 +140,7 @@
   /* Na mobilnom dnu traci Alano stavka ostaje samo ikonica, bez teksta ispod */
   .quick-dock-alano { padding: 9px 4px 6px; }
   .quick-dock-alano .quick-dock-label { display: none; }
+  .quick-dock-alano .quick-dock-mascot { margin-top: -6px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
