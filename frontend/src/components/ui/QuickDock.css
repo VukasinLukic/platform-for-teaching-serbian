@@ -114,9 +114,10 @@
   .quick-dock-item {
     flex: 1;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
+    align-items: center;
     gap: 3px;
-    padding: 6px 4px;
+    padding: 9px 4px 6px;
     border-radius: 14px;
   }
 
@@ -137,7 +138,7 @@
   }
 
   /* Na mobilnom dnu traci Alano stavka ostaje samo ikonica, bez teksta ispod */
-  .quick-dock-alano { padding: 6px 4px; }
+  .quick-dock-alano { padding: 9px 4px 6px; }
   .quick-dock-alano .quick-dock-label { display: none; }
 }
 
