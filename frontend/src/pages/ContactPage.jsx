@@ -7,6 +7,7 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+import MascotHint from '../components/mascot/MascotHint';
 
 export default function ContactPage() {
   const contactPhone = import.meta.env.VITE_CONTACT_PHONE || '+381 XX XXX XXXX';
@@ -209,6 +210,9 @@ export default function ContactPage() {
                  </button>
                </Link>
             </div>
+
+            {/* Brz odgovor preko Alana */}
+            <MascotHint message="Хоћеш брз одговор уместо форме? 🐱" />
           </div>
 
         </div>

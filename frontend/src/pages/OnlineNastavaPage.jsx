@@ -421,7 +421,7 @@ export default function OnlineNastavaPage() {
                           Учитавање...
                         </>
                       ) : (
-                        'Купи пакет'
+                        'Затражи пакет'
                       )}
                     </button>
                   </div>
@@ -479,7 +479,7 @@ export default function OnlineNastavaPage() {
                           Учитавање...
                         </>
                       ) : (
-                        'Купи пакет'
+                        'Затражи пакет'
                       )}
                     </button>
                   </div>

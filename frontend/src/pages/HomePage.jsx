@@ -21,6 +21,7 @@ import {
 import { useAuthStore } from '../store/authStore';
 import { inicijalniTestoviList } from '../data/inicijalniTestovi';
 import { useOnboarding } from '../context/OnboardingContext';
+import MascotHint from '../components/mascot/MascotHint';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import SEO from '../components/SEO';
@@ -591,6 +592,10 @@ export default function HomePage() {
               Тестови за 5, 6, 7. и 8. разред — граматика, правопис и књижевност.
             </p>
           </FadeInSection>
+
+          <div className="mt-8 max-w-md mx-auto">
+            <MascotHint message="Треба ти помоћ око тестова? 👋" />
+          </div>
         </div>
       </section>
 

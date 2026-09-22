@@ -199,7 +199,7 @@ export default function CoursePage() {
               </div>
               <h2 className="text-3xl font-bold mb-4 text-[#1A1A1A]">Откључајте све лекције</h2>
               <p className="text-gray-600 mb-8 max-w-md mx-auto">
-                Купите курс да бисте добили приступ свим видео лекцијама, материјалима и квизовима
+                Затражите курс да бисте добили приступ свим видео лекцијама, материјалима и квизовима
               </p>
               <button
                 onClick={handlePurchaseClick}
@@ -213,7 +213,7 @@ export default function CoursePage() {
                   </>
                 ) : (
                   <>
-                    Купи курс за {formatPrice(course.price)}
+                    Затражи курс за {formatPrice(course.price)}
                     <ArrowRight className="w-6 h-6" />
                   </>
                 )}
@@ -462,7 +462,7 @@ export default function CoursePage() {
                     Учитавање...
                   </>
                 ) : (
-                  <>Купи за {formatPrice(course.price)}</>
+                  <>Затражи за {formatPrice(course.price)}</>
                 )}
               </button>
             </div>
@@ -581,7 +581,7 @@ export default function CoursePage() {
                       </>
                     ) : (
                       <>
-                        Купи курс сада
+                        Затражи курс сада
                         <ArrowRight className="w-5 h-5" />
                       </>
                     )}

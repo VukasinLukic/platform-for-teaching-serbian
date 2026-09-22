@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Book, CheckCircle, Clock, AlertCircle, PlayCircle, Upload, ArrowRight } from 'lucide-react';
+import Alano from '../components/mascot/Alano';
 import { useAuthStore } from '../store/authStore';
 import { getUserCourses, getAllCourses } from '../services/course.service';
 import { getUserTransactions } from '../services/payment.service';
@@ -141,9 +142,7 @@ export default function DashboardPage() {
 
           {myCourses.length === 0 ? (
             <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-8 md:p-16 text-center border border-gray-100">
-              <div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <Book className="w-12 h-12 text-gray-400" />
-              </div>
+              <Alano pose="idle" size={96} className="mx-auto mb-6" />
               <h3 className="text-xl md:text-2xl font-bold mb-3 text-[#1A1A1A]">Још увек немате курсеве</h3>
               <p className="text-gray-600 mb-8 text-base md:text-lg">Изаберите курс и започните своје учење данас</p>
               <Link to="/courses">

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Trophy, ArrowLeft, RefreshCw } from 'lucide-react';
+import { ArrowLeft, RefreshCw } from 'lucide-react';
+import Alano from '../mascot/Alano';
 
 export default function QuizResult({ score, totalQuestions, onRetry }) {
     const percentage = Math.round((score / totalQuestions) * 100);
@@ -13,9 +14,7 @@ export default function QuizResult({ score, totalQuestions, onRetry }) {
 
     return (
         <div className="bg-white rounded-3xl p-8 md:p-12 border border-gray-100 shadow-xl text-center max-w-2xl mx-auto">
-            <div className="bg-yellow-100 w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
-                <Trophy className="w-12 h-12 text-yellow-600" />
-            </div>
+            <Alano pose="celebrating" size={140} className="mx-auto mb-4" />
 
             <h2 className="text-2xl md:text-3xl font-bold mb-2 text-[#1A1A1A]">{message}</h2>
             <p className="text-gray-600 mb-8">Ваш резултат:</p>

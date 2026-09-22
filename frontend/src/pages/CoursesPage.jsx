@@ -9,6 +9,7 @@ import Card, { CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import SEO from '../components/SEO';
 import { useOnboarding } from '../context/OnboardingContext';
+import MascotHint from '../components/mascot/MascotHint';
 
 export default function CoursesPage() {
   const { checkAndStartTutorial } = useOnboarding();
@@ -184,7 +185,7 @@ export default function CoursesPage() {
                 Извршите уплату
               </h3>
               <p className="text-gray-600 leading-relaxed">
-                Кликните на "Купи курс" и пратите инструкције за уплату
+                Кликните на "Затражи курс" и пратите инструкције за уплату
               </p>
             </div>
 
@@ -399,6 +400,10 @@ export default function CoursesPage() {
             </div>
           </div>
         )}
+      </div>
+
+      <div className="max-w-md mx-auto px-6 pb-16">
+        <MascotHint message="Питања око цена? 💬" />
       </div>
 
       <Footer />

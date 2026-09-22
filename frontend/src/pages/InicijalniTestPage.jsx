@@ -3,7 +3,6 @@ import { useParams, Navigate, useNavigate, Link } from 'react-router-dom';
 import {
   CheckCircle,
   XCircle,
-  Trophy,
   ArrowRight,
   ArrowLeft,
   ChevronRight,
@@ -13,6 +12,7 @@ import {
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import SEO from '../components/SEO';
+import Alano from '../components/mascot/Alano';
 import { inicijalniTestovi } from '../data/inicijalniTestovi';
 
 const DOMAIN = 'https://srpskiusrcu.rs';
@@ -218,9 +218,7 @@ export default function InicijalniTestPage() {
         <Header />
         <div className="max-w-2xl mx-auto px-6 py-12">
           <div className="bg-white rounded-3xl p-8 md:p-12 border border-gray-100 shadow-xl text-center">
-            <div className="bg-yellow-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-5">
-              <Trophy className="w-10 h-10 text-yellow-600" />
-            </div>
+            <Alano pose="celebrating" size={128} className="mx-auto mb-2" />
 
             <h2 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-1">{poruka}</h2>
             <p className="text-gray-500 text-sm mb-4">

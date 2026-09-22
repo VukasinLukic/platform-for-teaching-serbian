@@ -1,10 +1,9 @@
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import Accordion from '../components/ui/Accordion';
-import { HelpCircle, MessageCircle } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import Button from '../components/ui/Button';
+import { HelpCircle } from 'lucide-react';
 import SEO from '../components/SEO';
+import MascotHint from '../components/mascot/MascotHint';
 
 export default function FAQPage() {
   const faqs = [
@@ -97,23 +96,8 @@ export default function FAQPage() {
           <Accordion items={faqs} />
 
           {/* Contact CTA */}
-          <div className="mt-10 md:mt-16 text-center">
-             <div className="bg-[#F7F7F7] p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-xl border-2 border-gray-100">
-               <div className="flex flex-col md:flex-row items-center gap-5 md:gap-6">
-                 <div className="bg-[#D62828]/10 p-4 md:p-5 rounded-2xl">
-                   <MessageCircle className="w-8 h-8 md:w-10 md:h-10 text-[#D62828]" />
-                 </div>
-                 <div className="text-center md:text-left">
-                   <h3 className="text-xl md:text-2xl font-bold mb-2 text-[#1A1A1A]">Нисте пронашли одговор?</h3>
-                   <p className="text-gray-600 text-sm md:text-base">Ту смо да помогнемо. Јавите нам се директно.</p>
-                 </div>
-                 <Link to="/contact" className="w-full md:w-auto">
-                   <Button variant="primary" size="lg" className="w-full md:w-auto">
-                     Контактирајте нас
-                   </Button>
-                 </Link>
-               </div>
-             </div>
+          <div className="mt-10 md:mt-16">
+            <MascotHint message="Ниси нашао одговор? 🤔" />
           </div>
         </div>
       </section>
