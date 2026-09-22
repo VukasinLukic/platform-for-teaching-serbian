@@ -9,7 +9,6 @@ import PaymentConfirmationUpload from '../components/payment/PaymentConfirmation
 import Header from '../components/ui/Header';
 import Modal from '../components/ui/Modal';
 import OnlineClassesSection from '../components/dashboard/OnlineClassesSection';
-import HelpButton from '../components/ui/HelpButton';
 import { useOnboarding } from '../context/OnboardingContext';
 
 export default function DashboardPage() {
@@ -338,8 +337,6 @@ export default function DashboardPage() {
         )}
       </Modal>
 
-      {/* Help Button */}
-      <HelpButton pageKey="dashboard" />
     </div>
   );
 }

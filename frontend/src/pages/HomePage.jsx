@@ -21,7 +21,6 @@ import {
 import { useAuthStore } from '../store/authStore';
 import { inicijalniTestoviList } from '../data/inicijalniTestovi';
 import { useOnboarding } from '../context/OnboardingContext';
-import HelpButton from '../components/ui/HelpButton';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import SEO from '../components/SEO';
@@ -927,7 +926,6 @@ export default function HomePage() {
       {/* Footer */}
       <Footer />
 
-      <HelpButton pageKey="home" />
     </div>
     </>
   );

@@ -19,10 +19,11 @@ import { ASSISTANT_KNOWLEDGE_SR } from './assistantKnowledge.js';
 // ротира на OpenRouter страни ("free models rotating out with almost no notice"),
 // па је треба с времена на време проверити на https://openrouter.ai/models?max_price=0
 const OPENROUTER_MODELS = [
-  'deepseek/deepseek-v4-flash-0731:free',
+  'nex-agi/nex-n2.5-pro:free',
+  'nex-agi/nex-n2.5-mini:free',
+  'poolside/laguna-s-2.1:free',
   'google/gemma-4-31b-it:free',
   'qwen/qwen3.8-27b:free',
-  'nex-agi/nex-n2.5-pro:free',
 ];
 
 // OpenRouter бесплатни ниво: 50 захтева/дан укупно (дељено на СВЕ посетиоце сајта).
@@ -193,7 +194,7 @@ async function callOpenRouter(messages) {
     const controller = new AbortController();
     // Neki besplatni modeli su sporiji ("reasoning" modeli), a fallback lanac ume da
     // proba 2-3 modela u nizu — funkcija ima timeoutSeconds: 90 da sve to stane.
-    const timeout = setTimeout(() => controller.abort(), 14000);
+    const timeout = setTimeout(() => controller.abort(), 12000);
     try {
       const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',

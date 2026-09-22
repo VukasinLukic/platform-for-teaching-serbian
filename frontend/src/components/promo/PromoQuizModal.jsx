@@ -106,7 +106,7 @@ export default function PromoQuizModal() {
           </div>
 
           <p className="hidden md:block text-[11px] text-gray-400 leading-relaxed mt-3">
-            Квиз можеш покренути и касније, дугметом у доњем левом углу.
+            Квиз можеш покренути и касније, преко „Пробни тест" у брзом менију.
           </p>
         </div>
 

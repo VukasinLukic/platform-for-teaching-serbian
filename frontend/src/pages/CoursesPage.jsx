@@ -9,7 +9,6 @@ import Card, { CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import SEO from '../components/SEO';
 import { useOnboarding } from '../context/OnboardingContext';
-import HelpButton from '../components/ui/HelpButton';
 
 export default function CoursesPage() {
   const { checkAndStartTutorial } = useOnboarding();
@@ -404,7 +403,6 @@ export default function CoursesPage() {
 
       <Footer />
 
-      <HelpButton pageKey="courses" />
     </div>
     </>
   );

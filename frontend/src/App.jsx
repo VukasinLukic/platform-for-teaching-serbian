@@ -8,8 +8,8 @@ import { OnboardingProvider } from './context/OnboardingContext';
 import TutorialTooltip from './components/ui/TutorialTooltip';
 import { PromoProvider } from './context/PromoContext';
 import PromoQuizModal from './components/promo/PromoQuizModal';
-import PromoFloatingButton from './components/promo/PromoFloatingButton';
 import AssistantWidget from './components/assistant/AssistantWidget';
+import QuickDock from './components/ui/QuickDock';
 import { useVersionCheck } from './hooks/useVersionCheck';
 
 // Critical path — eager loaded
@@ -125,8 +125,8 @@ function AppContent() {
       <ScrollToTop />
       <TutorialTooltip />
       <PromoQuizModal />
-      <PromoFloatingButton />
       <AssistantWidget />
+      <QuickDock />
       <main>
         <Suspense fallback={<FullScreenSpinner text="Učitava se..." />}>
           <Routes>
