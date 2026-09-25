@@ -3,141 +3,12 @@ import { ArrowRight } from 'lucide-react';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import SEO from '../components/SEO';
-
-const blogPosts = [
-  {
-    id: 1,
-    slug: 'kako-se-pripremiti-za-malu-maturu',
-    title: 'Како се припремити за малу матуру из српског језика',
-    excerpt: 'Практичан водич кроз градиво, план рада и савете за ученике који полажу завршни испит из српског језика.',
-    category: 'Припрема',
-    author: 'Марина Лукић',
-    date: '2025-02-10',
-    readTime: '8 мин',
-  },
-  {
-    id: 2,
-    slug: 'padezi-u-srpskom-jeziku',
-    title: 'Падежи у српском језику — преглед, примери и вежбе',
-    excerpt: 'Преглед свих 7 падежа са питањима, примерима деклинације и типичним грешкама.',
-    category: 'Граматика',
-    author: 'Марина Лукић',
-    date: '2025-02-08',
-    readTime: '10 мин',
-  },
-  {
-    id: 3,
-    slug: 'motivacija-deteta-za-ucenje',
-    title: 'Како помоћи детету да заволи учење српског језика',
-    excerpt: 'Савети за родитеље: како створити позитивно окружење за учење и подржати дете у припреми за испит.',
-    category: 'Савети',
-    author: 'Марина Лукић',
-    date: '2025-02-05',
-    readTime: '6 мин',
-  },
-  {
-    id: 4,
-    slug: 'glasovne-promene-u-srpskom-jeziku',
-    title: 'Гласовне промене у српском језику — јотовање, палатализација, сибиларизација',
-    excerpt: 'Детаљно објашњење свих гласовних промена са примерима, правилима и вежбама за ученике.',
-    category: 'Граматика',
-    author: 'Марина Лукић',
-    date: '2025-02-15',
-    readTime: '12 мин',
-  },
-  {
-    id: 5,
-    slug: 'najcesce-greske-na-maloj-maturi',
-    title: '10 најчешћих грешака ученика на малој матури из српског',
-    excerpt: 'Анализа типичних грешака на завршном испиту и практични савети како их избећи.',
-    category: 'Припрема',
-    author: 'Марина Лукић',
-    date: '2025-02-18',
-    readTime: '9 мин',
-  },
-  {
-    id: 6,
-    slug: 'vrste-reci-u-srpskom-jeziku',
-    title: 'Врсте речи у српском језику — именице, придеви, глаголи и остале',
-    excerpt: 'Комплетан преглед свих врста речи: променљиве и непроменљиве, са примерима и објашњењима.',
-    category: 'Граматика',
-    author: 'Марина Лукић',
-    date: '2025-02-22',
-    readTime: '11 мин',
-  },
-  {
-    id: 7,
-    slug: 'stilske-figure-u-srpskom-jeziku',
-    title: 'Стилске фигуре — метафора, поређење, персонификација и друге',
-    excerpt: 'Преглед најважнијих стилских фигура за малу матуру: дефиниције, примери из лектире и вежбе.',
-    category: 'Књижевност',
-    author: 'Марина Лукић',
-    date: '2025-02-25',
-    readTime: '10 мин',
-  },
-  {
-    id: 8,
-    slug: 'lektira-za-malu-maturu-2026',
-    title: 'Лектира за малу матуру 2026 — комплетан списак са кратким садржајима',
-    excerpt: 'Сва дела из лектире која се испитују на завршном испиту из српског: аутори, жанрови, кључне теме и ликови.',
-    category: 'Књижевност',
-    author: 'Марина Лукић',
-    date: '2026-05-01',
-    readTime: '9 мин',
-  },
-  {
-    id: 9,
-    slug: 'poslednje-nedelje-pred-malu-maturu',
-    title: 'Мај и јун пред малу матуру — шта учити у последњих 6 недеља',
-    excerpt: 'Конкретан план учења за финалну припрему: шта прегледати, које грешке исправити и како се психички припремити.',
-    category: 'Припрема',
-    author: 'Марина Лукић',
-    date: '2026-05-01',
-    readTime: '6 мин',
-  },
-  {
-    id: 10,
-    slug: 'prijemni-srpski-sta-se-pita',
-    title: 'Пријемни из српског за гимназију — шта се пита и колико носи бодова',
-    excerpt: 'Структура пријемног испита из српског, колико бодова носи свaki задатак и на шта обратити пажњу.',
-    category: 'Припрема',
-    author: 'Марина Лукић',
-    date: '2026-05-02',
-    readTime: '7 мин',
-  },
-];
+import { blogPosts } from '../data/blogPosts';
 
 export default function BlogPage() {
-  const blogBreadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Почетна", "item": "https://srpskiusrcu.rs/" },
-      { "@type": "ListItem", "position": 2, "name": "Блог", "item": "https://srpskiusrcu.rs/blog" }
-    ]
-  };
-
-  const blogJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Blog",
-    "name": "Српски у Срцу Блог",
-    "description": "Чланци, савети и водичи за припрему мале матуре из српског језика",
-    "url": "https://srpskiusrcu.rs/blog",
-    "publisher": {
-      "@type": "EducationalOrganization",
-      "name": "Српски у Срцу"
-    }
-  };
-
   return (
     <>
-      <SEO
-        title="БЛОГ | САВЕТИ И ВОДИЧИ ЗА МАЛУ МАТУРУ"
-        description="Чланци, савети и водичи за припрему мале матуре из српског језика. Граматика, књижевност, савети за родитеље и ученике."
-        canonical="/blog"
-        jsonLd={[blogJsonLd, blogBreadcrumbJsonLd]}
-        keywords="blog srpski jezik, saveti za malu maturu, gramatika srpski, knjizevnost osnovna skola, padezi srpski jezik, stilske figure, glasovne promene"
-      />
+      <SEO />
       <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
         <Header />
 
@@ -148,7 +19,7 @@ export default function BlogPage() {
           <div className="space-y-0 divide-y divide-gray-200">
             {blogPosts.map((post) => (
               <Link
-                key={post.id}
+                key={post.slug}
                 to={`/blog/${post.slug}`}
                 className="group block py-8 first:pt-0"
               >

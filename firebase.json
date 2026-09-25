@@ -27,6 +27,30 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "redirects": [
+      {
+        "source": "/quizzes",
+        "destination": "/kvizovi",
+        "type": 301
+      },
+      {
+        "source": "/quizzes/:quizId",
+        "destination": "/kvizovi/:quizId",
+        "type": 301
+      },
+      {
+        "source": "/lat/quizzes",
+        "destination": "/lat/kvizovi",
+        "type": 301
+      },
+      {
+        "source": "/lat/quizzes/:quizId",
+        "destination": "/lat/kvizovi/:quizId",
+        "type": 301
+      }
+    ],
     "rewrites": [
       {
         "source": "**",
@@ -109,6 +133,15 @@
           {
             "key": "Cache-Control",
             "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
+      {
+        "regex": "^/(?:[^.]*|.*\\.html)$",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
           }
         ]
       }

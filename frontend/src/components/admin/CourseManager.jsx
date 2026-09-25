@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { slugify } from '../../seo/transliterate';
 import { collection, addDoc, getDocs, updateDoc, doc, deleteDoc, query, where } from 'firebase/firestore';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import { db, storage } from '../../services/firebase';
@@ -13,6 +14,7 @@ export default function CourseManager() {
   const [editingCourse, setEditingCourse] = useState(null);
   const [formData, setFormData] = useState({
     title: '',
+    slug: '',
     description: '',
     price: 0,
     type: 'video',
@@ -78,6 +80,7 @@ export default function CourseManager() {
 
       setFormData({
         title: course.title,
+        slug: course.slug || slugify(course.title || ''),
         description: course.description,
         price: course.price,
         type: course.type,
@@ -108,6 +111,7 @@ export default function CourseManager() {
     setEditingCourse(null);
     setFormData({
       title: '',
+      slug: '',
       description: '',
       price: 0,
       type: 'video',
@@ -268,6 +272,7 @@ export default function CourseManager() {
       const { thumbnailFile, modules, ...courseData } = formData;
       const dataToSave = {
         ...courseData,
+        slug: slugify(courseData.slug || courseData.title),
         thumbnail_url: thumbnailUrl,
         updated_at: new Date().toISOString(),
       };
@@ -389,12 +394,33 @@ export default function CourseManager() {
                   <input
                     type="text"
                     value={formData.title}
-                    onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                    onChange={(e) => {
+                      const title = e.target.value;
+                      const autoSlug = !formData.slug || formData.slug === slugify(formData.title);
+                      setFormData({ ...formData, title, slug: autoSlug ? slugify(title) : formData.slug });
+                    }}
                     className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition-colors text-gray-900"
                     placeholder="npr. Priprema za malu maturu"
                     required
                   />
                 </div>
+              </div>
+
+              {/* Slug (URL) Input — /kurs/<slug> */}
+              <div>
+                <label className="block text-sm font-medium text-gray-900 mb-1">URL adresa (slug)</label>
+                <div className="flex items-center rounded-lg border border-gray-300 focus-within:ring-2 focus-within:ring-black overflow-hidden">
+                  <span className="px-3 py-2 bg-gray-50 text-gray-500 text-sm whitespace-nowrap">/kurs/</span>
+                  <input
+                    type="text"
+                    value={formData.slug}
+                    onChange={(e) => setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })}
+                    onBlur={() => setFormData((f) => ({ ...f, slug: slugify(f.slug || f.title) }))}
+                    className="w-full px-3 py-2 outline-none text-gray-900 min-w-0"
+                    placeholder="priprema-za-malu-maturu"
+                  />
+                </div>
+                <p className="text-xs text-gray-500 mt-1">Automatski iz naziva (latinica, bez kvačica). Ne menjajte posle objave — stari linkovi prestaju da rade.</p>
               </div>
 
               {/* Description Input */}

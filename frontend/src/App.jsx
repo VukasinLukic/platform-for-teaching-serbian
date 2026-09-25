@@ -12,6 +12,8 @@ import AssistantWidget from './components/assistant/AssistantWidget';
 import QuickDock from './components/ui/QuickDock';
 import CookieConsent from './components/CookieConsent';
 import { useVersionCheck } from './hooks/useVersionCheck';
+import { ROUTER_BASENAME } from './seo/script';
+import { LegacyQuizRedirect, LatinMirrorReload } from './seo/routeHelpers';
 
 // Critical path — eager loaded
 import HomePage from './pages/HomePage';
@@ -42,6 +44,7 @@ const QuizListPage = lazy(() => import('./pages/QuizListPage'));
 const QuizRunnerPage = lazy(() => import('./pages/QuizRunnerPage'));
 const BlogPostPage = lazy(() => import('./pages/BlogPostPage'));
 const SEOTestPage = lazy(() => import('./pages/SEOTestPage'));
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage'));
 
 // Protected Route Component
 function ProtectedRoute({ children, adminOnly = false }) {
@@ -139,6 +142,7 @@ function AppContent() {
             <Route path="/reset-password" element={<ResetPasswordPage />} />
             <Route path="/verify" element={<VerifyEmailPage />} />
             <Route path="/course/:id" element={<CoursePage />} />
+            <Route path="/kurs/:slug" element={<CoursePage />} />
             <Route path="/online-class/:id" element={<OnlineClassPage />} />
             <Route path="/courses" element={<CoursesPage />} />
             <Route path="/online-nastava" element={<OnlineNastavaPage />} />
@@ -177,26 +181,17 @@ function AppContent() {
               }
             />
 
-            {/* Quiz Routes */}
-            <Route
-              path="/quizzes"
-              element={
-                <ProtectedRoute>
-                  <QuizListPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/quizzes/:quizId"
-              element={
-                <ProtectedRoute>
-                  <QuizRunnerPage />
-                </ProtectedRoute>
-              }
-            />
+            {/* Quiz Routes — public; old /quizzes URLs redirect */}
+            <Route path="/kvizovi" element={<QuizListPage />} />
+            <Route path="/kvizovi/:quizId" element={<QuizRunnerPage />} />
+            <Route path="/quizzes" element={<Navigate to="/kvizovi" replace />} />
+            <Route path="/quizzes/:quizId" element={<LegacyQuizRedirect />} />
 
-            {/* Catch all - redirect to home */}
-            <Route path="*" element={<Navigate to="/" replace />} />
+            {/* /lat/* reached by client-side navigation from the Cyrillic app: reload into Latin mode */}
+            <Route path="/lat/*" element={<LatinMirrorReload />} />
+
+            {/* Catch all - real 404 page (noindex) */}
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
       </main>
@@ -206,7 +201,7 @@ function AppContent() {
 
 function App() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={ROUTER_BASENAME}>
       <PromoProvider>
         <AppContent />
       </PromoProvider>

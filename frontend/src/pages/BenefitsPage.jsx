@@ -103,6 +103,7 @@ export default function BenefitsPage() {
       {/* VALUES SECTION - Minimal */}
       <section className="pt-14 pb-8 md:pt-24 md:pb-12 px-6">
         <div className="max-w-5xl mx-auto text-center">
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 text-[#1A1A1A]">Зашто учити са нама</h1>
           <h2 className="text-2xl md:text-3xl font-bold mb-3 text-[#1A1A1A]">Наше вредности</h2>
           <p className="text-gray-600 mb-10 md:mb-16">Зашто нас бирају ученици</p>
 
@@ -124,7 +125,7 @@ export default function BenefitsPage() {
             <div className="text-center">
               <h3 className="text-lg font-bold mb-3 text-[#1A1A1A]">Проверени резултати</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Преко 15 година искуства и стотине задовољних ученика који су остварили своје снове. Ваш успех је наш успех.
+                27 година искуства и стотине задовољних ученика који су остварили своје снове. Ваш успех је наш успех.
               </p>
             </div>
           </div>

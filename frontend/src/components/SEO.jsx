@@ -1,68 +1,91 @@
+import { useMemo } from 'react';
 import { Helmet } from 'react-helmet-async';
-
-const SITE_NAME = 'Српски у Срцу';
-const DEFAULT_IMAGE = 'https://srpskiusrcu.rs/og-image.png';
-const DOMAIN = 'https://srpskiusrcu.rs';
+import { useLocation } from 'react-router-dom';
+import { resolveRouteMeta } from '../seo/routes';
+import { buildHead, jsonLdToString } from '../seo/head';
+import { normalizePath } from '../seo/site';
+import { IS_LATIN } from '../seo/script';
 
 /**
- * SEO component za dinamičke meta tagove po stranicama
- * Koristi react-helmet-async za server-safe rendering
+ * Per-page <head> tags (title, description, canonical, robots, Open Graph,
+ * Twitter, hreflang alternates, JSON-LD) via react-helmet-async.
  *
- * @param {string} title - Naslov stranice (bez naziva sajta)
- * @param {string} description - Meta opis (150-160 karaktera)
- * @param {string} canonical - Kanonični URL (opciono)
- * @param {string} ogImage - Open Graph slika URL
- * @param {string} ogType - OG type: 'website', 'article', itd.
- * @param {Array} jsonLd - Niz JSON-LD strukturiranih podataka
- * @param {boolean} noindex - Da li se stranica indeksira
+ * Source of truth: src/seo/routes.js. For every route the registry knows
+ * (static pages, blog posts, tests), the registry's title/description/OG/JSON-LD
+ * are used and the props below are ignored — the same data generates the static
+ * HTML shells at build time (scripts/seo-build.mjs), so crawlers without JS and
+ * the live app always see identical tags.
+ *
+ * For routes outside the registry (courses from Firestore, quizzes, 404, private
+ * pages) the props are used. A canonical is always emitted: `canonical` prop
+ * (a path, e.g. "/kurs/slug") or the current path.
+ *
+ * On the Latin mirror (/lat/...) everything is transliterated and canonical /
+ * alternates point to the right script version.
+ *
+ * @param {string}  title        page title without the brand (brand added when it fits in 60 chars)
+ * @param {string}  description  meta description (~150–160 chars)
+ * @param {string}  canonical    canonical path, e.g. "/kurs/priprema" (defaults to current path)
+ * @param {string}  ogImage      path or absolute URL of a 1200×630 image
+ * @param {string}  ogType       'website' | 'article'
+ * @param {Array}   jsonLd       page JSON-LD (used when the registry has none for this route)
+ * @param {Array}   extraJsonLd  JSON-LD always appended (e.g. runtime Firestore data)
+ * @param {boolean} noindex      mark page noindex
  */
-const DEFAULT_KEYWORDS = 'srpski u srcu, Српски у Срцу, mala matura, мала матура, srpski jezik, српски језик, priprema za malu maturu, припрема мале матуре, online kursevi srpskog, video lekcije srpski';
-
 export default function SEO({
   title,
   description,
   canonical,
-  ogImage = DEFAULT_IMAGE,
+  ogImage,
   ogType = 'website',
   jsonLd = [],
+  extraJsonLd = [],
   noindex = false,
-  keywords,
+  publishedTime,
 }) {
-  const fullTitle = title ? `${title} | ${SITE_NAME}` : `${SITE_NAME} | ОНЛАЈН КУРСЕВИ ЗА МАЛУ МАТУРУ ИЗ СРПСКОГ`;
-  const canonicalUrl = canonical ? `${DOMAIN}${canonical}` : undefined;
-  const metaKeywords = keywords ? `${keywords}, ${DEFAULT_KEYWORDS}` : DEFAULT_KEYWORDS;
+  const location = useLocation();
+  const path = normalizePath(location.pathname);
+
+  const head = useMemo(() => {
+    const registry = resolveRouteMeta(path);
+    let meta;
+    if (registry) {
+      meta = { ...registry, noindex: registry.noindex || noindex };
+      if (registry.jsonLdFromPage && jsonLd.length) meta.jsonLd = jsonLd;
+    } else {
+      meta = {
+        path: canonical ? normalizePath(canonical) : path,
+        title,
+        description,
+        ogImage,
+        ogType,
+        noindex,
+        publishedTime,
+        jsonLd,
+      };
+    }
+    meta.jsonLd = [...(meta.jsonLd || []), ...extraJsonLd];
+    return buildHead(meta, { latin: IS_LATIN });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [path, title, description, canonical, ogImage, ogType, noindex, publishedTime, JSON.stringify(jsonLd), JSON.stringify(extraJsonLd)]);
 
   return (
     <Helmet>
-      {/* Osnovni meta tagovi */}
-      <title>{fullTitle}</title>
-      {description && <meta name="description" content={description} />}
-      <meta name="keywords" content={metaKeywords} />
-      {canonicalUrl && <link rel="canonical" href={canonicalUrl} />}
-      {noindex && <meta name="robots" content="noindex, nofollow" />}
-
-      {/* Open Graph tagovi */}
-      <meta property="og:title" content={fullTitle} />
-      {description && <meta property="og:description" content={description} />}
-      <meta property="og:type" content={ogType} />
-      {canonicalUrl && <meta property="og:url" content={canonicalUrl} />}
-      <meta property="og:image" content={ogImage} />
-      <meta property="og:image:width" content="1200" />
-      <meta property="og:image:height" content="630" />
-      <meta property="og:image:alt" content={fullTitle} />
-      <meta property="og:site_name" content={SITE_NAME} />
-      <meta property="og:locale" content="sr_RS" />
-
-      {/* Twitter Card tagovi */}
-      <meta name="twitter:card" content="summary_large_image" />
-      <meta name="twitter:title" content={fullTitle} />
-      {description && <meta name="twitter:description" content={description} />}
-      <meta name="twitter:image" content={ogImage} />
-
-      {/* JSON-LD strukturirani podaci */}
-      {jsonLd.map((schema, index) => (
-        <script key={index} type="application/ld+json">
-          {JSON.stringify(schema)}
+      <html lang={head.htmlLang} />
+      <title>{head.title}</title>
+      {head.metas.map((m) =>
+        m.name ? (
+          <meta key={`n:${m.name}`} name={m.name} content={m.content} />
+        ) : (
+          <meta key={`p:${m.property}`} property={m.property} content={m.content} />
+        )
+      )}
+      {head.links.map((l) => (
+        <link key={`${l.rel}:${l.hreflang || ''}`} rel={l.rel} href={l.href} {...(l.hreflang ? { hrefLang: l.hreflang } : {})} />
+      ))}
+      {head.jsonLd.map((schema, index) => (
+        <script key={`ld:${index}`} type="application/ld+json">
+          {jsonLdToString(schema)}
         </script>
       ))}
     </Helmet>

@@ -4,9 +4,8 @@ import { CheckCircle, XCircle, Trophy, ArrowRight, ChevronRight } from 'lucide-r
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import SEO from '../components/SEO';
+import NotFoundPage from './NotFoundPage';
 import { seoTestovi } from '../data/seoTestovi';
-
-const DOMAIN = 'https://srpskiusrcu.rs';
 
 export default function SEOTestPage() {
   const { kategorija, slug } = useParams();
@@ -21,38 +20,12 @@ export default function SEOTestPage() {
   const [faza, setFaza] = useState('test'); // 'test' | 'rezultat'
 
   if (!test) {
-    return <Navigate to="/" replace />;
+    return <NotFoundPage />;
   }
 
   const canonicalPath = `/srpski-jezik/${kljuc}`;
 
-  const jsonLd = [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'LearningResource',
-      name: test.metaTitle,
-      description: test.metaDescription,
-      url: `${DOMAIN}${canonicalPath}`,
-      inLanguage: 'sr',
-      educationalLevel: 'MiddleSchool',
-      learningResourceType: 'Quiz',
-      provider: {
-        '@type': 'Organization',
-        name: 'Српски у Срцу',
-        url: DOMAIN,
-      },
-    },
-    {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Почетна', item: DOMAIN },
-        { '@type': 'ListItem', position: 2, name: 'Српски језик', item: `${DOMAIN}/srpski-jezik` },
-        { '@type': 'ListItem', position: 3, name: test.kategorijaNaslov, item: `${DOMAIN}/srpski-jezik/${kategorija}` },
-        { '@type': 'ListItem', position: 4, name: test.naslov, item: `${DOMAIN}${canonicalPath}` },
-      ],
-    },
-  ];
+
 
   const pitanje = test.pitanja[trenutno];
   const progress = ((trenutno + 1) / test.pitanja.length) * 100;
@@ -79,13 +52,7 @@ export default function SEOTestPage() {
 
     return (
       <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
-        <SEO
-          title={test.metaTitle}
-          description={test.metaDescription}
-          canonical={canonicalPath}
-          keywords={test.keywords}
-          jsonLd={jsonLd}
-        />
+        <SEO />
         <Header />
         <div className="max-w-2xl mx-auto px-6 py-12">
           <div className="bg-white rounded-3xl p-8 md:p-12 border border-gray-100 shadow-xl text-center">
@@ -140,13 +107,7 @@ export default function SEOTestPage() {
 
   return (
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
-      <SEO
-        title={test.metaTitle}
-        description={test.metaDescription}
-        canonical={canonicalPath}
-        keywords={test.keywords}
-        jsonLd={jsonLd}
-      />
+      <SEO />
       <Header />
 
       <div className="max-w-3xl mx-auto px-6 py-10">

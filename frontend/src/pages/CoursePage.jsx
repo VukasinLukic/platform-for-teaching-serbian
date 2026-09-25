@@ -13,9 +13,14 @@ import { functions, functionsEU } from '../services/firebase';
 import Header from '../components/ui/Header';
 import AuthRequiredModal from '../components/ui/AuthRequiredModal';
 import VideoPlayer from '../components/course/VideoPlayer';
+import NotFoundPage from './NotFoundPage';
+import { resolveCourseIdBySlug } from '../seo/courseSlug';
+import { orgRef, teacherRef, breadcrumbSchema, absoluteUrl } from '../seo/site';
 
 export default function CoursePage() {
-  const { id } = useParams();
+  // /course/:id (legacy, Firestore id) or /kurs/:slug (SEO URL)
+  const { id: idParam, slug } = useParams();
+  const [id, setId] = useState(idParam || null);
   const navigate = useNavigate();
   const { user, userProfile } = useAuthStore();
   const [course, setCourse] = useState(null);
@@ -51,7 +56,27 @@ export default function CoursePage() {
   };
 
   useEffect(() => {
-    loadCourseData();
+    if (idParam) {
+      setId(idParam);
+      return;
+    }
+    let cancelled = false;
+    setLoading(true);
+    resolveCourseIdBySlug(slug)
+      .then((resolved) => {
+        if (cancelled) return;
+        if (resolved) setId(resolved);
+        else {
+          setCourse(null);
+          setLoading(false);
+        }
+      })
+      .catch(() => !cancelled && setLoading(false));
+    return () => { cancelled = true; };
+  }, [idParam, slug]);
+
+  useEffect(() => {
+    if (id) loadCourseData();
   }, [id, user]);
 
   const loadCourseData = async () => {
@@ -412,48 +437,51 @@ export default function CoursePage() {
     );
   }
 
-  if (!course) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-[#1A1A1A] mb-4">Курс није пронађен</h2>
-          <Link to="/courses" className="text-[#D62828] hover:underline">
-            Назад на курсеве
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  if (!course) return <NotFoundPage />;
 
   // SEO schema za Course
-  const courseJsonLd = course ? {
+  const coursePath = course.slug ? `/kurs/${course.slug}` : `/course/${course.id}`;
+  const courseDescription = course.description || `Онлајн видео курс „${course.title}“ за припрему мале матуре из српског језика.`;
+  const courseJsonLd = {
     "@context": "https://schema.org",
     "@type": "Course",
     "name": course.title,
-    "description": course.description || `Online видео курс ${course.title} за припрему мале матуре из српског језика`,
-    "provider": {
-      "@type": "EducationalOrganization",
-      "name": "Српски у Срцу",
-      "url": "https://srpskiusrcu.rs"
-    },
+    "description": courseDescription,
+    "url": absoluteUrl(coursePath),
+    ...(course.thumbnail_url ? { "image": course.thumbnail_url } : {}),
+    "inLanguage": "sr",
+    "provider": orgRef(),
     "hasCourseInstance": {
       "@type": "CourseInstance",
       "courseMode": "online",
-      "courseWorkload": "PT10H"
-    }
-  } : null;
+      "instructor": teacherRef()
+    },
+    // Price only when present in Firestore (RSD)
+    ...(typeof course.price === 'number' && course.price > 0 ? {
+      "offers": {
+        "@type": "Offer",
+        "price": course.price,
+        "priceCurrency": "RSD",
+        "category": "Paid",
+        "availability": "https://schema.org/InStock",
+        "url": absoluteUrl(coursePath)
+      }
+    } : {})
+  };
+  const courseBreadcrumb = breadcrumbSchema([
+    { name: 'Курсеви', path: '/courses' },
+    { name: course.title, path: coursePath },
+  ]);
 
   // Unified Course Page
   return (
     <>
-      {course && (
-        <SEO
-          title={`${course.title} | Online Курс`}
-          description={course.description || `Online видео курс ${course.title} за припрему мале матуре из српског језика. Интерактивне лекције, тестови, материјали за преузимање.`}
-          canonical={`/course/${course.id}`}
-          jsonLd={courseJsonLd ? [courseJsonLd] : []}
-        />
-      )}
+      <SEO
+        title={`${course.title} — онлајн курс`}
+        description={`${courseDescription}`.slice(0, 155)}
+        canonical={coursePath}
+        jsonLd={[courseJsonLd, courseBreadcrumb]}
+      />
 
       {/* Auth Required Modal */}
       <AuthRequiredModal

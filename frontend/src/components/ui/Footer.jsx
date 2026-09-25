@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import ScriptSwitcher from '../seo/ScriptSwitcher';
 
 export default function Footer() {
   const contactPhone = import.meta.env.VITE_CONTACT_PHONE || '+381 XX XXX XXXX';
@@ -53,7 +54,8 @@ export default function Footer() {
 
         <div className="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-gray-500">
           <p>&copy; 2026 СРПСКИ У СРЦУ. Сва права задржана.</p>
-          <div className="flex gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <ScriptSwitcher />
             <Link to="/privacy" className="hover:text-[#D62828] transition-colors">Политика приватности</Link>
             <Link to="/terms" className="hover:text-[#D62828] transition-colors">Услови коришћења</Link>
           </div>

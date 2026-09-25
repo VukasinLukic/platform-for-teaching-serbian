@@ -1,16 +1,24 @@
 User-agent: *
 Allow: /
+Allow: /kvizovi
 
-# Ne indeksiraj privatne i admin stranice
+# Private pages (also under the /lat Latin-script mirror)
 Disallow: /dashboard
 Disallow: /admin
-Disallow: /quizzes
 Disallow: /verify
 Disallow: /uplatnica
 Disallow: /login
 Disallow: /register
 Disallow: /reset-password
 Disallow: /online-class/
+Disallow: /lat/dashboard
+Disallow: /lat/admin
+Disallow: /lat/verify
+Disallow: /lat/uplatnica
+Disallow: /lat/login
+Disallow: /lat/register
+Disallow: /lat/reset-password
+Disallow: /lat/online-class/
 
-# Sitemap
+# Sitemap (generated at build time by frontend/scripts/seo-build.mjs)
 Sitemap: https://srpskiusrcu.rs/sitemap.xml

@@ -1,105 +1,42 @@
 <!doctype html>
-<html lang="sr">
+<html lang="sr-Cyrl">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <!-- Primary Meta Tags -->
-    <title>Српски у Срцу (Srpski u Srcu) | Online Курсеви за Малу Матуру из Српског</title>
-    <meta name="title" content="Српски у Срцу (Srpski u Srcu) | Online Курсеви за Малу Матуру из Српског" />
-    <meta name="description" content="Srpski u Srcu - Online видео курсеви за припрему мале матуре из српског језика. Наставница са 27 година искуства. Учи у своје време, 24/7 приступ. Упис отворен! Priprema za malu maturu." />
-    <meta name="keywords" content="мала матура српски, припрема мале матуре, online курсеви српски, завршни испит 8 разред, видео лекције српски, srpski u srcu, srpski jezik, mala matura, priprema za malu maturu, online kursevi srpskog jezika, zavrsni ispit, video lekcije srpski jezik, srpski u srcu rs, kursevi srpskog" />
+    <!--
+      SEO tags between the markers are replaced per route at build time by
+      scripts/seo-build.mjs (static shells in dist/) and taken over at runtime by
+      components/SEO.jsx (react-helmet-async). Source of truth: src/seo/routes.js.
+      Do not add title/description/canonical/og/twitter/JSON-LD tags elsewhere.
+    -->
+    <!-- SEO:START -->
+    <title>Мала матура из српског — онлајн курсеви | Српски у Срцу</title>
+    <meta data-rh="true" name="description" content="Видео курсеви и онлајн часови за припрему мале матуре из српског језика са наставницом Марином Лукић, 27 година искуства. Mala matura srpski — online priprema." />
+    <!-- SEO:END -->
+
     <meta name="author" content="Марина Лукић" />
-    <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
-    <meta name="language" content="Serbian" />
-    <meta name="revisit-after" content="7 days" />
 
-    <!-- Canonical URL -->
-    <link rel="canonical" href="https://srpskiusrcu.rs" />
-
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <!-- Icons / PWA -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-32x32.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
     <meta name="theme-color" content="#D62828" />
 
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://srpskiusrcu.rs" />
-    <meta property="og:title" content="Српски у Срцу (Srpski u Srcu) | Online Курсеви за Малу Матуру" />
-    <meta property="og:description" content="Srpski u Srcu - Online видео курсеви за припрему мале матуре из српског језика. Наставница са 27 година искуства. Priprema za malu maturu." />
-    <meta property="og:image" content="https://srpskiusrcu.rs/og-image.png" />
-    <meta property="og:image:width" content="1200" />
-    <meta property="og:image:height" content="630" />
-    <meta property="og:image:alt" content="Српски у Срцу - Online Курсеви за Малу Матуру" />
-    <meta property="og:site_name" content="Српски у Срцу" />
-    <meta property="og:locale" content="sr_RS" />
-
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:url" content="https://srpskiusrcu.rs" />
-    <meta name="twitter:title" content="Српски у Срцу (Srpski u Srcu) | Online Курсеви за Малу Матуру" />
-    <meta name="twitter:description" content="Srpski u Srcu - Online видео курсеви за припрему мале матуре из српског језика. Priprema za malu maturu. 24/7 приступ." />
-    <meta name="twitter:image" content="https://srpskiusrcu.rs/og-image.png" />
-
-    <!-- Preconnect za Firebase i Google Fonts -->
+    <!-- Preconnect for Firebase and Google services -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="preconnect" href="https://firestore.googleapis.com" />
     <link rel="preconnect" href="https://www.googletagmanager.com" />
 
-    <!-- Preload hero image for faster LCP -->
-    <link rel="preload" href="/heroSekcija.webp" as="image" type="image/webp" />
+    <!-- Header logo (above the fold on every page) -->
     <link rel="preload" href="/icon.webp" as="image" type="image/webp" />
 
     <!-- DNS prefetch for third-party resources -->
     <link rel="dns-prefetch" href="https://firebaseinstallations.googleapis.com" />
     <link rel="dns-prefetch" href="https://identitytoolkit.googleapis.com" />
-
-    <!-- JSON-LD: EducationalOrganization Schema -->
-    <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "EducationalOrganization",
-      "name": "Српски у Срцу",
-      "alternateName": "Srpski u Srcu",
-      "url": "https://srpskiusrcu.rs",
-      "logo": "https://srpskiusrcu.rs/logoFULL.svg",
-      "description": "Srpski u Srcu - Online платформа за видео курсеве српског језика и припрему мале матуре (mala matura) са наставницом Марином Лукић",
-      "foundingDate": "2024",
-      "address": {
-        "@type": "PostalAddress",
-        "addressCountry": "RS"
-      },
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "customer service",
-        "availableLanguage": "Serbian"
-      },
-      "sameAs": [
-        "https://www.instagram.com/srpskiusrcu"
-      ],
-      "offers": {
-        "@type": "Offer",
-        "category": "Online курсеви српског језика"
-      },
-      "hasOfferCatalog": {
-        "@type": "OfferCatalog",
-        "name": "Курсеви за малу матуру",
-        "itemListElement": [
-          {
-            "@type": "OfferCatalog",
-            "name": "Видео курсеви"
-          },
-          {
-            "@type": "OfferCatalog",
-            "name": "Online настава уживо"
-          }
-        ]
-      }
-    }
-    </script>
 
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-5ZBL4Y3DCJ"></script>
@@ -122,7 +59,7 @@
     </script>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root"><!-- PRERENDER --></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
