@@ -762,16 +762,8 @@ export default function HomePage() {
             />
           </div>
 
-          {/* Phone + tablet: video preview card under the CTA, with Alano peeking */}
+          {/* Phone + tablet: video preview card under the CTA */}
           <div className="lg:hidden relative mt-10 max-w-xl mx-auto md:mx-0">
-            <img
-              src="/mascot/alano-hero.webp"
-              alt=""
-              aria-hidden="true"
-              className="md:hidden absolute -top-16 right-2 w-24 h-auto z-10 drop-shadow-lg"
-              width="375"
-              height="592"
-            />
             <VideoPreviewCard catalog={catalog} />
           </div>
         </div>

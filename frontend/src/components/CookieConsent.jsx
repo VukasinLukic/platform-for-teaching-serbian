@@ -15,7 +15,7 @@ const readChoice = () => {
 /**
  * Cookie banner for Google Analytics (Consent Mode v2).
  * Analytics stays disabled (set in index.html) until the visitor accepts.
- * It is the first floating layer: while it is visible the mobile dock yields,
+ * It is the first floating layer: while it is visible the dock moves to the top,
  * tutorials wait and the promo modal stays closed (see context/floatingLayers.js).
  */
 export default function CookieConsent() {

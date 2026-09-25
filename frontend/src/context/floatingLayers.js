@@ -8,8 +8,8 @@ import { create } from 'zustand';
  * Each layer reports its state here and reads the others, so the rules live in one
  * place:
  *
- *  1. CookieConsent goes first. While it is visible, the mobile dock is hidden,
- *     tutorials wait, and the promo modal is never shown.
+ *  1. CookieConsent goes first. While it is visible, the dock moves away from the
+ *     bottom edge, tutorials wait, and the promo modal is never shown.
  *  2. On "focus routes" (course player, quizzes, tests, payment slip, a running
  *     mock exam) the dock is hidden; on course pages it collapses to a small
  *     Alano button so help is still one tap away.

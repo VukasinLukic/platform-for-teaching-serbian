@@ -1,47 +1,66 @@
 /*
- * Desktop (>=1024px): compact vertical rail in the bottom-right corner, where visitors
- * expect help/chat launchers. Labels slide out to the left on hover/focus.
- * Tablet + phone (<1024px): full-width bar at the bottom (see media query below).
+ * Quick actions are intentionally visible, labelled and easy to recognize.
+ * Desktop uses a small open card; tablet and phone use a compact bottom bar.
  */
 .quick-dock {
   position: fixed;
-  right: max(20px, env(safe-area-inset-right));
-  bottom: max(20px, env(safe-area-inset-bottom));
-  z-index: 45;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 3px;
+  right: max(18px, env(safe-area-inset-right));
+  bottom: max(18px, env(safe-area-inset-bottom));
+  z-index: 65;
+  width: 184px;
   padding: 8px;
-  border: 1px solid rgba(214, 40, 40, 0.1);
-  border-radius: 24px;
-  background: rgba(255, 255, 255, 0.97);
-  box-shadow: 0 20px 45px rgba(15, 23, 42, 0.14), 0 3px 10px rgba(15, 23, 42, 0.06);
-  -webkit-backdrop-filter: blur(14px);
-  backdrop-filter: blur(14px);
+  overflow: hidden;
+  border: 1px solid rgba(214, 40, 40, 0.16);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow:
+    0 18px 45px rgba(15, 23, 42, 0.16),
+    0 2px 8px rgba(15, 23, 42, 0.06);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  transition: top 180ms ease, bottom 180ms ease, transform 180ms ease;
 }
 
-.quick-dock-divider {
-  align-self: stretch;
-  height: 1px;
-  margin: 1px 8px;
-  background: rgba(26, 26, 26, 0.07);
+.quick-dock-heading {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 3px 7px 8px;
+  color: #6b7280;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.quick-dock-heading-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #d62828;
+  box-shadow: 0 0 0 4px rgba(214, 40, 40, 0.1);
+}
+
+.quick-dock-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .quick-dock-item {
-  position: relative;
   display: flex;
-  flex-direction: row-reverse;
   align-items: center;
-  gap: 0;
+  gap: 10px;
+  width: 100%;
   min-height: 48px;
-  padding: 6px;
+  padding: 6px 8px;
   border: 1px solid transparent;
-  border-radius: 16px;
-  color: #1a1a1a;
+  border-radius: 15px;
+  color: #1f2937;
   background: transparent;
   cursor: pointer;
-  transition: background 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+  text-align: left;
+  transition: color 160ms ease, background 160ms ease, border-color 160ms ease, transform 160ms ease;
 }
 
 .quick-dock-icon {
@@ -51,140 +70,176 @@
   width: 36px;
   height: 36px;
   border-radius: 12px;
-  background: #f8fafc;
-  transition: background 160ms ease, color 160ms ease;
+  color: #c52121;
+  background: #fff1f2;
+  transition: color 160ms ease, background 160ms ease, transform 160ms ease;
 }
 
-.quick-dock-mascot { width: 44px; height: 44px; overflow: visible; background: transparent; }
-.quick-dock-mascot img { width: 100%; height: 100%; object-fit: contain; }
-
-.quick-dock-alano { padding: 3px 2px; }
-
 .quick-dock-label {
-  overflow: hidden;
-  max-width: 0;
-  margin-right: 0;
-  color: #1a1a1a;
+  color: inherit;
   font-size: 13px;
-  font-weight: 700;
+  font-weight: 750;
   line-height: 1.2;
-  text-align: right;
   white-space: nowrap;
-  opacity: 0;
-  transition: max-width 220ms ease, opacity 180ms ease, margin-right 220ms ease;
 }
 
 .quick-dock-label small {
   display: block;
+  margin-top: 2px;
   color: #6b7280;
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 10px;
+  font-weight: 650;
 }
 
 .quick-dock-item:hover,
 .quick-dock-item:focus-visible {
-  color: #d62828;
-  background: #fff1f2;
-  border-color: rgba(214, 40, 40, 0.1);
+  color: #b91c1c;
+  border-color: rgba(214, 40, 40, 0.12);
+  background: #fff7f7;
 }
 
 .quick-dock-item:hover .quick-dock-icon,
-.quick-dock-item:focus-visible .quick-dock-icon { color: #d62828; background: #fff; }
-
-.quick-dock-item:hover .quick-dock-mascot,
-.quick-dock-item:focus-visible .quick-dock-mascot { background: transparent; }
-
-.quick-dock-item:hover .quick-dock-label,
-.quick-dock-item:focus-visible .quick-dock-label {
-  max-width: 160px;
-  margin-right: 10px;
-  opacity: 1;
+.quick-dock-item:focus-visible .quick-dock-icon {
+  color: #fff;
+  background: #d62828;
+  transform: translateY(-1px);
 }
 
-.quick-dock-item:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.28); }
-.quick-dock-item:active { transform: scale(0.96); }
+.quick-dock-item:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(214, 40, 40, 0.24);
+}
 
-/* Minimized launcher used on lesson pages (focus routes): only Alano, small and out of the way */
+.quick-dock-item:active { transform: scale(0.98); }
+
+.quick-dock-alano {
+  margin-top: 2px;
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, #d62828, #b91c1c);
+  box-shadow: 0 8px 18px rgba(185, 28, 28, 0.2);
+}
+
+.quick-dock-alano:hover,
+.quick-dock-alano:focus-visible {
+  color: #fff;
+  border-color: transparent;
+  background: linear-gradient(135deg, #e03131, #b91c1c);
+}
+
+.quick-dock-alano .quick-dock-label small { color: rgba(255, 255, 255, 0.78); }
+
+.quick-dock-mascot,
+.quick-dock-alano:hover .quick-dock-mascot,
+.quick-dock-alano:focus-visible .quick-dock-mascot {
+  width: 40px;
+  height: 40px;
+  margin: -4px 0;
+  overflow: visible;
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.quick-dock-mascot img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* With the cookie notice open, keep the dock visible at the top-right. */
+.quick-dock.is-yielding {
+  top: max(84px, calc(env(safe-area-inset-top) + 72px));
+  bottom: auto;
+}
+
+/* Minimized launcher used on lesson pages. */
 .quick-dock-mini {
   position: fixed;
   right: max(16px, env(safe-area-inset-right));
   bottom: max(16px, env(safe-area-inset-bottom));
-  z-index: 45;
+  z-index: 65;
   display: grid;
   place-items: center;
-  width: 58px;
-  height: 58px;
+  width: 62px;
+  height: 62px;
   padding: 5px;
-  overflow: visible;
   border: 2px solid #fff;
-  border-radius: 50%;
-  background: #fff5f5;
-  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.18);
+  border-radius: 20px;
+  background: linear-gradient(145deg, #fff, #fff1f2);
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.2);
   cursor: pointer;
   transition: transform 160ms ease, box-shadow 160ms ease;
 }
-.quick-dock-mini img { width: 100%; height: 100%; object-fit: contain; }
-.quick-dock-mini:hover { box-shadow: 0 14px 30px rgba(15, 23, 42, 0.24); }
-.quick-dock-mini:focus-visible { outline: 3px solid rgba(214, 40, 40, 0.45); outline-offset: 2px; }
 
-/* Tablet + phone: horizontal bar at the bottom of the screen */
+.quick-dock-mini img { width: 100%; height: 100%; object-fit: contain; }
+.quick-dock-mini:hover { transform: translateY(-2px); box-shadow: 0 16px 34px rgba(15, 23, 42, 0.24); }
+.quick-dock-mini:focus-visible { outline: 3px solid rgba(214, 40, 40, 0.45); outline-offset: 2px; }
+.quick-dock-mini.is-yielding {
+  top: max(84px, calc(env(safe-area-inset-top) + 72px));
+  bottom: auto;
+}
+
 @media (max-width: 1023px) {
   .quick-dock {
-    left: max(10px, env(safe-area-inset-left));
-    right: max(10px, env(safe-area-inset-right));
+    left: 50%;
+    right: auto;
     bottom: max(10px, env(safe-area-inset-bottom));
-    flex-direction: row;
-    align-items: stretch;
-    justify-content: space-around;
-    gap: 0;
+    width: min(calc(100vw - 20px), 430px);
     padding: 6px;
-    border: 1px solid rgba(214, 40, 40, 0.1);
-    border-radius: 22px;
-    box-shadow: 0 14px 36px rgba(15, 23, 42, 0.16);
+    border-radius: 21px;
+    transform: translateX(-50%);
+    box-shadow: 0 14px 34px rgba(15, 23, 42, 0.18);
   }
 
-  .quick-dock-divider { display: none; }
+  .quick-dock-heading { display: none; }
+
+  .quick-dock-actions {
+    flex-direction: row;
+    align-items: stretch;
+    gap: 4px;
+  }
 
   .quick-dock-item {
     flex: 1;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
     gap: 3px;
-    max-width: 180px;
-    min-height: 56px;
-    padding: 5px 4px;
+    min-width: 0;
+    min-height: 60px;
+    padding: 4px 3px;
     border-radius: 16px;
-  }
-
-  .quick-dock-label {
-    max-width: none;
-    margin-right: 0;
-    opacity: 1;
-    font-size: 12px;
     text-align: center;
   }
 
+  .quick-dock-icon { width: 30px; height: 30px; border-radius: 10px; }
+  .quick-dock-label { overflow: hidden; max-width: 100%; font-size: 11px; text-overflow: ellipsis; }
   .quick-dock-label small { display: none; }
 
-  .quick-dock-item:hover .quick-dock-label,
-  .quick-dock-item:focus-visible .quick-dock-label {
-    max-width: none;
-    margin-right: 0;
+  .quick-dock-alano {
+    margin-top: 0;
+    box-shadow: none;
   }
 
-  .quick-dock-icon { width: 30px; height: 30px; border-radius: 10px; }
-  .quick-dock-alano { padding: 3px 4px 5px; }
-  .quick-dock-alano .quick-dock-mascot { width: 38px; height: 38px; margin-top: -4px; }
-  .quick-dock-alano .quick-dock-label { margin-top: -3px; }
+  .quick-dock-mascot,
+  .quick-dock-alano:hover .quick-dock-mascot,
+  .quick-dock-alano:focus-visible .quick-dock-mascot {
+    width: 34px;
+    height: 34px;
+    margin: -3px 0;
+  }
+
+  .quick-dock.is-yielding {
+    top: max(76px, calc(env(safe-area-inset-top) + 68px));
+    bottom: auto;
+  }
 }
 
-/* The cookie banner owns the bottom edge on small screens until the visitor decides. */
-@media (max-width: 1023px) {
-  .quick-dock.is-yielding { display: none; }
+@media (max-width: 360px) {
+  .quick-dock { width: calc(100vw - 12px); }
+  .quick-dock-item { min-height: 56px; }
+  .quick-dock-label { font-size: 10px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .quick-dock-item, .quick-dock-label, .quick-dock-mini { transition-duration: 1ms; }
+  .quick-dock, .quick-dock-item, .quick-dock-icon, .quick-dock-mini { transition-duration: 1ms; }
   .quick-dock-item:active { transform: none; }
 }

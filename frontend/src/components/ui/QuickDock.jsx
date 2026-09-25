@@ -73,18 +73,16 @@ export default function QuickDock() {
   const testingActive = useFloatingLayers((s) => s.testingActive);
 
   const mode = getDockMode(location.pathname, { testingActive });
-  // The cookie banner owns the bottom edge until the visitor decides.
   const showFull = mode === 'full' && !isAssistantOpen;
   useBottomOffset(dockRef, showFull && !cookieBannerVisible);
 
   if (isAssistantOpen || mode === 'hidden') return null;
 
   if (mode === 'minimized') {
-    if (cookieBannerVisible) return null;
     return (
       <button
         type="button"
-        className="quick-dock-mini"
+        className={`quick-dock-mini ${cookieBannerVisible ? 'is-yielding' : ''}`}
         onClick={() => setAssistantOpen(true)}
         aria-label="Отвори Алана, асистента"
         title="Алано — асистент"
@@ -112,43 +110,46 @@ export default function QuickDock() {
       className={`quick-dock ${cookieBannerVisible ? 'is-yielding' : ''}`}
       aria-label="Брзи приступ"
     >
-      <button
-        type="button"
-        className="quick-dock-item"
-        onClick={() => navigate('/probni-prijemni')}
-        aria-label="Отвори пробни тест"
-      >
-        <span className="quick-dock-icon" aria-hidden="true">
-          <GraduationCap size={20} strokeWidth={2.1} />
-        </span>
-        <span className="quick-dock-label">Пробни тест</span>
-      </button>
+      <div className="quick-dock-heading" aria-hidden="true">
+        <span className="quick-dock-heading-dot" />
+        Брзи приступ
+      </div>
 
-      <span className="quick-dock-divider" aria-hidden="true" />
+      <div className="quick-dock-actions">
+        <button
+          type="button"
+          className="quick-dock-item"
+          onClick={() => navigate('/probni-prijemni')}
+          aria-label="Отвори пробни тест"
+        >
+          <span className="quick-dock-icon" aria-hidden="true">
+            <GraduationCap size={21} strokeWidth={2.1} />
+          </span>
+          <span className="quick-dock-label">Пробни тест</span>
+        </button>
 
-      <button type="button" className="quick-dock-item" onClick={handleHelp} aria-label="Отвори помоћ">
-        <span className="quick-dock-icon" aria-hidden="true">
-          <CircleHelp size={20} strokeWidth={2.1} />
-        </span>
-        <span className="quick-dock-label">Помоћ</span>
-      </button>
+        <button type="button" className="quick-dock-item" onClick={handleHelp} aria-label="Отвори помоћ">
+          <span className="quick-dock-icon" aria-hidden="true">
+            <CircleHelp size={21} strokeWidth={2.1} />
+          </span>
+          <span className="quick-dock-label">Помоћ</span>
+        </button>
 
-      <span className="quick-dock-divider" aria-hidden="true" />
-
-      <button
-        type="button"
-        className="quick-dock-item quick-dock-alano"
-        onClick={() => setAssistantOpen(true)}
-        aria-label="Отвори Алана, асистента"
-      >
-        <span className="quick-dock-icon quick-dock-mascot">
-          <img src="/mascot/alano-hero.webp" alt="" draggable={false} />
-        </span>
-        <span className="quick-dock-label">
-          Алано
-          <small>твој асистент</small>
-        </span>
-      </button>
+        <button
+          type="button"
+          className="quick-dock-item quick-dock-alano"
+          onClick={() => setAssistantOpen(true)}
+          aria-label="Отвори Алана, асистента"
+        >
+          <span className="quick-dock-icon quick-dock-mascot" aria-hidden="true">
+            <img src="/mascot/alano-hero.webp" alt="" draggable={false} />
+          </span>
+          <span className="quick-dock-label">
+            Алано
+            <small>твој асистент</small>
+          </span>
+        </button>
+      </div>
     </nav>
   );
 }
