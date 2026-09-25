@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { collection, query, where, getDocs, doc, getDoc, orderBy, limit } from 'firebase/firestore';
-import { db } from '../../services/firebase';
+import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+import { httpsCallable } from 'firebase/functions';
+import { db, functions } from '../../services/firebase';
 import { useAuthStore } from '../../store/authStore';
 import { Video, Calendar, Clock, Users, BookOpen } from 'lucide-react';
 
@@ -41,34 +42,13 @@ export default function OnlineClassesSection() {
           }
         }
 
-        // Fetch group data if assigned
+        // Group and next class (with Meet link) come from the server,
+        // which only returns them for the student's own active enrollment
         if (enrollmentData.groupId) {
-          const groupDoc = await getDoc(doc(db, 'online_groups', enrollmentData.groupId));
-          if (groupDoc.exists()) {
-            setGroupData(groupDoc.data());
-          }
-
-          // Fetch next scheduled session for this group
-          const now = new Date();
-          const sessionsQuery = query(
-            collection(db, 'online_sessions'),
-            where('groupId', '==', enrollmentData.groupId),
-            where('status', '==', 'scheduled'),
-            orderBy('scheduledDate', 'asc'),
-            limit(1)
-          );
-          const sessionsSnapshot = await getDocs(sessionsQuery);
-
-          if (!sessionsSnapshot.empty) {
-            const sessionDoc = sessionsSnapshot.docs[0];
-            const sessionData = { id: sessionDoc.id, ...sessionDoc.data() };
-
-            // Only show future sessions
-            const sessionDate = sessionData.scheduledDate.toDate ? sessionData.scheduledDate.toDate() : new Date(sessionData.scheduledDate);
-            if (sessionDate > now) {
-              setNextSession(sessionData);
-            }
-          }
+          const getMyOnlineGroup = httpsCallable(functions, 'getMyOnlineGroup');
+          const result = await getMyOnlineGroup();
+          setGroupData(result.data.group);
+          setNextSession(result.data.nextSession);
         }
       }
     } catch (error) {

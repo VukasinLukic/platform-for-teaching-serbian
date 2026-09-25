@@ -1,0 +1,14 @@
+{
+  "name": "srpski-rules-tests",
+  "private": true,
+  "type": "module",
+  "description": "Security tests for Firestore and Storage rules (runs on the Firebase emulator, requires Java)",
+  "scripts": {
+    "test": "firebase emulators:exec --only firestore,storage --project demo-srpski \"node rules.test.mjs\""
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.2",
+    "firebase": "^12.5.0",
+    "firebase-tools": "^13.0.0"
+  }
+}

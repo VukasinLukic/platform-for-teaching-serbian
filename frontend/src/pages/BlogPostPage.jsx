@@ -1,4 +1,5 @@
 import { useParams, Link } from 'react-router-dom';
+import DOMPurify from 'dompurify';
 import { Calendar, User, ArrowLeft } from 'lucide-react';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
@@ -771,7 +772,7 @@ export default function BlogPostPage() {
               prose-li:mb-1.5 prose-li:text-gray-700
               prose-strong:text-[#1A1A1A] prose-strong:font-semibold
               prose-em:text-gray-600"
-            dangerouslySetInnerHTML={{ __html: post.content }}
+            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
           />
 
           {/* Simple CTA */}

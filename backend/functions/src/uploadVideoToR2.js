@@ -132,7 +132,7 @@ export const generateUploadUrl = onCall(
         throw error;
       }
 
-      throw new HttpsError('internal', `Greška pri generisanju upload URL-a: ${error.message}`);
+      throw new HttpsError('internal', 'Greška pri generisanju upload URL-a');
     }
   }
 );
@@ -238,7 +238,7 @@ export const uploadVideoToR2 = onCall(
         throw error;
       }
 
-      throw new HttpsError('internal', `Greška pri upload-u videa: ${error.message}`);
+      throw new HttpsError('internal', 'Greška pri upload-u videa');
     }
   }
 );
@@ -304,7 +304,7 @@ export const deleteVideoFromR2 = onCall(
         throw error;
       }
 
-      throw new HttpsError('internal', `Greška pri brisanju videa: ${error.message}`);
+      throw new HttpsError('internal', 'Greška pri brisanju videa');
     }
   }
 );

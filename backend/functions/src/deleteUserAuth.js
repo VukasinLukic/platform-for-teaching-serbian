@@ -59,7 +59,7 @@ export const deleteUserAuth = onCall(async (request) => {
       };
     }
 
-    throw new HttpsError('internal', `Грешка при брисању корисника: ${error.message}`);
+    throw new HttpsError('internal', 'Грешка при брисању корисника');
   }
 });
 
@@ -121,6 +121,6 @@ export const bulkDeleteUsersAuth = onCall(async (request) => {
     };
   } catch (error) {
     console.error('Error in bulk delete:', error);
-    throw new HttpsError('internal', `Грешка при брисању корисника: ${error.message}`);
+    throw new HttpsError('internal', 'Грешка при брисању корисника');
   }
 });

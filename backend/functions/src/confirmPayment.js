@@ -5,23 +5,12 @@
 
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
-import { defineString } from 'firebase-functions/params';
-import nodemailer from 'nodemailer';
+import { getTransporter } from './sendEmail.js';
+import { requireAdmin, escapeHtml, SITE_URL } from './security.js';
 
-// Gmail credentials
-const gmailUser = defineString('GMAIL_USER', { default: 'vukasin4sports@gmail.com' });
-const gmailPassword = defineString('GMAIL_PASSWORD', { default: 'ltlf ziag mpma chat' });
-
-// Get email transporter
-const getTransporter = () => {
-  return nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: gmailUser.value(),
-      pass: gmailPassword.value(),
-    },
-  });
-};
+// Gmail credentials come only from the GMAIL_USER / GMAIL_PASSWORD environment
+// variables (see sendEmail.js). Never put credentials or defaults in source code.
+const senderEmail = () => process.env.GMAIL_USER;
 
 /**
  * Confirm a pending payment and grant course access
@@ -29,15 +18,7 @@ const getTransporter = () => {
 export const confirmPayment = onCall({ region: 'europe-west1' }, async (request) => {
   const db = getFirestore();
 
-  // Check authentication
-  if (!request.auth) {
-    throw new HttpsError('unauthenticated', 'Morate biti ulogovani');
-  }
-
-  // ✅ Check if user is admin using custom claims (FAST!)
-  if (!request.auth.token.role || request.auth.token.role !== 'admin') {
-    throw new HttpsError('permission-denied', 'Samo admin može da potvrđuje uplate');
-  }
+  requireAdmin(request, 'Samo admin može da potvrđuje uplate');
 
   const { transactionId, userId, courseId } = request.data;
 
@@ -83,7 +64,7 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
     const userCoursesRef = db.collection('user_courses').doc(userId);
     const userCoursesDoc = await userCoursesRef.get();
 
-    if (userCoursesDoc.exists()) {
+    if (userCoursesDoc.exists) {
       const courses = userCoursesDoc.data().courses || {};
       if (courses[courseId] && courses[courseId].active) {
         throw new HttpsError(
@@ -105,7 +86,9 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
       {
         courses: {
           [courseId]: {
+            active: true,
             purchased_at: FieldValue.serverTimestamp(),
+            valid_until: null,
             transaction_id: transactionId,
           },
         },
@@ -123,7 +106,7 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
       if (userData && userData.email) {
         const transporter = getTransporter();
         await transporter.sendMail({
-          from: `"Srpski u Srcu" <${gmailUser.value()}>`,
+          from: `"Srpski u Srcu" <${senderEmail()}>`,
           to: userData.email,
           subject: `✅ Vaša uplata je potvrđena - ${courseData?.title || transaction.packageName || 'Kurs'}`,
           html: `
@@ -136,15 +119,15 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
                   <h1 style="margin: 0; font-size: 28px;">Uplata potvrđena!</h1>
                 </div>
                 <div style="padding: 30px 0;">
-                  <p>Pozdrav <strong>${userData.ime || 'Korisniče'}</strong>,</p>
+                  <p>Pozdrav <strong>${escapeHtml(userData.ime || 'Korisniče')}</strong>,</p>
                   <p>Vaša uplata je uspešno potvrđena! Sada imate pristup kursu:</p>
                   <div style="background: #F5F3EF; padding: 20px; border-radius: 12px; margin: 20px 0;">
-                    <h3 style="color: #003366; margin-top: 0;">${courseData?.title || transaction.packageName || 'Kurs'}</h3>
-                    <p style="color: #666; margin: 5px 0;">ID transakcije: <strong>${transactionId}</strong></p>
+                    <h3 style="color: #003366; margin-top: 0;">${escapeHtml(courseData?.title || transaction.packageName || 'Kurs')}</h3>
+                    <p style="color: #666; margin: 5px 0;">ID transakcije: <strong>${escapeHtml(transactionId)}</strong></p>
                   </div>
                   <p>Možete početi sa učenjem odmah! Prijavite se na platformu i pristupite kursu.</p>
                   <div style="text-align: center; margin: 30px 0;">
-                    <a href="https://srpskiusrcu.com/dashboard" style="background: #003366; color: white; padding: 15px 30px; border-radius: 12px; text-decoration: none; display: inline-block; font-weight: bold;">Idi na Dashboard</a>
+                    <a href="${SITE_URL}/dashboard" style="background: #003366; color: white; padding: 15px 30px; border-radius: 12px; text-decoration: none; display: inline-block; font-weight: bold;">Idi na Dashboard</a>
                   </div>
                 </div>
                 <div style="text-align: center; color: #999; font-size: 12px; border-top: 1px solid #eee; padding-top: 20px;">
@@ -155,7 +138,7 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
             </html>
           `,
         });
-        console.log(`Payment confirmation email sent to ${userData.email}`);
+        console.log(`Payment confirmation email sent for transaction ${transactionId}`);
       }
     } catch (emailError) {
       console.error('Error sending confirmation email:', emailError);
@@ -182,15 +165,7 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
 export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) => {
   const db = getFirestore();
 
-  // Check authentication
-  if (!request.auth) {
-    throw new HttpsError('unauthenticated', 'Morate biti ulogovani');
-  }
-
-  // ✅ Check if user is admin using custom claims (FAST!)
-  if (!request.auth.token.role || request.auth.token.role !== 'admin') {
-    throw new HttpsError('permission-denied', 'Samo admin može da odbije uplate');
-  }
+  requireAdmin(request, 'Samo admin može da odbije uplate');
 
   const { transactionId, reason } = request.data;
 
@@ -249,7 +224,7 @@ export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) 
       if (userData && userData.email) {
         const transporter = getTransporter();
         await transporter.sendMail({
-          from: `"Srpski u Srcu" <${gmailUser.value()}>`,
+          from: `"Srpski u Srcu" <${senderEmail()}>`,
           to: userData.email,
           subject: `❌ Vaša uplata je odbijena - ${transaction.packageName || 'Kurs'}`,
           html: `
@@ -262,15 +237,15 @@ export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) 
                   <h1 style="margin: 0; font-size: 28px;">Uplata odbijena</h1>
                 </div>
                 <div style="padding: 30px 0;">
-                  <p>Pozdrav <strong>${userData.ime || 'Korisniče'}</strong>,</p>
-                  <p>Nažalost, vaša uplata za kurs <strong>${transaction.packageName || 'Kurs'}</strong> je odbijena.</p>
+                  <p>Pozdrav <strong>${escapeHtml(userData.ime || 'Korisniče')}</strong>,</p>
+                  <p>Nažalost, vaša uplata za kurs <strong>${escapeHtml(transaction.packageName || 'Kurs')}</strong> je odbijena.</p>
                   <div style="background: #FFF3F3; padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #FF6B6B;">
                     <h4 style="color: #8B0000; margin-top: 0;">Razlog odbijanja:</h4>
-                    <p style="color: #666; margin: 5px 0;">${reason || 'Nevalidna uplata'}</p>
+                    <p style="color: #666; margin: 5px 0;">${escapeHtml(reason || 'Nevalidna uplata')}</p>
                   </div>
                   <p>Molimo vas da proverite detalje uplate i pokušate ponovo. Ukoliko imate pitanja, slobodno nas kontaktirajte.</p>
                   <div style="text-align: center; margin: 30px 0;">
-                    <a href="https://srpskiusrcu.com/contact" style="background: #003366; color: white; padding: 15px 30px; border-radius: 12px; text-decoration: none; display: inline-block; font-weight: bold;">Kontaktirajte nas</a>
+                    <a href="${SITE_URL}/contact" style="background: #003366; color: white; padding: 15px 30px; border-radius: 12px; text-decoration: none; display: inline-block; font-weight: bold;">Kontaktirajte nas</a>
                   </div>
                 </div>
                 <div style="text-align: center; color: #999; font-size: 12px; border-top: 1px solid #eee; padding-top: 20px;">
@@ -281,7 +256,7 @@ export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) 
             </html>
           `,
         });
-        console.log(`Payment rejection email sent to ${userData.email}`);
+        console.log(`Payment rejection email sent for transaction ${transactionId}`);
       }
     } catch (emailError) {
       console.error('Error sending rejection email:', emailError);

@@ -10,6 +10,7 @@ import { PromoProvider } from './context/PromoContext';
 import PromoQuizModal from './components/promo/PromoQuizModal';
 import AssistantWidget from './components/assistant/AssistantWidget';
 import QuickDock from './components/ui/QuickDock';
+import CookieConsent from './components/CookieConsent';
 import { useVersionCheck } from './hooks/useVersionCheck';
 
 // Critical path — eager loaded
@@ -127,6 +128,7 @@ function AppContent() {
       <PromoQuizModal />
       <AssistantWidget />
       <QuickDock />
+      <CookieConsent />
       <main>
         <Suspense fallback={<FullScreenSpinner text="Učitava se..." />}>
           <Routes>

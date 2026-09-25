@@ -2,109 +2,146 @@ import Header from '../../components/ui/Header';
 import Card, { CardBody } from '../../components/ui/Card';
 import SEO from '../../components/SEO';
 
+// NOTE: Pre objavljivanja proveriti sa pravnikom podatke o rukovaocu (ime/naziv, adresa, PIB).
+const H2 = ({ children }) => (
+  <h2 className="text-2xl font-bold text-[#1A1A1A] mt-8 mb-4">{children}</h2>
+);
+
 export default function PrivacyPage() {
-  const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@srpskiusrcu.com';
-  const contactPhone = import.meta.env.VITE_CONTACT_PHONE || '+381 XX XXX XXXX';
+  const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'profesorka.marinalukic@gmail.com';
+  const contactPhone = import.meta.env.VITE_CONTACT_PHONE;
 
   return (
     <>
-      <SEO title="ПОЛИТИКА ПРИВАТНОСТИ" description="Политика приватности платформе Српски у Срцу." canonical="/privacy" noindex={false} />
+      <SEO
+        title="Политика приватности"
+        description="Како платформа Српски у Срцу прикупља, користи и чува податке о личности ученика и родитеља."
+        canonical="/privacy"
+      />
     <div className="min-h-screen bg-[#F7F7F7]">
       <Header />
 
-      <div className="max-w-4xl mx-auto px-6 py-16">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <Card variant="elevated">
-          <CardBody className="p-12">
-            <h1 className="text-4xl font-serif font-bold text-[#1A1A1A] mb-8">
-              Politika privatnosti
+          <CardBody className="p-6 sm:p-12">
+            <h1 className="text-3xl sm:text-4xl font-serif font-bold text-[#1A1A1A] mb-8">
+              Политика приватности
             </h1>
 
             <div className="prose prose-lg max-w-none space-y-6 text-gray-700">
-              <p className="text-sm text-gray-500">Poslednje ažuriranje: 19. januar 2025.</p>
+              <p className="text-sm text-gray-500">Последње ажурирање: 25. септембар 2026.</p>
 
               <section>
-                <h2 className="text-2xl font-bold text-[#1A1A1A] mt-8 mb-4">1. Uvod</h2>
+                <H2>1. Ко обрађује ваше податке</H2>
                 <p>
-                  Dobrodošli na platformu "Nauči Srpski". Poštujemo vašu privatnost i posvećeni smo zaštiti vaših ličnih podataka. Ova politika privatnosti objašnjava kako prikupljamo, koristimo i čuvamo vaše informacije.
+                  Руковалац подацима о личности је платформа „Српски у Срцу” (srpskiusrcu.rs), коју води
+                  наставница Марина Лукић. Податке обрађујемо у складу са Законом о заштити података о
+                  личности Републике Србије („Службени гласник РС”, бр. 87/2018).
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-[#1A1A1A] mt-8 mb-4">2. Podaci koje prikupljamo</h2>
-                <p>Prikupljamo sledeće vrste informacija:</p>
+                <H2>2. Које податке прикупљамо</H2>
                 <ul className="list-disc ml-6 space-y-2">
-                  <li>Lične informacije (ime, prezime, email adresa, broj telefona)</li>
-                  <li>Podatke o uplati (broj transakcije, iznos, datum)</li>
-                  <li>Podatke o korišćenju platforme (pristup lekcijama, napredak)</li>
-                  <li>Tehničke podatke (IP adresa, tip uređaja, browser)</li>
+                  <li><strong>Подаци налога:</strong> име и презиме, имејл адреса, број телефона (није обавезан), разред.</li>
+                  <li><strong>Подаци о куповини:</strong> износ, позив на број, датум уплате и доказ о уплати који сами пошаљете.</li>
+                  <li><strong>Подаци о учењу:</strong> приступ лекцијама, напредак, резултати квизова и тестова.</li>
+                  <li><strong>Поруке асистенту Алану:</strong> текст питања и одговора.</li>
+                  <li><strong>Технички подаци:</strong> IP адреса, тип уређаја и прегледача, само у мери потребној за безбедност и спречавање злоупотреба.</li>
+                  <li><strong>Аналитика:</strong> анонимизовани подаци о посети сајту, само ако прихватите колачиће.</li>
                 </ul>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-[#1A1A1A] mt-8 mb-4">3. Kako koristimo vaše podatke</h2>
-                <p>Vaše podatke koristimo za:</p>
+                <H2>3. Зашто их користимо и на ком основу</H2>
                 <ul className="list-disc ml-6 space-y-2">
-                  <li>Pružanje pristupa kursevima i materijalima</li>
-                  <li>Komunikaciju vezanu za kurseve i uplate</li>
-                  <li>Poboljšanje kvaliteta naših usluga</li>
-                  <li>Praćenje napretka i generisanje izveštaja</li>
-                  <li>Slanje obaveštenja o novim kursevima i promocijama</li>
+                  <li>Да бисмо отворили и водили ваш налог и омогућили приступ купљеним курсевима (извршење уговора).</li>
+                  <li>Да бисмо проверили уплату и издали потребне документе (извршење уговора и законска обавеза).</li>
+                  <li>Да бисмо слали имејлове о налогу, уплати и часовима (извршење уговора).</li>
+                  <li>Да бисмо заштитили платформу од злоупотребе (легитимни интерес).</li>
+                  <li>Да бисмо мерили посећеност и побољшавали сајт, само уз ваш пристанак на колачиће (пристанак).</li>
                 </ul>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-[#1A1A1A] mt-8 mb-4">4. Zaštita podataka</h2>
+                <H2>4. Деца и сагласност родитеља</H2>
                 <p>
-                  Koristimo Firebase Authentication i Firestore bazu podataka sa sigurnosnim pravilima koja štite vaše podatke. Svi podaci su kriptovani tokom prenosa (SSL/TLS) i skladišteni na bezbednim serverima.
+                  Већина корисника су ученици основне школе. За ученике млађе од 15 година налог може да
+                  отвори родитељ или старатељ, или ученик уз сагласност родитеља, што се потврђује приликом
+                  регистрације. Родитељ у сваком тренутку може да затражи увид у податке детета, њихову
+                  исправку или брисање налога, писањем на имејл адресу из тачке 10.
                 </p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-[#1A1A1A] mt-8 mb-4">5. Deljenje podataka</h2>
-                <p>
-                  Ne delimo vaše lične podatke sa trećim licima osim u sledećim slučajevima:
-                </p>
+                <H2>5. Коме достављамо податке</H2>
+                <p>Податке не продајемо и не користимо за рекламирање. Користимо следеће обрађиваче:</p>
                 <ul className="list-disc ml-6 space-y-2">
-                  <li>Sa vašom izričitom saglasošću</li>
-                  <li>Kada to zahteva zakon</li>
-                  <li>Za procesiranje plaćanja (banke, platni procesori)</li>
+                  <li><strong>Google (Firebase):</strong> налози, база података, чување фајлова и серверске функције.</li>
+                  <li><strong>Cloudflare (R2):</strong> чување и приказ видео лекција.</li>
+                  <li><strong>Google Analytics:</strong> статистика посета, само уз ваш пристанак.</li>
+                  <li><strong>OpenRouter и провајдери AI модела:</strong> обрада порука које пошаљете асистенту Алану. Не шаљите асистенту поверљиве податке.</li>
+                  <li><strong>Google (Gmail):</strong> слање имејлова са платформе.</li>
+                </ul>
+                <p>
+                  Неки од ових обрађивача чувају податке ван Србије, укључујући Европску унију и САД, уз
+                  стандардне уговорне клаузуле и друге мере заштите које закон предвиђа.
+                </p>
+              </section>
+
+              <section>
+                <H2>6. Колико дуго чувамо податке</H2>
+                <ul className="list-disc ml-6 space-y-2">
+                  <li>Податке налога и напретка, док је налог активан, или док не затражите брисање.</li>
+                  <li>Податке о уплатама, онолико колико налажу прописи о рачуноводству и порезима.</li>
+                  <li>Поруке асистенту Алану, 90 дана, након чега се аутоматски бришу.</li>
+                  <li>Техничке податке за заштиту од злоупотреба, најдуже неколико дана.</li>
                 </ul>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-[#1A1A1A] mt-8 mb-4">6. Vaša prava</h2>
-                <p>Imate pravo da:</p>
+                <H2>7. Колачићи</H2>
+                <p>
+                  Неопходни колачићи и локално складиште прегледача користе се за пријаву и чување
+                  подешавања и раде увек. Колачићи за аналитику (Google Analytics) укључују се само ако их
+                  прихватите на банеру. Избор можете променити брисањем података сајта у прегледачу, након
+                  чега ће се банер поново појавити.
+                </p>
+              </section>
+
+              <section>
+                <H2>8. Заштита података</H2>
+                <p>
+                  Приступ подацима имају само корисник и администратор платформе. Везе су шифроване (HTTPS),
+                  видео лекције и материјали доступни су само преко привремених, заштићених линкова, а
+                  приступ бази је ограничен безбедносним правилима.
+                </p>
+              </section>
+
+              <section>
+                <H2>9. Ваша права</H2>
+                <p>Имате право да:</p>
                 <ul className="list-disc ml-6 space-y-2">
-                  <li>Pristupite svojim podacima</li>
-                  <li>Ispravite netačne podatke</li>
-                  <li>Zatražite brisanje podataka</li>
-                  <li>Povučete saglasnost za obradu podataka</li>
-                  <li>Prenesete podatke drugom provajderu</li>
+                  <li>добијете увид у податке које о вама обрађујемо и њихову копију;</li>
+                  <li>затражите исправку нетачних података;</li>
+                  <li>затражите брисање података и налога;</li>
+                  <li>затражите ограничење обраде или се успротивите обради;</li>
+                  <li>добијете податке у структурираном облику (преносивост);</li>
+                  <li>повучете пристанак на аналитику у било ком тренутку;</li>
+                  <li>поднесете притужбу Поверенику за информације од јавног значаја и заштиту података о личности (www.poverenik.rs).</li>
                 </ul>
+                <p>На захтеве одговарамо најкасније у року од 30 дана.</p>
               </section>
 
               <section>
-                <h2 className="text-2xl font-bold text-[#1A1A1A] mt-8 mb-4">7. Kolačići (Cookies)</h2>
-                <p>
-                  Koristimo kolačiće za poboljšanje korisničkog iskustva, praćenje sesija i analitiku. Možete onemogućiti kolačiće u podešavanjima vašeg browser-a, ali to može uticati na funkcionalnost platforme.
-                </p>
-              </section>
-
-              <section>
-                <h2 className="text-2xl font-bold text-[#1A1A1A] mt-8 mb-4">8. Izmene politike</h2>
-                <p>
-                  Zadržavamo pravo da ažuriramo ovu politiku privatnosti. O svim značajnim izmenama ćemo vas obavestiti putem email-a ili obaveštenja na platformi.
-                </p>
-              </section>
-
-              <section>
-                <h2 className="text-2xl font-bold text-[#1A1A1A] mt-8 mb-4">9. Kontakt</h2>
-                <p>
-                  Za sva pitanja vezana za privatnost, možete nas kontaktirati na:
-                </p>
+                <H2>10. Контакт</H2>
+                <p>За сва питања о приватности и за остваривање права пишите нам на:</p>
                 <p className="font-semibold">
-                  Email: {contactEmail}<br />
-                  Telefon: {contactPhone}
+                  Имејл: {contactEmail}
+                  {contactPhone && (<><br />Телефон: {contactPhone}</>)}
+                </p>
+                <p>
+                  О значајним изменама ове политике обавестићемо вас имејлом или обавештењем на платформи.
                 </p>
               </section>
             </div>

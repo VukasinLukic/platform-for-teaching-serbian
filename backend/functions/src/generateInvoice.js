@@ -7,9 +7,10 @@ import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import PDFDocument from 'pdfkit';
+import { APP_CHECK } from './security.js';
 import { checkRateLimit } from './rate-limiter.js';
 
-export const generateInvoice = onCall(async (request) => {
+export const generateInvoice = onCall({ ...APP_CHECK }, async (request) => {
   const db = getFirestore();
   // Check authentication
   if (!request.auth) {

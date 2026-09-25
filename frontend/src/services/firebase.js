@@ -3,6 +3,7 @@
  */
 
 import { initializeApp } from 'firebase/app';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { getAuth, connectAuthEmulator } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
@@ -18,16 +19,18 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// DEBUG: Log Firebase config
-console.log('🔥 Firebase Config:', {
-  authDomain: firebaseConfig.authDomain,
-  projectId: firebaseConfig.projectId,
-  currentURL: window.location.href,
-  currentOrigin: window.location.origin,
-});
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// App Check: proves requests come from this site, so bots cannot call functions
+// directly. Enabled when a reCAPTCHA Enterprise site key is configured.
+const appCheckSiteKey = import.meta.env.VITE_RECAPTCHA_ENTERPRISE_SITE_KEY;
+if (appCheckSiteKey) {
+  initializeAppCheck(app, {
+    provider: new ReCaptchaEnterpriseProvider(appCheckSiteKey),
+    isTokenAutoRefreshEnabled: true,
+  });
+}
 
 // Initialize services
 export const auth = getAuth(app);
