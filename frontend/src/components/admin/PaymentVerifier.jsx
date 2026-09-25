@@ -167,8 +167,8 @@ export default function PaymentVerifier() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-[#1A1A1A]">Верификација уплата</h2>
+      <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-[#1A1A1A]">Верификација уплата</h2>
         <button
           onClick={loadPendingPayments}
           className="px-4 py-2 rounded-2xl bg-[#F7F7F7] text-[#1A1A1A] font-medium hover:bg-gray-200 transition-colors"
@@ -178,7 +178,7 @@ export default function PaymentVerifier() {
       </div>
 
       {pendingPayments.length === 0 ? (
-        <div className="bg-white rounded-3xl p-12 text-center shadow-sm border border-gray-100">
+        <div className="bg-white rounded-3xl p-8 md:p-12 text-center shadow-sm border border-gray-100">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
           <p className="text-gray-600 text-lg">Нема уплата на чекању</p>
           <p className="text-sm text-gray-400 mt-2">
@@ -190,15 +190,15 @@ export default function PaymentVerifier() {
           {pendingPayments.map((payment) => (
             <div
               key={payment.id}
-              className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100"
+              className="bg-white rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 shadow-sm border border-gray-100"
             >
               {/* Header */}
-              <div className="flex items-start justify-between mb-6">
-                <div>
+              <div className="flex flex-wrap items-start justify-between gap-3 mb-4 md:mb-6">
+                <div className="min-w-0">
                   <h3 className="text-xl font-bold text-[#1A1A1A] mb-1">
                     {formatPrice(payment.amount)}
                   </h3>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-xs sm:text-sm text-gray-500 break-all">
                     ID: {payment.id}
                   </p>
                 </div>
@@ -213,7 +213,7 @@ export default function PaymentVerifier() {
               </div>
 
               {/* User & Course Info Grid */}
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
+              <div className="grid md:grid-cols-2 gap-3 md:gap-6 mb-4 md:mb-6">
                 {/* User Info */}
                 <div className="bg-[#F7F7F7] rounded-2xl p-4">
                   <div className="flex items-center space-x-2 mb-3">
@@ -223,7 +223,7 @@ export default function PaymentVerifier() {
                   {payment.user ? (
                     <div className="space-y-1 text-sm text-gray-600">
                       <p className="font-semibold">{payment.user.ime}</p>
-                      <p className="text-gray-500">{payment.user.email}</p>
+                      <p className="text-gray-500 break-all">{payment.user.email}</p>
                       {payment.user.telefon && (
                         <p className="text-gray-500">{payment.user.telefon}</p>
                       )}
@@ -264,11 +264,11 @@ export default function PaymentVerifier() {
               </div>
 
               {/* Payment Reference */}
-              <div className="bg-blue-50/50 rounded-2xl p-4 mb-6">
-                <div className="flex justify-between items-center">
+              <div className="bg-blue-50/50 rounded-2xl p-4 mb-4 md:mb-6">
+                <div className="flex flex-wrap justify-between items-center gap-3">
                   <div>
                     <p className="text-sm text-gray-500 mb-1">Позив на број</p>
-                    <p className="font-mono font-bold text-lg text-[#1A1A1A]">{payment.payment_ref}</p>
+                    <p className="font-mono font-bold text-base sm:text-lg text-[#1A1A1A] break-all">{payment.payment_ref}</p>
                   </div>
                   {payment.invoice_url && (
                     <a
@@ -286,8 +286,8 @@ export default function PaymentVerifier() {
 
               {/* Confirmation Document */}
               {payment.confirmationUrl || payment.confirmation_url ? (
-                <div className="bg-green-50 rounded-2xl p-4 mb-6 border border-green-100">
-                  <div className="flex items-center justify-between">
+                <div className="bg-green-50 rounded-2xl p-4 mb-4 md:mb-6 border border-green-100">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <p className="font-semibold text-green-800 mb-1">✓ Потврда о уплати примљена</p>
                       <p className="text-sm text-green-600">
@@ -306,7 +306,7 @@ export default function PaymentVerifier() {
                   </div>
                 </div>
               ) : (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mb-6">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mb-4 md:mb-6">
                   <p className="text-sm text-yellow-800">
                     ⚠️ Корисник још није отпремио потврду о уплати
                   </p>
@@ -314,11 +314,11 @@ export default function PaymentVerifier() {
               )}
 
               {/* Action Buttons */}
-              <div className="flex space-x-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <button
                   onClick={() => confirmPayment(payment)}
                   disabled={processingId === payment.id}
-                  className="flex-1 bg-green-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-green-700 disabled:opacity-50 flex items-center justify-center transition-colors"
+                  className="flex-1 bg-green-600 text-white px-4 sm:px-6 py-3 rounded-2xl font-bold hover:bg-green-700 disabled:opacity-50 flex items-center justify-center transition-colors"
                 >
                   {processingId === payment.id ? (
                     <>
@@ -335,7 +335,7 @@ export default function PaymentVerifier() {
                 <button
                   onClick={() => rejectPayment(payment)}
                   disabled={processingId === payment.id}
-                  className="flex-1 bg-red-100 text-red-700 px-6 py-3 rounded-2xl font-bold hover:bg-red-200 disabled:opacity-50 flex items-center justify-center transition-colors"
+                  className="flex-1 bg-red-100 text-red-700 px-4 sm:px-6 py-3 rounded-2xl font-bold hover:bg-red-200 disabled:opacity-50 flex items-center justify-center transition-colors"
                 >
                   {processingId === payment.id ? (
                     <>

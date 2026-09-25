@@ -11,6 +11,7 @@ export function PromoProvider({ children }) {
   const [promotions, setPromotions] = useState({});
   const [loading, setLoading] = useState(true);
   const [showPromoQuiz, setShowPromoQuiz] = useState(false);
+  const [promoEligible, setPromoEligible] = useState(false);
 
   // Fetch promotions from Firestore
   useEffect(() => {
@@ -21,10 +22,10 @@ export function PromoProvider({ children }) {
           const data = promoDoc.data();
           setPromotions(data);
 
-          // Check if probniPrijemni is active and user hasn't seen it
+          // Active and not seen yet: PromoQuizModal decides *when* to open it
+          // (after ~30s of browsing or on exit intent, never over other layers).
           if (data.probniPrijemni?.active && !hasSeenPromo('probniPrijemni')) {
-            // Small delay so the page loads first
-            setTimeout(() => setShowPromoQuiz(true), 1500);
+            setPromoEligible(true);
           }
         }
       } catch (error) {
@@ -46,6 +47,7 @@ export function PromoProvider({ children }) {
   }, []);
 
   const markPromoSeen = useCallback((promoId) => {
+    if (promoId === 'probniPrijemni') setPromoEligible(false);
     try {
       localStorage.setItem(`${STORAGE_PREFIX}${promoId}`, 'true');
     } catch (error) {
@@ -99,6 +101,7 @@ export function PromoProvider({ children }) {
     loading,
     showPromoQuiz,
     setShowPromoQuiz,
+    promoEligible,
     hasSeenPromo,
     markPromoSeen,
     isPromoActive,
