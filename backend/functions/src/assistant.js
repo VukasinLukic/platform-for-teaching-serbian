@@ -11,7 +11,8 @@
  */
 
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
-import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { getFirestore, FieldValue, Timestamp } from 'firebase-admin/firestore';
+import { APP_CHECK } from './security.js';
 import { checkRateLimit } from './rate-limiter.js';
 import { ASSISTANT_KNOWLEDGE_SR } from './assistantKnowledge.js';
 
@@ -29,6 +30,16 @@ const OPENROUTER_MODELS = [
 // OpenRouter бесплатни ниво: 50 захтева/дан укупно (дељено на СВЕ посетиоце сајта).
 // Остављамо резерву испод тог прага да не бисмо добили сирову 429 грешку усред разговора.
 const DAILY_SOFT_LIMIT = 42;
+// Anonymous visitors may use at most this share of the daily budget, so one person
+// rotating IP addresses cannot switch Alano off for signed-in students.
+const ANON_DAILY_LIMIT = 20;
+// Per-person limits (hourly burst and daily total)
+const LIMITS = {
+  user: { hourly: 12, daily: 30 },
+  anon: { hourly: 6, daily: 10 },
+};
+// Conversation logs are deleted automatically (Firestore TTL policy on expireAt)
+const LOG_RETENTION_DAYS = 90;
 
 const MAX_MESSAGE_LENGTH = 1000;
 const MAX_HISTORY_TURNS = 6;
@@ -243,13 +254,14 @@ async function logInteraction(entry) {
     await db.collection('assistant_logs').add({
       ...entry,
       createdAt: FieldValue.serverTimestamp(),
+      expireAt: Timestamp.fromMillis(Date.now() + LOG_RETENTION_DAYS * 24 * 60 * 60 * 1000),
     });
   } catch (err) {
     console.error('[assistant] Greška pri logovanju:', err.message);
   }
 }
 
-export const askAsistent = onCall({ timeoutSeconds: 90, memory: '256MiB' }, async (request) => {
+export const askAsistent = onCall({ timeoutSeconds: 90, memory: '256MiB', ...APP_CHECK }, async (request) => {
   const startedAt = Date.now();
   const { auth, data, rawRequest } = request;
 
@@ -266,14 +278,16 @@ export const askAsistent = onCall({ timeoutSeconds: 90, memory: '256MiB' }, asyn
     : [];
 
   // Per-user/IP throttle (odvojeno od globalnog dnevnog budžeta ispod)
+  const isAnon = !auth?.uid;
   const limiterKey = auth?.uid ? `user_${auth.uid}` : `ip_${rawRequest?.ip || 'unknown'}`;
+  const limits = isAnon ? LIMITS.anon : LIMITS.user;
   try {
-    await checkRateLimit(limiterKey, 'assistant_chat', 12, 60);
+    await checkRateLimit(limiterKey, 'assistant_chat', limits.hourly, 60);
+    await checkRateLimit(limiterKey, 'assistant_chat_daily', limits.daily, 24 * 60);
   } catch (err) {
     if (err instanceof HttpsError && err.code === 'resource-exhausted') {
       return { ok: false, reason: 'rate_limit', reply: pickFallback('rate_limit') };
     }
-    // rate limiter's own internal errors already fail-open (return true), so ovo se retko desi
   }
 
   const db = getFirestore();
@@ -282,7 +296,9 @@ export const askAsistent = onCall({ timeoutSeconds: 90, memory: '256MiB' }, asyn
 
   const dailySnap = await dailyCounterRef.get();
   const usedToday = dailySnap.exists ? dailySnap.data()?.count || 0 : 0;
-  if (usedToday >= DAILY_SOFT_LIMIT) {
+  const anonUsedToday = dailySnap.exists ? dailySnap.data()?.anonCount || 0 : 0;
+  const overBudget = usedToday >= DAILY_SOFT_LIMIT || (isAnon && anonUsedToday >= ANON_DAILY_LIMIT);
+  if (overBudget) {
     await logInteraction({
       uid: auth?.uid || null,
       message: userMessage,
@@ -293,7 +309,6 @@ export const askAsistent = onCall({ timeoutSeconds: 90, memory: '256MiB' }, asyn
     return { ok: false, reason: 'daily_limit', reply: pickFallback('daily_limit') };
   }
 
-  // Personalizacija — samo ako je korisnik ulogovan
   let personalization;
   try {
     if (auth?.uid) {
@@ -336,7 +351,11 @@ ${personalization}`;
 
   // Rezervišemo dnevni budžet PRE poziva (optimistički) da ne pređemo prag ni pod
   // konkurentnim zahtevima.
-  await dailyCounterRef.set({ count: FieldValue.increment(1), date: todayKey }, { merge: true });
+  await dailyCounterRef.set({
+    count: FieldValue.increment(1),
+    ...(isAnon ? { anonCount: FieldValue.increment(1) } : {}),
+    date: todayKey,
+  }, { merge: true });
 
   const result = await callOpenRouter(messages);
   const latencyMs = Date.now() - startedAt;

@@ -106,16 +106,14 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Online groups - read for enrolled users, write for admin
+    // Online groups and sessions (Meet links) - admin only. Enrolled students get
+    // their own group's schedule through the getMyOnlineGroup function.
     match /online_groups/{groupId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
+      allow read, write: if isAdmin();
     }
 
-    // Online sessions - read for participants, write for admin
     match /online_sessions/{sessionId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
+      allow read, write: if isAdmin();
     }
 
     // Settings collection

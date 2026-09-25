@@ -22,7 +22,7 @@ import { auth, db, functions } from './firebase';
  * @param {string} telefon - Phone number
  * @returns {Promise<User>}
  */
-export const registerUser = async (email, password, ime, telefon) => {
+export const registerUser = async (email, password, ime, telefon, consents = {}) => {
   try {
     console.log('🔵 DEBUG: Starting registration...', {
       email,
@@ -47,6 +47,8 @@ export const registerUser = async (email, password, ime, telefon) => {
       role: 'korisnik', // default role
       registrovan_at: new Date().toISOString(),
       emailVerified: false, // Track verification status
+      termsAndParentalConsent: consents.termsAndParentalConsent === true,
+      consentAt: new Date().toISOString(),
     });
 
     // ✅ Send custom verification email with token

@@ -5,6 +5,7 @@
 
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { getFirestore } from 'firebase-admin/firestore';
+import { APP_CHECK } from './security.js';
 
 /**
  * Atomically increments the payment counter and returns the next reference
@@ -39,6 +40,7 @@ export const nextPaymentReference = async (db) => {
 export const generatePaymentReference = onCall(
   {
     cors: true,
+    ...APP_CHECK,
   },
   async (request) => {
     try {
@@ -65,7 +67,7 @@ export const generatePaymentReference = onCall(
         throw error;
       }
 
-      throw new HttpsError('internal', `Greška pri generisanju broja uplate: ${error.message}`);
+      throw new HttpsError('internal', 'Greška pri generisanju broja uplate');
     }
   }
 );

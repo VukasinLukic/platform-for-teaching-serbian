@@ -138,7 +138,7 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
             </html>
           `,
         });
-        console.log(`Payment confirmation email sent to ${userData.email}`);
+        console.log(`Payment confirmation email sent for transaction ${transactionId}`);
       }
     } catch (emailError) {
       console.error('Error sending confirmation email:', emailError);
@@ -256,7 +256,7 @@ export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) 
             </html>
           `,
         });
-        console.log(`Payment rejection email sent to ${userData.email}`);
+        console.log(`Payment rejection email sent for transaction ${transactionId}`);
       }
     } catch (emailError) {
       console.error('Error sending rejection email:', emailError);

@@ -16,6 +16,7 @@ setGlobalOptions({
 // Import functions
 export { getVideoUrl, getMaterialUrl } from './generateSignedUrl.js';
 export { createCourseTransaction } from './createCourseTransaction.js';
+export { getMyOnlineGroup } from './onlineClasses.js';
 export { generateInvoice } from './generateInvoice.js';
 export { confirmPayment, rejectPayment } from './confirmPayment.js';
 export { generateUploadUrl, uploadVideoToR2, deleteVideoFromR2 } from './uploadVideoToR2.js';

@@ -6,10 +6,11 @@
 
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { APP_CHECK } from './security.js';
 import { checkRateLimit } from './rate-limiter.js';
 import { nextPaymentReference } from './generatePaymentReference.js';
 
-export const createCourseTransaction = onCall({ cors: true }, async (request) => {
+export const createCourseTransaction = onCall({ cors: true, ...APP_CHECK }, async (request) => {
   if (!request.auth) {
     throw new HttpsError('unauthenticated', 'Morate biti prijavljeni');
   }

@@ -27,7 +27,7 @@ function generateVerificationToken() {
 async function sendWelcomeEmailAfterVerification(userEmail, userName) {
   try {
     await sendWelcomeEmailInternal({ userEmail, userName });
-    console.log(`✅ Welcome email sent to ${userEmail}`);
+    console.log('✅ Welcome email sent');
   } catch (error) {
     console.error(`❌ Failed to send welcome email to ${userEmail}:`, error);
   }
@@ -95,7 +95,7 @@ export const sendVerificationEmail = onCall({
       verificationUrl: verificationUrl
     });
 
-    console.log(`✅ Verification email sent to ${userData.email}`);
+    console.log(`✅ Verification email sent for user ${userId}`);
 
     return {
       success: true,
@@ -247,7 +247,7 @@ export const resendVerificationEmail = onCall({
     }
 
     const userData = userDoc.data();
-    console.log('🔵 User data found:', userData.email);
+    console.log('🔵 User data found:', userId);
 
     // Check if already verified
     if (userData.emailVerified) {
@@ -287,7 +287,7 @@ export const resendVerificationEmail = onCall({
 
     // Send verification email
     const verificationUrl = `${SITE_URL}/verify?token=${token}`;
-    console.log('🔵 Sending email to:', userData.email);
+    console.log('🔵 Sending verification email for user', userId);
 
     await sendEmail({
       userEmail: userData.email,
@@ -295,7 +295,7 @@ export const resendVerificationEmail = onCall({
       verificationUrl: verificationUrl
     });
 
-    console.log(`✅ Verification email resent to ${userData.email}`);
+    console.log(`✅ Verification email resent for user ${userId}`);
 
     return {
       success: true,

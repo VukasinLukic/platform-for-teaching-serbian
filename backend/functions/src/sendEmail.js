@@ -1,7 +1,7 @@
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import nodemailer from 'nodemailer';
 import { checkRateLimit } from './rate-limiter.js';
-import { requireAdmin, escapeParams, safeHttpsUrl } from './security.js';
+import { requireAdmin, escapeParams, safeHttpsUrl, APP_CHECK } from './security.js';
 
 /**
  * Gmail + Nodemailer Email Service
@@ -22,7 +22,6 @@ export const getTransporter = () => {
     throw new Error('Gmail credentials not configured. Check .env file.');
   }
 
-  console.log('✅ Using Gmail:', userEmail);
 
   // Use .createTransport() not .createTransporter()
   return nodemailer.createTransport({
@@ -461,7 +460,7 @@ const emailTemplates = Object.fromEntries(
 );
 
 // Cloud Function: Send Contact Form Email
-export const sendContactFormEmail = onCall({ cors: true }, async (request) => {
+export const sendContactFormEmail = onCall({ cors: true, ...APP_CHECK }, async (request) => {
   console.log('=== sendContactFormEmail called ===');
 
   const { name, email, phone, message } = request.data;
@@ -485,7 +484,6 @@ export const sendContactFormEmail = onCall({ cors: true }, async (request) => {
     const userEmail = process.env.GMAIL_USER;
     const contactEmail = process.env.CONTACT_EMAIL || userEmail;
 
-    console.log('Sending email from:', userEmail, 'to:', contactEmail);
 
     await transporter.sendMail({
       from: `"Srpski u Srcu - Kontakt Forma" <${userEmail}>`,
@@ -533,7 +531,6 @@ export const sendPaymentConfirmationEmail = onCall({ cors: true }, async (reques
     });
 
     const senderEmail = process.env.GMAIL_USER;
-    console.log('Sending email from:', senderEmail, 'to:', userEmail);
 
     await transporter.sendMail({
       from: `"Srpski u Srcu" <${senderEmail}>`,
@@ -686,7 +683,7 @@ export const sendVerificationEmail = async ({ userEmail, userName, verificationU
       html: template.html,
     });
 
-    console.log('✅ Verification email sent successfully to:', userEmail);
+    console.log('✅ Verification email sent successfully');
     return { success: true };
   } catch (error) {
     console.error('Error sending verification email:', error);
@@ -714,6 +711,6 @@ export const sendWelcomeEmailInternal = async ({ userEmail, userName }) => {
     html: template.html,
   });
 
-  console.log('✅ Welcome email sent successfully to:', userEmail);
+  console.log('✅ Welcome email sent successfully');
   return { success: true };
 };

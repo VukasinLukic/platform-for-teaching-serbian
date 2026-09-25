@@ -13,6 +13,7 @@ export default function RegisterPage() {
     telefon: '',
     password: '',
     confirmPassword: '',
+    consent: false,
   });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -24,7 +25,7 @@ export default function RegisterPage() {
   const handleChange = (e) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value,
     });
     setError('');
     setSuccess('');
@@ -46,13 +47,18 @@ export default function RegisterPage() {
       return false;
     }
 
-    if (formData.password.length < 6) {
-      setError('Лозинка мора имати најмање 6 карактера');
+    if (formData.password.length < 8 || !/[A-Za-zА-Яа-яЂђЈјЉљЊњЋћЏџČčĆćŠšŽžĐđ]/.test(formData.password) || !/\d/.test(formData.password)) {
+      setError('Лозинка мора имати најмање 8 карактера, бар једно слово и бар један број');
       return false;
     }
 
     if (formData.password !== formData.confirmPassword) {
       setError('Лозинке се не поклапају');
+      return false;
+    }
+
+    if (!formData.consent) {
+      setError('Потребно је да потврдите услове коришћења и сагласност родитеља за ученике млађе од 15 година');
       return false;
     }
 
@@ -75,7 +81,8 @@ export default function RegisterPage() {
         formData.email,
         formData.password,
         formData.ime,
-        formData.telefon
+        formData.telefon,
+        { termsAndParentalConsent: true }
       );
 
       // Welcome email will be sent AFTER email verification
@@ -342,7 +349,7 @@ export default function RegisterPage() {
                 </button>
               </div>
               <p className="mt-2 text-sm text-gray-500" style={{fontFamily: "'Plus Jakarta Sans', sans-serif"}}>
-                Најмање 6 карактера
+                Најмање 8 карактера, бар једно слово и један број
               </p>
             </div>
 
@@ -391,6 +398,23 @@ export default function RegisterPage() {
                 {error}
               </div>
             )}
+
+            {/* Terms and parental consent (ZZPL čl. 16: saglasnost roditelja za mlađe od 15 godina) */}
+            <label htmlFor="consent" className="flex items-start gap-3 text-sm text-gray-700 cursor-pointer">
+              <input
+                type="checkbox"
+                id="consent"
+                name="consent"
+                checked={formData.consent}
+                onChange={handleChange}
+                className="mt-1 w-4 h-4 accent-[#D62828] flex-shrink-0"
+              />
+              <span>
+                Прихватам <Link to="/terms" className="text-[#D62828] underline">услове коришћења</Link> и{' '}
+                <Link to="/privacy" className="text-[#D62828] underline">политику приватности</Link>. Ако је ученик млађи од 15 година,
+                потврђујем да сам родитељ или старатељ, или да се родитељ сагласио са регистрацијом.
+              </span>
+            </label>
 
             {/* Submit Button */}
             <button
