@@ -393,11 +393,11 @@ export default function OnlineNastavaPage() {
                 <div className="relative bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden border border-[#669BBC]/30 flex flex-col">
                   <div className="bg-[#669BBC]/10 p-6">
                     <h3 className="text-lg font-bold mb-1 text-[#669BBC]">Индивидуални часови</h3>
-                    <p className="text-[#669BBC]/70 text-xs mb-4">Индивидуална настава 1-на-1</p>
+                    <p className="text-[#4a7a99] text-sm mb-4">Индивидуална настава 1-на-1</p>
                     <div className="flex items-baseline gap-2">
                       <span className="text-3xl font-black text-[#4a7a96]">{formatPrice(pkg.price)}</span>
                     </div>
-                    <p className="text-[#669BBC]/60 text-xs mt-1">месечно</p>
+                    <p className="text-[#4a7a99] text-xs mt-1">месечно</p>
                   </div>
 
                   <div className="p-6 flex flex-col flex-1">
@@ -412,7 +412,7 @@ export default function OnlineNastavaPage() {
                       {pkg.features.map((feature, idx) => (
                         <div key={idx} className="flex items-start gap-2">
                           <CheckCircle className="w-4 h-4 text-[#669BBC] flex-shrink-0 mt-0.5" />
-                          <span className="text-gray-600 text-xs">{feature}</span>
+                          <span className="text-gray-600 text-sm">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -443,7 +443,7 @@ export default function OnlineNastavaPage() {
               return (
                 <div className="relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden border-2 border-[#CE1919]/40 md:scale-105 z-10 flex flex-col">
                   {/* Most Popular Banner */}
-                  <div className="absolute top-5 -right-10 bg-[#CE1919] text-white px-10 py-1.5 rotate-45 text-[10px] font-bold uppercase tracking-wider shadow-md z-20">
+                  <div className="absolute top-5 -right-10 bg-[#CE1919] text-white px-10 py-1.5 rotate-45 text-xs font-bold uppercase tracking-wider shadow-md z-20">
                     Најпопуларније
                   </div>
 
@@ -455,7 +455,7 @@ export default function OnlineNastavaPage() {
                       <span className="text-3xl font-black text-[#a01313] whitespace-nowrap">2.500 дин</span>
                     </div>
                     <p className="text-[#CE1919]/80 text-xs mt-1 font-medium">1 месец</p>
-                    <p className="text-[#CE1919]/50 text-[11px] mt-0.5">Остали месеци: {formatPrice(pkg.price)}</p>
+                    <p className="text-[#CE1919]/70 text-xs mt-0.5">Остали месеци: {formatPrice(pkg.price)}</p>
                   </div>
 
                   <div className="p-6 flex flex-col flex-1">
@@ -470,7 +470,7 @@ export default function OnlineNastavaPage() {
                       {pkg.features.map((feature, idx) => (
                         <div key={idx} className="flex items-start gap-2">
                           <CheckCircle className="w-4 h-4 text-[#CE1919] flex-shrink-0 mt-0.5" />
-                          <span className="text-gray-600 text-xs">{feature}</span>
+                          <span className="text-gray-600 text-sm">{feature}</span>
                         </div>
                       ))}
                     </div>
@@ -498,12 +498,12 @@ export default function OnlineNastavaPage() {
             <div className="relative bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden border border-[#780000]/25 flex flex-col">
               <div className="bg-[#780000]/10 p-6">
                 <h3 className="text-lg font-bold mb-1 text-[#780000]">Направи своју групу</h3>
-                <p className="text-[#780000]/60 text-xs mb-4">Учите заједно по повољнијој цени</p>
+                <p className="text-[#780000]/80 text-sm mb-4">Учите заједно по повољнијој цени</p>
                 <div className="flex items-center gap-3">
                   <Users className="w-10 h-10 text-[#780000]/50" />
                   <div>
                     <div className="text-base font-bold text-[#780000]">По договору</div>
-                    <div className="text-xs text-[#780000]/50">Прилагођено вама</div>
+                    <div className="text-xs text-[#780000]/75">Прилагођено вама</div>
                   </div>
                 </div>
               </div>
@@ -519,23 +519,23 @@ export default function OnlineNastavaPage() {
                 <div className="space-y-3 mb-6 flex-1">
                   <div className="flex items-start gap-2">
                     <CheckCircle className="w-4 h-4 text-[#780000]/70 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-600 text-xs">Флексибилан термин часова</span>
+                    <span className="text-gray-600 text-sm">Флексибилан термин часова</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle className="w-4 h-4 text-[#780000]/70 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-600 text-xs">Прилагођен програм за групу</span>
+                    <span className="text-gray-600 text-sm">Прилагођен програм за групу</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle className="w-4 h-4 text-[#780000]/70 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-600 text-xs">Посебне цене за групе</span>
+                    <span className="text-gray-600 text-sm">Посебне цене за групе</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle className="w-4 h-4 text-[#780000]/70 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-600 text-xs">Снимљени часови на платформи</span>
+                    <span className="text-gray-600 text-sm">Снимљени часови на платформи</span>
                   </div>
                   <div className="flex items-start gap-2">
                     <CheckCircle className="w-4 h-4 text-[#780000]/70 flex-shrink-0 mt-0.5" />
-                    <span className="text-gray-600 text-xs">Интерактивна настава уживо</span>
+                    <span className="text-gray-600 text-sm">Интерактивна настава уживо</span>
                   </div>
                 </div>
 

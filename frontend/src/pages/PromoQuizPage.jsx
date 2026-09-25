@@ -6,6 +6,7 @@ import Footer from '../components/ui/Footer';
 import SEO from '../components/SEO';
 import { promoQuizQuestions, PROMO_QUIZ_INTRO_TEXT } from '../data/promoQuizData';
 import { useAuthStore } from '../store/authStore';
+import { useFloatingLayers } from '../context/floatingLayers';
 import { usePromo } from '../context/PromoContext';
 
 const RETURN_TO_KEY = 'srpskiusrcu_return_to';
@@ -49,6 +50,13 @@ export default function PromoQuizPage() {
   const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
   const [savedResult, setSavedResult] = useState(null);
+  const setTestingActive = useFloatingLayers((st) => st.setTestingActive);
+
+  // While the mock exam is in progress, hide the dock/assistant launcher (focus mode).
+  useEffect(() => {
+    setTestingActive(!showResult);
+    return () => setTestingActive(false);
+  }, [showResult, setTestingActive]);
 
   // Shuffle answers once on mount
   const shuffledQuestions = useMemo(() => {
@@ -70,7 +78,7 @@ export default function PromoQuizPage() {
   // Scroll to top kada se prikazuju rezultati
   useEffect(() => {
     if (showResult) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     }
   }, [showResult]);
 

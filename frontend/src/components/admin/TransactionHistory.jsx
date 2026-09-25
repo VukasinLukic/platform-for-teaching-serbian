@@ -127,8 +127,8 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-2xl font-bold text-[#1A1A1A]">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 className="text-xl md:text-2xl font-bold text-[#1A1A1A]">
           Историја Трансакција
         </h3>
         <div className="text-sm text-gray-600">
@@ -136,8 +136,34 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+      {/* Mobile: card list (below md) */}
+      <ul className="md:hidden space-y-3" aria-label="Трансакције">
+        {transactions.map((tx) => (
+          <li key={tx.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-[#D62828] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                {tx.userName?.charAt(0) || tx.userEmail?.charAt(0).toUpperCase() || '?'}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="font-semibold text-[#1A1A1A] truncate">{tx.userName || 'Непознато име'}</div>
+                <div className="text-sm text-gray-600 truncate">{tx.userEmail || 'Непознат емаил'}</div>
+                {tx.userPhone && <div className="text-xs text-gray-500 mt-0.5">{tx.userPhone}</div>}
+              </div>
+              <div className="font-bold text-[#D62828] text-base whitespace-nowrap">{formatPrice(tx.amount)}</div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2">
+              {getStatusBadge(tx.status)}
+              <span className="text-xs text-gray-500">
+                {new Date(tx.created_at?.toDate?.() || tx.created_at).toLocaleString('sr-RS')}
+              </span>
+            </div>
+            <div className="mt-1 text-xs text-gray-400 font-mono">ID: {tx.id.substring(0, 8)}…</div>
+          </li>
+        ))}
+      </ul>
+
+      {/* Table (md and up) */}
+      <div className="hidden md:block bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
@@ -198,7 +224,7 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="text-sm text-gray-600">
             Страна {currentPage} од {totalPages}
           </div>

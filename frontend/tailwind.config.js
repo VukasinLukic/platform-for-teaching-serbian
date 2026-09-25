@@ -99,6 +99,27 @@ export default {
             transform: "scale(1)",
           },
         },
+        // Layout/navigation motion (unique names so they never clash with index.css classes)
+        "overlay-fade": {
+          from: { opacity: "0" },
+          to: { opacity: "1" },
+        },
+        "drawer-in-right": {
+          from: { transform: "translateX(100%)" },
+          to: { transform: "translateX(0)" },
+        },
+        "dropdown-in": {
+          from: { opacity: "0", transform: "translateY(-6px) scale(0.98)" },
+          to: { opacity: "1", transform: "translateY(0) scale(1)" },
+        },
+        "layer-rise": {
+          from: { opacity: "0", transform: "translateY(16px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
+        "testimonial-marquee": {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -107,6 +128,11 @@ export default {
         "fade-in": "fadeIn 1s ease-out",
         "slide-up": "slideUp 0.6s ease-out",
         "scale-in": "scaleIn 0.4s ease-out",
+        "overlay-fade": "overlay-fade 0.25s ease-out",
+        "drawer-in-right": "drawer-in-right 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
+        "dropdown-in": "dropdown-in 0.16s ease-out",
+        "layer-rise": "layer-rise 0.35s cubic-bezier(0.16, 1, 0.3, 1)",
+        "testimonial-marquee": "testimonial-marquee 60s linear infinite",
       },
     },
   },

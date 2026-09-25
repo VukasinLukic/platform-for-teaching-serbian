@@ -199,7 +199,57 @@ export default function ParticipantsManager() {
           </p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+        <>
+        {/* Mobile: card list (below md) */}
+        <ul className="md:hidden space-y-3" aria-label="Учесници">
+          {filteredEnrollments.map((enrollment) => (
+            <li key={enrollment.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="font-semibold text-[#1A1A1A] truncate">{enrollment.user?.ime || 'Непознато име'}</div>
+                  <div className="text-sm text-gray-600 truncate">{enrollment.user?.email}</div>
+                </div>
+                <div className="flex-shrink-0">{getStatusBadge(enrollment.status)}</div>
+              </div>
+              <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-2 text-sm">
+                <div>
+                  <dt className="text-xs text-gray-500">Пакет</dt>
+                  <dd className="text-[#1A1A1A]">{enrollment.package?.name || 'Непознат пакет'}</dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-500">Група</dt>
+                  <dd className={enrollment.group ? 'text-[#1A1A1A] font-semibold' : 'text-gray-400 italic'}>
+                    {enrollment.group ? enrollment.group.name : 'Није додељено'}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-500">Часови</dt>
+                  <dd>
+                    <span className="font-black text-[#D62828] text-lg">{enrollment.remainingClasses || 0}</span>
+                    <span className="text-xs text-gray-500"> / {(enrollment.remainingClasses || 0) + (enrollment.usedClasses || 0)}</span>
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-xs text-gray-500">Важи до</dt>
+                  <dd className="text-gray-700">
+                    {enrollment.endDate
+                      ? new Date(enrollment.endDate.toDate ? enrollment.endDate.toDate() : enrollment.endDate).toLocaleDateString('sr-RS')
+                      : '-'}
+                  </dd>
+                </div>
+              </dl>
+              <button
+                onClick={() => handleAssignToGroup(enrollment)}
+                className="mt-3 w-full flex items-center justify-center gap-2 py-2.5 bg-blue-50 text-blue-700 rounded-xl text-sm font-semibold hover:bg-blue-100 transition-colors"
+              >
+                <Edit2 className="w-4 h-4" /> Додели групу
+              </button>
+            </li>
+          ))}
+        </ul>
+
+        {/* Table (md and up) */}
+        <div className="hidden md:block bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
@@ -268,6 +318,7 @@ export default function ParticipantsManager() {
                         onClick={() => handleAssignToGroup(enrollment)}
                         className="p-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors"
                         title="Додели групу"
+                        aria-label="Додели групу"
                       >
                         <Edit2 className="w-4 h-4" />
                       </button>
@@ -278,6 +329,7 @@ export default function ParticipantsManager() {
             </table>
           </div>
         </div>
+        </>
       )}
 
       {/* Assign to Group Modal */}
