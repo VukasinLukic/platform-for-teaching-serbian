@@ -49,7 +49,6 @@ export const sendVerificationEmail = onCall({
     'https://srpskiusrcu.rs',
     'https://www.srpskiusrcu.rs'
   ],
-  region: 'us-central1',
   invoker: 'public'
 }, async (request) => {
   if (!request.auth) {
@@ -129,7 +128,6 @@ export const verifyEmailToken = onCall({
     'https://srpskiusrcu.rs',
     'https://www.srpskiusrcu.rs'
   ],
-  region: 'us-central1',
   invoker: 'public'
 }, async (request) => {
   const { token } = request.data;
@@ -223,7 +221,6 @@ export const resendVerificationEmail = onCall({
     'https://srpskiusrcu.rs',
     'https://www.srpskiusrcu.rs'
   ],
-  region: 'us-central1',
   invoker: 'public'
 }, async (request) => {
   console.log('🔵 resendVerificationEmail called');

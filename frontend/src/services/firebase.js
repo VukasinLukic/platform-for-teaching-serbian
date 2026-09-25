@@ -36,8 +36,11 @@ if (appCheckSiteKey) {
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
-export const functions = getFunctions(app, 'us-central1');
-export const functionsEU = getFunctions(app, 'europe-west1');
+// All Cloud Functions are deployed to europe-west1 (see backend/functions/src/globalOptions.js)
+export const FUNCTIONS_REGION = 'europe-west1';
+export const functions = getFunctions(app, FUNCTIONS_REGION);
+// Backwards-compatible alias: same instance as `functions`
+export const functionsEU = functions;
 
 // Connect to emulators in development (optional)
 const USE_EMULATORS = import.meta.env.VITE_USE_EMULATORS === 'true';
@@ -47,7 +50,6 @@ if (USE_EMULATORS && import.meta.env.DEV) {
   connectFirestoreEmulator(db, 'localhost', 8080);
   connectStorageEmulator(storage, 'localhost', 9199);
   connectFunctionsEmulator(functions, 'localhost', 5001);
-  connectFunctionsEmulator(functionsEU, 'localhost', 5001);
   console.log('🔧 Connected to Firebase Emulators');
 }
 

@@ -28,7 +28,7 @@ const createR2Client = () => {
  * Cloud Function to generate signed URL for video access
  * Only authenticated users who purchased the course can access videos
  */
-export const getVideoUrl = onCall({ region: 'europe-west1' }, async (request) => {
+export const getVideoUrl = onCall(async (request) => {
   // Check authentication
   if (!request.auth) {
     throw new HttpsError('unauthenticated', 'Morate biti ulogovani');
@@ -80,7 +80,7 @@ export const getVideoUrl = onCall({ region: 'europe-west1' }, async (request) =>
  * Cloud Function to generate a short-lived download URL for a lesson material.
  * Materials are never exposed as public links in Firestore; access is checked here.
  */
-export const getMaterialUrl = onCall({ region: 'europe-west1' }, async (request) => {
+export const getMaterialUrl = onCall(async (request) => {
   if (!request.auth) {
     throw new HttpsError('unauthenticated', 'Morate biti ulogovani');
   }
