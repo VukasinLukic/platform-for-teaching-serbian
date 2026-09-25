@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { httpsCallable } from 'firebase/functions';
 import { functions } from '../services/firebase';
 import { useAuthStore } from '../store/authStore';
+import { refreshVerificationClaims } from '../components/auth/verification';
 
 const RESEND_COOLDOWN = 60; // seconds
 const MAX_RESEND_ATTEMPTS = 5;
@@ -138,6 +139,8 @@ const VerifyEmailPage = () => {
 
             try {
               await refreshUserProfile();
+              // New ID token so Firestore rules / functions see email_verified = true
+              await refreshVerificationClaims();
             } catch (e) { /* ignore */ }
 
             // Redirect after 3s
@@ -381,10 +384,10 @@ const VerifyEmailPage = () => {
               <strong>Савети:</strong>
             </p>
             <ul className="text-sm text-blue-700 mt-2 space-y-1 list-disc list-inside">
-              <li>Проверите spam/junk фолдер у вашем email-у</li>
+              <li>Проверите и Spam/Промоције (Gmail) или Junk фолдер</li>
               <li>Email би требало да стигне за 1-2 минута</li>
               <li>Кликните на линк у email-у да верификујете налог</li>
-              <li>Након верификације, моћи ћете да приступите платформи</li>
+              <li>Панел и квизови раде и пре потврде — потврда је потребна за куповину и плаћене лекције</li>
             </ul>
           </div>
         )}
@@ -396,7 +399,7 @@ const VerifyEmailPage = () => {
             </p>
             <ul className="text-sm text-yellow-700 mt-2 space-y-1 list-disc list-inside">
               <li>Проверите да ли сте кликнули на најновији линк</li>
-              <li>Линк за верификацију истиче након 60 минута</li>
+              <li>Линк за верификацију важи 24 часа</li>
               <li>Затражите нови email ако је линк истекао</li>
             </ul>
           </div>

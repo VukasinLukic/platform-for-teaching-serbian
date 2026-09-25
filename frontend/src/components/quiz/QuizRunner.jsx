@@ -1,4 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useAuthStore } from '../../store/authStore';
+import { saveQuizResult } from '../dashboard/progressService';
 import { ArrowRight, CheckCircle, XCircle } from 'lucide-react';
 import parse from 'html-react-parser';
 import QuizResult from './QuizResult';
@@ -13,7 +16,10 @@ function shuffleArray(array) {
     return shuffled;
 }
 
-export default function QuizRunner({ quiz, onExit }) {
+export default function QuizRunner({ quiz, onExit, quizId: quizIdProp }) {
+    const params = useParams();
+    const quizId = quizIdProp || params.quizId;
+    const user = useAuthStore((s) => s.user);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [score, setScore] = useState(0);
@@ -62,6 +68,15 @@ export default function QuizRunner({ quiz, onExit }) {
         setSelectedAnswer(null);
         setIsAnswerSubmitted(false);
     };
+
+    // Save the result to the user's own progress doc (shown on the dashboard per topic)
+    useEffect(() => {
+        if (!showResult || !user?.uid || !quizId) return;
+        saveQuizResult(user.uid, { quizId, score, total: shuffledQuiz.length }).catch((err) => {
+            console.warn('Quiz result not saved:', err?.code || err);
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showResult]);
 
     if (showResult) {
         return <QuizResult score={score} totalQuestions={shuffledQuiz.length} onRetry={handleRetry} />;

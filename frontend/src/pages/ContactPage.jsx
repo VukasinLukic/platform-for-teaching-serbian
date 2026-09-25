@@ -1,53 +1,65 @@
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { zodResolver } from '../components/auth/zodResolver';
+import { functionsErrorMessage } from '../components/auth/errorMessages';
 import { Mail, Phone, MapPin, Send, CheckCircle, MessageSquare, MessageCircle, Instagram } from 'lucide-react';
 import { sendContactFormEmail } from '../services/email.service';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import Button from '../components/ui/Button';
-import Input from '../components/ui/Input';
 import { Link } from 'react-router-dom';
 import SEO from '../components/SEO';
+
+const contactSchema = z.object({
+  ime: z.string().trim().min(2, 'Унесите име и презиме').max(80, 'Име је предугачко'),
+  email: z.string().trim().min(1, 'Унесите имејл адресу').pipe(z.email('Имејл адреса није исправна (нпр. ime@gmail.com)')),
+  telefon: z
+    .string()
+    .trim()
+    .refine((v) => v === '' || /^\+?[\d\s/-]{6,20}$/.test(v), 'Неисправан број телефона'),
+  poruka: z.string().trim().min(10, 'Порука треба да има бар 10 карактера').max(3000, 'Порука је предугачка (највише 3000 карактера)'),
+});
+
+const fieldClass = (hasError) =>
+  `w-full px-6 py-4 bg-[#F7F7F7] border-2 rounded-2xl focus:outline-none transition-colors ${
+    hasError ? 'border-red-400 focus:border-red-500' : 'border-gray-100 focus:border-[#D62828]'
+  }`;
+
+function FieldError({ id, error }) {
+  if (!error) return null;
+  return <p id={id} role="alert" className="mt-2 text-sm font-medium text-red-600">{error.message}</p>;
+}
 
 export default function ContactPage() {
   const contactPhone = import.meta.env.VITE_CONTACT_PHONE || '+381 XX XXX XXXX';
   const viberNumber = contactPhone.replace(/[^\d+]/g, '');
 
-  const [formData, setFormData] = useState({
-    ime: '',
-    email: '',
-    telefon: '',
-    poruka: '',
-  });
-  const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState('');
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(contactSchema),
+    mode: 'onBlur',
+    reValidateMode: 'onChange',
+    defaultValues: { ime: '', email: '', telefon: '', poruka: '' },
+  });
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
+  const onSubmit = async (data) => {
     setError('');
-
-    try {
-      const result = await sendContactFormEmail(formData);
-      if (result.success) {
-        setSuccess(true);
-        setFormData({ ime: '', email: '', telefon: '', poruka: '' });
-      } else {
-        throw new Error('Грешка при слању поруке.');
-      }
-    } catch (err) {
-      setError('Дошло је до грешке при слању поруке. Молимо покушајте поново.');
-    } finally {
-      setLoading(false);
+    const result = await sendContactFormEmail(data);
+    if (result.success) {
+      setSuccess(true);
+      reset();
+    } else {
+      setError(functionsErrorMessage(result.error, 'Порука није послата. Покушајте поново или нам пишите директно на имејл.'));
     }
   };
+  const loading = isSubmitting;
 
   return (
     <>
@@ -68,7 +80,13 @@ export default function ContactPage() {
     <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
       <Header />
 
-      <div className="max-w-7xl mx-auto px-6 py-10 md:py-20">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-10 md:py-20">
+        <header className="mb-8 md:mb-12 max-w-2xl">
+          <h1 className="text-3xl md:text-5xl font-bold text-[#1A1A1A] mb-3">Контакт</h1>
+          <p className="text-gray-600 text-base md:text-lg">
+            Имате питање о курсевима или припреми за малу матуру? Пишите нам — одговарамо у року од 24 часа.
+          </p>
+        </header>
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-start">
 
           {/* Left Side - Form (Span 7) */}
@@ -91,50 +109,46 @@ export default function ContactPage() {
                     <Button variant="primary" onClick={() => setSuccess(false)}>Нова порука</Button>
                   </div>
                ) : (
-                 <form onSubmit={handleSubmit} className="space-y-6">
-                   <Input
-                     name="ime"
-                     placeholder="Име и презиме"
-                     value={formData.ime}
-                     onChange={handleChange}
-                     className="bg-[#F7F7F7] border-gray-100 rounded-2xl py-4"
-                     required
-                   />
-                   <Input
-                     type="email"
-                     name="email"
-                     placeholder="Емаил адреса"
-                     value={formData.email}
-                     onChange={handleChange}
-                     className="bg-[#F7F7F7] border-gray-100 rounded-2xl py-4"
-                     required
-                   />
-                   <Input
-                     type="tel"
-                     name="telefon"
-                     placeholder="Телефон"
-                     value={formData.telefon}
-                     onChange={handleChange}
-                     className="bg-[#F7F7F7] border-gray-100 rounded-2xl py-4"
-                   />
-                   <textarea
-                     name="poruka"
-                     value={formData.poruka}
-                     onChange={handleChange}
-                     rows={5}
-                     className="w-full px-6 py-4 bg-[#F7F7F7] border-2 border-gray-100 rounded-2xl focus:border-[#D62828] focus:outline-none transition-colors resize-none"
-                     placeholder="Ваша порука..."
-                     required
-                   />
+                 <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5">
+                   <div>
+                     <label htmlFor="contact-ime" className="block text-sm font-semibold text-[#1A1A1A] mb-2">Име и презиме</label>
+                     <input id="contact-ime" type="text" autoComplete="name" placeholder="Марко Марковић"
+                       aria-invalid={!!errors.ime} aria-describedby={errors.ime ? 'contact-ime-error' : undefined}
+                       className={fieldClass(errors.ime)} {...register('ime')} />
+                     <FieldError id="contact-ime-error" error={errors.ime} />
+                   </div>
+                   <div>
+                     <label htmlFor="contact-email" className="block text-sm font-semibold text-[#1A1A1A] mb-2">Имејл адреса</label>
+                     <input id="contact-email" type="email" inputMode="email" autoComplete="email" placeholder="ime@gmail.com"
+                       aria-invalid={!!errors.email} aria-describedby={errors.email ? 'contact-email-error' : undefined}
+                       className={fieldClass(errors.email)} {...register('email')} />
+                     <FieldError id="contact-email-error" error={errors.email} />
+                   </div>
+                   <div>
+                     <label htmlFor="contact-telefon" className="block text-sm font-semibold text-[#1A1A1A] mb-2">
+                       Телефон <span className="font-normal text-gray-400">(опционо)</span>
+                     </label>
+                     <input id="contact-telefon" type="tel" inputMode="tel" autoComplete="tel" placeholder="0612345678"
+                       aria-invalid={!!errors.telefon} aria-describedby={errors.telefon ? 'contact-telefon-error' : undefined}
+                       className={fieldClass(errors.telefon)} {...register('telefon')} />
+                     <FieldError id="contact-telefon-error" error={errors.telefon} />
+                   </div>
+                   <div>
+                     <label htmlFor="contact-poruka" className="block text-sm font-semibold text-[#1A1A1A] mb-2">Порука</label>
+                     <textarea id="contact-poruka" rows={5} placeholder="Ваша порука..."
+                       aria-invalid={!!errors.poruka} aria-describedby={errors.poruka ? 'contact-poruka-error' : undefined}
+                       className={`${fieldClass(errors.poruka)} resize-none`} {...register('poruka')} />
+                     <FieldError id="contact-poruka-error" error={errors.poruka} />
+                   </div>
 
-                   {error && <div className="text-red-500 text-sm">{error}</div>}
+                   {error && <div role="alert" className="bg-red-50 border border-red-200 text-red-700 text-sm rounded-2xl px-4 py-3">{error}</div>}
 
                    <button
                      type="submit"
                      disabled={loading}
                      className="w-full bg-[#D62828] text-white font-bold py-4 rounded-full hover:bg-[#B91F1F] transition shadow-lg hover:shadow-xl disabled:opacity-70"
                    >
-                     {loading ? 'Слање...' : 'Пошаљи порику'}
+                     {loading ? 'Слање...' : 'Пошаљи поруку'}
                    </button>
                  </form>
                )}

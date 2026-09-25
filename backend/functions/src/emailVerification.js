@@ -13,6 +13,16 @@ import { SITE_URL } from './security.js';
 
 const db = getFirestore();
 
+// Verification links stay valid for 24 hours (emails often land in Spam/Promotions
+// and are opened later).
+const VERIFICATION_TOKEN_TTL_HOURS = 24;
+
+function verificationExpiryDate() {
+  const expiresAt = new Date();
+  expiresAt.setHours(expiresAt.getHours() + VERIFICATION_TOKEN_TTL_HOURS);
+  return expiresAt;
+}
+
 /**
  * Generate a unique verification token
  * @returns {string} Random verification token
@@ -74,8 +84,7 @@ export const sendVerificationEmail = onCall({
 
     // Generate verification token
     const token = generateVerificationToken();
-    const expiresAt = new Date();
-    expiresAt.setMinutes(expiresAt.getMinutes() + 60); // Token expires in 60 minutes
+    const expiresAt = verificationExpiryDate();
 
     // Store verification token in database
     await db.collection('email_verifications').doc(token).set({
@@ -271,8 +280,7 @@ export const resendVerificationEmail = onCall({
 
     // Generate new verification token
     const token = generateVerificationToken();
-    const expiresAt = new Date();
-    expiresAt.setMinutes(expiresAt.getMinutes() + 60);
+    const expiresAt = verificationExpiryDate();
     console.log('🔵 Generated new token:', token.substring(0, 10) + '...');
 
     // Store new verification token

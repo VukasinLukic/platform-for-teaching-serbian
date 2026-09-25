@@ -92,7 +92,7 @@ export default function EmailVerificationGate() {
               </div>
 
               <p className="text-xs text-gray-500 mb-4">
-                Нисте добили email? Проверите спам фолдер.
+                Нисте добили имејл? Проверите и Spam/Промоције. Линк важи 24 часа.
               </p>
             </div>
 

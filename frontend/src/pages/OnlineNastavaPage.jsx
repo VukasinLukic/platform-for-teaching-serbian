@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
+import { ensureEmailVerifiedForPurchase } from '../components/auth/verification';
 import { Link, useNavigate } from 'react-router-dom';
 import { Video, Calendar, Users, Clock, CheckCircle, X, BookOpen } from 'lucide-react';
 import { httpsCallable } from 'firebase/functions';
@@ -85,6 +86,12 @@ export default function OnlineNastavaPage() {
   const handlePurchase = async (pkg) => {
     if (!user) {
       setShowAuthModal(true);
+      return;
+    }
+
+    const verification = await ensureEmailVerifiedForPurchase();
+    if (!verification.ok) {
+      alert(verification.message);
       return;
     }
 
