@@ -181,7 +181,7 @@ export default function PaymentVerifier() {
         <div className="bg-white rounded-3xl p-8 md:p-12 text-center shadow-sm border border-gray-100">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
           <p className="text-gray-600 text-lg">Нема уплата на чекању</p>
-          <p className="text-sm text-gray-400 mt-2">
+          <p className="text-sm text-gray-500 mt-2">
             Све уплате су верификоване
           </p>
         </div>
@@ -206,7 +206,7 @@ export default function PaymentVerifier() {
                   <div className="bg-gold/20 text-ink px-4 py-2 rounded-full text-sm font-bold">
                     На чекању
                   </div>
-                  <p className="text-xs text-gray-400 mt-2">
+                  <p className="text-xs text-gray-500 mt-2">
                     {payment.createdAt && formatDate(payment.createdAt)}
                   </p>
                 </div>

@@ -330,14 +330,14 @@ function MobileMenu({ open, onClose, user, userProfile, onLogout, scriptSwitcher
             <li>
               <NavLink to="/contact" className={rowClass}>
                 <span className="flex items-center gap-3">
-                  <Mail className="w-5 h-5 text-gray-400" aria-hidden="true" /> Контакт
+                  <Mail className="w-5 h-5 text-gray-500" aria-hidden="true" /> Контакт
                 </span>
               </NavLink>
             </li>
             <li>
               <NavLink to="/faq" className={rowClass}>
                 <span className="flex items-center gap-3">
-                  <CircleHelp className="w-5 h-5 text-gray-400" aria-hidden="true" /> Честа питања
+                  <CircleHelp className="w-5 h-5 text-gray-500" aria-hidden="true" /> Честа питања
                 </span>
               </NavLink>
             </li>

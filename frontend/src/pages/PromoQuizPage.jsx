@@ -174,11 +174,11 @@ export default function PromoQuizPage() {
             <p className="text-gray-500 text-sm mb-3">Ваш резултат:</p>
 
             <div className="text-4xl font-black text-brand mb-3">
-              {effectiveScore} <span className="text-lg text-gray-400 font-medium">/ {effectiveTotal}</span>
+              {effectiveScore} <span className="text-lg text-gray-500 font-medium">/ {effectiveTotal}</span>
             </div>
 
             <p className="text-sm text-gray-500 mb-6">
-              Prosek naših učenika je <span className="font-bold text-ink">15</span> / {effectiveTotal} poena.
+              Просек наших ученика је <span className="font-bold text-ink">15</span> / {effectiveTotal} poena.
             </p>
 
             {/* 20% Discount Highlight */}
@@ -210,7 +210,7 @@ export default function PromoQuizPage() {
                     {copied ? (
                       <Check className="w-5 h-5 text-green-600" />
                     ) : (
-                      <Copy className="w-5 h-5 text-gray-400" />
+                      <Copy className="w-5 h-5 text-gray-500" />
                     )}
                   </button>
                 </div>
@@ -343,7 +343,7 @@ export default function PromoQuizPage() {
                   } else if (answer === selectedAnswer) {
                     buttonClass += "border-red-500 bg-red-50 text-red-700";
                   } else {
-                    buttonClass += "border-gray-100 text-gray-400";
+                    buttonClass += "border-gray-100 text-gray-500";
                   }
                 } else {
                   if (selectedAnswer === answer) {
@@ -384,7 +384,7 @@ export default function PromoQuizPage() {
                 className={`px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${
                   selectedAnswer
                     ? 'bg-brand text-white hover:bg-brand-700 shadow-lg hover:shadow-xl'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                 }`}
               >
                 Провери одговор

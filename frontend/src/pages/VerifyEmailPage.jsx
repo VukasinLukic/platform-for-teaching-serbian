@@ -299,7 +299,7 @@ const VerifyEmailPage = () => {
                   disabled={resendDisabled}
                   className={`w-full py-4 rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl ${
                     resendDisabled
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                       : 'bg-accent text-primary hover:bg-accent-dark'
                   }`}
                 >
@@ -356,7 +356,7 @@ const VerifyEmailPage = () => {
                   disabled={resendDisabled}
                   className={`w-full py-4 rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl ${
                     resendDisabled
-                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                       : 'bg-accent text-primary hover:bg-accent-dark'
                   }`}
                 >

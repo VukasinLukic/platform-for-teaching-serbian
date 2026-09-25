@@ -3,6 +3,7 @@ import { Award, CheckCircle } from 'lucide-react';
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import { Link } from 'react-router-dom';
+import Button from '../components/ui/Button';
 import SEO from '../components/SEO';
 
 export default function AboutPage() {
@@ -109,7 +110,7 @@ export default function AboutPage() {
             </p>
 
             {/* Stats Bar */}
-            <div ref={statsRef} className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 shadow-xl max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+            <div ref={statsRef} className="bg-white rounded-3xl md:rounded-3xl p-6 md:p-8 shadow-xl max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center pb-6 md:pb-0 border-b md:border-b-0 md:border-r last:border-b-0 last:border-r-0 border-gray-100">
                   <div className="text-4xl font-black text-brand mb-1">
@@ -247,7 +248,7 @@ export default function AboutPage() {
 
         {/* CTA SECTION */}
         <section className="py-14 md:py-20 px-6 bg-white">
-          <div className="max-w-5xl mx-auto bg-brand rounded-[2rem] md:rounded-[3rem] p-8 md:p-20 text-center relative overflow-hidden">
+          <div className="max-w-5xl mx-auto bg-brand rounded-3xl md:rounded-3xl p-8 md:p-20 text-center relative overflow-hidden">
             {/* Decorative Circles */}
             <div className="absolute top-0 left-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full translate-x-1/3 translate-y-1/3"></div>
@@ -261,21 +262,15 @@ export default function AboutPage() {
                 Упис је у току!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link to="/courses" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto bg-white text-brand px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition shadow-lg">
+                <Button as={Link} to="/courses" variant="subtle" size="lg" className="w-full sm:w-auto">
                     Погледајте курсеве
-                  </button>
-                </Link>
-                <Link to="/online-nastava" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto bg-gold text-ink px-10 py-4 rounded-full font-bold text-lg hover:bg-gold-500 transition shadow-lg">
-                    Online настава
-                  </button>
-                </Link>
-                <Link to="/contact" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto bg-transparent border-2 border-white text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-brand transition">
+                </Button>
+                <Button as={Link} to="/online-nastava" variant="gold" size="lg" className="w-full sm:w-auto">
+                    Онлајн настава
+                </Button>
+                <Button as={Link} to="/contact" variant="outlineWhite" size="lg" className="w-full sm:w-auto">
                     Контактирајте нас
-                  </button>
-                </Link>
+                </Button>
               </div>
             </div>
           </div>

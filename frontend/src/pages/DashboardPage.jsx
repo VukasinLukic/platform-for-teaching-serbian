@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import Button from '../components/ui/Button';
 import { Book, CheckCircle, Clock, AlertCircle, PlayCircle, Upload, ArrowRight } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { getUserCourses, getAllCourses } from '../services/course.service';
@@ -196,11 +197,9 @@ export default function DashboardPage() {
                     <span className="text-3xl font-bold text-brand">{formatPrice(course.price)}</span>
                     <span className="text-sm text-gray-500">једнократно</span>
                   </div>
-                  <Link to={`/course/${course.id}`}>
-                    <button className="w-full bg-brand text-white py-3 rounded-2xl font-bold hover:bg-brand-700 transition-all hover:scale-105 transform flex items-center justify-center gap-2">
+                  <Button as={Link} to={`/course/${course.id}`} variant="primary" size="md" className="w-full">
                       Погледај Курс <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </Link>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -280,17 +279,15 @@ export default function DashboardPage() {
               <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
                 <div className="text-center md:text-left">
                   <h2 className="text-2xl md:text-3xl font-bold mb-3 md:mb-4">Квизови знања</h2>
-                  <p className="text-gray-400 text-base md:text-lg max-w-xl">
+                  <p className="text-gray-500 text-base md:text-lg max-w-xl">
                     Тестирајте своје знање кроз интерактивне квизове. Пратите свој напредак и утврдите градиво на забаван начин.
                   </p>
                 </div>
 
-                <Link to="/kvizovi" className="w-full md:w-auto">
-                  <button className="w-full md:w-auto bg-brand text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-700 transition-all hover:scale-105 transform flex items-center justify-center gap-2 shadow-lg shadow-red-900/20">
+                <Button as={Link} to="/kvizovi" variant="primary" size="lg" className="w-full md:w-auto">
                     <Book className="w-5 h-5" />
                     Погледај Квизове <ArrowRight className="w-5 h-5" />
-                  </button>
-                </Link>
+                </Button>
               </div>
             </div>
           </div>

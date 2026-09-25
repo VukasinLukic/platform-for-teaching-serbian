@@ -19,7 +19,7 @@ export default function VideoPlayer({ lessonId, courseId: courseIdProp, onProgre
 
   useEffect(() => {
     if (!lessonId) {
-      setError('Lesson ID je obavezan');
+      setError('ИД лекције је обавезан');
       setLoading(false);
       return;
     }
@@ -100,7 +100,7 @@ export default function VideoPlayer({ lessonId, courseId: courseIdProp, onProgre
       const result = await getVideoUrl({ lessonId });
 
       if (!result.data || !result.data.url) {
-        throw new Error('Video URL nije dostupan');
+        throw new Error('Адреса видеа није доступан');
       }
 
       setVideoUrl(result.data.url);
@@ -129,7 +129,7 @@ export default function VideoPlayer({ lessonId, courseId: courseIdProp, onProgre
     return (
       <div className="glass-card rounded-2xl p-12 flex flex-col items-center justify-center min-h-[400px]">
         <Loader2 className="h-12 w-12 text-primary animate-spin mb-4" />
-        <p className="text-muted-foreground text-lg">Učitavanje videa...</p>
+        <p className="text-muted-foreground text-lg">Учитавање видеа...</p>
       </div>
     );
   }
@@ -140,10 +140,10 @@ export default function VideoPlayer({ lessonId, courseId: courseIdProp, onProgre
         <div className="bg-destructive/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
           <AlertCircle className="h-10 w-10 text-destructive" />
         </div>
-        <h3 className="text-2xl font-bold text-destructive mb-3">Greška</h3>
+        <h3 className="text-2xl font-bold text-destructive mb-3">Грешка</h3>
         <p className="text-muted-foreground max-w-md mx-auto mb-6">{error}</p>
         <button onClick={loadVideo} className="btn-primary">
-          Pokušaj ponovo
+          Покушај поново
         </button>
       </div>
     );

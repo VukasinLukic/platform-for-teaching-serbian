@@ -33,15 +33,15 @@ const DOT = {
   done: 'bg-green-600 text-white border-green-600',
   current: 'bg-white text-brand border-brand ring-4 ring-brand/10',
   todo: 'bg-white text-gray-300 border-gray-200',
-  skipped: 'bg-gray-100 text-gray-400 border-gray-200',
+  skipped: 'bg-gray-100 text-gray-500 border-gray-200',
   rejected: 'bg-red-600 text-white border-red-600',
 };
 
 const LABEL = {
   done: 'text-ink',
   current: 'text-brand',
-  todo: 'text-gray-400',
-  skipped: 'text-gray-400',
+  todo: 'text-gray-500',
+  skipped: 'text-gray-500',
   rejected: 'text-red-700',
 };
 

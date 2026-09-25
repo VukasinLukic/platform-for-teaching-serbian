@@ -91,7 +91,7 @@ export default function NotificationDropdown() {
       {/* Bell Button */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 text-gray-400 hover:text-ink transition rounded-lg hover:bg-gray-100"
+        className="relative p-2 text-gray-500 hover:text-ink transition rounded-lg hover:bg-gray-100"
       >
         <Bell size={20} className="md:w-6 md:h-6" />
         {unreadCount > 0 && (
@@ -113,16 +113,16 @@ export default function NotificationDropdown() {
                   <button
                     onClick={markAllAsRead}
                     className="text-xs text-gold hover:text-white transition flex items-center gap-1"
-                    title="Oznaci sve kao procitano"
+                    title="Ознаци све као процитано"
                   >
                     <CheckCheck size={14} />
-                    <span className="hidden md:inline">Procitaj sve</span>
+                    <span className="hidden md:inline">Процитај све</span>
                   </button>
                 )}
                 <button
                   onClick={clearAll}
-                  className="text-xs text-gray-400 hover:text-red-400 transition flex items-center gap-1"
-                  title="Obrisi sve"
+                  className="text-xs text-gray-500 hover:text-red-400 transition flex items-center gap-1"
+                  title="Обриси све"
                 >
                   <Trash2 size={14} />
                 </button>
@@ -135,8 +135,8 @@ export default function NotificationDropdown() {
             {notifications.length === 0 ? (
               <div className="py-12 text-center text-gray-500">
                 <Bell className="w-12 h-12 mx-auto mb-3 text-gray-300" />
-                <p className="font-medium">Nema obavestenja</p>
-                <p className="text-sm text-gray-400">Ovde ce se pojaviti sve aktivnosti</p>
+                <p className="font-medium">Нема обавестења</p>
+                <p className="text-sm text-gray-500">Овде це се појавити све активности</p>
               </div>
             ) : (
               <div>
@@ -161,7 +161,7 @@ export default function NotificationDropdown() {
                         <p className={`text-sm ${notification.read ? 'text-gray-500' : 'text-ink'}`}>
                           {notification.message}
                         </p>
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="text-xs text-gray-500 mt-1">
                           {formatTime(notification.timestamp)}
                         </p>
                       </div>
@@ -170,7 +170,7 @@ export default function NotificationDropdown() {
                           e.stopPropagation();
                           removeNotification(notification.id);
                         }}
-                        className="flex-shrink-0 p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition"
+                        className="flex-shrink-0 p-1 text-gray-500 hover:text-red-500 hover:bg-red-50 rounded transition"
                         title="Obrisi"
                       >
                         <X size={14} />

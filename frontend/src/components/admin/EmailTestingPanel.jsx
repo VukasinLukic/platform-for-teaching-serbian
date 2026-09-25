@@ -22,7 +22,7 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
     {
       id: 'contactForm',
       title: 'Kontakt Forma',
-      description: 'Email koji se šalje kada korisnik popuni kontakt formu',
+      description: 'Имејл који се шаље када корисник попуни контакт форму',
       icon: Mail,
       color: 'bg-blue-500',
       functionName: 'sendContactFormEmail',
@@ -30,13 +30,13 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
         name: 'Test Korisnik',
         email: testEmail,
         phone: '0601234567',
-        message: 'Ovo je test poruka sa kontakt forme. Testiram funkcionalnost slanja email-ova.'
+        message: 'Ово је тест порука са контакт форме. Тестирам функционалност слања имејл-ова.'
       }
     },
     {
       id: 'paymentConfirmation',
-      title: 'Potvrda Uplate',
-      description: 'Email koji se šalje kada se uplata potvrdi',
+      title: 'Потврда Уплате',
+      description: 'Имејл који се шаље када се уплата потврди',
       icon: CheckCircle2,
       color: 'bg-green-500',
       functionName: 'sendPaymentConfirmationEmail',
@@ -49,8 +49,8 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
     },
     {
       id: 'paymentRejection',
-      title: 'Odbijcna Uplata',
-      description: 'Email koji se šalje kada se uplata odbije',
+      title: 'Одбијцна Уплата',
+      description: 'Имејл који се шаље када се уплата одбије',
       icon: AlertCircle,
       color: 'bg-red-500',
       functionName: 'sendPaymentRejectionEmail',
@@ -63,8 +63,8 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
     },
     {
       id: 'welcome',
-      title: 'Dobrodošlica',
-      description: 'Email koji se šalje novim korisnicima',
+      title: 'Добродошлица',
+      description: 'Имејл који се шаље новим корисницима',
       icon: Mail,
       color: 'bg-purple-500',
       functionName: 'sendWelcomeEmail',
@@ -75,8 +75,8 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
     },
     {
       id: 'classReminder',
-      title: 'Podsetnik za Čas',
-      description: 'Email koji se šalje kao podsetnik za onlajn čas',
+      title: 'Подсетник за Час',
+      description: 'Имејл који се шаље као подсетник за онлајн час',
       icon: Mail,
       color: 'bg-yellow-500',
       functionName: 'sendClassReminderEmail',
@@ -187,7 +187,7 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
             </div>
             <div>
               <h2 className="text-3xl font-bold font-serif">Email Testing Panel</h2>
-              <p className="text-white/80 mt-1">Testiraj sve email funkcije odjednom</p>
+              <p className="text-white/80 mt-1">Тестирај све имејл функције одједном</p>
             </div>
           </div>
         </div>
@@ -207,7 +207,7 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
               placeholder="vukasin.lukic.sr@gmail.com"
             />
             <p className="text-xs text-gray-500 mt-2">
-              Svi test email-ovi će biti poslati na ovu adresu
+              Сви тест имејл-ови ће бити послати на ову адресу
             </p>
           </div>
 
@@ -244,12 +244,12 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
                     {isLoading ? (
                       <>
                         <Loader2 size={20} className="animate-spin" />
-                        Šaljem...
+                        Шаљем...
                       </>
                     ) : (
                       <>
                         <Send size={20} />
-                        Pošalji Test
+                        Пошаљи Тест
                       </>
                     )}
                   </button>
@@ -260,7 +260,7 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
 
           {/* Send All Button */}
           <div className="bg-gradient-to-r from-ink to-ink-800 p-6 rounded-2xl">
-            <h3 className="text-white font-bold text-xl mb-3 font-serif">Pošalji SVE odjednom</h3>
+            <h3 className="text-white font-bold text-xl mb-3 font-serif">Пошаљи СВЕ одједном</h3>
             <p className="text-white/70 text-sm mb-4">
               Šalje sve {emailTypes.length} test email-ova redom na unetu adresu
             </p>
@@ -276,12 +276,12 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
               {sendingAll ? (
                 <>
                   <Loader2 size={24} className="animate-spin" />
-                  Šaljem sve email-ove...
+                  Шаљем све имејл-ове...
                 </>
               ) : (
                 <>
                   <Send size={24} />
-                  Pošalji SVE Test Email-ove
+                  Пошаљи СВЕ Тест Имејл-ове
                 </>
               )}
             </button>

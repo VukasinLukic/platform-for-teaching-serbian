@@ -69,7 +69,7 @@ export default function SEOTestPage() {
             <p className="text-gray-500 text-sm mb-3">Ваш резултат:</p>
 
             <div className="text-4xl font-black text-brand mb-6">
-              {tacnih} <span className="text-lg text-gray-400 font-medium">/ {ukupno}</span>
+              {tacnih} <span className="text-lg text-gray-500 font-medium">/ {ukupno}</span>
             </div>
 
             <p className="text-sm text-gray-500 mb-8">
@@ -94,7 +94,7 @@ export default function SEOTestPage() {
 
             <button
               onClick={() => { setTrenutno(0); setOdabrano(null); setTacnih(0); setFaza('test'); }}
-              className="text-sm text-gray-400 hover:text-brand transition-colors underline"
+              className="text-sm text-gray-500 hover:text-brand transition-colors underline"
             >
               Покушај поново
             </button>
@@ -112,7 +112,7 @@ export default function SEOTestPage() {
 
       <div className="max-w-3xl mx-auto px-6 py-10">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-1 text-xs text-gray-400 mb-6 flex-wrap">
+        <nav className="flex items-center gap-1 text-xs text-gray-500 mb-6 flex-wrap">
           <Link to="/" className="hover:text-brand transition-colors">Почетна</Link>
           <ChevronRight className="w-3 h-3 flex-shrink-0" />
           <span>Српски језик</span>
@@ -159,7 +159,7 @@ export default function SEOTestPage() {
                 } else if (idx === odabrano) {
                   cls += 'border-red-500 bg-red-50 text-red-700';
                 } else {
-                  cls += 'border-gray-100 text-gray-400';
+                  cls += 'border-gray-100 text-gray-500';
                 }
               } else {
                 cls += 'border-gray-100 hover:border-gray-300 text-gray-700';

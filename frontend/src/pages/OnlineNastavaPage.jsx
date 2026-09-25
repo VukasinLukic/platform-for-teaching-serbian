@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { ensureEmailVerifiedForPurchase } from '../components/auth/verification';
 import { Link, useNavigate } from 'react-router-dom';
+import Button from '../components/ui/Button';
 import { Video, Calendar, Users, Clock, CheckCircle, X, BookOpen } from 'lucide-react';
 import { httpsCallable } from 'firebase/functions';
 import { formatPrice } from '../utils/helpers';
@@ -129,7 +130,7 @@ export default function OnlineNastavaPage() {
     "@type": "FAQPage",
     "mainEntity": [
       { "@type": "Question", "name": "Шта ако пропустим час?", "acceptedAnswer": { "@type": "Answer", "text": "Сви часови се снимају и биће доступни 48 сати након одржавања часа. Можете их погледати у своје време." } },
-      { "@type": "Question", "name": "Који разреди могу да се пријаве?", "acceptedAnswer": { "@type": "Answer", "text": "Online настава је намењена ученицима од 5. до 8. разреда основне школе који се припремају за малу матуру из српског језика." } },
+      { "@type": "Question", "name": "Који разреди могу да се пријаве?", "acceptedAnswer": { "@type": "Answer", "text": "Онлајн настава је намењена ученицима од 5. до 8. разреда основне школе који се припремају за малу матуру из српског језика." } },
       { "@type": "Question", "name": "Могу ли да откажем претплату?", "acceptedAnswer": { "@type": "Answer", "text": "Да! Пошто су пакети месечни, можете отказати у било ком тренутку. Нема обавеза, нема скривених трошкова." } },
       { "@type": "Question", "name": "Који термин бирам за групне/индивидуалне часове?", "acceptedAnswer": { "@type": "Answer", "text": "Групни: Четвртком у 18:00. Индивидуални: Уторком, термин бирате при упису." } },
       { "@type": "Question", "name": "Шта ми треба за online часове?", "acceptedAnswer": { "@type": "Answer", "text": "Потребан вам је компјутер, таблет или телефон са интернетом, камером и микрофоном. Користимо Google Meet који је бесплатан." } }
@@ -141,14 +142,14 @@ export default function OnlineNastavaPage() {
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Почетна", "item": "https://srpskiusrcu.rs/" },
-      { "@type": "ListItem", "position": 2, "name": "Online настава", "item": "https://srpskiusrcu.rs/online-nastava" }
+      { "@type": "ListItem", "position": 2, "name": "Онлајн настава", "item": "https://srpskiusrcu.rs/online-nastava" }
     ]
   };
 
   const onlineCourseJsonLd = {
     "@context": "https://schema.org",
     "@type": "Course",
-    "name": "Online настава српског језика уживо",
+    "name": "Онлајн настава српског језика уживо",
     "description": "Интерактивни online часови српског језика са наставницом уживо преко Google Meet. Групни и индивидуални часови за припрему мале матуре.",
     "provider": {
       "@type": "EducationalOrganization",
@@ -199,7 +200,7 @@ export default function OnlineNastavaPage() {
       <div className="bg-gradient-to-br from-brand to-brand-700 text-white py-14 md:py-20 rounded-b-[2rem] md:rounded-b-[3rem]">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="inline-block bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full mb-6">
-            <span className="text-sm font-bold uppercase tracking-wider">Online настава уживо</span>
+            <span className="text-sm font-bold uppercase tracking-wider">Онлајн настава уживо</span>
           </div>
           <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6">
             Интерактивни часови<br />са наставницом
@@ -539,11 +540,9 @@ export default function OnlineNastavaPage() {
                   </div>
                 </div>
 
-                <Link to="/contact" className="mt-auto">
-                  <button className="w-full bg-brand-900 hover:bg-brand-950 text-white px-6 py-3 rounded-full hover:shadow-md transition-all font-bold text-sm transform hover:scale-105">
+                <Button as={Link} to="/contact" variant="primary" size="md" className="mt-auto w-full">
                     Контактирајте нас
-                  </button>
-                </Link>
+                </Button>
               </div>
             </div>
 
@@ -575,7 +574,7 @@ export default function OnlineNastavaPage() {
                 Који разреди могу да се пријаве?
               </h3>
               <p className="text-gray-600">
-                Online настава је намењена ученицима од 5. до 8. разреда основне школе који се припремају за малу матуру из српског језика.
+                Онлајн настава је намењена ученицима од 5. до 8. разреда основне школе који се припремају за малу матуру из српског језика.
               </p>
             </div>
 
@@ -625,11 +624,9 @@ export default function OnlineNastavaPage() {
             >
               Изабери пакет
             </button>
-            <Link to="/contact" className="w-full sm:w-auto">
-              <button className="w-full sm:w-auto bg-ink text-white px-8 md:px-12 py-4 md:py-5 rounded-full hover:bg-gray-800 transition-all font-bold text-base md:text-xl shadow-lg hover:scale-105 transform">
+            <Button as={Link} to="/contact" variant="secondary" size="lg" className="w-full sm:w-auto">
                 Контактирајте нас
-              </button>
-            </Link>
+            </Button>
           </div>
         </div>
       </section>

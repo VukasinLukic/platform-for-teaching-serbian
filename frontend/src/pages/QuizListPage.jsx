@@ -38,7 +38,7 @@ export default function QuizListPage() {
                     </div>
                 ) : quizzes.length === 0 ? (
                     <div className="bg-gray-50 rounded-3xl p-8 md:p-16 text-center border border-gray-100 flex flex-col items-center">
-                        <HelpCircle className="w-16 h-16 text-gray-400 mb-6" />
+                        <HelpCircle className="w-16 h-16 text-gray-500 mb-6" />
                         <h2 className="text-xl md:text-2xl font-bold mb-3 text-ink">Тренутно нема доступних квизова</h2>
                         <p className="text-gray-600 text-base md:text-lg">Вратите се касније, ускоро додајемо нове изазове!</p>
                     </div>

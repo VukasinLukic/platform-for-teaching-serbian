@@ -116,7 +116,7 @@ export default function PromotionsManager() {
                     Активна - видљива свим посетиоцима
                   </span>
                 ) : (
-                  <span className="flex items-center gap-1.5 text-gray-400 font-bold">
+                  <span className="flex items-center gap-1.5 text-gray-500 font-bold">
                     <EyeOff className="w-4 h-4" />
                     Неактивна - не приказује се
                   </span>

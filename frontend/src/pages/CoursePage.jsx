@@ -291,7 +291,7 @@ export default function CoursePage() {
                       {downloadingIdx === idx ? (
                         <Loader2 className="w-5 h-5 text-brand animate-spin" />
                       ) : (
-                        <Download className="w-5 h-5 text-gray-400 group-hover:text-brand transition-colors" />
+                        <Download className="w-5 h-5 text-gray-500 group-hover:text-brand transition-colors" />
                       )}
                     </button>
                   ))}
@@ -355,7 +355,7 @@ export default function CoursePage() {
                     <p className="text-xs text-gray-500">{module.lessons?.length || 0} лекција</p>
                   </div>
                 </div>
-                <ChevronDown className={`w-5 h-5 text-gray-400 transition ${activeModuleIndex === moduleIndex ? 'rotate-180' : ''}`} />
+                <ChevronDown className={`w-5 h-5 text-gray-500 transition ${activeModuleIndex === moduleIndex ? 'rotate-180' : ''}`} />
               </button>
 
               {/* Lessons list */}
@@ -373,7 +373,7 @@ export default function CoursePage() {
                             selectedLesson?.id === lesson.id
                               ? 'bg-brand text-white'
                               : isLocked
-                              ? 'bg-gray-50 text-gray-400 cursor-pointer opacity-60 hover:opacity-80'
+                              ? 'bg-gray-50 text-gray-500 cursor-pointer opacity-60 hover:opacity-80'
                               : 'hover:bg-gray-50 text-gray-700 border border-gray-100 bg-white'
                           }`}
                           title={isLocked ? 'Откључајте све лекције куповином курса' : ''}

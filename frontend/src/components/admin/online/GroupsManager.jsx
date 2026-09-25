@@ -202,7 +202,7 @@ export default function GroupsManager() {
       {/* Groups Grid */}
       {groups.length === 0 ? (
         <div className="text-center py-20 bg-gray-50 rounded-2xl">
-          <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <Users className="w-16 h-16 text-gray-500 mx-auto mb-4" />
           <h3 className="text-xl font-bold text-ink mb-2">Нема група</h3>
           <p className="text-gray-600 mb-6">Креирајте своју прву групу за онлајн часове</p>
           <button

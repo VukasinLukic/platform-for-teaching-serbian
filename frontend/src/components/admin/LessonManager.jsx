@@ -586,13 +586,13 @@ export default function LessonManager() {
                                 </div>
                               ) : editingLesson ? (
                                 <div>
-                                  <FileVideo className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                                  <FileVideo className="w-12 h-12 text-gray-500 mx-auto mb-2" />
                                   <p className="font-medium text-gray-700">Кликните да промените видео</p>
                                   <p className="text-xs text-gray-500">Тренутни видео ће бити задржан ако не отпремите нови</p>
                                 </div>
                               ) : (
                                 <div>
-                                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                                  <Upload className="w-12 h-12 text-gray-500 mx-auto mb-2" />
                                   <p className="font-medium text-gray-700">Кликните да отпремите видео</p>
                                   <p className="text-xs text-gray-500">MP4, MOV (макс 500MB)</p>
                                 </div>
@@ -619,7 +619,7 @@ export default function LessonManager() {
                               htmlFor="materialsFile"
                               className="border-2 border-dashed border-gray-300 rounded-2xl p-4 text-center cursor-pointer block hover:border-brand hover:bg-gray-50 transition-all"
                             >
-                              <Paperclip className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                              <Paperclip className="w-8 h-8 text-gray-500 mx-auto mb-2" />
                               <p className="font-medium text-gray-700">Кликните да додате материјале</p>
                               <p className="text-xs text-gray-500">PDF, DOC, PPT, XLS, ZIP (макс 50MB по фајлу)</p>
                             </label>
@@ -759,14 +759,14 @@ export default function LessonManager() {
 
       {selectedCourse && modules.length === 0 && (
         <div className="bg-white rounded-3xl p-12 text-center border border-gray-100">
-          <Video className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <Video className="w-16 h-16 text-gray-500 mx-auto mb-4" />
           <p className="text-gray-500">Нема модула за овај курс. Прво креирајте модуле у менаџеру курсева.</p>
         </div>
       )}
 
       {!selectedCourse && (
         <div className="bg-white rounded-3xl p-12 text-center border border-gray-100">
-          <Video className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <Video className="w-16 h-16 text-gray-500 mx-auto mb-4" />
           <p className="text-gray-500">Одаберите курс да бисте управљали лекцијама</p>
         </div>
       )}

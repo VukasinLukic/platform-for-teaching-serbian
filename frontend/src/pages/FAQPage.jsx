@@ -36,7 +36,7 @@ export default function FAQPage() {
 
           {/* Contact CTA */}
           <div className="mt-10 md:mt-16 text-center">
-             <div className="bg-surface p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-xl border-2 border-gray-100">
+             <div className="bg-surface p-6 md:p-10 rounded-3xl md:rounded-3xl shadow-xl border-2 border-gray-100">
                <div className="flex flex-col md:flex-row items-center gap-5 md:gap-6">
                  <div className="bg-brand/10 p-4 md:p-5 rounded-2xl">
                    <MessageCircle className="w-8 h-8 md:w-10 md:h-10 text-brand" />
@@ -45,11 +45,9 @@ export default function FAQPage() {
                    <h3 className="text-xl md:text-2xl font-bold mb-2 text-ink">Нисте пронашли одговор?</h3>
                    <p className="text-gray-600 text-sm md:text-base">Ту смо да помогнемо. Јавите нам се директно.</p>
                  </div>
-                 <Link to="/contact" className="w-full md:w-auto">
-                   <Button variant="primary" size="lg" className="w-full md:w-auto">
+                 <Button as={Link} to="/contact" variant="primary" size="lg" className="w-full md:w-auto">
                      Контактирајте нас
-                   </Button>
-                 </Link>
+                 </Button>
                </div>
              </div>
           </div>

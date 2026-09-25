@@ -36,7 +36,7 @@ export default function EmailVerificationGate() {
       }
     } catch (error) {
       console.error('Error resending verification email:', error);
-      alert('Greška prilikom slanja email-a. Pokušajte ponovo.');
+      alert('Грешка приликом слања имејла. Покушајте поново.');
     } finally {
       setResending(false);
     }

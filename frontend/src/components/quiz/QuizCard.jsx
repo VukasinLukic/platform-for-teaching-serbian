@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import Button from '../ui/Button';
 import { ArrowRight } from 'lucide-react';
 
 // Mapiranje boja za svaki kviz
@@ -45,11 +46,9 @@ export default function QuizCard({ quiz }) {
             </p>
 
             <div className="mt-auto">
-                <Link to={`/kvizovi/${quiz.id}`}>
-                    <button className="w-full bg-brand text-white py-3 rounded-2xl font-bold hover:bg-brand-700 transition-all hover:scale-105 transform flex items-center justify-center gap-2">
+                <Button as={Link} to={`/kvizovi/${quiz.id}`} variant="primary" size="md" className="w-full">
                         Започни квиз <ArrowRight className="w-4 h-4" />
-                    </button>
-                </Link>
+                  </Button>
             </div>
         </div>
     );

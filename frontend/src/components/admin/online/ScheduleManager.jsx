@@ -174,7 +174,7 @@ export default function ScheduleManager() {
               >
                 <div className="space-y-2">
                   {daySessions.length === 0 ? (
-                    <div className="text-center py-8 text-gray-400 text-sm">
+                    <div className="text-center py-8 text-gray-500 text-sm">
                       Нема часова
                     </div>
                   ) : (

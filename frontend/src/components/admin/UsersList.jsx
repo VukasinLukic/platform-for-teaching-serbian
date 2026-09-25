@@ -235,7 +235,7 @@ export default function UsersList() {
   if (allUsers.length === 0) {
     return (
       <div className="text-center py-20">
-        <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+        <Users className="w-16 h-16 text-gray-500 mx-auto mb-4" />
         <h3 className="text-xl font-bold text-ink mb-2">Нема ученика</h3>
         <p className="text-gray-600">Тренутно нема регистрованих ученика.</p>
       </div>
@@ -261,7 +261,7 @@ export default function UsersList() {
 
         {/* Search */}
         <div className="relative w-full sm:w-80">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
           <input
             type="text"
             placeholder="Претрага по имену, емаилу или телефону..."
@@ -384,7 +384,7 @@ export default function UsersList() {
                         {user.telefon}
                       </div>
                     ) : (
-                      <span className="text-sm text-gray-400">Нема телефона</span>
+                      <span className="text-sm text-gray-500">Нема телефона</span>
                     )}
                   </td>
                   <td className="px-6 py-4">
@@ -394,7 +394,7 @@ export default function UsersList() {
                         {new Date(user.registrovan_at).toLocaleDateString('sr-RS')}
                       </div>
                     ) : (
-                      <span className="text-sm text-gray-400">-</span>
+                      <span className="text-sm text-gray-500">-</span>
                     )}
                   </td>
                   <td className="px-6 py-4">

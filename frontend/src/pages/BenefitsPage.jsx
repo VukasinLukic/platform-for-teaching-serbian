@@ -2,6 +2,7 @@ import { CheckCircle, Video, Users, FileText, Award, Clock, BookOpen, Headphones
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import { Link } from 'react-router-dom';
+import Button from '../components/ui/Button';
 import SEO from '../components/SEO';
 
 export default function BenefitsPage() {
@@ -141,7 +142,7 @@ export default function BenefitsPage() {
               return (
                 <div
                   key={index}
-                  className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col items-center text-center group border border-gray-100"
+                  className="bg-white rounded-3xl md:rounded-3xl p-6 md:p-8 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col items-center text-center group border border-gray-100"
                 >
                   <div className={`w-16 h-16 rounded-2xl ${benefit.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
                     <Icon className={`w-8 h-8 ${benefit.color}`} />
@@ -164,7 +165,7 @@ export default function BenefitsPage() {
             {/* Left: Checklist */}
             <div>
               <h2 className="text-2xl md:text-4xl font-bold mb-5 md:mb-8">Шта је све укључено?</h2>
-              <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-lg">
+              <div className="bg-white rounded-3xl md:rounded-3xl p-6 md:p-10 shadow-lg">
                 <div className="grid sm:grid-cols-2 gap-y-4 gap-x-8">
                   {includedFeatures.map((feature, index) => (
                     <div key={index} className="flex items-start gap-3">
@@ -181,7 +182,7 @@ export default function BenefitsPage() {
             {/* Right: Guarantee & CTA */}
             <div className="space-y-8">
               {/* Guarantee Card */}
-              <div className="bg-gradient-to-br from-brand to-brand-700 text-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-xl relative overflow-hidden">
+              <div className="bg-gradient-to-br from-brand to-brand-700 text-white rounded-3xl md:rounded-3xl p-6 md:p-10 shadow-xl relative overflow-hidden">
                 <div className="relative z-10">
                   <div className="flex items-center gap-4 mb-6">
                     <div className="bg-gold p-3 rounded-xl text-ink">
@@ -209,14 +210,12 @@ export default function BenefitsPage() {
               </div>
 
               {/* Simple CTA Card */}
-              <div className="bg-white border-2 border-brand rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 text-center shadow-lg">
+              <div className="bg-white border-2 border-brand rounded-3xl md:rounded-3xl p-6 md:p-10 text-center shadow-lg">
                 <h3 className="text-xl font-bold mb-2">Једнократна уплата</h3>
                 <p className="text-gray-500 text-sm mb-6">Без скривених месечних трошкова</p>
-                <Link to="/register">
-                  <button className="w-full bg-brand text-white py-4 rounded-full font-bold hover:bg-brand-700 transition shadow-lg hover:shadow-xl">
+                <Button as={Link} to="/register" variant="primary" size="lg" className="w-full">
                     Пријави се Сада
-                  </button>
-                </Link>
+                </Button>
               </div>
             </div>
           </div>

@@ -218,7 +218,7 @@ export default function UserDetailModal({ user, onClose, onUpdate }) {
                             />
                           ) : (
                             <div className="w-16 h-16 rounded-lg bg-gray-200 flex items-center justify-center flex-shrink-0">
-                              <BookOpen className="w-8 h-8 text-gray-400" />
+                              <BookOpen className="w-8 h-8 text-gray-500" />
                             </div>
                           )}
 

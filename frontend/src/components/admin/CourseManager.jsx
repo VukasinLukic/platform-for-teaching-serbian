@@ -153,7 +153,7 @@ export default function CourseManager() {
       // Validate file size (max 5MB)
       const maxSize = 5 * 1024 * 1024;
       if (file.size > maxSize) {
-        showToast({ type: 'warning', message: 'Slika je prevelika. Maksimalna veličina je 5MB.' });
+        showToast({ type: 'warning', message: 'Слика је превелика. Максимална величина је 5МБ.' });
         return;
       }
       setFormData({ ...formData, thumbnailFile: file });
@@ -223,11 +223,11 @@ export default function CourseManager() {
 
     // Validation
     if (formData.title.trim().length < 3) {
-      showToast({ type: 'warning', message: 'Naziv kursa mora imati bar 3 karaktera' });
+      showToast({ type: 'warning', message: 'Назив курса мора имати бар 3 карактера' });
       return;
     }
     if (formData.price < 0) {
-      showToast({ type: 'warning', message: 'Cena ne sme biti negativna' });
+      showToast({ type: 'warning', message: 'Цена не сме бити негативна' });
       return;
     }
 
@@ -257,7 +257,7 @@ export default function CourseManager() {
             },
             (error) => {
               console.error('❌ [CourseManager] Upload error:', error);
-              showToast({ type: 'error', message: 'Greška pri upload-u slike' });
+              showToast({ type: 'error', message: 'Грешка при уплоад-у слике' });
               reject(error);
             },
             async () => {
@@ -319,7 +319,7 @@ export default function CourseManager() {
     } catch (error) {
       console.error('❌ [CourseManager] Error saving course:', error);
       console.error('❌ [CourseManager] Error details:', error.message);
-      showToast({ type: 'error', message: 'Greška pri čuvanju kursa: ' + error.message });
+      showToast({ type: 'error', message: 'Грешка при чувању курса: ' + error.message });
     } finally {
       setFormLoading(false);
       setUploadProgress(0);
@@ -336,7 +336,7 @@ export default function CourseManager() {
       loadCourses();
     } catch (error) {
       console.error('Error toggling status:', error);
-      showToast({ type: 'error', message: 'Greška pri promeni statusa' });
+      showToast({ type: 'error', message: 'Грешка при промени статуса' });
     }
   };
 
@@ -350,7 +350,7 @@ export default function CourseManager() {
       loadCourses();
     } catch (error) {
       console.error('Error deleting course:', error);
-      showToast({ type: 'error', message: 'Greška pri brisanju kursa' });
+      showToast({ type: 'error', message: 'Грешка при брисању курса' });
     }
   };
 
@@ -365,13 +365,13 @@ export default function CourseManager() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900">Upravljanje kursevima</h2>
+        <h2 className="text-2xl font-bold text-gray-900">Управљање курсевима</h2>
         <button
           onClick={() => handleOpenForm()}
           className="bg-black text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-800 transition-colors flex items-center"
         >
           <Plus className="h-5 w-5 mr-2" />
-          Novi kurs
+          Нови курс
         </button>
       </div>
 
@@ -386,7 +386,7 @@ export default function CourseManager() {
             <form onSubmit={handleSubmit} className="space-y-6">
               {/* Title Input */}
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-1">Naziv kursa</label>
+                <label className="block text-sm font-medium text-gray-900 mb-1">Назив курса</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Tag className="h-5 w-5 text-gray-500" />
@@ -400,7 +400,7 @@ export default function CourseManager() {
                       setFormData({ ...formData, title, slug: autoSlug ? slugify(title) : formData.slug });
                     }}
                     className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition-colors text-gray-900"
-                    placeholder="npr. Priprema za malu maturu"
+                    placeholder="нпр. Припрема за малу матуру"
                     required
                   />
                 </div>
@@ -410,7 +410,7 @@ export default function CourseManager() {
               <div>
                 <label className="block text-sm font-medium text-gray-900 mb-1">URL adresa (slug)</label>
                 <div className="flex items-center rounded-lg border border-gray-300 focus-within:ring-2 focus-within:ring-black overflow-hidden">
-                  <span className="px-3 py-2 bg-gray-50 text-gray-500 text-sm whitespace-nowrap">/kurs/</span>
+                  <span className="px-3 py-2 bg-gray-50 text-gray-500 text-sm whitespace-nowrap">/курс/</span>
                   <input
                     type="text"
                     value={formData.slug}
@@ -420,7 +420,7 @@ export default function CourseManager() {
                     placeholder="priprema-za-malu-maturu"
                   />
                 </div>
-                <p className="text-xs text-gray-500 mt-1">Automatski iz naziva (latinica, bez kvačica). Ne menjajte posle objave — stari linkovi prestaju da rade.</p>
+                <p className="text-xs text-gray-500 mt-1">Аутоматски из назива (латиница, без квачица). Не мењајте после објаве — стари линкови престају да раде.</p>
               </div>
 
               {/* Description Input */}
@@ -435,7 +435,7 @@ export default function CourseManager() {
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                     className="pl-10 w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-black focus:border-black transition-colors text-gray-900"
                     rows={4}
-                    placeholder="Detaljan opis kursa..."
+                    placeholder="Детаљан опис курса..."
                     required
                   />
                 </div>
@@ -443,7 +443,7 @@ export default function CourseManager() {
 
               {/* Thumbnail Upload */}
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">Slika kursa (thumbnail)</label>
+                <label className="block text-sm font-medium text-gray-900 mb-2">Слика курса (тхумбнаил)</label>
                 <div className="relative group">
                   <input
                     type="file"
@@ -492,15 +492,15 @@ export default function CourseManager() {
                         />
                         <div className="text-left">
                           <p className="font-bold text-gray-900">Trenutna slika</p>
-                          <p className="text-sm text-gray-500">Kliknite da promenite</p>
+                          <p className="text-sm text-gray-500">Кликните да промените</p>
                         </div>
                       </div>
                     ) : (
                       <div className="space-y-2">
                         <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                          <Upload className="h-8 w-8 text-gray-400 group-hover:text-black transition-colors" />
+                          <Upload className="h-8 w-8 text-gray-500 group-hover:text-black transition-colors" />
                         </div>
-                        <p className="font-medium text-gray-900">Kliknite da otpremite sliku</p>
+                        <p className="font-medium text-gray-900">Кликните да отпремите слику</p>
                         <p className="text-xs text-gray-500">JPG, PNG, WebP (maks 5MB)</p>
                       </div>
                     )}
@@ -544,7 +544,7 @@ export default function CourseManager() {
 
                 {/* Status Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-900 mb-1">Status</label>
+                  <label className="block text-sm font-medium text-gray-900 mb-1">Статус</label>
                   <div className="flex bg-gray-100 p-1 rounded-lg">
                     <button
                       type="button"
@@ -574,7 +574,7 @@ export default function CourseManager() {
 
               {/* Course Type Selection */}
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">Tip kursa</label>
+                <label className="block text-sm font-medium text-gray-900 mb-2">Тип курса</label>
                 <div className="grid grid-cols-2 gap-4">
                   <button
                     type="button"
@@ -585,10 +585,10 @@ export default function CourseManager() {
                         : 'border-gray-200 hover:border-gray-300 text-gray-500'
                     }`}
                   >
-                    <MonitorPlay className={`w-6 h-6 mr-2 ${formData.type === 'video' ? 'text-black' : 'text-gray-400'}`} />
+                    <MonitorPlay className={`w-6 h-6 mr-2 ${formData.type === 'video' ? 'text-black' : 'text-gray-500'}`} />
                     <div className="text-left">
-                      <div className="font-semibold">Video kurs</div>
-                      <div className="text-xs opacity-70">Unapred snimljene lekcije</div>
+                      <div className="font-semibold">Видео курс</div>
+                      <div className="text-xs opacity-70">Унапред снимљене лекције</div>
                     </div>
                   </button>
 
@@ -601,10 +601,10 @@ export default function CourseManager() {
                         : 'border-gray-200 hover:border-gray-300 text-gray-500'
                     }`}
                   >
-                    <Users className={`w-6 h-6 mr-2 ${formData.type === 'live' ? 'text-black' : 'text-gray-400'}`} />
+                    <Users className={`w-6 h-6 mr-2 ${formData.type === 'live' ? 'text-black' : 'text-gray-500'}`} />
                     <div className="text-left">
-                      <div className="font-semibold">Uživo časovi</div>
-                      <div className="text-xs opacity-70">Termini u realnom vremenu</div>
+                      <div className="font-semibold">Уживо часови</div>
+                      <div className="text-xs opacity-70">Термини у реалном времену</div>
                     </div>
                   </button>
                 </div>
@@ -615,7 +615,7 @@ export default function CourseManager() {
                 <div className="flex items-center justify-between mb-4">
                   <div className="flex items-center gap-3">
                     <List className="w-5 h-5 text-gray-700" />
-                    <label className="block text-sm font-medium text-gray-900">Oblasti kursa</label>
+                    <label className="block text-sm font-medium text-gray-900">Области курса</label>
                   </div>
                   <button
                     type="button"
@@ -623,14 +623,14 @@ export default function CourseManager() {
                     className="text-sm bg-gray-100 hover:bg-gray-200 px-3 py-1.5 rounded-lg font-medium text-gray-700 flex items-center gap-1 transition-colors"
                   >
                     <Plus className="w-4 h-4" />
-                    Dodaj oblast
+                    Додај област
                   </button>
                 </div>
 
                 {formData.modules.length === 0 ? (
                   <div className="text-center py-8 bg-gray-50 rounded-xl border-2 border-dashed border-gray-200">
                     <List className="w-12 h-12 text-gray-300 mx-auto mb-2" />
-                    <p className="text-sm text-gray-500">Još nema oblasti. Kliknite "Dodaj oblast" da započnete.</p>
+                    <p className="text-sm text-gray-500">Још нема области. Кликните "Додај област" да започнете.</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
@@ -656,7 +656,7 @@ export default function CourseManager() {
                             type="button"
                             onClick={() => removeModule(moduleIndex)}
                             className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                            title="Obriši oblast"
+                            title="Обриши област"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -665,7 +665,7 @@ export default function CourseManager() {
                     ))}
                   </div>
                 )}
-                <p className="text-xs text-gray-500 mt-3">* Lekcije se dodaju u sekciji "Lekcije" nakon kreiranja kursa</p>
+                <p className="text-xs text-gray-500 mt-3">* Лекције се додају у секцији "Лекције" након креирања курса</p>
               </div>
 
               <div className="flex space-x-4 pt-6 border-t border-gray-100 mt-6">
@@ -677,12 +677,12 @@ export default function CourseManager() {
                   {formLoading ? (
                     <>
                       <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      Čuvanje...
+                      Чување...
                     </>
                   ) : (
                     <>
                       <CheckCircle className="h-5 w-5 mr-2" />
-                      Sačuvaj
+                      Сачувај
                     </>
                   )}
                 </button>
@@ -691,7 +691,7 @@ export default function CourseManager() {
                   onClick={handleCloseForm}
                   className="flex-1 bg-white text-gray-700 border border-gray-300 py-3 rounded-lg font-semibold hover:bg-gray-50 transition-colors"
                 >
-                  Otkaži
+                  Откажи
                 </button>
               </div>
             </form>
@@ -702,12 +702,12 @@ export default function CourseManager() {
       {/* Courses List */}
       {courses.length === 0 ? (
         <div className="bg-white border border-gray-200 rounded-2xl p-12 text-center">
-          <p className="text-gray-500 mb-4">Nema kreiranih kurseva</p>
+          <p className="text-gray-500 mb-4">Нема креираних курсева</p>
           <button
             onClick={() => handleOpenForm()}
             className="bg-black text-white px-6 py-2 rounded-lg font-semibold hover:bg-gray-800 transition-colors"
           >
-            Kreiraj prvi kurs
+            Креирај први курс
           </button>
         </div>
       ) : (
@@ -766,7 +766,7 @@ export default function CourseManager() {
                   <button
                     onClick={() => handleDelete(course.id, course.title)}
                     className="p-2 bg-white border border-gray-300 text-red-600 hover:border-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                    title="Obriši"
+                    title="Обриши"
                   >
                     <Trash2 className="h-5 w-5" />
                   </button>

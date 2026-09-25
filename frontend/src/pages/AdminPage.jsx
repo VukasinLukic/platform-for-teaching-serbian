@@ -66,36 +66,36 @@ export default function AdminPage() {
     { id: 'courses', label: 'Kursevi', icon: BookOpen },
     { id: 'lessons', label: 'Lekcije', icon: Video },
     { id: 'payments', label: 'Uplate', icon: CreditCard },
-    { id: 'online', label: 'Onlajn časovi', icon: Video },
-    { id: 'students', label: 'Učenici', icon: Users },
+    { id: 'online', label: 'Онлајн часови', icon: Video },
+    { id: 'students', label: 'Ученици', icon: Users },
     { id: 'promotions', label: 'Промоције', icon: Gift },
-    { id: 'settings', label: 'Podešavanja', icon: Settings },
+    { id: 'settings', label: 'Подешавања', icon: Settings },
   ];
 
   const statsCards = [
     {
-      label: 'Ukupno Kurseva',
+      label: 'Укупно Курсева',
       value: statsData.totalCourses || 0,
       icon: BookOpen,
       color: 'text-gold',
       borderColor: 'border-b-4 border-gold'
     },
     {
-      label: 'Aktivnih Učenika',
+      label: 'Активних Ученика',
       value: statsData.activeStudents ? `${statsData.activeStudents}+` : '0',
       icon: Users,
       color: 'text-brand',
       borderColor: 'border-b-4 border-brand'
     },
     {
-      label: 'Na Čekanju Uplate',
+      label: 'На Чекању Уплате',
       value: statsData.pendingPayments || 0,
       icon: Clock,
       color: 'text-gold',
       borderColor: 'border-b-4 border-gold'
     },
     {
-      label: 'Mesečni Prihod',
+      label: 'Месечни Приход',
       value: formatPrice(statsData.monthlyRevenue || 0),
       icon: TrendingUp,
       color: 'text-brand',
@@ -197,7 +197,7 @@ export default function AdminPage() {
             onClick={handleLogout}
             className="flex items-center gap-2 text-red-300 hover:text-red-100 text-sm transition"
           >
-            <LogOut size={16} /> Odjavi se
+            <LogOut size={16} /> Одјави се
           </button>
         </div>
       </aside>
@@ -228,7 +228,7 @@ export default function AdminPage() {
                   {userProfile?.ime?.charAt(0) || 'A'}
                 </div>
                 <span className="text-sm font-bold text-ink">{userProfile?.ime || 'Admin'}</span>
-                <ChevronDown size={16} className="text-gray-400" />
+                <ChevronDown size={16} className="text-gray-500" />
              </div>
           </div>
         </header>
@@ -277,7 +277,7 @@ export default function AdminPage() {
         )}
 
         {/* Content Area */}
-        <div className="bg-white md:rounded-2xl lg:rounded-[2.5rem] shadow-sm border-y md:border border-gray-100 min-h-[400px] lg:min-h-[600px] -mx-4 md:mx-0 p-4 md:p-6 lg:p-8 overflow-x-auto">
+        <div className="bg-white md:rounded-2xl lg:rounded-3xl shadow-sm border-y md:border border-gray-100 min-h-[400px] lg:min-h-[600px] -mx-4 md:mx-0 p-4 md:p-6 lg:p-8 overflow-x-auto">
            {/* Tab Title if not Dashboard */}
            {activeTab !== 'dashboard' && (
              <h2 className="text-lg md:text-xl lg:text-2xl font-bold text-ink mb-4 md:mb-6 pb-4 border-b border-gray-100">
@@ -298,7 +298,7 @@ export default function AdminPage() {
               {activeTab === 'dashboard' && (
                  <div className="space-y-8">
                     <div className="flex justify-between items-center">
-                       <h3 className="text-xl font-bold text-ink">Poslednje Aktivnosti</h3>
+                       <h3 className="text-xl font-bold text-ink">Последње Активности</h3>
                     </div>
 
                     {/* Pending Payments */}

@@ -150,7 +150,7 @@ export default function ParticipantsManager() {
       <div className="flex flex-col sm:flex-row gap-4">
         {/* Search */}
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-500" />
           <input
             type="text"
             placeholder="Претрага по имену или емаилу..."
@@ -190,7 +190,7 @@ export default function ParticipantsManager() {
       {/* Participants Table */}
       {filteredEnrollments.length === 0 ? (
         <div className="text-center py-20 bg-gray-50 rounded-2xl">
-          <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <Users className="w-16 h-16 text-gray-500 mx-auto mb-4" />
           <h3 className="text-xl font-bold text-ink mb-2">Нема учесника</h3>
           <p className="text-gray-600">
             {searchTerm || filterStatus !== 'all' || filterGroup !== 'all'
@@ -218,7 +218,7 @@ export default function ParticipantsManager() {
                 </div>
                 <div>
                   <dt className="text-xs text-gray-500">Група</dt>
-                  <dd className={enrollment.group ? 'text-ink font-semibold' : 'text-gray-400 italic'}>
+                  <dd className={enrollment.group ? 'text-ink font-semibold' : 'text-gray-500 italic'}>
                     {enrollment.group ? enrollment.group.name : 'Није додељено'}
                   </dd>
                 </div>
@@ -288,7 +288,7 @@ export default function ParticipantsManager() {
                           <div className="text-gray-500">{enrollment.group.teacherName}</div>
                         </div>
                       ) : (
-                        <span className="text-sm text-gray-400 italic">Није додељено</span>
+                        <span className="text-sm text-gray-500 italic">Није додељено</span>
                       )}
                     </td>
                     <td className="px-6 py-4">
@@ -310,7 +310,7 @@ export default function ParticipantsManager() {
                           {new Date(enrollment.endDate.toDate ? enrollment.endDate.toDate() : enrollment.endDate).toLocaleDateString('sr-RS')}
                         </div>
                       ) : (
-                        <span className="text-sm text-gray-400">-</span>
+                        <span className="text-sm text-gray-500">-</span>
                       )}
                     </td>
                     <td className="px-6 py-4">

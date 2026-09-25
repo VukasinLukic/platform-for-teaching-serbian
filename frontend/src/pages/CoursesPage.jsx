@@ -239,9 +239,8 @@ export default function CoursesPage() {
             <Book className="w-20 h-20 text-gray-300 mx-auto mb-6" />
             <h3 className="text-2xl font-bold text-ink mb-4">Ускоро ће бити доступни нови курсеви</h3>
             <p className="text-gray-600 mb-8">Радимо на изради квалитетних материјала за вас.</p>
-            <Link to="/contact">
-              <Button variant="primary">Контактирајте нас</Button>
-            </Link>
+            <Button as={Link} to="/contact" variant="primary" size="md">Контактирајте нас
+            </Button>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -252,7 +251,7 @@ export default function CoursesPage() {
                 className="h-full block"
                 {...(index === 0 ? { 'data-tour': 'courses-first-card' } : {})}
               >
-                <div className="bg-white rounded-[2.5rem] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 h-full flex flex-col overflow-hidden cursor-pointer">
+                <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 h-full flex flex-col overflow-hidden cursor-pointer">
                   {/* Card Header Image */}
                   <div className="h-40 md:h-48 bg-surface relative overflow-hidden flex items-center justify-center">
                      {course.thumbnail_url ? (
@@ -327,7 +326,7 @@ export default function CoursesPage() {
 
             {/* Coming Soon - Припрема за малу матуру 2. део */}
             <div className="relative h-full">
-              <div className="bg-white rounded-[2.5rem] shadow-lg border border-gray-100 h-full flex flex-col overflow-hidden">
+              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 h-full flex flex-col overflow-hidden">
                 <div className="h-40 md:h-48 bg-gradient-to-br from-brand/5 to-gold/10 relative flex items-center justify-center">
                   <div className="text-center">
                     <Book className="w-14 h-14 text-brand/20 mx-auto mb-2" />
@@ -356,7 +355,7 @@ export default function CoursesPage() {
               </div>
 
               {/* Overlay */}
-              <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] rounded-[2.5rem] flex flex-col items-center justify-center gap-2">
+              <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] rounded-3xl flex flex-col items-center justify-center gap-2">
                 <h4 className="text-3xl font-black text-brand">Ускоро</h4>
                 <p className="text-ink text-sm font-semibold">Курс је у изради</p>
               </div>
@@ -364,7 +363,7 @@ export default function CoursesPage() {
 
             {/* Coming Soon - Потпун курс за малу матуру */}
             <div className="relative h-full">
-              <div className="bg-white rounded-[2.5rem] shadow-lg border border-gray-100 h-full flex flex-col overflow-hidden">
+              <div className="bg-white rounded-3xl shadow-lg border border-gray-100 h-full flex flex-col overflow-hidden">
                 <div className="h-40 md:h-48 bg-gradient-to-br from-ink/5 to-brand/5 relative flex items-center justify-center">
                   <div className="text-center">
                     <Book className="w-14 h-14 text-ink/15 mx-auto mb-2" />
@@ -393,7 +392,7 @@ export default function CoursesPage() {
               </div>
 
               {/* Overlay */}
-              <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] rounded-[2.5rem] flex flex-col items-center justify-center gap-2">
+              <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] rounded-3xl flex flex-col items-center justify-center gap-2">
                 <h4 className="text-3xl font-black text-ink">Ускоро</h4>
                 <p className="text-ink text-sm font-semibold">Курс је у изради</p>
               </div>

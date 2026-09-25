@@ -29,7 +29,7 @@ export default function BlogPage() {
                       <span className="text-xs font-semibold text-brand uppercase tracking-wide">
                         {post.category}
                       </span>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-gray-500">
                         {new Date(post.date).toLocaleDateString('sr-RS', {
                           day: 'numeric',
                           month: 'long',
@@ -43,7 +43,7 @@ export default function BlogPage() {
                     <p className="text-gray-600 text-sm leading-relaxed">
                       {post.excerpt}
                     </p>
-                    <span className="inline-block mt-3 text-sm text-gray-400">{post.readTime} читања</span>
+                    <span className="inline-block mt-3 text-sm text-gray-500">{post.readTime} читања</span>
                   </div>
                   <ArrowRight
                     size={20}

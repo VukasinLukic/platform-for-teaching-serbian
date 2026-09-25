@@ -76,7 +76,7 @@ export default function InicijalniTestPage() {
 
         <div className="max-w-3xl mx-auto px-6 py-10 md:py-14">
           {/* Breadcrumb */}
-          <nav className="flex items-center gap-1 text-xs text-gray-400 mb-8 flex-wrap">
+          <nav className="flex items-center gap-1 text-xs text-gray-500 mb-8 flex-wrap">
             <Link to="/" className="hover:text-brand transition-colors">
               Почетна
             </Link>
@@ -142,7 +142,7 @@ export default function InicijalniTestPage() {
               <div className="mt-6">
                 <Link
                   to="/#inicijalni-testovi"
-                  className="text-sm text-gray-400 hover:text-brand transition-colors inline-flex items-center gap-1"
+                  className="text-sm text-gray-500 hover:text-brand transition-colors inline-flex items-center gap-1"
                 >
                   <ArrowLeft className="w-4 h-4" />
                   Назад на избор разреда
@@ -185,7 +185,7 @@ export default function InicijalniTestPage() {
             </p>
 
             <div className="text-5xl md:text-6xl font-black text-brand mb-2">
-              {tacnih} <span className="text-2xl text-gray-400 font-medium">/ {ukupno}</span>
+              {tacnih} <span className="text-2xl text-gray-500 font-medium">/ {ukupno}</span>
             </div>
             <p className="text-sm text-gray-500 mb-8">Тачно {procenat}%</p>
 
@@ -212,7 +212,7 @@ export default function InicijalniTestPage() {
 
             <Link
               to="/#inicijalni-testovi"
-              className="text-sm text-gray-400 hover:text-brand transition-colors inline-flex items-center gap-1"
+              className="text-sm text-gray-500 hover:text-brand transition-colors inline-flex items-center gap-1"
             >
               <ArrowLeft className="w-4 h-4" />
               Пробај тест за други разред
@@ -287,7 +287,7 @@ export default function InicijalniTestPage() {
                 } else if (idx === odabrano) {
                   cls += 'border-red-500 bg-red-50 text-red-700';
                 } else {
-                  cls += 'border-gray-100 text-gray-400';
+                  cls += 'border-gray-100 text-gray-500';
                 }
               } else {
                 cls += 'border-gray-100 hover:border-gray-300 text-gray-700';
@@ -346,7 +346,7 @@ export default function InicijalniTestPage() {
           </div>
         )}
 
-        <p className="mt-8 text-xs text-gray-400 flex items-center gap-1.5">
+        <p className="mt-8 text-xs text-gray-500 flex items-center gap-1.5">
           <BookOpen className="w-3.5 h-3.5" />
           Питања и тачни одговори преузети из иницијалних тестова за {test.razred}. разред.
         </p>

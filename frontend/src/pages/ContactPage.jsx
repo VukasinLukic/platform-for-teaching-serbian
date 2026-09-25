@@ -98,7 +98,7 @@ export default function ContactPage() {
                </div>
             </div>
 
-            <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-12 shadow-xl relative z-10 border border-gray-100">
+            <div className="bg-white rounded-3xl md:rounded-3xl p-6 md:p-12 shadow-xl relative z-10 border border-gray-100">
                {success ? (
                   <div className="text-center py-12 md:py-20">
                     <div className="bg-brand/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
@@ -126,7 +126,7 @@ export default function ContactPage() {
                    </div>
                    <div>
                      <label htmlFor="contact-telefon" className="block text-sm font-semibold text-ink mb-2">
-                       Телефон <span className="font-normal text-gray-400">(опционо)</span>
+                       Телефон <span className="font-normal text-gray-500">(опционо)</span>
                      </label>
                      <input id="contact-telefon" type="tel" inputMode="tel" autoComplete="tel" placeholder="0612345678"
                        aria-invalid={!!errors.telefon} aria-describedby={errors.telefon ? 'contact-telefon-error' : undefined}
@@ -156,7 +156,7 @@ export default function ContactPage() {
 
             {/* Chat Bubble Decoration */}
             <div className="absolute -right-6 bottom-20 hidden lg:block z-20">
-              <div className="bg-gold p-4 rounded-[2rem] rounded-bl-none shadow-lg transform rotate-6">
+              <div className="bg-gold p-4 rounded-3xl rounded-bl-none shadow-lg transform rotate-6">
                 <MessageSquare className="w-8 h-8 text-ink" />
               </div>
             </div>
@@ -165,7 +165,7 @@ export default function ContactPage() {
           {/* Right Side - Info Cards (Span 5) */}
           <div className="lg:col-span-5 space-y-6 pt-8">
             {/* Email Card */}
-            <div className="bg-white p-6 rounded-[2rem] shadow-md flex items-center gap-6 hover:shadow-lg transition-shadow border border-gray-100">
+            <div className="bg-white p-6 rounded-3xl shadow-md flex items-center gap-6 hover:shadow-lg transition-shadow border border-gray-100">
               <div className="bg-brand w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 text-white">
                 <Mail />
               </div>
@@ -176,7 +176,7 @@ export default function ContactPage() {
             </div>
 
             {/* Phone Card */}
-            <div className="bg-white p-6 rounded-[2rem] shadow-md flex items-center gap-6 hover:shadow-lg transition-shadow border border-gray-100">
+            <div className="bg-white p-6 rounded-3xl shadow-md flex items-center gap-6 hover:shadow-lg transition-shadow border border-gray-100">
               <div className="bg-gold w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 text-ink">
                 <Phone />
               </div>
@@ -189,7 +189,7 @@ export default function ContactPage() {
             {/* Viber Card */}
             <a
               href={`viber://chat?number=${encodeURIComponent(viberNumber)}`}
-              className="bg-white p-6 rounded-[2rem] shadow-md flex items-center gap-6 hover:shadow-lg transition-shadow border border-gray-100"
+              className="bg-white p-6 rounded-3xl shadow-md flex items-center gap-6 hover:shadow-lg transition-shadow border border-gray-100"
             >
               <div className="bg-viber w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 text-white">
                 <MessageCircle />
@@ -201,7 +201,7 @@ export default function ContactPage() {
             </a>
 
             {/* Location Card */}
-            <div className="bg-white p-6 rounded-[2rem] shadow-md flex items-center gap-6 hover:shadow-lg transition-shadow border border-gray-100">
+            <div className="bg-white p-6 rounded-3xl shadow-md flex items-center gap-6 hover:shadow-lg transition-shadow border border-gray-100">
               <div className="bg-ink w-14 h-14 rounded-full flex items-center justify-center flex-shrink-0 text-white">
                 <MapPin />
               </div>
@@ -212,16 +212,14 @@ export default function ContactPage() {
             </div>
 
             {/* FAQ Promo */}
-            <div className="bg-brand text-white p-8 rounded-[2.5rem] text-center mt-8">
+            <div className="bg-brand text-white p-8 rounded-3xl text-center mt-8">
                <h3 className="text-xl font-bold mb-2">Често постављана питања</h3>
                <p className="text-white/90 text-sm mb-6">
                  Пре него што нас контактирате, проверите да ли сте пронашли одговор у нашем FAQ одељку.
                </p>
-               <Link to="/faq">
-                 <button className="bg-white text-brand px-6 py-3 rounded-full text-sm font-bold hover:bg-gray-100 transition w-full">
+               <Button as={Link} to="/faq" variant="subtle" size="md" className="w-full">
                    Погледајте честа питања
-                 </button>
-               </Link>
+               </Button>
             </div>
           </div>
 

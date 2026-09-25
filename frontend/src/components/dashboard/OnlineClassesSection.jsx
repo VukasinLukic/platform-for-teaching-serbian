@@ -85,7 +85,7 @@ export default function OnlineClassesSection() {
           <div>
             <div className="text-sm text-gray-600 mb-1">Активан пакет</div>
             <div className="text-xl font-bold text-ink">
-              {packageData?.name || 'Online настава'}
+              {packageData?.name || 'Онлајн настава'}
             </div>
             <div className="text-sm text-gray-500 mt-1">
               Важи до: {enrollment.endDate ? new Date(enrollment.endDate.toDate ? enrollment.endDate.toDate() : enrollment.endDate).toLocaleDateString('sr-RS') : '-'}
@@ -139,7 +139,7 @@ export default function OnlineClassesSection() {
         </div>
       ) : (
         <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-2xl mb-6">
-          <Clock className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+          <Clock className="w-12 h-12 mx-auto mb-3 text-gray-500" />
           <p className="font-medium">Тренутно нема заказаних часова</p>
           {!groupData && (
             <p className="text-sm mt-2">

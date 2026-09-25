@@ -895,7 +895,7 @@ export default function HomePage() {
                     Изаберите курс
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-sm md:text-base">
-                    Прегледајте наше курсеве или пакете online наставе и изаберите онај који вам одговара.
+                    Прегледајте наше курсеве или пакете онлајн наставе и изаберите онај који вам одговара.
                   </p>
                 </div>
               </div>

@@ -119,7 +119,7 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
   if (allTransactions.length === 0) {
     return (
       <div className="text-center py-12 text-gray-600">
-        <Clock className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+        <Clock className="w-12 h-12 mx-auto mb-3 text-gray-500" />
         <p className="font-medium">Нема трансакција за приказ</p>
       </div>
     );
@@ -157,7 +157,7 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
                 {new Date(tx.created_at?.toDate?.() || tx.created_at).toLocaleString('sr-RS')}
               </span>
             </div>
-            <div className="mt-1 text-xs text-gray-400 font-mono">ID: {tx.id.substring(0, 8)}…</div>
+            <div className="mt-1 text-xs text-gray-500 font-mono">ID: {tx.id.substring(0, 8)}…</div>
           </li>
         ))}
       </ul>

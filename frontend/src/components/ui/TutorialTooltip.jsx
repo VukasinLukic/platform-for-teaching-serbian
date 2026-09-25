@@ -134,7 +134,7 @@ export default function TutorialTooltip() {
           </div>
           <button
             onClick={skipTutorial}
-            className="text-gray-400 hover:text-gray-700 transition-colors p-2 -mr-2 rounded-lg"
+            className="text-gray-500 hover:text-gray-700 transition-colors p-2 -mr-2 rounded-lg"
             aria-label="Затвори водич"
           >
             <X className="h-4 w-4" />

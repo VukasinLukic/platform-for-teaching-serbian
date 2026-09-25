@@ -117,7 +117,7 @@ export default function QuizRunner({ quiz, onExit, quizId: quizIdProp }) {
                             } else if (answer === selectedAnswer) {
                                 buttonClass += "border-red-500 bg-red-50 text-red-700";
                             } else {
-                                buttonClass += "border-gray-100 text-gray-400";
+                                buttonClass += "border-gray-100 text-gray-500";
                             }
                         } else {
                             if (selectedAnswer === answer) {
@@ -157,7 +157,7 @@ export default function QuizRunner({ quiz, onExit, quizId: quizIdProp }) {
                         disabled={!selectedAnswer}
                         className={`px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${selectedAnswer
                                 ? 'bg-brand text-white hover:bg-brand-700 shadow-lg hover:shadow-xl'
-                                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                             }`}
                     >
                         Провери одговор

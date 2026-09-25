@@ -240,7 +240,7 @@ export default function SessionsManager() {
       {/* Sessions List */}
       {sessions.length === 0 ? (
         <div className="text-center py-20 bg-gray-50 rounded-2xl">
-          <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <Calendar className="w-16 h-16 text-gray-500 mx-auto mb-4" />
           <h3 className="text-xl font-bold text-ink mb-2">Нема заказаних часова</h3>
           <p className="text-gray-600 mb-6">Закажите први час за групу</p>
           <button

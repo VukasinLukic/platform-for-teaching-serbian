@@ -6,7 +6,7 @@ export default function ResetPasswordPage() {
     <div className="min-h-screen bg-white flex items-center justify-center px-4 py-12">
       <div className="w-full max-w-md">
         {/* Contact Support Card */}
-        <div className="bg-white rounded-[3rem] shadow-xl p-8 border border-gray-100">
+        <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
           <div className="text-center mb-8">
             <div className="bg-brand/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Mail className="w-10 h-10 text-brand" />
