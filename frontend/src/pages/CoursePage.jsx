@@ -198,7 +198,7 @@ export default function CoursePage() {
               <button
                 onClick={handlePurchaseClick}
                 disabled={purchasing}
-                className="bg-brand text-white px-12 py-5 rounded-full font-bold hover:bg-brand-700 transition-all shadow-xl hover:scale-105 inline-flex items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="bg-brand text-white px-12 py-5 rounded-full font-bold hover:bg-brand-700 transition-all shadow-xl motion-safe:hover:scale-105 inline-flex items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {purchasing ? (
                   <>
@@ -544,7 +544,7 @@ export default function CoursePage() {
                   <button
                     onClick={handlePurchaseClick}
                     disabled={purchasing}
-                    className="w-full sm:w-auto bg-brand text-white px-8 py-4 rounded-full font-bold hover:bg-brand-700 transition-all shadow-lg hover:scale-105 inline-flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    className="w-full sm:w-auto bg-brand text-white px-8 py-4 rounded-full font-bold hover:bg-brand-700 transition-all shadow-lg motion-safe:hover:scale-105 inline-flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     {purchasing ? (
                       <>

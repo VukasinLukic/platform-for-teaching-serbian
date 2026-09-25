@@ -238,7 +238,7 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
                     className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold transition-all ${
                       isLoading || sendingAll
                         ? 'bg-gray-300 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-brand to-warning hover:shadow-lg hover:scale-105 text-white'
+                        : 'bg-gradient-to-r from-brand to-warning hover:shadow-lg motion-safe:hover:scale-105 text-white'
                     }`}
                   >
                     {isLoading ? (
@@ -270,7 +270,7 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
               className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-bold text-lg transition-all ${
                 sendingAll || Object.values(loadingStates).some(v => v)
                   ? 'bg-gray-600 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-brand to-warning hover:shadow-2xl hover:scale-105 text-white'
+                  : 'bg-gradient-to-r from-brand to-warning hover:shadow-2xl motion-safe:hover:scale-105 text-white'
               }`}
             >
               {sendingAll ? (

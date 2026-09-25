@@ -25,7 +25,7 @@ export default function QuizCard({ quiz }) {
     const firstLetter = quiz.title.charAt(0).toUpperCase();
 
     return (
-        <div className="bg-white rounded-3xl p-6 border border-gray-100 hover:shadow-xl hover:border-brand/20 transition-all hover:-translate-y-1 h-full flex flex-col">
+        <div className="bg-white rounded-3xl p-6 border border-gray-100 hover:shadow-xl hover:border-brand/20 transition-all motion-safe:hover:-translate-y-1 h-full flex flex-col">
             <div
                 className="p-4 rounded-2xl w-fit mb-4 flex items-center justify-center"
                 style={{

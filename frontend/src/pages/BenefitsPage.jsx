@@ -142,9 +142,9 @@ export default function BenefitsPage() {
               return (
                 <div
                   key={index}
-                  className="bg-white rounded-3xl md:rounded-3xl p-6 md:p-8 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col items-center text-center group border border-gray-100"
+                  className="bg-white rounded-3xl md:rounded-3xl p-6 md:p-8 shadow-lg hover:shadow-xl transition-all motion-safe:hover:-translate-y-1 flex flex-col items-center text-center group border border-gray-100"
                 >
-                  <div className={`w-16 h-16 rounded-2xl ${benefit.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                  <div className={`w-16 h-16 rounded-2xl ${benefit.bg} flex items-center justify-center mb-6 motion-safe:group-hover:scale-110 transition-transform`}>
                     <Icon className={`w-8 h-8 ${benefit.color}`} />
                   </div>
                   <h3 className="text-lg font-bold text-ink mb-3">{benefit.title}</h3>

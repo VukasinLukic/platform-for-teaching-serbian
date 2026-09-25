@@ -497,7 +497,7 @@ export default function CourseManager() {
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                        <div className="bg-gray-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 motion-safe:group-hover:scale-110 transition-transform">
                           <Upload className="h-8 w-8 text-gray-500 group-hover:text-black transition-colors" />
                         </div>
                         <p className="font-medium text-gray-900">Кликните да отпремите слику</p>

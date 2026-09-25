@@ -459,7 +459,7 @@ function FeaturedCourseCard() {
                     }`}
                     style={{ transitionDelay: `${700 + i * 100}ms` }}
                   >
-                    <div className="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-red-100 transition-all group-hover:scale-110 transform duration-300">
+                    <div className="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-red-100 transition-all motion-safe:group-hover:scale-110 transform duration-300">
                       <Icon className="w-5 h-5 text-brand" />
                     </div>
                     <div>
@@ -810,10 +810,10 @@ export default function HomePage() {
               <FadeInSection key={test.razred} delay={i * 120}>
                 <Link
                   to={`/inicijalni-test/${test.razred}`}
-                  className="group flex flex-col h-full bg-white rounded-3xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-2xl hover:border-brand/40 hover:-translate-y-1.5 transition-all duration-300"
+                  className="group flex flex-col h-full bg-white rounded-3xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-2xl hover:border-brand/40 motion-safe:hover:-translate-y-1.5 transition-all duration-300"
                 >
                   <div className="flex items-center justify-between mb-5">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand to-brand-700 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand to-brand-700 flex items-center justify-center shadow-lg motion-safe:group-hover:scale-110 transition-transform duration-300">
                       <span className="text-2xl font-black text-white">{test.razred}</span>
                     </div>
                     <ClipboardList className="w-6 h-6 text-gray-300 group-hover:text-brand transition-colors" />

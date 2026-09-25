@@ -115,7 +115,7 @@ export default function AdminPage() {
       {/* Floating Email Test Button - Desktop */}
       <button
         onClick={() => setIsEmailPanelOpen(true)}
-        className="hidden lg:flex fixed bottom-6 left-72 bg-gradient-to-r from-brand to-warning text-white px-6 py-4 rounded-full shadow-2xl hover:shadow-3xl hover:scale-110 transition-all duration-300 items-center gap-3 font-bold z-50 group"
+        className="hidden lg:flex fixed bottom-6 left-72 bg-gradient-to-r from-brand to-warning text-white px-6 py-4 rounded-full shadow-2xl hover:shadow-3xl motion-safe:hover:scale-110 transition-all duration-300 items-center gap-3 font-bold z-50 group"
       >
         <Mail size={24} className="group-hover:rotate-12 transition-transform" />
         <span>Test Emails</span>

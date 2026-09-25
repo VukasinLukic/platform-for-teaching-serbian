@@ -129,7 +129,7 @@ export default function CoursesPage() {
       <Header />
 
       {/* Hero */}
-      <div className="bg-gradient-to-br from-brand to-brand-700 text-white py-14 md:py-20 rounded-b-[2rem] md:rounded-b-[3rem]">
+      <div className="bg-gradient-to-br from-brand to-brand-700 text-white py-14 md:py-20 rounded-b-3xl md:rounded-b-3xl">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-7xl font-bold mb-4 md:mb-6">
             Наши курсеви
@@ -160,7 +160,7 @@ export default function CoursesPage() {
                 visibleSteps[0] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
             >
-              <div className="bg-gradient-to-br from-brand to-brand-700 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="bg-brand w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 motion-safe:group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">1</span>
               </div>
               <h3 className="text-2xl font-bold text-ink mb-3">
@@ -178,7 +178,7 @@ export default function CoursesPage() {
                 visibleSteps[1] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
             >
-              <div className="bg-gradient-to-br from-warning to-warning-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="bg-brand w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 motion-safe:group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">2</span>
               </div>
               <h3 className="text-2xl font-bold text-ink mb-3">
@@ -196,7 +196,7 @@ export default function CoursesPage() {
                 visibleSteps[2] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
             >
-              <div className="bg-gradient-to-br from-gold to-gold-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="bg-brand w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 motion-safe:group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">3</span>
               </div>
               <h3 className="text-2xl font-bold text-ink mb-3">
@@ -214,7 +214,7 @@ export default function CoursesPage() {
                 visibleSteps[3] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
             >
-              <div className="bg-gradient-to-br from-success to-success-700 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="bg-brand w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 motion-safe:group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">4</span>
               </div>
               <h3 className="text-2xl font-bold text-ink mb-3">
@@ -251,7 +251,7 @@ export default function CoursesPage() {
                 className="h-full block"
                 {...(index === 0 ? { 'data-tour': 'courses-first-card' } : {})}
               >
-                <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 h-full flex flex-col overflow-hidden cursor-pointer">
+                <div className="bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 motion-safe:hover:-translate-y-2 border border-gray-100 h-full flex flex-col overflow-hidden cursor-pointer">
                   {/* Card Header Image */}
                   <div className="h-40 md:h-48 bg-surface relative overflow-hidden flex items-center justify-center">
                      {course.thumbnail_url ? (

@@ -197,7 +197,7 @@ export default function OnlineNastavaPage() {
       <Header />
 
       {/* Hero Section */}
-      <div className="bg-gradient-to-br from-brand to-brand-700 text-white py-14 md:py-20 rounded-b-[2rem] md:rounded-b-[3rem]">
+      <div className="bg-gradient-to-br from-brand to-brand-700 text-white py-14 md:py-20 rounded-b-3xl md:rounded-b-3xl">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <div className="inline-block bg-white/20 backdrop-blur-sm px-6 py-2 rounded-full mb-6">
             <span className="text-sm font-bold uppercase tracking-wider">Онлајн настава уживо</span>
@@ -231,7 +231,7 @@ export default function OnlineNastavaPage() {
                 visibleSteps[0] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
             >
-              <div className="bg-gradient-to-br from-brand to-brand-700 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="bg-brand w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 motion-safe:group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">1</span>
               </div>
               <h3 className="text-2xl font-bold text-ink mb-3">
@@ -249,7 +249,7 @@ export default function OnlineNastavaPage() {
                 visibleSteps[1] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
             >
-              <div className="bg-gradient-to-br from-warning to-warning-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="bg-brand w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 motion-safe:group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">2</span>
               </div>
               <h3 className="text-2xl font-bold text-ink mb-3">
@@ -267,7 +267,7 @@ export default function OnlineNastavaPage() {
                 visibleSteps[2] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
             >
-              <div className="bg-gradient-to-br from-gold to-gold-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="bg-brand w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 motion-safe:group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">3</span>
               </div>
               <h3 className="text-2xl font-bold text-ink mb-3">
@@ -285,7 +285,7 @@ export default function OnlineNastavaPage() {
                 visibleSteps[3] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
             >
-              <div className="bg-gradient-to-br from-success to-success-700 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="bg-brand w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 motion-safe:group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">4</span>
               </div>
               <h3 className="text-2xl font-bold text-ink mb-3">
@@ -391,7 +391,7 @@ export default function OnlineNastavaPage() {
               const pkg = packages.find(p => p.id === 'individual');
               if (!pkg) return null;
               return (
-                <div className="relative bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden border border-info-400/30 flex flex-col">
+                <div className="relative bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 motion-safe:hover:-translate-y-1 overflow-hidden border border-info-400/30 flex flex-col">
                   <div className="bg-info-600/10 p-6">
                     <h3 className="text-lg font-bold mb-1 text-info-600">Индивидуални часови</h3>
                     <p className="text-info-600 text-sm mb-4">Индивидуална настава 1-на-1</p>
@@ -421,7 +421,7 @@ export default function OnlineNastavaPage() {
                     <button
                       onClick={() => handlePurchase(pkg)}
                       disabled={purchasingId === pkg.id}
-                      className="w-full bg-info-600 hover:bg-info-500 text-white px-6 py-3 rounded-full hover:shadow-md transition-all font-bold text-sm transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center justify-center gap-2 mt-auto"
+                      className="w-full bg-info-600 hover:bg-info-500 text-white px-6 py-3 rounded-full hover:shadow-md transition-all font-bold text-sm transform motion-safe:hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center justify-center gap-2 mt-auto"
                     >
                       {purchasingId === pkg.id ? (
                         <>
@@ -442,7 +442,7 @@ export default function OnlineNastavaPage() {
               const pkg = packages.find(p => p.id === 'group');
               if (!pkg) return null;
               return (
-                <div className="relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 overflow-hidden border-2 border-brand/40 md:scale-105 z-10 flex flex-col">
+                <div className="relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 motion-safe:hover:-translate-y-1 overflow-hidden border-2 border-brand/40 md:scale-105 z-10 flex flex-col">
                   {/* Most Popular Banner */}
                   <div className="absolute top-5 -right-10 bg-brand text-white px-10 py-1.5 rotate-45 text-xs font-bold uppercase tracking-wider shadow-md z-20">
                     Најпопуларније
@@ -479,7 +479,7 @@ export default function OnlineNastavaPage() {
                     <button
                       onClick={() => handlePurchase(pkg)}
                       disabled={purchasingId === pkg.id}
-                      className="w-full bg-brand hover:bg-brand-700 text-white px-6 py-3 rounded-full hover:shadow-md transition-all font-bold text-sm transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center justify-center gap-2 mt-auto"
+                      className="w-full bg-brand hover:bg-brand-700 text-white px-6 py-3 rounded-full hover:shadow-md transition-all font-bold text-sm transform motion-safe:hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center justify-center gap-2 mt-auto"
                     >
                       {purchasingId === pkg.id ? (
                         <>
@@ -496,7 +496,7 @@ export default function OnlineNastavaPage() {
             })()}
 
             {/* RIGHT - Create Your Own Group */}
-            <div className="relative bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden border border-brand-900/25 flex flex-col">
+            <div className="relative bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 motion-safe:hover:-translate-y-1 overflow-hidden border border-brand-900/25 flex flex-col">
               <div className="bg-brand-900/10 p-6">
                 <h3 className="text-lg font-bold mb-1 text-brand-900">Направи своју групу</h3>
                 <p className="text-brand-900/80 text-sm mb-4">Учите заједно по повољнијој цени</p>
@@ -620,7 +620,7 @@ export default function OnlineNastavaPage() {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
-              className="w-full sm:w-auto bg-white text-brand px-8 md:px-12 py-4 md:py-5 rounded-full hover:bg-gray-100 transition-all font-bold text-base md:text-xl shadow-lg hover:scale-105 transform"
+              className="w-full sm:w-auto bg-white text-brand px-8 md:px-12 py-4 md:py-5 rounded-full hover:bg-gray-100 transition-all font-bold text-base md:text-xl shadow-lg motion-safe:hover:scale-105 transform"
             >
               Изабери пакет
             </button>

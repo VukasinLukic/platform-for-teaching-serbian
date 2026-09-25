@@ -187,8 +187,8 @@ export default function DashboardPage() {
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {availableForPurchase.map((course) => (
-                <div key={course.id} className="group bg-gradient-to-br from-gray-50 to-white rounded-3xl p-6 border border-gray-100 hover:shadow-xl hover:border-brand/20 transition-all hover:-translate-y-1">
-                  <div className="bg-gradient-to-br from-brand to-brand-700 p-4 rounded-2xl w-fit mb-4 group-hover:scale-110 transition-transform">
+                <div key={course.id} className="group bg-gradient-to-br from-gray-50 to-white rounded-3xl p-6 border border-gray-100 hover:shadow-xl hover:border-brand/20 transition-all motion-safe:hover:-translate-y-1">
+                  <div className="bg-gradient-to-br from-brand to-brand-700 p-4 rounded-2xl w-fit mb-4 motion-safe:group-hover:scale-110 transition-transform">
                     <Book className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-lg font-bold mb-2 text-ink group-hover:text-brand transition-colors">{course.title}</h3>
@@ -227,7 +227,7 @@ export default function DashboardPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {myCourses.map((course) => (
                 <Link key={course.id} to={`/course/${course.id}`}>
-                  <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-xl hover:border-brand/20 transition-all hover:-translate-y-1 h-full">
+                  <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-xl hover:border-brand/20 transition-all motion-safe:hover:-translate-y-1 h-full">
                     {/* Thumbnail or gradient background */}
                     <div className="h-40 bg-gradient-to-br from-brand to-brand-700 flex items-center justify-center relative overflow-hidden">
                       {course.thumbnail_url ? (
@@ -328,7 +328,7 @@ export default function DashboardPage() {
                           {transaction.status === 'pending' && !transaction.confirmationUrl && (
                             <button
                               onClick={() => handleOpenUploadModal(transaction)}
-                              className="flex items-center gap-2 bg-brand text-white px-5 py-2.5 rounded-xl font-bold hover:bg-brand-700 transition-all hover:scale-105 transform text-sm"
+                              className="flex items-center gap-2 bg-brand text-white px-5 py-2.5 rounded-xl font-bold hover:bg-brand-700 transition-all motion-safe:hover:scale-105 transform text-sm"
                             >
                               <Upload className="w-4 h-4" />
                               Отпреми потврду

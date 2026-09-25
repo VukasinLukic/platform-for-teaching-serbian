@@ -12,7 +12,7 @@ export default function AuthShell({ title, subtitle, children, footer, mascot = 
       <aside className="hidden lg:flex lg:w-[46%] xl:w-1/2 bg-notebook relative overflow-hidden border-r border-paper-300/70">
         <div className="relative flex flex-col justify-between w-full pl-20 pr-12 py-12 xl:pl-24">
           <Link to="/" className="block w-56 rounded-lg" aria-label="Српски у Срцу — почетна">
-            <img src="/logoFULL.svg" alt="" className="w-full h-auto" />
+            <img src="/logoFULL.svg" alt="" className="w-full h-auto mix-blend-multiply" />
           </Link>
           <div className="max-w-md">
             <p className="font-display text-3xl xl:text-4xl font-semibold leading-snug text-ink">
@@ -34,7 +34,7 @@ export default function AuthShell({ title, subtitle, children, footer, mascot = 
       <main className="w-full lg:w-[54%] xl:w-1/2 flex flex-col">
         <div className="flex items-center justify-between px-5 sm:px-8 pt-6 lg:px-16">
           <Link to="/" className="lg:hidden block w-36 rounded-lg" aria-label="Српски у Срцу — почетна">
-            <img src="/logoFULL.svg" alt="" className="w-full h-auto" />
+            <img src="/logoFULL.svg" alt="" className="w-full h-auto mix-blend-multiply" />
           </Link>
           <Link
             to="/"

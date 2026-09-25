@@ -135,7 +135,7 @@ export default function OnlineClassPage() {
               <div className="flex gap-4 pt-4">
                 <button
                   onClick={() => setShowRegistrationForm(true)}
-                  className="bg-brand text-white px-10 py-5 rounded-full text-lg font-bold hover:bg-brand-700 transition-all shadow-xl hover:shadow-brand/40 hover:-translate-y-1 flex items-center gap-3"
+                  className="bg-brand text-white px-10 py-5 rounded-full text-lg font-bold hover:bg-brand-700 transition-all shadow-xl hover:shadow-brand/40 motion-safe:hover:-translate-y-1 flex items-center gap-3"
                 >
                   Пријави се за Часове
                 </button>
