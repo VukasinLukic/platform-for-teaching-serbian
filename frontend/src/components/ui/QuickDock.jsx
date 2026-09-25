@@ -58,7 +58,8 @@ function useBottomOffset(ref, active) {
 
 /**
  * Single sticky "quick dock" — mock exam, help and the Alano assistant launcher.
- * Desktop: vertical bar on the left edge. Mobile: bar at the bottom of the screen.
+ * Desktop: compact vertical rail in the bottom-right corner. Mobile: floating bar
+ * at the bottom of the screen.
  * Visibility follows the rules in context/floatingLayers.js.
  */
 export default function QuickDock() {
@@ -111,8 +112,13 @@ export default function QuickDock() {
       className={`quick-dock ${cookieBannerVisible ? 'is-yielding' : ''}`}
       aria-label="Брзи приступ"
     >
-      <button type="button" className="quick-dock-item" onClick={() => navigate('/probni-prijemni')}>
-        <span className="quick-dock-icon">
+      <button
+        type="button"
+        className="quick-dock-item"
+        onClick={() => navigate('/probni-prijemni')}
+        aria-label="Отвори пробни тест"
+      >
+        <span className="quick-dock-icon" aria-hidden="true">
           <GraduationCap size={20} strokeWidth={2.1} />
         </span>
         <span className="quick-dock-label">Пробни тест</span>
@@ -120,8 +126,8 @@ export default function QuickDock() {
 
       <span className="quick-dock-divider" aria-hidden="true" />
 
-      <button type="button" className="quick-dock-item" onClick={handleHelp}>
-        <span className="quick-dock-icon">
+      <button type="button" className="quick-dock-item" onClick={handleHelp} aria-label="Отвори помоћ">
+        <span className="quick-dock-icon" aria-hidden="true">
           <CircleHelp size={20} strokeWidth={2.1} />
         </span>
         <span className="quick-dock-label">Помоћ</span>
@@ -133,6 +139,7 @@ export default function QuickDock() {
         type="button"
         className="quick-dock-item quick-dock-alano"
         onClick={() => setAssistantOpen(true)}
+        aria-label="Отвори Алана, асистента"
       >
         <span className="quick-dock-icon quick-dock-mascot">
           <img src="/mascot/alano-hero.webp" alt="" draggable={false} />
