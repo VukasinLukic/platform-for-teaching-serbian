@@ -4,6 +4,7 @@ import { Mail, Lock, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { loginUser } from '../services/auth.service';
 import { useAuthStore } from '../store/authStore';
 import SEO from '../components/SEO';
+import { authErrorMessage } from '../components/auth/errorMessages';
 
 export default function LoginPage() {
   const [formData, setFormData] = useState({
@@ -52,17 +53,7 @@ export default function LoginPage() {
       }
     } catch (err) {
       console.error('Login error:', err);
-      if (err.code === 'auth/user-not-found') {
-        setError('Корисник са овим емаилом не постоји');
-      } else if (err.code === 'auth/wrong-password') {
-        setError('Погрешна лозинка');
-      } else if (err.code === 'auth/invalid-email') {
-        setError('Неважећи емаил формат');
-      } else if (err.code === 'auth/too-many-requests') {
-        setError('Превише неуспешних покушаја. Покушајте поново касније.');
-      } else {
-        setError('Грешка при пријављивању. Проверите емаил и лозинку.');
-      }
+      setError(authErrorMessage(err, 'Грешка при пријављивању. Проверите имејл и лозинку.'));
     } finally {
       setLoading(false);
     }
@@ -200,6 +191,7 @@ export default function LoginPage() {
                   type="email"
                   id="email"
                   name="email"
+                  autoComplete="email"
                   value={formData.email}
                   onChange={handleChange}
                   placeholder="ваш@емаил.рс"
@@ -225,6 +217,7 @@ export default function LoginPage() {
                   type={showPassword ? 'text' : 'password'}
                   id="password"
                   name="password"
+                  autoComplete="current-password"
                   value={formData.password}
                   onChange={handleChange}
                   placeholder="••••••••"

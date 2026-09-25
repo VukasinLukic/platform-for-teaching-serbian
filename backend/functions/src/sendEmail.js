@@ -417,7 +417,7 @@ const rawEmailTemplates = {
             <div class="warning">
               <p style="margin: 0;"><strong>⚠️ Važno:</strong></p>
               <ul style="margin: 10px 0 0 0; padding-left: 20px;">
-                <li>Link za verifikaciju je važeći 60 minuta</li>
+                <li>Link za verifikaciju je važeći 24 sata</li>
                 <li>Ako ne verifikujete email, nećete moći pristupiti kursevima</li>
                 <li>Ako link ne radi, kopirajte ga i nalepite u browser</li>
               </ul>

@@ -10,6 +10,17 @@ import Header from '../components/ui/Header';
 import Modal from '../components/ui/Modal';
 import OnlineClassesSection from '../components/dashboard/OnlineClassesSection';
 import { useOnboarding } from '../context/OnboardingContext';
+import EmailVerificationBanner from '../components/auth/EmailVerificationBanner';
+import { isEmailVerified } from '../components/auth/verification';
+import PaymentStatusTimeline from '../components/dashboard/PaymentStatusTimeline';
+import ContinueLearningCard from '../components/dashboard/ContinueLearningCard';
+import QuizResultsCard from '../components/dashboard/QuizResultsCard';
+import MalaMaturaCountdown, { MALA_MATURA_DATE } from '../components/dashboard/MalaMaturaCountdown';
+import EmptyState from '../components/dashboard/EmptyState';
+import { getCourseProgress, countCompletedLessons, getQuizResults, toMillis } from '../components/dashboard/progressService';
+import { getAvailableQuizzes } from '../services/quiz.service';
+
+const QUIZ_BASE_PATH = '/kvizovi';
 
 export default function DashboardPage() {
   const { user, userProfile, logout } = useAuthStore();
@@ -20,12 +31,23 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [uploadModalOpen, setUploadModalOpen] = useState(false);
   const [selectedTransaction, setSelectedTransaction] = useState(null);
+  const [resume, setResume] = useState(null);
+  const [quizResults, setQuizResults] = useState({});
+  const [quizTitles, setQuizTitles] = useState({});
 
   useEffect(() => {
     if (user) {
       loadUserData();
     }
-  }, [user]);
+    // Reload when the email gets verified (purchased courses become readable)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user, userProfile?.emailVerified]);
+
+  useEffect(() => {
+    if (!loading && window.location.hash === '#uplate') {
+      document.getElementById('uplate')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [loading]);
 
   useEffect(() => {
     if (!loading) {
@@ -34,17 +56,47 @@ export default function DashboardPage() {
   }, [loading, checkAndStartTutorial]);
 
   const loadUserData = async () => {
+    // Each source is loaded independently so one failure (e.g. user_courses is readable
+    // only after email verification) does not empty the whole dashboard.
+    const verified = isEmailVerified(userProfile, user);
+    const [coursesRes, txRes, allRes, quizRes, manifestRes] = await Promise.allSettled([
+      verified ? getUserCourses(user.uid) : Promise.resolve([]),
+      getUserTransactions(user.uid),
+      getAllCourses(),
+      getQuizResults(user.uid),
+      getAvailableQuizzes(),
+    ]);
+    const coursesData = coursesRes.status === 'fulfilled' ? coursesRes.value : [];
+    const allCoursesData = allRes.status === 'fulfilled' ? allRes.value : [];
+    setMyCourses(coursesData);
+    setTransactions(txRes.status === 'fulfilled' ? txRes.value : []);
+    setAllCourses(allCoursesData);
+    setQuizResults(quizRes.status === 'fulfilled' ? quizRes.value : {});
+    if (manifestRes.status === 'fulfilled' && Array.isArray(manifestRes.value)) {
+      setQuizTitles(Object.fromEntries(manifestRes.value.map((q) => [q.id, q.title])));
+    }
+
     try {
-      const [coursesData, transactionsData, allCoursesData] = await Promise.all([
-        getUserCourses(user.uid),
-        getUserTransactions(user.uid),
-        getAllCourses(),
-      ]);
-      setMyCourses(coursesData);
-      setTransactions(transactionsData);
-      setAllCourses(allCoursesData);
+      const progressList = await Promise.all(
+        coursesData.map(async (course) => ({ course, progress: await getCourseProgress(user.uid, course.id).catch(() => null) }))
+      );
+      const latest = progressList
+        .filter((p) => p.progress?.lastLessonId)
+        .sort((a, b) => toMillis(b.progress.updatedAt) - toMillis(a.progress.updatedAt))[0];
+      if (latest) {
+        const total = allCoursesData.find((c) => c.id === latest.course.id)?.lessonsCount || 0;
+        const done = countCompletedLessons(latest.progress);
+        setResume({
+          course: latest.course,
+          lastLessonId: latest.progress.lastLessonId,
+          lastLessonTitle: latest.progress.lastLessonTitle,
+          percent: total > 0 ? Math.min(100, Math.round((done / total) * 100)) : null,
+        });
+      } else {
+        setResume(null);
+      }
     } catch (error) {
-      console.error('Error loading user data:', error);
+      console.error('Error loading progress:', error);
     } finally {
       setLoading(false);
     }
@@ -103,6 +155,26 @@ export default function DashboardPage() {
           <p className="text-gray-600 text-base md:text-xl">Наставите тамо где сте стали или истражите нове курсеве</p>
         </div>
 
+        <EmailVerificationBanner className="mb-8" />
+
+        {(resume || MALA_MATURA_DATE) && (
+          <div className={`mb-10 grid gap-6 ${resume && MALA_MATURA_DATE ? 'lg:grid-cols-[2fr,1fr]' : ''}`}>
+            {resume && <ContinueLearningCard {...resume} />}
+            <MalaMaturaCountdown />
+          </div>
+        )}
+
+        {transactions.some((t) => t.status === 'pending') && (
+          <section id="uplate" className="mb-10 md:mb-16 scroll-mt-24">
+            <h2 className="text-xl md:text-3xl font-bold mb-2 text-[#1A1A1A]">Статус уплате</h2>
+            <p className="text-gray-600 mb-6">Одобравамо уплате обично у року од 24 часа.</p>
+            <PaymentStatusTimeline
+              transactions={transactions.filter((t) => t.status === 'pending')}
+              onUploadProof={handleOpenUploadModal}
+            />
+          </section>
+        )}
+
         {/* Available Courses Section - FIRST */}
         {availableForPurchase.length > 0 && (
           <div className="mb-10 md:mb-16" data-tour="available-courses">
@@ -140,18 +212,18 @@ export default function DashboardPage() {
           <h2 className="text-xl md:text-3xl font-bold mb-6 md:mb-8 text-[#1A1A1A]">Моји курсеви</h2>
 
           {myCourses.length === 0 ? (
-            <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-8 md:p-16 text-center border border-gray-100">
-              <div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-                <Book className="w-12 h-12 text-gray-400" />
-              </div>
-              <h3 className="text-xl md:text-2xl font-bold mb-3 text-[#1A1A1A]">Још увек немате курсеве</h3>
-              <p className="text-gray-600 mb-8 text-base md:text-lg">Изаберите курс и започните своје учење данас</p>
-              <Link to="/courses">
-                <button className="bg-[#D62828] text-white px-8 py-4 rounded-full font-bold hover:bg-[#B91F1F] transition-all hover:scale-105 transform flex items-center gap-2 mx-auto">
+            <EmptyState
+              pose="wave"
+              title={isEmailVerified(userProfile, user) ? 'Још увек немаш курсеве' : 'Твоји курсеви ће се појавити овде'}
+              text={isEmailVerified(userProfile, user)
+                ? 'Изабери курс и почни да учиш данас. Прва лекција сваког курса је бесплатна.'
+                : 'Потврди имејл адресу да би видео купљене курсеве и могао да купујеш нове.'}
+              action={
+                <Link to="/courses" className="inline-flex items-center gap-2 bg-[#D62828] text-white px-6 py-3 rounded-full font-bold hover:bg-[#B91F1F]">
                   Погледај курсеве <ArrowRight className="w-5 h-5" />
-                </button>
-              </Link>
-            </div>
+                </Link>
+              }
+            />
           ) : (
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {myCourses.map((course) => (
@@ -187,6 +259,17 @@ export default function DashboardPage() {
           <OnlineClassesSection />
         </div>
 
+        {/* Quiz results per topic */}
+        <section className="mb-10 md:mb-16">
+          <div className="flex items-center justify-between mb-6 gap-3">
+            <h2 className="text-xl md:text-3xl font-bold text-[#1A1A1A]">Резултати квизова</h2>
+            <Link to={QUIZ_BASE_PATH} className="text-[#D62828] hover:text-[#B91F1F] font-medium flex items-center gap-2">
+              Сви квизови <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+          <QuizResultsCard results={quizResults} quizTitles={quizTitles} quizBasePath={QUIZ_BASE_PATH} />
+        </section>
+
         {/* Quizzes Section */}
         {myCourses.length > 0 && (
           <div className="mb-10 md:mb-16" data-tour="quizzes">
@@ -216,7 +299,7 @@ export default function DashboardPage() {
         {/* Transactions Section */}
         {transactions.length > 0 && (
           <div className="mb-10 md:mb-16">
-            <h2 className="text-xl md:text-3xl font-bold mb-6 md:mb-8 text-[#1A1A1A]">Трансакције</h2>
+            <h2 className="text-xl md:text-3xl font-bold mb-6 md:mb-8 text-[#1A1A1A]">Историја уплата</h2>
 
             {/* Desktop Table View */}
             <div className="hidden md:block bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm">
@@ -327,7 +410,7 @@ export default function DashboardPage() {
       <Modal
         isOpen={uploadModalOpen}
         onClose={() => setUploadModalOpen(false)}
-        title={`Потврда уплате - ${selectedTransaction?.courseName || ''}`}
+        title={`Доказ о уплати — ${selectedTransaction?.courseName || selectedTransaction?.packageName || ''}`}
       >
         {selectedTransaction && (
           <PaymentConfirmationUpload

@@ -16,6 +16,8 @@ import VideoPlayer from '../components/course/VideoPlayer';
 import NotFoundPage from './NotFoundPage';
 import { resolveCourseIdBySlug } from '../seo/courseSlug';
 import { orgRef, teacherRef, breadcrumbSchema, absoluteUrl } from '../seo/site';
+import { ensureEmailVerifiedForPurchase } from '../components/auth/verification';
+import { purchaseErrorMessage } from '../components/auth/errorMessages';
 
 export default function CoursePage() {
   // /course/:id (legacy, Firestore id) or /kurs/:slug (SEO URL)
@@ -88,8 +90,12 @@ export default function CoursePage() {
       const modulesData = await getCourseModulesWithLessons(id);
       setModules(modulesData);
 
-      // Set first lesson as selected
-      if (modulesData.length > 0 && modulesData[0].lessons.length > 0) {
+      // Set first lesson as selected (or the lesson from ?lekcija= — "continue where you left off")
+      const resumeId = new URLSearchParams(window.location.search).get('lekcija');
+      const resumeLesson = resumeId && modulesData.flatMap((m) => m.lessons || []).find((l) => l.id === resumeId);
+      if (resumeLesson) {
+        setSelectedLesson(resumeLesson);
+      } else if (modulesData.length > 0 && modulesData[0].lessons.length > 0) {
         setSelectedLesson(modulesData[0].lessons[0]);
       }
 
@@ -112,6 +118,12 @@ export default function CoursePage() {
     }
 
     setPurchasing(true);
+    const verification = await ensureEmailVerifiedForPurchase();
+    if (!verification.ok) {
+      setPurchasing(false);
+      alert(verification.message);
+      return;
+    }
     try {
       // The transaction (amount, course) is created on the server; an existing
       // pending transaction for this course is reused.
@@ -120,7 +132,7 @@ export default function CoursePage() {
       const paymentRef = result.data.paymentReference;
 
       // Navigate to payment slip page with payment data
-      navigate('/uplatnica', {
+      navigate(result.data.transactionId ? `/uplatnica?tx=${encodeURIComponent(result.data.transactionId)}` : '/uplatnica', {
         state: {
           paymentData: {
             amount: result.data.amount,
@@ -132,7 +144,7 @@ export default function CoursePage() {
       });
     } catch (error) {
       console.error('Error creating transaction:', error);
-      alert('Грешка при креирању трансакције. Покушајте поново.');
+      alert(purchaseErrorMessage(error));
     } finally {
       setPurchasing(false);
     }

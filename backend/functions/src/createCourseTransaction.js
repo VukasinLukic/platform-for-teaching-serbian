@@ -27,6 +27,19 @@ export const createCourseTransaction = onCall({ cors: true, ...APP_CHECK }, asyn
   try {
     const db = getFirestore();
 
+    // Purchases require a verified email. The ID token claim is the primary check; the
+    // users document flag (writable only by the server/admin, see firestore.rules) covers
+    // a token issued moments before verification.
+    if (request.auth.token.email_verified !== true) {
+      const profile = await db.collection('users').doc(userId).get();
+      if (!profile.exists || profile.data().emailVerified !== true) {
+        throw new HttpsError(
+          'failed-precondition',
+          'Пре куповине потврдите имејл адресу. Линк за потврду смо послали на ваш имејл (проверите и Spam/Промоције).'
+        );
+      }
+    }
+
     const courseDoc = await db.collection('courses').doc(courseId).get();
     if (!courseDoc.exists) {
       throw new HttpsError('not-found', 'Kurs ne postoji');

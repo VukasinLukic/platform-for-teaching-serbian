@@ -1,114 +1,83 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, User, Phone, ArrowRight, Eye, EyeOff, Sparkles, Award } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { z } from 'zod';
+import { Mail, Lock, User, Phone, ArrowRight, Eye, EyeOff } from 'lucide-react';
 import { registerUser } from '../services/auth.service';
-import { sendWelcomeEmail } from '../services/email.service';
-import { isValidEmail, isValidPhone } from '../utils/helpers';
 import SEO from '../components/SEO';
+import { zodResolver } from '../components/auth/zodResolver';
+import { authErrorMessage } from '../components/auth/errorMessages';
+
+const LETTER = /[A-Za-zА-Яа-яЂђЈјЉљЊњЋћЏџČčĆćŠšŽžĐđ]/;
+
+const registerSchema = z
+  .object({
+    ime: z.string().trim().min(2, 'Унесите име и презиме').max(80, 'Име је предугачко'),
+    email: z.string().trim().min(1, 'Унесите имејл адресу').pipe(z.email('Имејл адреса није исправна (нпр. ime@gmail.com)')),
+    telefon: z
+      .string()
+      .trim()
+      .refine((v) => v === '' || /^(\+381|0)6\d{7,8}$/.test(v.replace(/[\s/-]/g, '')), 'Неисправан број телефона (нпр. 0612345678)'),
+    password: z
+      .string()
+      .min(8, 'Лозинка мора имати најмање 8 карактера')
+      .refine((v) => LETTER.test(v), 'Лозинка мора садржати бар једно слово')
+      .refine((v) => /\d/.test(v), 'Лозинка мора садржати бар један број'),
+    confirmPassword: z.string().min(1, 'Поновите лозинку'),
+    consent: z.literal(true, { error: 'Потребно је да прихватите услове и потврдите сагласност родитеља' }),
+  })
+  .refine((d) => d.password === d.confirmPassword, { path: ['confirmPassword'], message: 'Лозинке се не поклапају' });
+
+const inputClass = (hasError) =>
+  `w-full pl-12 py-4 border-2 rounded-2xl focus:outline-none transition-all duration-300 ${
+    hasError ? 'border-red-400 focus:border-red-500 bg-red-50/40' : 'border-gray-200 focus:border-[#F2C94C] hover:border-gray-300'
+  }`;
+
+function FieldError({ id, error }) {
+  if (!error) return null;
+  return (
+    <p id={id} role="alert" className="mt-2 text-sm font-medium text-red-600">
+      {error.message}
+    </p>
+  );
+}
 
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    ime: '',
-    email: '',
-    telefon: '',
-    password: '',
-    confirmPassword: '',
-    consent: false,
-  });
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.type === 'checkbox' ? e.target.checked : e.target.value,
-    });
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm({
+    resolver: zodResolver(registerSchema),
+    mode: 'onBlur',
+    reValidateMode: 'onChange',
+    defaultValues: { ime: '', email: '', telefon: '', password: '', confirmPassword: '', consent: false },
+  });
+
+  const onSubmit = async (data) => {
     setError('');
     setSuccess('');
-  };
-
-  const validateForm = () => {
-    if (!formData.ime.trim()) {
-      setError('Име и презиме су обавезни');
-      return false;
-    }
-
-    if (!isValidEmail(formData.email)) {
-      setError('Неважећи емаил формат');
-      return false;
-    }
-
-    if (formData.telefon && !isValidPhone(formData.telefon)) {
-      setError('Неважећи формат телефона (нпр. 0612345678)');
-      return false;
-    }
-
-    if (formData.password.length < 8 || !/[A-Za-zА-Яа-яЂђЈјЉљЊњЋћЏџČčĆćŠšŽžĐđ]/.test(formData.password) || !/\d/.test(formData.password)) {
-      setError('Лозинка мора имати најмање 8 карактера, бар једно слово и бар један број');
-      return false;
-    }
-
-    if (formData.password !== formData.confirmPassword) {
-      setError('Лозинке се не поклапају');
-      return false;
-    }
-
-    if (!formData.consent) {
-      setError('Потребно је да потврдите услове коришћења и сагласност родитеља за ученике млађе од 15 година');
-      return false;
-    }
-
-    return true;
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setSuccess('');
-
-    if (!validateForm()) {
-      return;
-    }
-
-    setLoading(true);
-
     try {
-      await registerUser(
-        formData.email,
-        formData.password,
-        formData.ime,
-        formData.telefon,
-        { termsAndParentalConsent: true }
-      );
-
-      // Welcome email will be sent AFTER email verification
-
-      // ✅ Show success message about email verification
-      setSuccess('Регистрација успешна! Послали смо вам email са линком за верификацију.');
-
-      // Redirect to verify page to wait for email verification
-      setTimeout(() => {
-        navigate('/verify');
-      }, 1500);
+      await registerUser(data.email.trim(), data.password, data.ime.trim(), data.telefon.trim(), {
+        termsAndParentalConsent: true,
+      });
+      setSuccess('Налог је направљен! Послали смо ти имејл са линком за потврду (провери и Spam/Промоције). Можеш одмах да користиш панел и квизове.');
+      setTimeout(() => navigate('/dashboard'), 1800);
     } catch (err) {
       console.error('Registration error:', err);
-      if (err.code === 'auth/email-already-in-use') {
-        setError('Емаил је већ регистрован. Покушајте са другим емаилом.');
-      } else if (err.code === 'auth/invalid-email') {
-        setError('Неважећи емаил формат');
-      } else if (err.code === 'auth/weak-password') {
-        setError('Лозинка је преслаба. Користите јаче комбинације.');
-      } else {
-        setError('Грешка при регистрацији. Покушајте поново.');
-      }
-    } finally {
-      setLoading(false);
+      setError(authErrorMessage(err, 'Грешка при регистрацији. Покушајте поново.'));
     }
   };
+
+  const loading = isSubmitting;
+  const labelStyle = { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', letterSpacing: '0.5px' };
+  const fieldStyle = { fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '1rem' };
 
   return (
     <>
@@ -243,146 +212,74 @@ export default function RegisterPage() {
           </div>
 
           {/* Form */}
-          <form onSubmit={handleSubmit} className="space-y-5 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
-            {/* Name Field */}
+          <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-5 animate-fade-in-up" style={{animationDelay: '0.2s'}}>
             <div className="group">
-              <label
-                htmlFor="ime"
-                className="block text-[#1A1A1A] mb-2 font-semibold"
-                style={{fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', letterSpacing: '0.5px'}}
-              >
-                ИМЕ И ПРЕЗИМЕ
-              </label>
+              <label htmlFor="ime" className="block text-[#1A1A1A] mb-2 font-semibold" style={labelStyle}>ИМЕ И ПРЕЗИМЕ</label>
               <div className="relative">
-                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#F2C94C] transition-colors" />
-                <input
-                  type="text"
-                  id="ime"
-                  name="ime"
-                  value={formData.ime}
-                  onChange={handleChange}
-                  placeholder="Марко Марковић"
-                  required
-                  className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#F2C94C] focus:outline-none transition-all duration-300 hover:border-gray-300"
-                  style={{fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '1rem'}}
-                />
+                <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#F2C94C] transition-colors" aria-hidden="true" />
+                <input id="ime" type="text" autoComplete="name" placeholder="Марко Марковић"
+                  aria-invalid={!!errors.ime} aria-describedby={errors.ime ? 'ime-error' : undefined}
+                  className={`${inputClass(errors.ime)} pr-4`} style={fieldStyle} {...register('ime')} />
               </div>
+              <FieldError id="ime-error" error={errors.ime} />
             </div>
 
-            {/* Email Field */}
             <div className="group">
-              <label
-                htmlFor="email"
-                className="block text-[#1A1A1A] mb-2 font-semibold"
-                style={{fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', letterSpacing: '0.5px'}}
-              >
-                ЕМАИЛ АДРЕСА
-              </label>
+              <label htmlFor="email" className="block text-[#1A1A1A] mb-2 font-semibold" style={labelStyle}>ИМЕЈЛ АДРЕСА</label>
               <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#F2C94C] transition-colors" />
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  value={formData.email}
-                  onChange={handleChange}
-                  placeholder="ваш@емаил.рс"
-                  required
-                  className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#F2C94C] focus:outline-none transition-all duration-300 hover:border-gray-300"
-                  style={{fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '1rem'}}
-                />
+                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#F2C94C] transition-colors" aria-hidden="true" />
+                <input id="email" type="email" autoComplete="email" placeholder="ime@gmail.com" inputMode="email"
+                  aria-invalid={!!errors.email} aria-describedby={errors.email ? 'email-error' : undefined}
+                  className={`${inputClass(errors.email)} pr-4`} style={fieldStyle} {...register('email')} />
               </div>
+              <FieldError id="email-error" error={errors.email} />
             </div>
 
-            {/* Phone Field */}
             <div className="group">
-              <label
-                htmlFor="telefon"
-                className="block text-[#1A1A1A] mb-2 font-semibold"
-                style={{fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', letterSpacing: '0.5px'}}
-              >
-                ТЕЛЕФОН <span className="text-gray-400 font-normal">(опционално)</span>
-              </label>
+              <label htmlFor="telefon" className="block text-[#1A1A1A] mb-2 font-semibold" style={labelStyle}>ТЕЛЕФОН (опционо)</label>
               <div className="relative">
-                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#F2C94C] transition-colors" />
-                <input
-                  type="tel"
-                  id="telefon"
-                  name="telefon"
-                  value={formData.telefon}
-                  onChange={handleChange}
-                  placeholder="0612345678"
-                  className="w-full pl-12 pr-4 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#F2C94C] focus:outline-none transition-all duration-300 hover:border-gray-300"
-                  style={{fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '1rem'}}
-                />
+                <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#F2C94C] transition-colors" aria-hidden="true" />
+                <input id="telefon" type="tel" autoComplete="tel" placeholder="0612345678" inputMode="tel"
+                  aria-invalid={!!errors.telefon} aria-describedby={errors.telefon ? 'telefon-error' : undefined}
+                  className={`${inputClass(errors.telefon)} pr-4`} style={fieldStyle} {...register('telefon')} />
               </div>
+              <FieldError id="telefon-error" error={errors.telefon} />
             </div>
 
-            {/* Password Field */}
             <div className="group">
-              <label
-                htmlFor="password"
-                className="block text-[#1A1A1A] mb-2 font-semibold"
-                style={{fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', letterSpacing: '0.5px'}}
-              >
-                ЛОЗИНКА
-              </label>
+              <label htmlFor="password" className="block text-[#1A1A1A] mb-2 font-semibold" style={labelStyle}>ЛОЗИНКА</label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#F2C94C] transition-colors" />
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  id="password"
-                  name="password"
-                  value={formData.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  required
-                  className="w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#F2C94C] focus:outline-none transition-all duration-300 hover:border-gray-300"
-                  style={{fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '1rem'}}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#F2C94C] transition-colors"
-                >
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#F2C94C] transition-colors" aria-hidden="true" />
+                <input id="password" type={showPassword ? 'text' : 'password'} autoComplete="new-password" placeholder="••••••••"
+                  aria-invalid={!!errors.password} aria-describedby={errors.password ? 'password-error' : 'password-help'}
+                  className={`${inputClass(errors.password)} pr-12`} style={fieldStyle} {...register('password')} />
+                <button type="button" onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Сакриј лозинку' : 'Прикажи лозинку'}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#F2C94C] transition-colors">
                   {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
-              <p className="mt-2 text-sm text-gray-500" style={{fontFamily: "'Plus Jakarta Sans', sans-serif"}}>
-                Најмање 8 карактера, бар једно слово и један број
-              </p>
+              {errors.password ? (
+                <FieldError id="password-error" error={errors.password} />
+              ) : (
+                <p id="password-help" className="mt-2 text-sm text-gray-500">Најмање 8 карактера, бар једно слово и један број</p>
+              )}
             </div>
 
-            {/* Confirm Password Field */}
             <div className="group">
-              <label
-                htmlFor="confirmPassword"
-                className="block text-[#1A1A1A] mb-2 font-semibold"
-                style={{fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '0.875rem', letterSpacing: '0.5px'}}
-              >
-                ПОТВРДИТЕ ЛОЗИНКУ
-              </label>
+              <label htmlFor="confirmPassword" className="block text-[#1A1A1A] mb-2 font-semibold" style={labelStyle}>ПОНОВИТЕ ЛОЗИНКУ</label>
               <div className="relative">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#F2C94C] transition-colors" />
-                <input
-                  type={showConfirmPassword ? 'text' : 'password'}
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={formData.confirmPassword}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  required
-                  className="w-full pl-12 pr-12 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#F2C94C] focus:outline-none transition-all duration-300 hover:border-gray-300"
-                  style={{fontFamily: "'Plus Jakarta Sans', sans-serif", fontSize: '1rem'}}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#F2C94C] transition-colors"
-                >
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 group-focus-within:text-[#F2C94C] transition-colors" aria-hidden="true" />
+                <input id="confirmPassword" type={showConfirmPassword ? 'text' : 'password'} autoComplete="new-password" placeholder="••••••••"
+                  aria-invalid={!!errors.confirmPassword} aria-describedby={errors.confirmPassword ? 'confirmPassword-error' : undefined}
+                  className={`${inputClass(errors.confirmPassword)} pr-12`} style={fieldStyle} {...register('confirmPassword')} />
+                <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  aria-label={showConfirmPassword ? 'Сакриј лозинку' : 'Прикажи лозинку'}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#F2C94C] transition-colors">
                   {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                 </button>
               </div>
+              <FieldError id="confirmPassword-error" error={errors.confirmPassword} />
             </div>
 
             {/* Success Message */}
@@ -404,9 +301,9 @@ export default function RegisterPage() {
               <input
                 type="checkbox"
                 id="consent"
-                name="consent"
-                checked={formData.consent}
-                onChange={handleChange}
+                aria-invalid={!!errors.consent}
+                aria-describedby={errors.consent ? 'consent-error' : undefined}
+                {...register('consent')}
                 className="mt-1 w-4 h-4 accent-[#D62828] flex-shrink-0"
               />
               <span>
@@ -415,6 +312,7 @@ export default function RegisterPage() {
                 потврђујем да сам родитељ или старатељ, или да се родитељ сагласио са регистрацијом.
               </span>
             </label>
+            <FieldError id="consent-error" error={errors.consent} />
 
             {/* Submit Button */}
             <button
