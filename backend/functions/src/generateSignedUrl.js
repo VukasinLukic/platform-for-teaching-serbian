@@ -2,7 +2,9 @@ import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { getFirestore } from 'firebase-admin/firestore';
+import { getStorage } from 'firebase-admin/storage';
 import { defineString } from 'firebase-functions/params';
+import { loadLessonWithAccessCheck, getMaterialStoragePath } from './lessonAccess.js';
 
 // Define environment parameters for Cloudflare R2
 const cloudflareAccountId = defineString('CLOUDFLARE_ACCOUNT_ID');
@@ -26,7 +28,7 @@ const createR2Client = () => {
  * Cloud Function to generate signed URL for video access
  * Only authenticated users who purchased the course can access videos
  */
-export const getVideoUrl = onCall({ region: 'europe-west1' }, async (request) => {
+export const getVideoUrl = onCall(async (request) => {
   // Check authentication
   if (!request.auth) {
     throw new HttpsError('unauthenticated', 'Morate biti ulogovani');
@@ -40,56 +42,11 @@ export const getVideoUrl = onCall({ region: 'europe-west1' }, async (request) =>
   }
 
   try {
-    // Get lesson data
     const db = getFirestore();
-    const lessonDoc = await db.collection('lessons').doc(lessonId).get();
+    const { lesson } = await loadLessonWithAccessCheck(db, lessonId, userId);
 
-    if (!lessonDoc.exists) {
-      throw new HttpsError('not-found', 'Lekcija ne postoji');
-    }
-
-    const lesson = lessonDoc.data();
-    console.log('Lesson data fields:', Object.keys(lesson), 'videoPath:', lesson.videoPath);
-
-    // Support both field names: courseId (camelCase) and course_id (underscore)
-    const lessonCourseId = lesson.courseId || lesson.course_id;
-
-    // Check if this is a free preview lesson (first lesson of first module)
-    let isFreePreview = false;
-    if (lesson.moduleId && lessonCourseId) {
-      const modulesQuery = db.collection('modules')
-        .where('courseId', '==', lessonCourseId)
-        .orderBy('order', 'asc')
-        .limit(1);
-      const modulesSnap = await modulesQuery.get();
-
-      if (!modulesSnap.empty) {
-        const firstModule = modulesSnap.docs[0];
-        if (firstModule.id === lesson.moduleId) {
-          const lessonsQuery = db.collection('lessons')
-            .where('moduleId', '==', firstModule.id)
-            .orderBy('order', 'asc')
-            .limit(1);
-          const lessonsSnap = await lessonsQuery.get();
-
-          if (!lessonsSnap.empty && lessonsSnap.docs[0].id === lessonId) {
-            isFreePreview = true;
-          }
-        }
-      }
-    }
-
-    // Check if user has access to the course (skip for free preview lessons)
-    if (!isFreePreview) {
-      const userCoursesDoc = await db.collection('user_courses').doc(userId).get();
-      const userCourses = userCoursesDoc.exists ? userCoursesDoc.data().courses : {};
-
-      if (!userCourses[lessonCourseId]) {
-        throw new HttpsError(
-          'permission-denied',
-          'Nemate pristup ovom kursu. Molimo kupite kurs da biste pristupili lekcijama.'
-        );
-      }
+    if (!lesson.videoPath) {
+      throw new HttpsError('not-found', 'Lekcija nema video');
     }
 
     // Generate signed URL with 1 hour expiration
@@ -116,5 +73,49 @@ export const getVideoUrl = onCall({ region: 'europe-west1' }, async (request) =>
     }
 
     throw new HttpsError('internal', 'Greška pri generisanju video linka');
+  }
+});
+
+/**
+ * Cloud Function to generate a short-lived download URL for a lesson material.
+ * Materials are never exposed as public links in Firestore; access is checked here.
+ */
+export const getMaterialUrl = onCall(async (request) => {
+  if (!request.auth) {
+    throw new HttpsError('unauthenticated', 'Morate biti ulogovani');
+  }
+
+  const { lessonId, index } = request.data || {};
+
+  if (!lessonId || !Number.isInteger(index) || index < 0) {
+    throw new HttpsError('invalid-argument', 'lessonId i index su obavezni');
+  }
+
+  try {
+    const db = getFirestore();
+    const { lesson } = await loadLessonWithAccessCheck(db, lessonId, request.auth.uid);
+
+    const material = (lesson.materials || [])[index];
+    const path = getMaterialStoragePath(material);
+
+    if (!path || !path.startsWith('course-materials/')) {
+      throw new HttpsError('not-found', 'Materijal ne postoji');
+    }
+
+    const [url] = await getStorage().bucket().file(path).getSignedUrl({
+      action: 'read',
+      expires: Date.now() + 15 * 60 * 1000, // 15 minutes
+      responseDisposition: `attachment; filename*=UTF-8''${encodeURIComponent(material.name || 'materijal')}`,
+    });
+
+    return { url, name: material.name || 'materijal' };
+  } catch (error) {
+    console.error('Error generating material URL:', error);
+
+    if (error instanceof HttpsError) {
+      throw error;
+    }
+
+    throw new HttpsError('internal', 'Greška pri preuzimanju materijala');
   }
 });

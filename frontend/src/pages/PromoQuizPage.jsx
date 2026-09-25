@@ -6,6 +6,7 @@ import Footer from '../components/ui/Footer';
 import SEO from '../components/SEO';
 import { promoQuizQuestions, PROMO_QUIZ_INTRO_TEXT } from '../data/promoQuizData';
 import { useAuthStore } from '../store/authStore';
+import { useFloatingLayers } from '../context/floatingLayers';
 import { usePromo } from '../context/PromoContext';
 
 const RETURN_TO_KEY = 'srpskiusrcu_return_to';
@@ -49,6 +50,13 @@ export default function PromoQuizPage() {
   const [isAnswerSubmitted, setIsAnswerSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
   const [savedResult, setSavedResult] = useState(null);
+  const setTestingActive = useFloatingLayers((st) => st.setTestingActive);
+
+  // While the mock exam is in progress, hide the dock/assistant launcher (focus mode).
+  useEffect(() => {
+    setTestingActive(!showResult);
+    return () => setTestingActive(false);
+  }, [showResult, setTestingActive]);
 
   // Shuffle answers once on mount
   const shuffledQuestions = useMemo(() => {
@@ -70,7 +78,7 @@ export default function PromoQuizPage() {
   // Scroll to top kada se prikazuju rezultati
   useEffect(() => {
     if (showResult) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      window.scrollTo({ top: 0, behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     }
   }, [showResult]);
 
@@ -143,7 +151,7 @@ export default function PromoQuizPage() {
   // RESULT VIEW
   if (showResult) {
     return (
-      <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+      <div className="min-h-screen bg-white font-sans text-ink">
         <SEO
           title="Пробни Пријемни 2025/2026 — Резултат"
           description="Урадите пробни пријемни тест из српског и добијте 20% попуст на курс. Бесплатно, без регистрације."
@@ -157,7 +165,7 @@ export default function PromoQuizPage() {
               <Trophy className="w-8 h-8 text-yellow-600" />
             </div>
 
-            <h2 className="text-xl font-bold text-[#1A1A1A] mb-1">
+            <h2 className="text-xl font-bold text-ink mb-1">
               {percentage === 100 ? 'Савршено! Честитамо!' :
                percentage >= 80 ? 'Одлично знање!' :
                percentage >= 50 ? 'Добар резултат!' :
@@ -165,21 +173,21 @@ export default function PromoQuizPage() {
             </h2>
             <p className="text-gray-500 text-sm mb-3">Ваш резултат:</p>
 
-            <div className="text-4xl font-black text-[#D62828] mb-3">
-              {effectiveScore} <span className="text-lg text-gray-400 font-medium">/ {effectiveTotal}</span>
+            <div className="text-4xl font-black text-brand mb-3">
+              {effectiveScore} <span className="text-lg text-gray-500 font-medium">/ {effectiveTotal}</span>
             </div>
 
             <p className="text-sm text-gray-500 mb-6">
-              Prosek naših učenika je <span className="font-bold text-[#1A1A1A]">15</span> / {effectiveTotal} poena.
+              Просек наших ученика је <span className="font-bold text-ink">15</span> / {effectiveTotal} poena.
             </p>
 
             {/* 20% Discount Highlight */}
-            <div className="bg-gradient-to-r from-[#D62828] to-[#B91F1F] rounded-2xl p-5 mb-6 shadow-lg">
+            <div className="bg-gradient-to-r from-brand to-brand-700 rounded-2xl p-5 mb-6 shadow-lg">
               <div className="flex items-center justify-center gap-3 mb-2">
-                <Gift className="w-7 h-7 text-[#F2C94C]" />
+                <Gift className="w-7 h-7 text-gold" />
                 <span className="text-2xl md:text-3xl font-black text-white">20% ПОПУСТ</span>
               </div>
-              <p className="text-white/90 text-sm">
+              <p className="text-white text-sm">
                 Честитамо! Остварили сте попуст од 20% на било коју куповину.
               </p>
             </div>
@@ -191,7 +199,7 @@ export default function PromoQuizPage() {
                   Ваш код за попуст:
                 </p>
                 <div className="bg-white rounded-xl p-4 flex items-center justify-between gap-3 border border-green-200">
-                  <code className="min-w-0 break-all text-lg md:text-2xl font-black text-[#1A1A1A] tracking-wider">
+                  <code className="min-w-0 break-all text-lg md:text-2xl font-black text-ink tracking-wider">
                     {effectiveDiscountCode}
                   </code>
                   <button
@@ -202,7 +210,7 @@ export default function PromoQuizPage() {
                     {copied ? (
                       <Check className="w-5 h-5 text-green-600" />
                     ) : (
-                      <Copy className="w-5 h-5 text-gray-400" />
+                      <Copy className="w-5 h-5 text-gray-500" />
                     )}
                   </button>
                 </div>
@@ -232,7 +240,7 @@ export default function PromoQuizPage() {
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <button
                     onClick={handleGoToRegister}
-                    className="px-8 py-4 rounded-xl bg-[#D62828] text-white font-bold hover:bg-[#B91F1F] transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                    className="px-8 py-4 rounded-xl bg-brand text-white font-bold hover:bg-brand-700 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
                   >
                     <UserPlus className="w-5 h-5" />
                     Региструј се
@@ -257,7 +265,7 @@ export default function PromoQuizPage() {
               </button>
               <button
                 onClick={handleRetry}
-                className="px-8 py-4 rounded-xl bg-[#D62828] text-white font-bold hover:bg-[#B91F1F] transition-all flex items-center justify-center gap-2"
+                className="px-8 py-4 rounded-xl bg-brand text-white font-bold hover:bg-brand-700 transition-all flex items-center justify-center gap-2"
               >
                 Покушај поново
               </button>
@@ -271,7 +279,7 @@ export default function PromoQuizPage() {
 
   // QUIZ VIEW
   return (
-    <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+    <div className="min-h-screen bg-white font-sans text-ink">
       <SEO
         title="Пробни Пријемни 2025/2026 — Тест из Српског"
         description="Урадите пробни пријемни тест из српског и добијте 20% попуст на курс. Бесплатно, без регистрације."
@@ -283,14 +291,14 @@ export default function PromoQuizPage() {
       <div className="max-w-4xl mx-auto px-6 py-12">
         <button
           onClick={() => navigate('/')}
-          className="mb-8 flex items-center gap-2 text-gray-500 hover:text-[#D62828] font-medium transition-colors"
+          className="mb-8 flex items-center gap-2 text-gray-500 hover:text-brand font-medium transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
           Одустани
         </button>
 
         {/* Title */}
-        <h1 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-8">
+        <h1 className="text-2xl md:text-3xl font-bold text-ink mb-8">
           Пробни пријемни 2025/2026
         </h1>
 
@@ -303,7 +311,7 @@ export default function PromoQuizPage() {
             </div>
             <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
               <div
-                className="h-full bg-[#D62828] transition-all duration-300 ease-out"
+                className="h-full bg-brand transition-all duration-300 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
@@ -321,7 +329,7 @@ export default function PromoQuizPage() {
 
           {/* Question Card */}
           <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 mb-8">
-            <div className="text-lg md:text-xl font-normal text-[#1A1A1A] mb-8 whitespace-pre-line leading-relaxed">
+            <div className="text-lg md:text-xl font-normal text-ink mb-8 whitespace-pre-line leading-relaxed">
               {currentQuestion.question}
             </div>
 
@@ -335,11 +343,11 @@ export default function PromoQuizPage() {
                   } else if (answer === selectedAnswer) {
                     buttonClass += "border-red-500 bg-red-50 text-red-700";
                   } else {
-                    buttonClass += "border-gray-100 text-gray-400";
+                    buttonClass += "border-gray-100 text-gray-500";
                   }
                 } else {
                   if (selectedAnswer === answer) {
-                    buttonClass += "border-[#D62828] bg-red-50 text-[#D62828]";
+                    buttonClass += "border-brand bg-red-50 text-brand";
                   } else {
                     buttonClass += "border-gray-100 hover:border-gray-300 text-gray-700";
                   }
@@ -375,8 +383,8 @@ export default function PromoQuizPage() {
                 disabled={!selectedAnswer}
                 className={`px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${
                   selectedAnswer
-                    ? 'bg-[#D62828] text-white hover:bg-[#B91F1F] shadow-lg hover:shadow-xl'
-                    : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                    ? 'bg-brand text-white hover:bg-brand-700 shadow-lg hover:shadow-xl'
+                    : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                 }`}
               >
                 Провери одговор
@@ -384,7 +392,7 @@ export default function PromoQuizPage() {
             ) : (
               <button
                 onClick={handleNextQuestion}
-                className="px-8 py-3 rounded-xl font-bold flex items-center gap-2 bg-[#D62828] text-white hover:bg-[#B91F1F] shadow-lg hover:shadow-xl transition-all"
+                className="px-8 py-3 rounded-xl font-bold flex items-center gap-2 bg-brand text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all"
               >
                 {isLastQuestion ? 'Заврши квиз' : 'Следеће питање'} <ArrowRight className="w-5 h-5" />
               </button>

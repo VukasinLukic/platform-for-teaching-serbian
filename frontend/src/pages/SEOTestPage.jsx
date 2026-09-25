@@ -4,9 +4,8 @@ import { CheckCircle, XCircle, Trophy, ArrowRight, ChevronRight } from 'lucide-r
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import SEO from '../components/SEO';
+import NotFoundPage from './NotFoundPage';
 import { seoTestovi } from '../data/seoTestovi';
-
-const DOMAIN = 'https://srpskiusrcu.rs';
 
 export default function SEOTestPage() {
   const { kategorija, slug } = useParams();
@@ -21,38 +20,12 @@ export default function SEOTestPage() {
   const [faza, setFaza] = useState('test'); // 'test' | 'rezultat'
 
   if (!test) {
-    return <Navigate to="/" replace />;
+    return <NotFoundPage />;
   }
 
   const canonicalPath = `/srpski-jezik/${kljuc}`;
 
-  const jsonLd = [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'LearningResource',
-      name: test.metaTitle,
-      description: test.metaDescription,
-      url: `${DOMAIN}${canonicalPath}`,
-      inLanguage: 'sr',
-      educationalLevel: 'MiddleSchool',
-      learningResourceType: 'Quiz',
-      provider: {
-        '@type': 'Organization',
-        name: 'Српски у Срцу',
-        url: DOMAIN,
-      },
-    },
-    {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Почетна', item: DOMAIN },
-        { '@type': 'ListItem', position: 2, name: 'Српски језик', item: `${DOMAIN}/srpski-jezik` },
-        { '@type': 'ListItem', position: 3, name: test.kategorijaNaslov, item: `${DOMAIN}/srpski-jezik/${kategorija}` },
-        { '@type': 'ListItem', position: 4, name: test.naslov, item: `${DOMAIN}${canonicalPath}` },
-      ],
-    },
-  ];
+
 
   const pitanje = test.pitanja[trenutno];
   const progress = ((trenutno + 1) / test.pitanja.length) * 100;
@@ -78,14 +51,8 @@ export default function SEOTestPage() {
     const procenat = Math.round((tacnih / ukupno) * 100);
 
     return (
-      <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
-        <SEO
-          title={test.metaTitle}
-          description={test.metaDescription}
-          canonical={canonicalPath}
-          keywords={test.keywords}
-          jsonLd={jsonLd}
-        />
+      <div className="min-h-screen bg-white font-sans text-ink">
+        <SEO />
         <Header />
         <div className="max-w-2xl mx-auto px-6 py-12">
           <div className="bg-white rounded-3xl p-8 md:p-12 border border-gray-100 shadow-xl text-center">
@@ -93,7 +60,7 @@ export default function SEOTestPage() {
               <Trophy className="w-8 h-8 text-yellow-600" />
             </div>
 
-            <h2 className="text-xl font-bold text-[#1A1A1A] mb-1">
+            <h2 className="text-xl font-bold text-ink mb-1">
               {procenat === 100 ? 'Савршено! Честитамо!' :
                procenat >= 80 ? 'Одлично знање!' :
                procenat >= 50 ? 'Добар резултат!' :
@@ -101,18 +68,18 @@ export default function SEOTestPage() {
             </h2>
             <p className="text-gray-500 text-sm mb-3">Ваш резултат:</p>
 
-            <div className="text-4xl font-black text-[#D62828] mb-6">
-              {tacnih} <span className="text-lg text-gray-400 font-medium">/ {ukupno}</span>
+            <div className="text-4xl font-black text-brand mb-6">
+              {tacnih} <span className="text-lg text-gray-500 font-medium">/ {ukupno}</span>
             </div>
 
             <p className="text-sm text-gray-500 mb-8">
-              Желиш да вежбаш још? На платформи те чека <span className="font-bold text-[#1A1A1A]">500+ питања</span> са видео лекцијама.
+              Желиш да вежбаш још? На платформи те чека <span className="font-bold text-ink">500+ питања</span> са видео лекцијама.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-3 justify-center mb-6">
               <button
                 onClick={() => navigate('/register')}
-                className="px-8 py-4 rounded-xl bg-[#D62828] text-white font-bold hover:bg-[#B91F1F] transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
+                className="px-8 py-4 rounded-xl bg-brand text-white font-bold hover:bg-brand-700 transition-all flex items-center justify-center gap-2 shadow-lg hover:shadow-xl"
               >
                 Направи налог — бесплатно
                 <ArrowRight className="w-5 h-5" />
@@ -127,7 +94,7 @@ export default function SEOTestPage() {
 
             <button
               onClick={() => { setTrenutno(0); setOdabrano(null); setTacnih(0); setFaza('test'); }}
-              className="text-sm text-gray-400 hover:text-[#D62828] transition-colors underline"
+              className="text-sm text-gray-500 hover:text-brand transition-colors underline"
             >
               Покушај поново
             </button>
@@ -139,29 +106,23 @@ export default function SEOTestPage() {
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
-      <SEO
-        title={test.metaTitle}
-        description={test.metaDescription}
-        canonical={canonicalPath}
-        keywords={test.keywords}
-        jsonLd={jsonLd}
-      />
+    <div className="min-h-screen bg-white font-sans text-ink">
+      <SEO />
       <Header />
 
       <div className="max-w-3xl mx-auto px-6 py-10">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-1 text-xs text-gray-400 mb-6 flex-wrap">
-          <Link to="/" className="hover:text-[#D62828] transition-colors">Почетна</Link>
+        <nav className="flex items-center gap-1 text-xs text-gray-500 mb-6 flex-wrap">
+          <Link to="/" className="hover:text-brand transition-colors">Почетна</Link>
           <ChevronRight className="w-3 h-3 flex-shrink-0" />
           <span>Српски језик</span>
           <ChevronRight className="w-3 h-3 flex-shrink-0" />
           <span>{test.kategorijaNaslov}</span>
           <ChevronRight className="w-3 h-3 flex-shrink-0" />
-          <span className="text-[#1A1A1A] font-medium">{test.naslov}</span>
+          <span className="text-ink font-medium">{test.naslov}</span>
         </nav>
 
-        <h1 className="text-2xl md:text-3xl font-bold text-[#1A1A1A] mb-3">{test.naslov}</h1>
+        <h1 className="text-2xl md:text-3xl font-bold text-ink mb-3">{test.naslov}</h1>
 
         {trenutno === 0 && (
           <p className="text-gray-600 mb-8 leading-relaxed">{test.uvod}</p>
@@ -175,7 +136,7 @@ export default function SEOTestPage() {
           </div>
           <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
             <div
-              className="h-full bg-[#D62828] transition-all duration-300 ease-out"
+              className="h-full bg-brand transition-all duration-300 ease-out"
               style={{ width: `${progress}%` }}
             />
           </div>
@@ -183,7 +144,7 @@ export default function SEOTestPage() {
 
         {/* Question card */}
         <div className="bg-white rounded-3xl p-6 md:p-8 shadow-sm border border-gray-100 mb-6">
-          <p className="text-lg md:text-xl font-normal text-[#1A1A1A] mb-8 leading-relaxed">
+          <p className="text-lg md:text-xl font-normal text-ink mb-8 leading-relaxed">
             {pitanje.pitanje}
           </p>
 
@@ -198,7 +159,7 @@ export default function SEOTestPage() {
                 } else if (idx === odabrano) {
                   cls += 'border-red-500 bg-red-50 text-red-700';
                 } else {
-                  cls += 'border-gray-100 text-gray-400';
+                  cls += 'border-gray-100 text-gray-500';
                 }
               } else {
                 cls += 'border-gray-100 hover:border-gray-300 text-gray-700';
@@ -239,7 +200,7 @@ export default function SEOTestPage() {
           <div className="flex justify-end">
             <button
               onClick={handleSledece}
-              className="px-8 py-3 rounded-xl font-bold flex items-center gap-2 bg-[#D62828] text-white hover:bg-[#B91F1F] shadow-lg hover:shadow-xl transition-all"
+              className="px-8 py-3 rounded-xl font-bold flex items-center gap-2 bg-brand text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all"
             >
               {trenutno + 1 === test.pitanja.length ? 'Заврши тест' : 'Следеће питање'}
               <ArrowRight className="w-5 h-5" />

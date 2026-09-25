@@ -55,18 +55,18 @@ export default function OnlineClassPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#F7F7F7] flex items-center justify-center">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#F2C94C] border-t-transparent"></div>
+      <div className="min-h-screen bg-surface flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-gold border-t-transparent"></div>
       </div>
     );
   }
 
   if (!course) {
     return (
-      <div className="min-h-screen bg-[#F7F7F7] flex items-center justify-center">
+      <div className="min-h-screen bg-surface flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-[#1A1A1A] mb-4">Časovi nisu pronađeni</h2>
-          <Button onClick={() => navigate('/courses')}>Nazad na kurseve</Button>
+          <h2 className="text-2xl font-bold text-ink mb-4">Часови нису пронађени</h2>
+          <Button onClick={() => navigate('/courses')}>Назад на курсеве</Button>
         </div>
       </div>
     );
@@ -90,21 +90,21 @@ export default function OnlineClassPage() {
   const spotsLeft = schedule.maxStudents - schedule.currentEnrolled;
 
   return (
-    <div className="min-h-screen bg-[#F7F7F7] font-sans text-[#1A1A1A]">
+    <div className="min-h-screen bg-surface font-sans text-ink">
       <Header />
 
       {/* HERO SECTION */}
-      <section className="bg-gradient-to-br from-[#1A1A1A] to-[#002244] text-white pt-12 pb-20 md:pt-16 md:pb-32 relative overflow-hidden">
+      <section className="bg-gradient-to-br from-ink to-info-950 text-white pt-12 pb-20 md:pt-16 md:pb-32 relative overflow-hidden">
         {/* Background Decor */}
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-[#F2C94C] opacity-10 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2"></div>
-        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-[#D62828] opacity-10 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/2"></div>
+        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-gold opacity-10 rounded-full blur-[100px] translate-x-1/2 -translate-y-1/2"></div>
+        <div className="absolute bottom-0 left-0 w-[400px] h-[400px] bg-brand opacity-10 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/2"></div>
 
         <div className="max-w-7xl mx-auto px-6 relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             {/* Left Content */}
             <div className="space-y-6 md:space-y-8">
-              <div className="inline-flex items-center gap-2 bg-[#D62828] text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-fade-in-up">
-                <Video className="w-4 h-4" /> Uživo Časovi
+              <div className="inline-flex items-center gap-2 bg-brand text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-fade-in-up">
+                <Video className="w-4 h-4" /> Уживо Часови
               </div>
 
               <h1 className="text-3xl md:text-6xl font-serif font-bold leading-tight">
@@ -118,15 +118,15 @@ export default function OnlineClassPage() {
               {/* Quick Stats */}
               <div className="grid grid-cols-3 gap-4 pt-4">
                 <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 text-center">
-                  <div className="text-3xl font-bold text-[#F2C94C]">{schedule.totalWeeks}</div>
+                  <div className="text-3xl font-bold text-gold">{schedule.totalWeeks}</div>
                   <div className="text-xs text-gray-300 mt-1">Sedmica</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 text-center">
-                  <div className="text-3xl font-bold text-[#D62828]">{schedule.totalClasses}</div>
-                  <div className="text-xs text-gray-300 mt-1">Časova</div>
+                  <div className="text-3xl font-bold text-brand">{schedule.totalClasses}</div>
+                  <div className="text-xs text-gray-300 mt-1">Часова</div>
                 </div>
                 <div className="bg-white/10 backdrop-blur-md rounded-2xl p-4 text-center">
-                  <div className="text-3xl font-bold text-[#FFD700]">{spotsLeft}</div>
+                  <div className="text-3xl font-bold text-gold">{spotsLeft}</div>
                   <div className="text-xs text-gray-300 mt-1">Slobodno</div>
                 </div>
               </div>
@@ -135,36 +135,36 @@ export default function OnlineClassPage() {
               <div className="flex gap-4 pt-4">
                 <button
                   onClick={() => setShowRegistrationForm(true)}
-                  className="bg-[#D62828] text-white px-10 py-5 rounded-full text-lg font-bold hover:bg-[#B91F1F] transition-all shadow-xl hover:shadow-[#D62828]/40 hover:-translate-y-1 flex items-center gap-3"
+                  className="bg-brand text-white px-10 py-5 rounded-full text-lg font-bold hover:bg-brand-700 transition-all shadow-xl hover:shadow-brand/40 motion-safe:hover:-translate-y-1 flex items-center gap-3"
                 >
-                  Prijavi se za Časove
+                  Пријави се за Часове
                 </button>
               </div>
             </div>
 
             {/* Right Content - Teacher Card */}
             <div className="relative hidden lg:block">
-              <div className="bg-white rounded-[3rem] p-8 shadow-2xl">
+              <div className="bg-white rounded-3xl p-8 shadow-2xl">
                 <div className="text-center mb-6">
-                  <div className="w-32 h-32 rounded-full bg-gradient-to-br from-[#1A1A1A] to-[#D62828] mx-auto mb-4 flex items-center justify-center text-white text-4xl font-bold">
+                  <div className="w-32 h-32 rounded-full bg-gradient-to-br from-ink to-brand mx-auto mb-4 flex items-center justify-center text-white text-4xl font-bold">
                     {course.teacherName?.charAt(0) || 'M'}
                   </div>
-                  <h3 className="text-2xl font-bold text-[#1A1A1A]">
+                  <h3 className="text-2xl font-bold text-ink">
                     {course.teacherName || 'Profesorka Marina'}
                   </h3>
                   <p className="text-gray-600 mt-2">
-                    Magistar srpskog jezika i književnosti
+                    Магистар српског језика и књижевности
                   </p>
                 </div>
 
-                <div className="bg-[#F7F7F7] rounded-2xl p-6 space-y-4">
+                <div className="bg-surface rounded-2xl p-6 space-y-4">
                   <p className="text-gray-700 text-sm leading-relaxed">
                     {course.teacherBio || 'Sa više od 10 godina iskustva u nastavi, pomažem učenicima da ostvare najbolje rezultate na maloj maturi.'}
                   </p>
 
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <Star className="w-4 h-4 fill-[#FFD700] text-[#FFD700]" />
-                    <span className="font-semibold">98% učenika zadovoljno</span>
+                    <Star className="w-4 h-4 fill-gold text-gold" />
+                    <span className="font-semibold">98% ученика задовољно</span>
                   </div>
                 </div>
               </div>
@@ -182,43 +182,43 @@ export default function OnlineClassPage() {
             <Card variant="elevated">
               <CardBody className="p-5 md:p-10">
                 <div className="flex items-center gap-4 mb-8">
-                  <div className="bg-[#F7F7F7] p-3 rounded-2xl">
-                    <Calendar className="w-8 h-8 text-[#1A1A1A]" />
+                  <div className="bg-surface p-3 rounded-2xl">
+                    <Calendar className="w-8 h-8 text-ink" />
                   </div>
-                  <h2 className="text-2xl font-serif font-bold">Raspored Časova</h2>
+                  <h2 className="text-2xl font-serif font-bold">Распоред Часова</h2>
                 </div>
 
                 <div className="space-y-6">
-                  <div className="bg-[#F7F7F7] rounded-2xl p-6">
+                  <div className="bg-surface rounded-2xl p-6">
                     <div className="grid md:grid-cols-2 gap-6">
                       <div>
-                        <div className="text-sm text-gray-600 mb-1">Početak</div>
-                        <div className="text-lg font-bold text-[#1A1A1A]">{schedule.startDate}</div>
+                        <div className="text-sm text-gray-600 mb-1">Почетак</div>
+                        <div className="text-lg font-bold text-ink">{schedule.startDate}</div>
                       </div>
                       <div>
                         <div className="text-sm text-gray-600 mb-1">Kraj</div>
-                        <div className="text-lg font-bold text-[#1A1A1A]">{schedule.endDate}</div>
+                        <div className="text-lg font-bold text-ink">{schedule.endDate}</div>
                       </div>
                     </div>
                   </div>
 
                   <div className="space-y-3">
                     <div className="font-semibold text-gray-700 flex items-center gap-2">
-                      <Clock className="w-5 h-5 text-[#D62828]" />
-                      Termini
+                      <Clock className="w-5 h-5 text-brand" />
+                      Термини
                     </div>
                     {schedule.sessions.map((session, idx) => (
                       <div key={idx} className="flex items-center justify-between bg-white border-2 border-gray-100 rounded-xl p-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-full bg-[#F2C94C] flex items-center justify-center font-bold text-[#1A1A1A]">
+                          <div className="w-10 h-10 rounded-full bg-gold flex items-center justify-center font-bold text-ink">
                             {session.day.charAt(0)}
                           </div>
                           <div>
-                            <div className="font-semibold text-[#1A1A1A]">{session.day}</div>
+                            <div className="font-semibold text-ink">{session.day}</div>
                             <div className="text-sm text-gray-500">{session.time}</div>
                           </div>
                         </div>
-                        <CheckCircle className="w-5 h-5 text-[#F2C94C]" />
+                        <CheckCircle className="w-5 h-5 text-gold" />
                       </div>
                     ))}
                   </div>
@@ -229,7 +229,7 @@ export default function OnlineClassPage() {
             {/* Benefits Card */}
             <Card variant="elevated">
               <CardBody className="p-5 md:p-10">
-                <h2 className="text-2xl font-serif font-bold mb-6">Šta dobijate?</h2>
+                <h2 className="text-2xl font-serif font-bold mb-6">Шта добијате?</h2>
 
                 <div className="space-y-4">
                   {[
@@ -242,7 +242,7 @@ export default function OnlineClassPage() {
                     'WhatsApp grupa za pitanja'
                   ].map((benefit, idx) => (
                     <div key={idx} className="flex items-center gap-3">
-                      <CheckCircle className="w-5 h-5 text-[#F2C94C] flex-shrink-0" />
+                      <CheckCircle className="w-5 h-5 text-gold flex-shrink-0" />
                       <span className="text-gray-700">{benefit}</span>
                     </div>
                   ))}
@@ -258,7 +258,7 @@ export default function OnlineClassPage() {
               <CardBody className="p-8">
                 <div className="text-center mb-6">
                   <div className="text-sm text-gray-600 mb-2">Cena paketa</div>
-                  <div className="text-4xl font-black text-[#D62828]">
+                  <div className="text-4xl font-black text-brand">
                     {formatPrice(course.price)}
                   </div>
                   <div className="text-sm text-gray-500 mt-2">
@@ -269,11 +269,11 @@ export default function OnlineClassPage() {
                 <div className="space-y-4 mb-6">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-gray-600">Dostupna mesta:</span>
-                    <span className="font-bold text-[#1A1A1A]">{spotsLeft} / {schedule.maxStudents}</span>
+                    <span className="font-bold text-ink">{spotsLeft} / {schedule.maxStudents}</span>
                   </div>
                   <div className="w-full bg-gray-100 rounded-full h-2">
                     <div
-                      className="bg-[#F2C94C] h-full rounded-full transition-all"
+                      className="bg-gold h-full rounded-full transition-all"
                       style={{ width: `${(schedule.currentEnrolled / schedule.maxStudents) * 100}%` }}
                     />
                   </div>
@@ -281,15 +281,15 @@ export default function OnlineClassPage() {
 
                 <button
                   onClick={() => setShowRegistrationForm(true)}
-                  className="w-full bg-[#D62828] text-white py-4 rounded-xl font-bold hover:bg-[#B91F1F] transition-all shadow-lg flex items-center justify-center gap-2"
+                  className="w-full bg-brand text-white py-4 rounded-xl font-bold hover:bg-brand-700 transition-all shadow-lg flex items-center justify-center gap-2"
                 >
                   <Users className="w-5 h-5" />
-                  Prijavi se za Časove
+                  Пријави се за Часове
                 </button>
 
                 <div className="mt-6 pt-6 border-t border-gray-200 text-center text-sm text-gray-600">
-                  <p>📞 Pitanja? Pozovite nas</p>
-                  <a href="tel:+381641234567" className="font-bold text-[#1A1A1A] hover:text-[#D62828]">
+                  <p>📞 Питања? Позовите нас</p>
+                  <a href="tel:+381641234567" className="font-bold text-ink hover:text-brand">
                     +381 64 123 4567
                   </a>
                 </div>
@@ -310,22 +310,22 @@ export default function OnlineClassPage() {
               <X className="w-6 h-6" />
             </button>
 
-            <h3 className="text-3xl font-bold text-[#1A1A1A] mb-2">Prijava za Časove</h3>
-            <p className="text-gray-600 mb-8">Popunite formular i javićemo vam se u najkraćem roku.</p>
+            <h3 className="text-3xl font-bold text-ink mb-2">Пријава за Часове</h3>
+            <p className="text-gray-600 mb-8">Попуните формулар и јавићемо вам се у најкраћем року.</p>
 
             <form onSubmit={handleSubmitRegistration} className="space-y-6">
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">Ime i prezime</label>
+                <label className="block text-sm font-medium text-gray-900 mb-2">Име и презиме</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <User className="h-5 w-5 text-gray-400" />
+                    <User className="h-5 w-5 text-gray-500" />
                   </div>
                   <input
                     type="text"
                     value={formData.fullName}
                     onChange={(e) => setFormData({ ...formData, fullName: e.target.value })}
-                    className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A1A1A] focus:border-[#1A1A1A]"
-                    placeholder="Petar Petrović"
+                    className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ink focus:border-ink"
+                    placeholder="Петар Петровић"
                     required
                   />
                 </div>
@@ -335,13 +335,13 @@ export default function OnlineClassPage() {
                 <label className="block text-sm font-medium text-gray-900 mb-2">Email</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Mail className="h-5 w-5 text-gray-400" />
+                    <Mail className="h-5 w-5 text-gray-500" />
                   </div>
                   <input
                     type="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                    className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A1A1A] focus:border-[#1A1A1A]"
+                    className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ink focus:border-ink"
                     placeholder="petar@primer.com"
                     required
                   />
@@ -349,16 +349,16 @@ export default function OnlineClassPage() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-900 mb-2">Telefon</label>
+                <label className="block text-sm font-medium text-gray-900 mb-2">Телефон</label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Phone className="h-5 w-5 text-gray-400" />
+                    <Phone className="h-5 w-5 text-gray-500" />
                   </div>
                   <input
                     type="tel"
                     value={formData.phone}
                     onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                    className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A1A1A] focus:border-[#1A1A1A]"
+                    className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ink focus:border-ink"
                     placeholder="+381 64 123 4567"
                     required
                   />
@@ -370,9 +370,9 @@ export default function OnlineClassPage() {
                 <select
                   value={formData.level}
                   onChange={(e) => setFormData({ ...formData, level: e.target.value })}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A1A1A] focus:border-[#1A1A1A]"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ink focus:border-ink"
                 >
-                  <option value="beginner">Početni</option>
+                  <option value="beginner">Почетни</option>
                   <option value="intermediate">Srednji</option>
                   <option value="advanced">Napredni</option>
                 </select>
@@ -382,14 +382,14 @@ export default function OnlineClassPage() {
                 <label className="block text-sm font-medium text-gray-900 mb-2">Cilj / Motivacija (opciono)</label>
                 <div className="relative">
                   <div className="absolute top-3 left-3 pointer-events-none">
-                    <MessageSquare className="h-5 w-5 text-gray-400" />
+                    <MessageSquare className="h-5 w-5 text-gray-500" />
                   </div>
                   <textarea
                     value={formData.motivation}
                     onChange={(e) => setFormData({ ...formData, motivation: e.target.value })}
-                    className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#1A1A1A] focus:border-[#1A1A1A]"
+                    className="pl-10 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-ink focus:border-ink"
                     rows={4}
-                    placeholder="Šta želite da postignete sa ovim časovima?"
+                    placeholder="Шта желите да постигнете са овим часовима?"
                   />
                 </div>
               </div>
@@ -397,16 +397,16 @@ export default function OnlineClassPage() {
               <div className="flex gap-4 pt-6">
                 <button
                   type="submit"
-                  className="flex-1 bg-[#D62828] text-white py-4 rounded-lg font-bold hover:bg-[#B91F1F] transition-all"
+                  className="flex-1 bg-brand text-white py-4 rounded-lg font-bold hover:bg-brand-700 transition-all"
                 >
-                  Pošalji Prijavu
+                  Пошаљи Пријаву
                 </button>
                 <button
                   type="button"
                   onClick={() => setShowRegistrationForm(false)}
                   className="flex-1 bg-gray-100 text-gray-700 py-4 rounded-lg font-bold hover:bg-gray-200 transition-all"
                 >
-                  Otkaži
+                  Откажи
                 </button>
               </div>
             </form>

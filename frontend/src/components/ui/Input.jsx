@@ -17,14 +17,14 @@ const Input = forwardRef(
     return (
       <div className="w-full">
         {label && (
-          <label className="block text-sm font-medium text-gray-700 mb-2">
-            {label} {required && <span className="text-red-500">*</span>}
+          <label htmlFor={props.id} className="block text-sm font-semibold text-ink mb-2">
+            {label} {required && <span className="text-brand" aria-hidden="true">*</span>}
           </label>
         )}
 
         <div className="relative">
           {LeftIcon && (
-            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-400 pointer-events-none">
               <LeftIcon className="w-5 h-5" />
             </div>
           )}
@@ -32,35 +32,35 @@ const Input = forwardRef(
           <input
             ref={ref}
             className={`
-              w-full px-4 py-3 rounded-xl border-2
+              w-full h-12 px-4 rounded-xl border bg-white text-ink
               ${LeftIcon ? 'pl-12' : ''}
               ${RightIcon ? 'pr-12' : ''}
               ${error
-                ? 'border-red-300 focus:border-red-500 focus:ring-red-200'
-                : 'border-gray-200 focus:border-[#BFECC9] focus:ring-[#BFECC9]/20'
+                ? 'border-danger-500 focus:border-danger focus:ring-danger/15'
+                : 'border-ink-200 hover:border-ink-300 focus:border-brand focus:ring-brand/15'
               }
               focus:ring-4 focus:outline-none
               transition-all duration-200
-              placeholder:text-gray-400
-              disabled:bg-gray-50 disabled:cursor-not-allowed
+              placeholder:text-ink-400
+              disabled:bg-surface disabled:cursor-not-allowed
               ${className}
             `}
             {...props}
           />
 
           {RightIcon && (
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400">
+            <div className="absolute right-4 top-1/2 -translate-y-1/2 text-ink-400">
               <RightIcon className="w-5 h-5" />
             </div>
           )}
         </div>
 
         {error && (
-          <p className="mt-2 text-sm text-red-600">{error}</p>
+          <p className="mt-2 text-sm text-danger" role="alert">{error}</p>
         )}
 
         {helperText && !error && (
-          <p className="mt-2 text-xs text-gray-500">{helperText}</p>
+          <p className="mt-2 text-xs text-ink-500">{helperText}</p>
         )}
       </div>
     );

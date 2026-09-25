@@ -1,3 +1,6 @@
+// DISABLED: intentionally NOT exported from index.js — anyone could call it.
+// Kept only for reference. Do not re-export. Use scripts/setAdminClaim.js instead.
+
 /**
  * Initialize Admin Custom Claim
  * One-time function to set custom claim for the first admin user

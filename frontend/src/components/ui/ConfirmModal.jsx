@@ -49,11 +49,11 @@ export default function ConfirmModal({
           </button>
           <div className="text-center mb-6">
             <div className="flex justify-center mb-4">{getIcon()}</div>
-            <h2 className="text-2xl font-bold text-[#1A1A1A] mb-2">{title}</h2>
+            <h2 className="text-2xl font-bold text-ink mb-2">{title}</h2>
             {message && <p className="text-gray-600 whitespace-pre-line">{message}</p>}
           </div>
           <div className="flex gap-3">
-            <button onClick={onClose} className="flex-1 px-6 py-3 bg-gray-100 text-[#1A1A1A] rounded-xl font-bold hover:bg-gray-200 transition-all">
+            <button onClick={onClose} className="flex-1 px-6 py-3 bg-gray-100 text-ink rounded-xl font-bold hover:bg-gray-200 transition-all">
               {cancelText}
             </button>
             <button onClick={() => { onConfirm(); onClose(); }} className={'flex-1 px-6 py-3 text-white rounded-xl font-bold transition-all ' + getConfirmButtonClass()}>

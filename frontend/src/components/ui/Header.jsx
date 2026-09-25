@@ -1,34 +1,435 @@
-import { Link } from 'react-router-dom';
-import { useState } from 'react';
-import {
-  Menu,
-  X,
-  Home,
-  BookOpen,
-  Video,
-  Info,
-  Mail,
-  LayoutDashboard,
-  ShieldCheck,
-  LogOut,
-  LogIn,
-  UserPlus,
-  ChevronRight,
-} from 'lucide-react';
+import { Link, NavLink, useLocation } from 'react-router-dom';
+import { useCallback, useEffect, useId, useRef, useState } from 'react';
+import { Menu, X, ChevronDown, ClipboardList, GraduationCap, ListChecks, LayoutDashboard, ShieldCheck, LogOut, Mail, CircleHelp } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
-import Button from './Button';
+import ScriptSwitcher from '../seo/ScriptSwitcher';
 
-const NAV_LINKS = [
-  { to: '/', label: 'Почетна', icon: Home },
-  { to: '/courses', label: 'Курсеви', icon: BookOpen },
-  { to: '/online-nastava', label: 'Online настава', icon: Video },
-  { to: '/about', label: 'О нама', icon: Info },
-  { to: '/contact', label: 'Контакт', icon: Mail },
+// Primary navigation (Contact and FAQ live in the footer and in the mobile menu).
+const NAV_ITEMS = [
+  { to: '/courses', label: 'Курсеви' },
+  { to: '/online-nastava', label: 'Онлајн настава' },
+  { id: 'tests', label: 'Тестови' },
+  { to: '/blog', label: 'Блог' },
+  { to: '/about', label: 'О нама' },
 ];
 
-export default function Header({ transparent = false }) {
+const TEST_LINKS = [
+  { to: '/inicijalni-test/5', label: 'Иницијални тест — 5. разред', icon: ClipboardList },
+  { to: '/inicijalni-test/6', label: 'Иницијални тест — 6. разред', icon: ClipboardList },
+  { to: '/inicijalni-test/7', label: 'Иницијални тест — 7. разред', icon: ClipboardList },
+  { to: '/inicijalni-test/8', label: 'Иницијални тест — 8. разред', icon: ClipboardList },
+  { to: '/probni-prijemni', label: 'Пробни пријемни', hint: 'Бесплатно · 20 питања', icon: GraduationCap },
+  { to: '/kvizovi', label: 'Квизови', hint: 'Вежбај по областима', icon: ListChecks },
+];
+
+const TEST_PATH_RE = /^(\/lat)?\/(inicijalni-test|probni-prijemni|kvizovi|quizzes)(\/|$)/;
+
+const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
+
+const desktopLinkClass = ({ isActive }) =>
+  `relative inline-flex items-center h-10 px-3 rounded-full text-[15px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
+    isActive ? 'text-brand bg-red-50' : 'text-ink hover:text-brand hover:bg-red-50/60'
+  }`;
+
+function useScrolled(threshold = 8) {
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > threshold);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, [threshold]);
+  return scrolled;
+}
+
+/** Accessible "Тестови" dropdown: button + menu of links, keyboard and Escape aware. */
+function TestsDropdown({ active }) {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef(null);
+  const buttonRef = useRef(null);
+  const menuId = useId();
+  const location = useLocation();
+
+  useEffect(() => setOpen(false), [location.pathname]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const onPointer = (e) => {
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) setOpen(false);
+    };
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        buttonRef.current?.focus();
+      }
+    };
+    document.addEventListener('pointerdown', onPointer);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('pointerdown', onPointer);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open]);
+
+  const focusItem = (index) => {
+    const items = wrapRef.current?.querySelectorAll('[data-menu-item]');
+    if (!items?.length) return;
+    const i = (index + items.length) % items.length;
+    items[i].focus();
+  };
+
+  const onButtonKeyDown = (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && open) {
+      e.preventDefault();
+      setOpen(false);
+      return;
+    }
+    if (e.key === 'ArrowDown' || e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      setOpen(true);
+      requestAnimationFrame(() => focusItem(0));
+    }
+  };
+
+  const onMenuKeyDown = (e) => {
+    const items = Array.from(wrapRef.current?.querySelectorAll('[data-menu-item]') || []);
+    const current = items.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      focusItem(current + 1);
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      focusItem(current - 1);
+    } else if (e.key === 'Home') {
+      e.preventDefault();
+      focusItem(0);
+    } else if (e.key === 'End') {
+      e.preventDefault();
+      focusItem(items.length - 1);
+    } else if (e.key === 'Tab') {
+      setOpen(false);
+    }
+  };
+
+  return (
+    <div ref={wrapRef} className="relative">
+      <button
+        ref={buttonRef}
+        type="button"
+        aria-expanded={open}
+        aria-controls={menuId}
+        aria-haspopup="true"
+        onClick={() => setOpen((v) => !v)}
+        onKeyDown={onButtonKeyDown}
+        className={`${desktopLinkClass({ isActive: active })} gap-1`}
+      >
+        Тестови
+        <ChevronDown
+          className={`w-4 h-4 motion-safe:transition-transform ${open ? 'rotate-180' : ''}`}
+          aria-hidden="true"
+        />
+      </button>
+
+      {open && (
+        // pt-2 keeps the hover bridge between button and panel
+        <div className="absolute left-1/2 -translate-x-1/2 top-full pt-2 z-50">
+          <ul
+            id={menuId}
+            onKeyDown={onMenuKeyDown}
+            className="w-[min(22rem,calc(100vw-2rem))] bg-white rounded-2xl shadow-2xl ring-1 ring-black/5 p-2 motion-safe:animate-dropdown-in"
+          >
+            <li className="px-3 pt-2 pb-1 text-xs font-bold uppercase tracking-wider text-gray-500">
+              Иницијални тестови (бесплатно)
+            </li>
+            <li className="grid grid-cols-4 gap-1.5 px-1 pb-2">
+              {TEST_LINKS.slice(0, 4).map((t) => (
+                <NavLink
+                  key={t.to}
+                  to={t.to}
+                  data-menu-item
+                  aria-label={t.label}
+                  className={({ isActive }) =>
+                    `flex flex-col items-center justify-center rounded-xl py-2.5 border text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
+                      isActive
+                        ? 'border-brand bg-red-50 text-brand'
+                        : 'border-gray-100 hover:border-brand/40 hover:bg-red-50/60 text-ink'
+                    }`
+                  }
+                >
+                  <span className="text-lg font-black leading-none">{t.to.slice(-1)}.</span>
+                  <span className="text-xs text-gray-500 mt-1">разред</span>
+                </NavLink>
+              ))}
+            </li>
+            <li role="separator" className="h-px bg-gray-100 mx-2 my-1" />
+            {TEST_LINKS.slice(4).map((t) => (
+              <li key={t.to}>
+                <NavLink
+                  to={t.to}
+                  data-menu-item
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
+                      isActive ? 'bg-red-50 text-brand' : 'hover:bg-gray-50 text-ink'
+                    }`
+                  }
+                >
+                  <span className="w-9 h-9 rounded-lg bg-red-50 text-brand flex items-center justify-center flex-shrink-0">
+                    <t.icon className="w-5 h-5" aria-hidden="true" />
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block text-sm font-bold">{t.label}</span>
+                    {t.hint && <span className="block text-xs text-gray-500">{t.hint}</span>}
+                  </span>
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Full-height mobile menu dialog with focus trap, Escape, scroll lock. */
+function MobileMenu({ open, onClose, user, userProfile, onLogout, scriptSwitcher }) {
+  const panelRef = useRef(null);
+  const titleId = useId();
+
+  useEffect(() => {
+    if (!open) return undefined;
+    const previouslyFocused = document.activeElement;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
+    const focusTimer = requestAnimationFrame(() => {
+      panelRef.current?.querySelector('[data-autofocus]')?.focus();
+    });
+
+    const onKey = (e) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose();
+        return;
+      }
+      if (e.key !== 'Tab' || !panelRef.current) return;
+      const nodes = Array.from(panelRef.current.querySelectorAll(FOCUSABLE));
+      if (!nodes.length) return;
+      const first = nodes[0];
+      const last = nodes[nodes.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      cancelAnimationFrame(focusTimer);
+      document.body.style.overflow = originalOverflow;
+      document.removeEventListener('keydown', onKey);
+      if (previouslyFocused && typeof previouslyFocused.focus === 'function') previouslyFocused.focus();
+    };
+  }, [open, onClose]);
+
+  if (!open) return null;
+
+  const rowClass = ({ isActive }) =>
+    `flex items-center justify-between min-h-[48px] px-4 rounded-xl text-base font-semibold transition-colors ${
+      isActive ? 'bg-red-50 text-brand' : 'text-ink hover:bg-gray-50'
+    }`;
+
+  return (
+    <div className="fixed inset-0 z-[80] lg:hidden">
+      <div
+        className="absolute inset-0 bg-ink/50 motion-safe:animate-overlay-fade"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="absolute inset-y-0 right-0 w-full sm:w-[24rem] bg-white shadow-2xl flex flex-col motion-safe:animate-drawer-in-right"
+        style={{ paddingBottom: 'env(safe-area-inset-bottom)', paddingRight: 'env(safe-area-inset-right)' }}
+      >
+        <div className="flex items-center justify-between h-14 px-4 border-b border-gray-100 flex-shrink-0">
+          <h2 id={titleId} className="text-base font-bold text-ink">
+            Мени
+          </h2>
+          <button
+            type="button"
+            data-autofocus
+            onClick={onClose}
+            className="w-11 h-11 -mr-2 flex items-center justify-center rounded-full text-ink hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+            aria-label="Затвори мени"
+          >
+            <X size={22} />
+          </button>
+        </div>
+
+        <nav aria-label="Главна навигација" className="flex-1 overflow-y-auto overscroll-contain px-3 py-4">
+          <ul className="space-y-1">
+            <li>
+              <NavLink to="/" end className={rowClass}>
+                Почетна
+              </NavLink>
+            </li>
+            {NAV_ITEMS.filter((i) => i.to).slice(0, 2).map((item) => (
+              <li key={item.to}>
+                <NavLink to={item.to} className={rowClass}>
+                  {item.label}
+                </NavLink>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-4 rounded-2xl bg-brand-50 border border-red-100 p-3">
+            <p className="px-1 pb-2 text-xs font-bold uppercase tracking-wider text-gray-500">Тестови</p>
+            <div className="grid grid-cols-4 gap-2">
+              {TEST_LINKS.slice(0, 4).map((t) => (
+                <NavLink
+                  key={t.to}
+                  to={t.to}
+                  aria-label={t.label}
+                  className={({ isActive }) =>
+                    `flex flex-col items-center justify-center min-h-[56px] rounded-xl border bg-white ${
+                      isActive ? 'border-brand text-brand' : 'border-gray-200 text-ink'
+                    }`
+                  }
+                >
+                  <span className="text-lg font-black leading-none">{t.to.slice(-1)}.</span>
+                  <span className="text-xs text-gray-500 mt-0.5">разред</span>
+                </NavLink>
+              ))}
+            </div>
+            <ul className="mt-2 space-y-1">
+              {TEST_LINKS.slice(4).map((t) => (
+                <li key={t.to}>
+                  <NavLink to={t.to} className={rowClass}>
+                    <span className="flex items-center gap-3">
+                      <t.icon className="w-5 h-5 text-brand" aria-hidden="true" />
+                      {t.label}
+                    </span>
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <ul className="mt-4 space-y-1">
+            {NAV_ITEMS.filter((i) => i.to).slice(2).map((item) => (
+              <li key={item.to}>
+                <NavLink to={item.to} className={rowClass}>
+                  {item.label}
+                </NavLink>
+              </li>
+            ))}
+            <li>
+              <NavLink to="/contact" className={rowClass}>
+                <span className="flex items-center gap-3">
+                  <Mail className="w-5 h-5 text-gray-500" aria-hidden="true" /> Контакт
+                </span>
+              </NavLink>
+            </li>
+            <li>
+              <NavLink to="/faq" className={rowClass}>
+                <span className="flex items-center gap-3">
+                  <CircleHelp className="w-5 h-5 text-gray-500" aria-hidden="true" /> Честа питања
+                </span>
+              </NavLink>
+            </li>
+          </ul>
+
+          {/* INTEGRATION SLOT (mobile): ScriptSwitcher renders here when passed to <Header scriptSwitcher={...} /> */}
+          {scriptSwitcher && <div className="mt-4 px-1">{scriptSwitcher}</div>}
+        </nav>
+
+        <div className="flex-shrink-0 border-t border-gray-100 p-4 space-y-2">
+          {user ? (
+            <>
+              <div className="grid grid-cols-2 gap-2">
+                <Link
+                  to="/dashboard"
+                  className="flex items-center justify-center gap-2 min-h-[48px] rounded-full bg-ink text-white font-bold"
+                >
+                  <LayoutDashboard className="w-4 h-4" aria-hidden="true" /> Мој панел
+                </Link>
+                {userProfile?.role === 'admin' ? (
+                  <Link
+                    to="/admin"
+                    className="flex items-center justify-center gap-2 min-h-[48px] rounded-full border-2 border-gray-200 text-ink font-bold"
+                  >
+                    <ShieldCheck className="w-4 h-4" aria-hidden="true" /> Админ
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={onLogout}
+                    className="flex items-center justify-center gap-2 min-h-[48px] rounded-full border-2 border-gray-200 text-ink font-bold"
+                  >
+                    <LogOut className="w-4 h-4" aria-hidden="true" /> Одјави се
+                  </button>
+                )}
+              </div>
+              {userProfile?.role === 'admin' && (
+                <button
+                  type="button"
+                  onClick={onLogout}
+                  className="w-full min-h-[44px] rounded-full text-gray-600 font-semibold hover:bg-gray-50"
+                >
+                  Одјави се
+                </button>
+              )}
+            </>
+          ) : (
+            <div className="grid grid-cols-2 gap-2">
+              <Link
+                to="/login"
+                className="flex items-center justify-center min-h-[48px] rounded-full border-2 border-gray-200 text-ink font-bold"
+              >
+                Пријави се
+              </Link>
+              <Link
+                to="/register"
+                className="flex items-center justify-center min-h-[48px] rounded-full bg-brand text-white font-bold shadow-md shadow-red-900/10"
+              >
+                Региструј се
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/**
+ * Site header.
+ *
+ * @param {boolean} [transparent]  translucent background (kept for existing callers)
+ * @param {React.ReactNode} [scriptSwitcher]
+ *   INTEGRATION SLOT: the Cyrillic/Latin `ScriptSwitcher` (components/seo/ScriptSwitcher.jsx,
+ *   built by the SEO agent) is mounted here. During integration either pass it from pages
+ *   (`<Header scriptSwitcher={<ScriptSwitcher />} />`) or import it in this file and use it
+ *   as the default value of this prop. It renders next to the auth buttons on desktop and
+ *   inside the mobile menu.
+ */
+export default function Header({ transparent = false, scriptSwitcher = <ScriptSwitcher /> }) {
   const { user, logout, userProfile } = useAuthStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const scrolled = useScrolled();
+  const location = useLocation();
+  const testsActive = TEST_PATH_RE.test(location.pathname);
+
+  // Close the mobile menu on every route change.
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname, location.search]);
+
+  const closeMenu = useCallback(() => setMobileMenuOpen(false), []);
 
   const handleLogout = () => {
     logout();
@@ -38,217 +439,133 @@ export default function Header({ transparent = false }) {
   return (
     <>
       <header
-        className={`sticky top-0 z-50 shadow-lg transition-all duration-300 ${
-          transparent ? 'bg-white/95 backdrop-blur-lg' : 'bg-white'
+        className={`sticky top-0 z-50 border-b motion-safe:transition-[background-color,box-shadow,border-color] motion-safe:duration-300 ${
+          scrolled
+            ? 'bg-white/90 backdrop-blur-md border-gray-200/80 shadow-[0_6px_24px_-12px_rgba(26,26,26,0.25)]'
+            : transparent
+              ? 'bg-white/70 backdrop-blur-md border-transparent'
+              : 'bg-white border-gray-100'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-6 py-2">
-          <div className="flex items-center justify-between">
-            {/* Logo */}
-            <Link to="/" className="flex items-center group transition-transform hover:scale-105">
-              <img
-                src="/icon.webp"
-                alt="СРПСКИ У СРЦУ"
-                className="h-16 md:h-20 w-auto py-2"
-                width="80"
-                height="80"
-              />
-            </Link>
+        <div
+          className={`max-w-7xl mx-auto px-4 sm:px-6 flex items-center justify-between gap-4 h-14 motion-safe:transition-[height] motion-safe:duration-300 ${
+            scrolled ? 'lg:h-14' : 'lg:h-[72px]'
+          }`}
+        >
+          {/* Logo */}
+          <Link
+            to="/"
+            className="flex items-center flex-shrink-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+            aria-label="Српски у срцу — почетна"
+          >
+            <img
+              src="/footer.webp"
+              alt=""
+              className={`w-auto motion-safe:transition-[height] motion-safe:duration-300 h-9 ${scrolled ? 'lg:h-9' : 'lg:h-11'}`}
+              width="766"
+              height="291"
+            />
+          </Link>
 
-            {/* Desktop Navigation */}
-            <nav className="hidden lg:flex items-center gap-8 text-sm font-medium">
-              <Link to="/" className="text-[#1A1A1A] hover:text-[#D62828] transition">
-                Почетна
-              </Link>
-
-              <Link to="/courses" className="text-[#1A1A1A] hover:text-[#D62828] transition">
-                Курсеви
-              </Link>
-
-              <Link to="/online-nastava" className="text-[#1A1A1A] hover:text-[#D62828] transition">
-                Online настава
-              </Link>
-
-              <Link to="/about" className="text-[#1A1A1A] hover:text-[#D62828] transition">
-                О нама
-              </Link>
-
-              <Link to="/contact" className="text-[#1A1A1A] hover:text-[#D62828] transition">
-                Контакт
-              </Link>
-            </nav>
-
-            {/* Desktop Auth Buttons */}
-            <div className="hidden lg:flex items-center gap-4">
-              {user ? (
-                <>
-                  <Link
-                    to="/dashboard"
-                    className="text-[#1A1A1A] hover:text-[#D62828] transition text-sm font-medium"
-                  >
-                    Ваш панел
-                  </Link>
-                  {userProfile?.role === 'admin' && (
-                    <Link
-                      to="/admin"
-                      className="text-[#1A1A1A] hover:text-[#D62828] transition text-sm font-medium"
-                    >
-                      Админ
-                    </Link>
-                  )}
-                  <Button variant="outline" size="sm" onClick={logout}>
-                    Одјави се
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Link to="/login">
-                    <Button variant="ghost" size="sm" className="text-[#1A1A1A] hover:text-[#D62828]">
-                      Пријави се
-                    </Button>
-                  </Link>
-                  <Link to="/register">
-                    <Button variant="primary" size="sm">
-                      Региструј се
-                    </Button>
-                  </Link>
-                </>
+          {/* Desktop navigation */}
+          <nav aria-label="Главна навигација" className="hidden lg:block">
+            <ul className="flex items-center gap-1">
+              {NAV_ITEMS.map((item) =>
+                item.id === 'tests' ? (
+                  <li key="tests">
+                    <TestsDropdown active={testsActive} />
+                  </li>
+                ) : (
+                  <li key={item.to}>
+                    <NavLink to={item.to} className={desktopLinkClass}>
+                      {item.label}
+                    </NavLink>
+                  </li>
+                )
               )}
-            </div>
+            </ul>
+          </nav>
 
-            {/* Mobile Burger Menu Button */}
+          {/* Desktop actions */}
+          <div className="hidden lg:flex items-center gap-2">
+            {/* INTEGRATION SLOT (desktop): ScriptSwitcher */}
+            {scriptSwitcher}
+            {user ? (
+              <>
+                <NavLink to="/dashboard" className={desktopLinkClass}>
+                  Мој панел
+                </NavLink>
+                {userProfile?.role === 'admin' && (
+                  <NavLink to="/admin" className={desktopLinkClass}>
+                    Админ
+                  </NavLink>
+                )}
+                <button
+                  type="button"
+                  onClick={logout}
+                  className="inline-flex items-center h-10 px-4 rounded-full border-2 border-gray-200 text-sm font-bold text-ink hover:border-ink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                >
+                  Одјави се
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  to="/login"
+                  className="inline-flex items-center h-10 px-4 rounded-full text-[15px] font-semibold text-ink hover:text-brand transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+                >
+                  Пријави се
+                </Link>
+                <Link
+                  to="/register"
+                  className="inline-flex items-center h-10 px-5 rounded-full bg-brand text-white text-[15px] font-bold shadow-md shadow-red-900/10 hover:bg-brand-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand"
+                >
+                  Региструј се
+                </Link>
+              </>
+            )}
+          </div>
+
+          {/* Mobile: primary CTA + burger */}
+          <div className="flex items-center gap-1 lg:hidden">
+            {!user && (
+              <Link
+                to="/register"
+                className="hidden min-[400px]:inline-flex items-center h-9 px-4 rounded-full bg-brand text-white text-sm font-bold"
+              >
+                Региструј се
+              </Link>
+            )}
+            {user && (
+              <Link
+                to="/dashboard"
+                className="inline-flex items-center h-9 px-3 rounded-full text-sm font-semibold text-ink hover:bg-gray-100"
+              >
+                Мој панел
+              </Link>
+            )}
             <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="lg:hidden p-2 text-[#1A1A1A] hover:text-[#D62828] transition"
-              aria-label={mobileMenuOpen ? 'Затвори мени' : 'Отвори мени'}
+              type="button"
+              onClick={() => setMobileMenuOpen(true)}
+              className="w-11 h-11 -mr-2 flex items-center justify-center rounded-full text-ink hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
+              aria-label="Отвори мени"
               aria-expanded={mobileMenuOpen}
+              aria-haspopup="dialog"
             >
-              {mobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
+              <Menu size={24} />
             </button>
           </div>
         </div>
       </header>
 
-      {/* Mobile Menu Overlay */}
-      {mobileMenuOpen && (
-        <div className="fixed inset-0 z-[60] lg:hidden">
-          <div
-            className="absolute inset-0 bg-[#1A1A1A]/55 backdrop-blur-sm menu-backdrop-in"
-            onClick={() => setMobileMenuOpen(false)}
-          />
-          <div className="absolute top-0 right-0 flex h-full w-[86%] max-w-sm flex-col bg-white shadow-2xl menu-panel-in">
-            {/* Menu Header */}
-            <div className="flex items-center justify-between bg-gradient-to-r from-[#D62828] to-[#B91F1F] px-5 py-5 flex-shrink-0">
-              <div className="flex items-center gap-3">
-                <img src="/icon.webp" alt="" className="h-11 w-11 rounded-xl bg-white/15 p-1" />
-                <span className="text-white font-bold text-lg leading-tight">Мени</span>
-              </div>
-              <button
-                onClick={() => setMobileMenuOpen(false)}
-                className="text-white/85 hover:text-white hover:bg-white/15 p-2 rounded-full transition-colors"
-                aria-label="Затвори мени"
-              >
-                <X size={22} />
-              </button>
-            </div>
-
-            {/* Profile chip */}
-            {user && (
-              <Link
-                to="/dashboard"
-                onClick={() => setMobileMenuOpen(false)}
-                className="flex items-center gap-3 mx-5 mt-5 p-3 rounded-2xl bg-[#FFF5F5] border border-[#D62828]/10 flex-shrink-0 menu-item-in"
-                style={{ animationDelay: '40ms' }}
-              >
-                <span className="flex h-11 w-11 flex-none items-center justify-center rounded-full bg-gradient-to-br from-[#D62828] to-[#B91F1F] text-white font-bold text-lg">
-                  {userProfile?.ime?.charAt(0)?.toUpperCase() || 'У'}
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate font-bold text-[#1A1A1A] text-sm">
-                    {userProfile?.ime || 'Твој налог'}
-                  </span>
-                  <span className="block text-xs text-gray-500">Отвори свој панел</span>
-                </span>
-                <ChevronRight className="h-4 w-4 flex-none text-[#D62828]" />
-              </Link>
-            )}
-
-            {/* Menu Content */}
-            <nav className="flex flex-1 flex-col overflow-y-auto px-5 py-5 gap-1">
-              {NAV_LINKS.map(({ to, label, icon: Icon }, index) => (
-                <Link
-                  key={to}
-                  to={to}
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="group flex items-center gap-3.5 rounded-2xl px-4 py-3.5 font-semibold text-[15px] text-[#1A1A1A] transition-colors hover:bg-[#FFF5F5] menu-item-in"
-                  style={{ animationDelay: `${80 + index * 45}ms` }}
-                >
-                  <span className="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-gray-100 text-gray-500 transition-colors group-hover:bg-[#D62828]/10 group-hover:text-[#D62828]">
-                    <Icon size={17} />
-                  </span>
-                  {label}
-                </Link>
-              ))}
-
-              {userProfile?.role === 'admin' && (
-                <Link
-                  to="/admin"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="group flex items-center gap-3.5 rounded-2xl px-4 py-3.5 font-semibold text-[15px] text-[#1A1A1A] transition-colors hover:bg-[#FFF5F5] menu-item-in"
-                  style={{ animationDelay: `${80 + NAV_LINKS.length * 45}ms` }}
-                >
-                  <span className="flex h-9 w-9 flex-none items-center justify-center rounded-xl bg-gray-100 text-gray-500 transition-colors group-hover:bg-[#D62828]/10 group-hover:text-[#D62828]">
-                    <ShieldCheck size={17} />
-                  </span>
-                  Админ
-                </Link>
-              )}
-
-              <div className="flex-1" />
-
-              <div className="border-t border-gray-100 pt-4 mt-4 menu-item-in" style={{ animationDelay: '340ms' }}>
-                {user ? (
-                  <button
-                    onClick={handleLogout}
-                    className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gray-50 px-5 py-3.5 font-bold text-[#1A1A1A] transition-colors hover:bg-gray-100"
-                  >
-                    <LogOut size={17} /> Одјави се
-                  </button>
-                ) : (
-                  <div className="flex flex-col gap-2.5">
-                    <Link
-                      to="/login"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 rounded-2xl border-2 border-gray-200 px-5 py-3.5 font-semibold text-[#1A1A1A] transition-colors hover:bg-gray-50"
-                    >
-                      <LogIn size={17} /> Пријави се
-                    </Link>
-                    <Link
-                      to="/register"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-[#D62828] to-[#B91F1F] px-5 py-3.5 font-bold text-white shadow-lg shadow-[#D62828]/20 transition-shadow hover:shadow-xl"
-                    >
-                      <UserPlus size={17} /> Региструј се
-                    </Link>
-                  </div>
-                )}
-              </div>
-            </nav>
-          </div>
-        </div>
-      )}
-
-      <style>{`
-        @keyframes menu-backdrop-in { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes menu-panel-in { from { transform: translateX(100%); } to { transform: translateX(0); } }
-        @keyframes menu-item-in { from { opacity: 0; transform: translateX(10px); } to { opacity: 1; transform: translateX(0); } }
-        .menu-backdrop-in { animation: menu-backdrop-in 220ms ease-out; }
-        .menu-panel-in { animation: menu-panel-in 320ms cubic-bezier(0.16, 1, 0.3, 1); }
-        .menu-item-in { animation: menu-item-in 320ms ease-out backwards; }
-        @media (prefers-reduced-motion: reduce) {
-          .menu-backdrop-in, .menu-panel-in, .menu-item-in { animation-duration: 1ms; }
-        }
-      `}</style>
+      <MobileMenu
+        open={mobileMenuOpen}
+        onClose={closeMenu}
+        user={user}
+        userProfile={userProfile}
+        onLogout={handleLogout}
+        scriptSwitcher={scriptSwitcher}
+      />
     </>
   );
 }

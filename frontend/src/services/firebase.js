@@ -3,6 +3,7 @@
  */
 
 import { initializeApp } from 'firebase/app';
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from 'firebase/app-check';
 import { getAuth, connectAuthEmulator } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getStorage, connectStorageEmulator } from 'firebase/storage';
@@ -18,23 +19,28 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// DEBUG: Log Firebase config
-console.log('🔥 Firebase Config:', {
-  authDomain: firebaseConfig.authDomain,
-  projectId: firebaseConfig.projectId,
-  currentURL: window.location.href,
-  currentOrigin: window.location.origin,
-});
-
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
+
+// App Check: proves requests come from this site, so bots cannot call functions
+// directly. Enabled when a reCAPTCHA Enterprise site key is configured.
+const appCheckSiteKey = import.meta.env.VITE_RECAPTCHA_ENTERPRISE_SITE_KEY;
+if (appCheckSiteKey) {
+  initializeAppCheck(app, {
+    provider: new ReCaptchaEnterpriseProvider(appCheckSiteKey),
+    isTokenAutoRefreshEnabled: true,
+  });
+}
 
 // Initialize services
 export const auth = getAuth(app);
 export const db = getFirestore(app);
 export const storage = getStorage(app);
-export const functions = getFunctions(app, 'us-central1');
-export const functionsEU = getFunctions(app, 'europe-west1');
+// All Cloud Functions are deployed to europe-west1 (see backend/functions/src/globalOptions.js)
+export const FUNCTIONS_REGION = 'europe-west1';
+export const functions = getFunctions(app, FUNCTIONS_REGION);
+// Backwards-compatible alias: same instance as `functions`
+export const functionsEU = functions;
 
 // Connect to emulators in development (optional)
 const USE_EMULATORS = import.meta.env.VITE_USE_EMULATORS === 'true';
@@ -44,7 +50,6 @@ if (USE_EMULATORS && import.meta.env.DEV) {
   connectFirestoreEmulator(db, 'localhost', 8080);
   connectStorageEmulator(storage, 'localhost', 9199);
   connectFunctionsEmulator(functions, 'localhost', 5001);
-  connectFunctionsEmulator(functionsEU, 'localhost', 5001);
   console.log('🔧 Connected to Firebase Emulators');
 }
 

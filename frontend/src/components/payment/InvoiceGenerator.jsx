@@ -31,23 +31,23 @@ export default function InvoiceGenerator({ courseId, courseName, price }) {
           <div className="bg-primary/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
             <CheckCircle className="h-10 w-10 text-primary" />
           </div>
-          <h3 className="text-2xl font-bold mb-2">Uplatnica generisana!</h3>
+          <h3 className="text-2xl font-bold mb-2">Уплатница генерисана!</h3>
           <p className="text-muted-foreground">
-            Vaša uplatnica je spremna za preuzimanje
+            Ваша уплатница је спремна за преузимање
           </p>
         </div>
 
         {/* Transaction Details */}
         <div className="bg-muted/30 rounded-2xl p-6 mb-6 space-y-4">
           <div className="flex justify-between items-center">
-            <span className="text-muted-foreground">Poziv na broj:</span>
+            <span className="text-muted-foreground">Позив на број:</span>
             <span className="font-mono font-bold text-lg text-primary">
               {invoiceData.paymentRef}
             </span>
           </div>
           <div className="border-t border-border pt-4">
             <div className="flex justify-between items-center">
-              <span className="text-muted-foreground">Iznos:</span>
+              <span className="text-muted-foreground">Износ:</span>
               <span className="text-2xl font-black text-gradient">
                 {formatPrice(invoiceData.amount)}
               </span>
@@ -64,7 +64,7 @@ export default function InvoiceGenerator({ courseId, courseName, price }) {
           className="btn-primary w-full mb-6 group"
         >
           <Download className="h-5 w-5 mr-2" />
-          Preuzmi uplatnicu (PDF)
+          Преузми уплатницу (PDF)
           <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
         </a>
 
@@ -72,7 +72,7 @@ export default function InvoiceGenerator({ courseId, courseName, price }) {
         <div className="bg-secondary/5 rounded-2xl p-6">
           <h4 className="font-bold text-lg mb-4 flex items-center">
             <FileText className="h-5 w-5 mr-2 text-secondary" />
-            Sledeći koraci:
+            Следећи кораци:
           </h4>
           <ol className="space-y-3 text-sm">
             <li className="flex items-start">
@@ -80,7 +80,7 @@ export default function InvoiceGenerator({ courseId, courseName, price }) {
                 1
               </span>
               <span className="text-muted-foreground">
-                Preuzmite PDF uplatnicu klikom na dugme iznad
+                Преузмите PDF уплатницу кликом на дугме изнад
               </span>
             </li>
             <li className="flex items-start">
@@ -88,7 +88,7 @@ export default function InvoiceGenerator({ courseId, courseName, price }) {
                 2
               </span>
               <span className="text-muted-foreground">
-                Izvršite uplatu u banci ili putem e-banking aplikacije
+                Извршите уплату у банци или путем електронског банкарства апликације
               </span>
             </li>
             <li className="flex items-start">
@@ -96,7 +96,7 @@ export default function InvoiceGenerator({ courseId, courseName, price }) {
                 3
               </span>
               <span className="text-muted-foreground">
-                Upload-ujte potvrdu o uplati u svom Dashboard-u
+                Отпремите потврду о уплати у свом панелу
               </span>
             </li>
             <li className="flex items-start">
@@ -104,7 +104,7 @@ export default function InvoiceGenerator({ courseId, courseName, price }) {
                 4
               </span>
               <span className="text-muted-foreground">
-                Čekajte potvrdu (obično do 24h) i pristup kursu
+                Чекајте потврду (обично до 24х) и приступ курсу
               </span>
             </li>
           </ol>
@@ -125,26 +125,26 @@ export default function InvoiceGenerator({ courseId, courseName, price }) {
     <div className="glass-card rounded-3xl p-8">
       {/* Header */}
       <div className="text-center mb-6">
-        <h3 className="text-2xl font-bold mb-2">Kupovina kursa</h3>
+        <h3 className="text-2xl font-bold mb-2">Куповина курса</h3>
         <p className="text-muted-foreground">{courseName}</p>
       </div>
 
       {/* Price Display */}
       <div className="bg-gradient-to-br from-primary/20 to-secondary/20 rounded-2xl p-8 mb-6 text-center">
-        <div className="text-sm text-muted-foreground mb-2">Cena kursa</div>
+        <div className="text-sm text-muted-foreground mb-2">Цена курса</div>
         <div className="text-5xl font-black text-gradient mb-2">
           {formatPrice(price)}
         </div>
-        <div className="text-sm text-muted-foreground">Jednokratna uplata</div>
+        <div className="text-sm text-muted-foreground">Једнократна уплата</div>
       </div>
 
       {/* What's included */}
       <div className="mb-6">
-        <h4 className="font-bold mb-4">Šta dobijate:</h4>
+        <h4 className="font-bold mb-4">Шта добијате:</h4>
         <ul className="space-y-3">
           <li className="flex items-center">
             <CheckCircle className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
-            <span className="text-muted-foreground">Doživotni pristup svim lekcijama</span>
+            <span className="text-muted-foreground">Доживотни приступ свим лекцијама</span>
           </li>
           <li className="flex items-center">
             <CheckCircle className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
@@ -152,11 +152,11 @@ export default function InvoiceGenerator({ courseId, courseName, price }) {
           </li>
           <li className="flex items-center">
             <CheckCircle className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
-            <span className="text-muted-foreground">Dodatni materijali za preuzimanje</span>
+            <span className="text-muted-foreground">Додатни материјали за преузимање</span>
           </li>
           <li className="flex items-center">
             <CheckCircle className="h-5 w-5 text-primary mr-3 flex-shrink-0" />
-            <span className="text-muted-foreground">Podrška i pomoć profesorke</span>
+            <span className="text-muted-foreground">Подршка и помоћ професорке</span>
           </li>
         </ul>
       </div>
@@ -182,7 +182,7 @@ export default function InvoiceGenerator({ courseId, courseName, price }) {
         ) : (
           <>
             <FileText className="h-5 w-5 mr-2" />
-            Generiši uplatnicu
+            Генериши уплатницу
             <ArrowRight className="h-5 w-5 ml-2 group-hover:translate-x-1 transition-transform" />
           </>
         )}
@@ -190,7 +190,7 @@ export default function InvoiceGenerator({ courseId, courseName, price }) {
 
       {/* Info note */}
       <p className="text-center text-xs text-muted-foreground mt-4">
-        Uplata se vrši putem bankovne uplatnice. Nakon uplate, upload-ujte potvrdu za pristup.
+        Уплата се врши путем банковне уплатнице. Након уплате, отпремите потврду за приступ.
       </p>
     </div>
   );

@@ -1,7 +1,9 @@
+import { useEffect, useRef } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { GraduationCap, CircleHelp } from 'lucide-react';
 import { useOnboarding, PAGE_TUTORIALS } from '../../context/OnboardingContext';
 import { useAssistantUiStore } from '../../store/assistantUiStore';
+import { useFloatingLayers, getDockMode } from '../../context/floatingLayers';
 import './QuickDock.css';
 
 function getPageKeyForPath(pathname) {
@@ -11,20 +13,85 @@ function getPageKeyForPath(pathname) {
   return null;
 }
 
+const MOBILE_QUERY = '(max-width: 1023px)';
+
 /**
- * Jedinstveni sticky "quick dock" — zamenjuje ranije razbacana plutajuća dugmad
- * (probni test, pomoć, Alano launcher) jednim doslednim setom od 3 stavke.
- * Desktop: vertikalna traka uz levu ivicu ekrana. Mobilni: traka na dnu ekrana.
+ * Publishes the space the dock occupies at the bottom of the viewport (mobile only) as
+ * `--dock-offset` on <html> and as body bottom padding, so the footer and page CTAs
+ * are never hidden behind it. Other floating layers can use the same variable.
+ */
+function useBottomOffset(ref, active) {
+  useEffect(() => {
+    const root = document.documentElement;
+    const body = document.body;
+    const clear = () => {
+      root.style.removeProperty('--dock-offset');
+      body.style.removeProperty('padding-bottom');
+    };
+    if (!active || !ref.current || typeof window === 'undefined') {
+      clear();
+      return undefined;
+    }
+
+    const mql = window.matchMedia ? window.matchMedia(MOBILE_QUERY) : null;
+    const update = () => {
+      if (!ref.current || (mql && !mql.matches)) {
+        clear();
+        return;
+      }
+      const h = Math.ceil(ref.current.getBoundingClientRect().height);
+      root.style.setProperty('--dock-offset', `${h}px`);
+      body.style.paddingBottom = `${h}px`;
+    };
+
+    update();
+    const ro = typeof ResizeObserver !== 'undefined' ? new ResizeObserver(update) : null;
+    ro?.observe(ref.current);
+    mql?.addEventListener?.('change', update);
+    return () => {
+      ro?.disconnect();
+      mql?.removeEventListener?.('change', update);
+      clear();
+    };
+  }, [ref, active]);
+}
+
+/**
+ * Single sticky "quick dock" — mock exam, help and the Alano assistant launcher.
+ * Desktop: vertical bar on the left edge. Mobile: bar at the bottom of the screen.
+ * Visibility follows the rules in context/floatingLayers.js.
  */
 export default function QuickDock() {
   const location = useLocation();
   const navigate = useNavigate();
+  const dockRef = useRef(null);
   const { startTutorial, resetTutorial, hasSeenTutorial } = useOnboarding();
   const isAssistantOpen = useAssistantUiStore((s) => s.isOpen);
   const setAssistantOpen = useAssistantUiStore((s) => s.setAssistantOpen);
+  const cookieBannerVisible = useFloatingLayers((s) => s.cookieBannerVisible);
+  const testingActive = useFloatingLayers((s) => s.testingActive);
 
-  // Sakrij dok je Alano chat otvoren — panel je preko cele/desne strane ekrana.
-  if (isAssistantOpen) return null;
+  const mode = getDockMode(location.pathname, { testingActive });
+  // The cookie banner owns the bottom edge until the visitor decides.
+  const showFull = mode === 'full' && !isAssistantOpen;
+  useBottomOffset(dockRef, showFull && !cookieBannerVisible);
+
+  if (isAssistantOpen || mode === 'hidden') return null;
+
+  if (mode === 'minimized') {
+    if (cookieBannerVisible) return null;
+    return (
+      <button
+        type="button"
+        className="quick-dock-mini"
+        onClick={() => setAssistantOpen(true)}
+        aria-label="Отвори Алана, асистента"
+        title="Алано — асистент"
+      >
+        <img src="/mascot/alano-hero.webp" alt="" draggable={false} />
+      </button>
+    );
+  }
 
   const pageKey = getPageKeyForPath(location.pathname);
   const tutorial = pageKey ? PAGE_TUTORIALS[pageKey] : null;
@@ -39,7 +106,11 @@ export default function QuickDock() {
   };
 
   return (
-    <nav className="quick-dock" aria-label="Брзи приступ">
+    <nav
+      ref={dockRef}
+      className={`quick-dock ${cookieBannerVisible ? 'is-yielding' : ''}`}
+      aria-label="Брзи приступ"
+    >
       <button type="button" className="quick-dock-item" onClick={() => navigate('/probni-prijemni')}>
         <span className="quick-dock-icon">
           <GraduationCap size={20} strokeWidth={2.1} />

@@ -7,9 +7,10 @@ import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { getStorage } from 'firebase-admin/storage';
 import PDFDocument from 'pdfkit';
+import { APP_CHECK } from './security.js';
 import { checkRateLimit } from './rate-limiter.js';
 
-export const generateInvoice = onCall(async (request) => {
+export const generateInvoice = onCall({ ...APP_CHECK }, async (request) => {
   const db = getFirestore();
   // Check authentication
   if (!request.auth) {
@@ -54,12 +55,19 @@ export const generateInvoice = onCall(async (request) => {
     const paymentRef = `KRS-${Date.now()}-${Math.floor(Math.random() * 1000)}`;
 
     // Create transaction record
+    // Canonical camelCase fields + legacy mirrors (see transactionModel.js)
     const transactionRef = await db.collection('transactions').add({
+      type: 'course',
+      userId,
       user_id: userId,
+      courseId,
       course_id: courseId,
+      courseName: course.title || '',
       amount: course.price,
       status: 'pending',
+      paymentRef,
       payment_ref: paymentRef,
+      createdAt: FieldValue.serverTimestamp(),
       created_at: FieldValue.serverTimestamp(),
     });
 
@@ -98,6 +106,7 @@ export const generateInvoice = onCall(async (request) => {
 
     // Update transaction with PDF URL
     await transactionRef.update({
+      invoiceUrl: downloadUrl,
       invoice_url: downloadUrl,
     });
 

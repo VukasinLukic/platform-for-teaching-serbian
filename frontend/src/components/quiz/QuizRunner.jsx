@@ -1,4 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import { useAuthStore } from '../../store/authStore';
+import { saveQuizResult } from '../dashboard/progressService';
 import { ArrowRight, CheckCircle, XCircle } from 'lucide-react';
 import parse from 'html-react-parser';
 import QuizResult from './QuizResult';
@@ -13,7 +16,10 @@ function shuffleArray(array) {
     return shuffled;
 }
 
-export default function QuizRunner({ quiz, onExit }) {
+export default function QuizRunner({ quiz, onExit, quizId: quizIdProp }) {
+    const params = useParams();
+    const quizId = quizIdProp || params.quizId;
+    const user = useAuthStore((s) => s.user);
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [selectedAnswer, setSelectedAnswer] = useState(null);
     const [score, setScore] = useState(0);
@@ -63,6 +69,15 @@ export default function QuizRunner({ quiz, onExit }) {
         setIsAnswerSubmitted(false);
     };
 
+    // Save the result to the user's own progress doc (shown on the dashboard per topic)
+    useEffect(() => {
+        if (!showResult || !user?.uid || !quizId) return;
+        saveQuizResult(user.uid, { quizId, score, total: shuffledQuiz.length }).catch((err) => {
+            console.warn('Quiz result not saved:', err?.code || err);
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [showResult]);
+
     if (showResult) {
         return <QuizResult score={score} totalQuestions={shuffledQuiz.length} onRetry={handleRetry} />;
     }
@@ -80,7 +95,7 @@ export default function QuizRunner({ quiz, onExit }) {
                 </div>
                 <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-[#D62828] transition-all duration-300 ease-out"
+                        className="h-full bg-brand transition-all duration-300 ease-out"
                         style={{ width: `${progress}%` }}
                     ></div>
                 </div>
@@ -88,7 +103,7 @@ export default function QuizRunner({ quiz, onExit }) {
 
             {/* Question Card */}
             <div className="bg-white rounded-3xl p-5 md:p-8 shadow-sm border border-gray-100 mb-8">
-                <div className="text-lg md:text-xl font-normal text-[#1A1A1A] mb-8 whitespace-pre-line leading-relaxed">
+                <div className="text-lg md:text-xl font-normal text-ink mb-8 whitespace-pre-line leading-relaxed">
                     {parse(currentQuestion.question)}
                 </div>
 
@@ -102,11 +117,11 @@ export default function QuizRunner({ quiz, onExit }) {
                             } else if (answer === selectedAnswer) {
                                 buttonClass += "border-red-500 bg-red-50 text-red-700";
                             } else {
-                                buttonClass += "border-gray-100 text-gray-400";
+                                buttonClass += "border-gray-100 text-gray-500";
                             }
                         } else {
                             if (selectedAnswer === answer) {
-                                buttonClass += "border-[#D62828] bg-red-50 text-[#D62828]";
+                                buttonClass += "border-brand bg-red-50 text-brand";
                             } else {
                                 buttonClass += "border-gray-100 hover:border-gray-300 text-gray-700";
                             }
@@ -141,8 +156,8 @@ export default function QuizRunner({ quiz, onExit }) {
                         onClick={handleSubmitAnswer}
                         disabled={!selectedAnswer}
                         className={`px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${selectedAnswer
-                                ? 'bg-[#D62828] text-white hover:bg-[#B91F1F] shadow-lg hover:shadow-xl'
-                                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                                ? 'bg-brand text-white hover:bg-brand-700 shadow-lg hover:shadow-xl'
+                                : 'bg-gray-200 text-gray-500 cursor-not-allowed'
                             }`}
                     >
                         Провери одговор
@@ -150,7 +165,7 @@ export default function QuizRunner({ quiz, onExit }) {
                 ) : (
                     <button
                         onClick={handleNextQuestion}
-                        className="px-8 py-3 rounded-xl font-bold flex items-center gap-2 bg-[#D62828] text-white hover:bg-[#B91F1F] shadow-lg hover:shadow-xl transition-all"
+                        className="px-8 py-3 rounded-xl font-bold flex items-center gap-2 bg-brand text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all"
                     >
                         {isLastQuestion ? 'Заврши квиз' : 'Следеће питање'} <ArrowRight className="w-5 h-5" />
                     </button>

@@ -2,6 +2,7 @@ import { CheckCircle, Video, Users, FileText, Award, Clock, BookOpen, Headphones
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import { Link } from 'react-router-dom';
+import Button from '../components/ui/Button';
 import SEO from '../components/SEO';
 
 export default function BenefitsPage() {
@@ -10,57 +11,57 @@ export default function BenefitsPage() {
       icon: Video,
       title: '100+ Видео лекција',
       description: 'Приступ свим видео лекцијама 24/7 са неограниченим понављањем и HD квалитетом.',
-      color: 'text-[#D62828]',
-      bg: 'bg-[#D62828]/10'
+      color: 'text-brand',
+      bg: 'bg-brand-50'
     },
     {
       icon: Users,
       title: 'Недељни уживо часови',
       description: 'Интерактивни часови са професорком преко видео позива уз могућност постављања питања.',
-      color: 'text-[#1A1A1A]',
-      bg: 'bg-[#1A1A1A]/10'
+      color: 'text-ink',
+      bg: 'bg-ink/10'
     },
     {
       icon: FileText,
       title: 'PDF материјали',
       description: 'Сви материјали за штампу - тестови, вежбања, анализе дела доступни за download.',
-      color: 'text-[#F2C94C]',
-      bg: 'bg-[#F2C94C]/20'
+      color: 'text-gold',
+      bg: 'bg-gold/20'
     },
     {
       icon: Award,
       title: 'Сертификат по завршетку',
       description: 'Добијате званични сертификат након успешног завршетка курса као доказ о знању.',
-      color: 'text-[#D62828]',
-      bg: 'bg-[#D62828]/10'
+      color: 'text-brand',
+      bg: 'bg-brand-50'
     },
     {
       icon: Clock,
       title: 'Доживотни приступ',
       description: 'Једнократна уплата за неограничен приступ свим материјалима. Учите својим темпом.',
-      color: 'text-[#1A1A1A]',
-      bg: 'bg-[#1A1A1A]/10'
+      color: 'text-ink',
+      bg: 'bg-ink/10'
     },
     {
       icon: BookOpen,
       title: 'Симулације испита',
       description: 'Вежбајте на реалним примерима испита из претходних година и смањите трему.',
-      color: 'text-[#F2C94C]',
-      bg: 'bg-[#F2C94C]/20'
+      color: 'text-gold',
+      bg: 'bg-gold/20'
     },
     {
       icon: Headphones,
       title: 'Подршка професорке',
       description: 'Директна комуникација са професорком током целе припреме путем емаила или чата.',
-      color: 'text-[#D62828]',
-      bg: 'bg-[#D62828]/10'
+      color: 'text-brand',
+      bg: 'bg-brand-50'
     },
     {
       icon: TrendingUp,
       title: 'Праћење напретка',
       description: 'Детаљан увид у ваш напредак и резултате кроз интерактивни dashboard.',
-      color: 'text-[#1A1A1A]',
-      bg: 'bg-[#1A1A1A]/10'
+      color: 'text-ink',
+      bg: 'bg-ink/10'
     },
   ];
 
@@ -97,34 +98,35 @@ export default function BenefitsPage() {
         jsonLd={[benefitsBreadcrumbJsonLd]}
         keywords="prednosti online kurseva, zasto online nastava srpskog, video lekcije srpski jezik, priprema za malu maturu prednosti, online ucenje srpski"
       />
-    <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+    <div className="min-h-screen bg-white font-sans text-ink">
       <Header />
 
       {/* VALUES SECTION - Minimal */}
       <section className="pt-14 pb-8 md:pt-24 md:pb-12 px-6">
         <div className="max-w-5xl mx-auto text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-3 text-[#1A1A1A]">Наше вредности</h2>
+          <h1 className="text-3xl md:text-5xl font-bold mb-4 text-ink">Зашто учити са нама</h1>
+          <h2 className="text-2xl md:text-3xl font-bold mb-3 text-ink">Наше вредности</h2>
           <p className="text-gray-600 mb-10 md:mb-16">Зашто нас бирају ученици</p>
 
           <div className="grid md:grid-cols-3 gap-8 md:gap-10">
             <div className="text-center">
-              <h3 className="text-lg font-bold mb-3 text-[#1A1A1A]">Учење с разумевањем</h3>
+              <h3 className="text-lg font-bold mb-3 text-ink">Учење с разумевањем</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
                 Српски језик учимо са љубављу и посвећеношћу. Свака лекција је осмишљена тако да изграђује дубоко разумевање, а не напамет учење.
               </p>
             </div>
 
             <div className="text-center">
-              <h3 className="text-lg font-bold mb-3 text-[#1A1A1A]">Индивидуална пажња</h3>
+              <h3 className="text-lg font-bold mb-3 text-ink">Индивидуална пажња</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
                 Свако дете је јединствено. Прилагођавамо наставу вашим потребама и пратимо напредак са посвећеношћу искусне професорке.
               </p>
             </div>
 
             <div className="text-center">
-              <h3 className="text-lg font-bold mb-3 text-[#1A1A1A]">Проверени резултати</h3>
+              <h3 className="text-lg font-bold mb-3 text-ink">Проверени резултати</h3>
               <p className="text-gray-600 text-sm leading-relaxed">
-                Преко 15 година искуства и стотине задовољних ученика који су остварили своје снове. Ваш успех је наш успех.
+                27 година искуства и стотине задовољних ученика који су остварили своје снове. Ваш успех је наш успех.
               </p>
             </div>
           </div>
@@ -140,12 +142,12 @@ export default function BenefitsPage() {
               return (
                 <div
                   key={index}
-                  className="bg-white rounded-[2rem] md:rounded-[2.5rem] p-6 md:p-8 shadow-lg hover:shadow-xl transition-all hover:-translate-y-1 flex flex-col items-center text-center group border border-gray-100"
+                  className="bg-white rounded-3xl md:rounded-3xl p-6 md:p-8 shadow-lg hover:shadow-xl transition-all motion-safe:hover:-translate-y-1 flex flex-col items-center text-center group border border-gray-100"
                 >
-                  <div className={`w-16 h-16 rounded-2xl ${benefit.bg} flex items-center justify-center mb-6 group-hover:scale-110 transition-transform`}>
+                  <div className={`w-16 h-16 rounded-2xl ${benefit.bg} flex items-center justify-center mb-6 motion-safe:group-hover:scale-110 transition-transform`}>
                     <Icon className={`w-8 h-8 ${benefit.color}`} />
                   </div>
-                  <h3 className="text-lg font-bold text-[#1A1A1A] mb-3">{benefit.title}</h3>
+                  <h3 className="text-lg font-bold text-ink mb-3">{benefit.title}</h3>
                   <p className="text-sm text-gray-600 leading-relaxed">
                     {benefit.description}
                   </p>
@@ -157,18 +159,18 @@ export default function BenefitsPage() {
       </section>
 
       {/* DETAILED FEATURES SPLIT */}
-      <section className="py-14 md:py-24 bg-[#F7F7F7] mt-8 md:mt-12">
+      <section className="py-14 md:py-24 bg-surface mt-8 md:mt-12">
         <div className="max-w-7xl mx-auto px-6">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16">
             {/* Left: Checklist */}
             <div>
               <h2 className="text-2xl md:text-4xl font-bold mb-5 md:mb-8">Шта је све укључено?</h2>
-              <div className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-lg">
+              <div className="bg-white rounded-3xl md:rounded-3xl p-6 md:p-10 shadow-lg">
                 <div className="grid sm:grid-cols-2 gap-y-4 gap-x-8">
                   {includedFeatures.map((feature, index) => (
                     <div key={index} className="flex items-start gap-3">
-                      <div className="bg-[#D62828]/10 rounded-full p-1 mt-0.5">
-                        <CheckCircle className="w-4 h-4 text-[#D62828]" />
+                      <div className="bg-brand-50 rounded-full p-1 mt-0.5">
+                        <CheckCircle className="w-4 h-4 text-brand" />
                       </div>
                       <span className="font-medium text-gray-700 text-sm">{feature}</span>
                     </div>
@@ -180,15 +182,15 @@ export default function BenefitsPage() {
             {/* Right: Guarantee & CTA */}
             <div className="space-y-8">
               {/* Guarantee Card */}
-              <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] text-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 shadow-xl relative overflow-hidden">
+              <div className="bg-gradient-to-br from-brand to-brand-700 text-white rounded-3xl md:rounded-3xl p-6 md:p-10 shadow-xl relative overflow-hidden">
                 <div className="relative z-10">
                   <div className="flex items-center gap-4 mb-6">
-                    <div className="bg-[#F2C94C] p-3 rounded-xl text-[#1A1A1A]">
+                    <div className="bg-gold p-3 rounded-xl text-ink">
                       <Award size={32} />
                     </div>
                     <h3 className="text-2xl font-bold">Гаранција Квалитета</h3>
                   </div>
-                  <p className="text-white/90 mb-8 leading-relaxed">
+                  <p className="text-white mb-8 leading-relaxed">
                     Ако нисте задовољни у првих 7 дана, враћамо вам новац. Без питања.
                     Верујемо у квалитет наше наставе.
                   </p>
@@ -204,18 +206,15 @@ export default function BenefitsPage() {
                   </div>
                 </div>
                 {/* Decoration */}
-                <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl"></div>
               </div>
 
               {/* Simple CTA Card */}
-              <div className="bg-white border-2 border-[#D62828] rounded-[2rem] md:rounded-[3rem] p-6 md:p-10 text-center shadow-lg">
+              <div className="bg-white border-2 border-brand rounded-3xl md:rounded-3xl p-6 md:p-10 text-center shadow-lg">
                 <h3 className="text-xl font-bold mb-2">Једнократна уплата</h3>
                 <p className="text-gray-500 text-sm mb-6">Без скривених месечних трошкова</p>
-                <Link to="/register">
-                  <button className="w-full bg-[#D62828] text-white py-4 rounded-full font-bold hover:bg-[#B91F1F] transition shadow-lg hover:shadow-xl">
+                <Button as={Link} to="/register" variant="primary" size="lg" className="w-full">
                     Пријави се Сада
-                  </button>
-                </Link>
+                </Button>
               </div>
             </div>
           </div>

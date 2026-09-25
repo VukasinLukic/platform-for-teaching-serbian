@@ -5,16 +5,9 @@
 
 import { httpsCallable } from 'firebase/functions';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import {
-  collection,
-  doc,
-  getDoc,
-  updateDoc,
-  getDocs,
-  query,
-  where,
-} from 'firebase/firestore';
+import { doc, getDoc, updateDoc } from 'firebase/firestore';
 import { functions, storage, db } from './firebase';
+import { normalizeTransaction, getUserTransactionDocs, sortByCreatedAtDesc } from './transactions';
 
 /**
  * Generate invoice PDF for course purchase
@@ -78,67 +71,32 @@ export const uploadPaymentConfirmation = async (transactionId, file) => {
  */
 export const getUserTransactions = async (userId) => {
   try {
-    // Try both field names since some old transactions may use user_id
-    const q1 = query(
-      collection(db, 'transactions'),
-      where('user_id', '==', userId)
-    );
-    const q2 = query(
-      collection(db, 'transactions'),
-      where('userId', '==', userId)
-    );
+    // Matches both `userId` and legacy `user_id` documents
+    const docs = await getUserTransactionDocs(userId);
 
-    const [snapshot1, snapshot2] = await Promise.all([
-      getDocs(q1),
-      getDocs(q2)
-    ]);
-
-    // Combine results and remove duplicates
-    const allDocs = [...snapshot1.docs, ...snapshot2.docs];
-    const uniqueDocs = allDocs.filter((doc, index, self) =>
-      index === self.findIndex((d) => d.id === doc.id)
-    );
-
-    // Load course and package data for each transaction
+    // Load course data for course transactions
     const transactionsWithData = await Promise.all(
-      uniqueDocs.map(async (docSnap) => {
-        const txData = docSnap.data();
-        const type = txData.type || 'course';
+      docs.map(async (docSnap) => {
+        const tx = normalizeTransaction(docSnap);
 
-        let courseName = null;
         let course = null;
+        let courseName = tx.courseName;
 
-        // Load course or package data based on type
-        if (type === 'course' && txData.course_id) {
-          const courseDoc = await getDoc(doc(db, 'courses', txData.course_id));
+        if (tx.type === 'course' && tx.courseId) {
+          const courseDoc = await getDoc(doc(db, 'courses', tx.courseId));
           if (courseDoc.exists()) {
             course = courseDoc.data();
-            courseName = course.title;
+            courseName = course.title || courseName;
           }
-        } else if (type === 'online_package') {
-          // For online packages, use the packageName field stored in the transaction
-          courseName = txData.packageName || 'Online пакет';
+        } else if (tx.type === 'online_package') {
+          courseName = tx.packageName || 'Online пакет';
         }
 
-        // Handle Firestore Timestamp conversion
-        let createdAt = txData.created_at || txData.createdAt;
-        if (createdAt && createdAt.toDate) {
-          createdAt = createdAt.toDate();
-        } else if (createdAt && !(createdAt instanceof Date)) {
-          createdAt = new Date(createdAt);
-        }
-
-        return {
-          id: docSnap.id,
-          ...txData,
-          courseName,
-          course,
-          createdAt
-        };
+        return { ...tx, courseName, course };
       })
     );
 
-    return transactionsWithData;
+    return sortByCreatedAtDesc(transactionsWithData);
   } catch (error) {
     console.error('Error fetching transactions:', error);
     throw error;
@@ -159,10 +117,7 @@ export const getTransactionById = async (transactionId) => {
       throw new Error('Transakcija ne postoji');
     }
 
-    return {
-      id: docSnap.id,
-      ...docSnap.data()
-    };
+    return normalizeTransaction(docSnap);
   } catch (error) {
     console.error('Error fetching transaction:', error);
     throw error;

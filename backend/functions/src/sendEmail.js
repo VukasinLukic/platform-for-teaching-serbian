@@ -1,6 +1,7 @@
 import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import nodemailer from 'nodemailer';
 import { checkRateLimit } from './rate-limiter.js';
+import { requireAdmin, escapeParams, safeHttpsUrl, APP_CHECK } from './security.js';
 
 /**
  * Gmail + Nodemailer Email Service
@@ -10,7 +11,7 @@ import { checkRateLimit } from './rate-limiter.js';
  */
 
 // Get transporter (created on-demand to avoid issues)
-const getTransporter = () => {
+export const getTransporter = () => {
   const userEmail = process.env.GMAIL_USER;
   const userPassword = process.env.GMAIL_PASSWORD;
 
@@ -21,7 +22,6 @@ const getTransporter = () => {
     throw new Error('Gmail credentials not configured. Check .env file.');
   }
 
-  console.log('✅ Using Gmail:', userEmail);
 
   // Use .createTransport() not .createTransporter()
   return nodemailer.createTransport({
@@ -33,8 +33,8 @@ const getTransporter = () => {
   });
 };
 
-// Email Templates
-const emailTemplates = {
+// Email Templates (raw — never call directly, use emailTemplates below)
+const rawEmailTemplates = {
   contactForm: ({ name, email, phone, message }) => ({
     subject: `Nova poruka sa kontakt forme - ${name}`,
     html: `
@@ -417,7 +417,7 @@ const emailTemplates = {
             <div class="warning">
               <p style="margin: 0;"><strong>⚠️ Važno:</strong></p>
               <ul style="margin: 10px 0 0 0; padding-left: 20px;">
-                <li>Link za verifikaciju je važeći 60 minuta</li>
+                <li>Link za verifikaciju je važeći 24 sata</li>
                 <li>Ako ne verifikujete email, nećete moći pristupiti kursevima</li>
                 <li>Ako link ne radi, kopirajte ga i nalepite u browser</li>
               </ul>
@@ -447,10 +447,21 @@ const emailTemplates = {
   }),
 };
 
+// Every template gets HTML-escaped values in the body; the subject line is plain text,
+// so it is built from the raw values.
+const emailTemplates = Object.fromEntries(
+  Object.entries(rawEmailTemplates).map(([name, template]) => [
+    name,
+    (params) => ({
+      subject: template(params).subject,
+      html: template(escapeParams(params)).html,
+    }),
+  ])
+);
+
 // Cloud Function: Send Contact Form Email
-export const sendContactFormEmail = onCall({ cors: true }, async (request) => {
+export const sendContactFormEmail = onCall({ cors: true, ...APP_CHECK }, async (request) => {
   console.log('=== sendContactFormEmail called ===');
-  console.log('Request data:', JSON.stringify(request.data, null, 2));
 
   const { name, email, phone, message } = request.data;
 
@@ -473,7 +484,6 @@ export const sendContactFormEmail = onCall({ cors: true }, async (request) => {
     const userEmail = process.env.GMAIL_USER;
     const contactEmail = process.env.CONTACT_EMAIL || userEmail;
 
-    console.log('Sending email from:', userEmail, 'to:', contactEmail);
 
     await transporter.sendMail({
       from: `"Srpski u Srcu - Kontakt Forma" <${userEmail}>`,
@@ -492,14 +502,14 @@ export const sendContactFormEmail = onCall({ cors: true }, async (request) => {
       code: error.code,
       stack: error.stack
     });
-    throw new HttpsError('internal', `Failed to send email: ${error.message}`);
+    throw new HttpsError('internal', 'Slanje email-a nije uspelo');
   }
 });
 
 // Cloud Function: Send Payment Confirmation Email
 export const sendPaymentConfirmationEmail = onCall({ cors: true }, async (request) => {
+  requireAdmin(request);
   console.log('=== sendPaymentConfirmationEmail called ===');
-  console.log('Request data:', JSON.stringify(request.data, null, 2));
 
   const { userName, userEmail, courseTitle, transactionId } = request.data;
 
@@ -521,7 +531,6 @@ export const sendPaymentConfirmationEmail = onCall({ cors: true }, async (reques
     });
 
     const senderEmail = process.env.GMAIL_USER;
-    console.log('Sending email from:', senderEmail, 'to:', userEmail);
 
     await transporter.sendMail({
       from: `"Srpski u Srcu" <${senderEmail}>`,
@@ -539,12 +548,13 @@ export const sendPaymentConfirmationEmail = onCall({ cors: true }, async (reques
       code: error.code,
       stack: error.stack
     });
-    throw new HttpsError('internal', `Failed to send email: ${error.message}`);
+    throw new HttpsError('internal', 'Slanje email-a nije uspelo');
   }
 });
 
 // Cloud Function: Send Payment Rejection Email
 export const sendPaymentRejectionEmail = onCall({ cors: true }, async (request) => {
+  requireAdmin(request);
   console.log('=== sendPaymentRejectionEmail called ===');
   const { userName, userEmail, courseTitle, reason } = request.data;
 
@@ -573,12 +583,13 @@ export const sendPaymentRejectionEmail = onCall({ cors: true }, async (request) 
     return { success: true, message: 'Email successfully sent' };
   } catch (error) {
     console.error('Error sending payment rejection email:', error);
-    throw new HttpsError('internal', `Failed to send email: ${error.message}`);
+    throw new HttpsError('internal', 'Slanje email-a nije uspelo');
   }
 });
 
 // Cloud Function: Send Welcome Email
 export const sendWelcomeEmail = onCall({ cors: true }, async (request) => {
+  requireAdmin(request);
   console.log('=== sendWelcomeEmail called ===');
   const { userName, userEmail } = request.data;
 
@@ -602,12 +613,13 @@ export const sendWelcomeEmail = onCall({ cors: true }, async (request) => {
     return { success: true, message: 'Email successfully sent' };
   } catch (error) {
     console.error('Error sending welcome email:', error);
-    throw new HttpsError('internal', `Failed to send email: ${error.message}`);
+    throw new HttpsError('internal', 'Slanje email-a nije uspelo');
   }
 });
 
 // Cloud Function: Send Class Reminder Email (1 hour before class)
 export const sendClassReminderEmail = onCall({ cors: true }, async (request) => {
+  requireAdmin(request);
   console.log('=== sendClassReminderEmail called ===');
   const { userName, userEmail, className, classDate, classTime, meetLink, groupName } = request.data;
 
@@ -623,7 +635,7 @@ export const sendClassReminderEmail = onCall({ cors: true }, async (request) => 
       className,
       classDate,
       classTime,
-      meetLink,
+      meetLink: safeHttpsUrl(meetLink),
       groupName,
     });
     const senderEmail = process.env.GMAIL_USER;
@@ -639,7 +651,7 @@ export const sendClassReminderEmail = onCall({ cors: true }, async (request) => 
     return { success: true, message: 'Class reminder email successfully sent' };
   } catch (error) {
     console.error('Error sending class reminder email:', error);
-    throw new HttpsError('internal', `Failed to send email: ${error.message}`);
+    throw new HttpsError('internal', 'Slanje email-a nije uspelo');
   }
 });
 
@@ -671,7 +683,7 @@ export const sendVerificationEmail = async ({ userEmail, userName, verificationU
       html: template.html,
     });
 
-    console.log('✅ Verification email sent successfully to:', userEmail);
+    console.log('✅ Verification email sent successfully');
     return { success: true };
   } catch (error) {
     console.error('Error sending verification email:', error);
@@ -699,6 +711,6 @@ export const sendWelcomeEmailInternal = async ({ userEmail, userName }) => {
     html: template.html,
   });
 
-  console.log('✅ Welcome email sent successfully to:', userEmail);
+  console.log('✅ Welcome email sent successfully');
   return { success: true };
 };

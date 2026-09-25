@@ -2,10 +2,11 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function to check if user is admin
+    // Admin = custom claim `role: admin`. Claims can only be set with the Admin SDK
+    // (setUserRole / scripts/setAdminClaim.js), never by the user. The `role` field in
+    // the users document is display-only and must never be trusted here.
     function isAdmin() {
-      return request.auth != null &&
-             get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+      return request.auth != null && request.auth.token.get('role', '') == 'admin';
     }
 
     // Helper function to check if user is authenticated
@@ -13,11 +14,18 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // Users collection
+    // Users collection - personal data, readable only by the owner and admins
     match /users/{userId} {
-      allow read: if isAuthenticated();
-      allow create: if request.auth.uid == userId;
-      allow update: if request.auth.uid == userId || isAdmin();
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isAdmin());
+      allow create: if isAuthenticated() && request.auth.uid == userId
+                    && request.resource.data.get('role', 'korisnik') == 'korisnik'
+                    && request.resource.data.get('emailVerified', false) == false
+                    && !request.resource.data.keys().hasAny(['verifiedAt', 'roleUpdatedAt']);
+      // Owners may edit their profile but never their role or verification status
+      allow update: if isAdmin() ||
+                    (isAuthenticated() && request.auth.uid == userId &&
+                     !request.resource.data.diff(resource.data).affectedKeys()
+                       .hasAny(['role', 'roleUpdatedAt', 'emailVerified', 'verifiedAt']));
       allow delete: if isAdmin();
     }
 
@@ -40,16 +48,24 @@ service cloud.firestore {
     }
 
     // Transactions collection
+    // Created only on the server (createCourseTransaction / generateInvoice) so the
+    // amount and course come from the database. The buyer may only attach a payment
+    // confirmation to their own pending transaction.
+    function isTransactionOwner() {
+      return isAuthenticated() &&
+             (resource.data.user_id == request.auth.uid ||
+              resource.data.userId == request.auth.uid);
+    }
+
     match /transactions/{transactionId} {
-      allow read: if isAuthenticated() &&
-                     (resource.data.user_id == request.auth.uid ||
-                      resource.data.userId == request.auth.uid ||
-                      isAdmin());
-      allow create: if isAuthenticated();
-      allow update: if isAuthenticated() &&
-                       (resource.data.user_id == request.auth.uid ||
-                        resource.data.userId == request.auth.uid) ||
-                       isAdmin();
+      allow read: if isTransactionOwner() || isAdmin();
+      allow create: if isAdmin();
+      allow update: if isAdmin() ||
+                    (isTransactionOwner() &&
+                     resource.data.status == 'pending' &&
+                     request.resource.data.status == 'pending' &&
+                     request.resource.data.diff(resource.data).affectedKeys()
+                       .hasOnly(['confirmationUrl', 'confirmationUploadedAt', 'status']));
       allow delete: if isAdmin();
     }
 
@@ -84,21 +100,20 @@ service cloud.firestore {
     match /online_enrollments/{enrollmentId} {
       allow read: if isAuthenticated() &&
                      (resource.data.userId == request.auth.uid || isAdmin());
-      allow create: if isAuthenticated() && request.resource.data.userId == request.auth.uid;
+      // Enrollments are created by the admin when a payment is approved
+      allow create: if isAdmin();
       allow update: if isAdmin();
       allow delete: if isAdmin();
     }
 
-    // Online groups - read for enrolled users, write for admin
+    // Online groups and sessions (Meet links) - admin only. Enrolled students get
+    // their own group's schedule through the getMyOnlineGroup function.
     match /online_groups/{groupId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
+      allow read, write: if isAdmin();
     }
 
-    // Online sessions - read for participants, write for admin
     match /online_sessions/{sessionId} {
-      allow read: if isAuthenticated();
-      allow write: if isAdmin();
+      allow read, write: if isAdmin();
     }
 
     // Settings collection

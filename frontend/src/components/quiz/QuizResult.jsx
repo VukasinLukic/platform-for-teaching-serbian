@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowLeft, RefreshCw } from 'lucide-react';
 import Alano from '../mascot/Alano';
+import Button from '../ui/Button';
 
 export default function QuizResult({ score, totalQuestions, onRetry }) {
     const percentage = Math.round((score / totalQuestions) * 100);
@@ -16,23 +17,21 @@ export default function QuizResult({ score, totalQuestions, onRetry }) {
         <div className="bg-white rounded-3xl p-8 md:p-12 border border-gray-100 shadow-xl text-center max-w-2xl mx-auto">
             <Alano pose="celebrating" size={140} className="mx-auto mb-4" />
 
-            <h2 className="text-2xl md:text-3xl font-bold mb-2 text-[#1A1A1A]">{message}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-2 text-ink">{message}</h2>
             <p className="text-gray-600 mb-8">Ваш резултат:</p>
 
-            <div className="text-5xl md:text-6xl font-black text-[#D62828] mb-8">
-                {score} <span className="text-2xl text-gray-400 font-medium">/ {totalQuestions}</span>
+            <div className="text-5xl md:text-6xl font-black text-brand mb-8">
+                {score} <span className="text-2xl text-gray-500 font-medium">/ {totalQuestions}</span>
             </div>
 
             <div className="flex flex-col md:flex-row gap-4 justify-center">
-                <Link to="/quizzes">
-                    <button className="w-full md:w-auto px-8 py-4 rounded-xl border-2 border-gray-200 font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
+                <Button as={Link} to="/kvizovi" variant="subtle" size="lg" className="w-full md:w-auto">
                         <ArrowLeft className="w-5 h-5" />
-                        Nazad na kvizove
-                    </button>
-                </Link>
+                        Назад на квизове
+                  </Button>
                 <button
                     onClick={onRetry}
-                    className="w-full md:w-auto px-8 py-4 rounded-xl bg-[#D62828] text-white font-bold hover:bg-[#B91F1F] transition-all flex items-center justify-center gap-2"
+                    className="w-full md:w-auto px-8 py-4 rounded-xl bg-brand text-white font-bold hover:bg-brand-700 transition-all flex items-center justify-center gap-2"
                 >
                     <RefreshCw className="w-5 h-5" />
                     Probaj ponovo
