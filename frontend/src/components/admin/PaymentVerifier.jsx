@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { verifyPayment } from '../../services/admin.service';
+import { normalizeTransaction, sortByCreatedAtDesc } from '../../services/transactions';
 import { CheckCircle, XCircle, Loader2, ExternalLink, User, BookOpen } from 'lucide-react';
 import { formatPrice, formatDate } from '../../utils/helpers';
 import { sendPaymentConfirmationEmail, sendPaymentRejectionEmail } from '../../services/email.service';
@@ -26,11 +27,11 @@ export default function PaymentVerifier() {
       // Load additional data for each transaction
       const paymentsData = await Promise.all(
         snapshot.docs.map(async (docSnap) => {
-          const transaction = docSnap.data();
+          const transaction = normalizeTransaction(docSnap);
 
           // Load user data
           let user = null;
-          const userId = transaction.userId || transaction.user_id;
+          const userId = transaction.userId;
           if (userId) {
             const userDoc = await getDoc(doc(db, 'users', userId));
             user = userDoc.exists() ? userDoc.data() : null;
@@ -39,10 +40,10 @@ export default function PaymentVerifier() {
           // Load course or package data based on type
           let course = null;
           let package_data = null;
-          const type = transaction.type || 'course';
+          const type = transaction.type;
 
-          if (type === 'course' && transaction.course_id) {
-            const courseDoc = await getDoc(doc(db, 'courses', transaction.course_id));
+          if (type === 'course' && transaction.courseId) {
+            const courseDoc = await getDoc(doc(db, 'courses', transaction.courseId));
             course = courseDoc.exists() ? courseDoc.data() : null;
           } else if (type === 'online_package') {
             // For online packages, create package_data from transaction fields
@@ -53,7 +54,6 @@ export default function PaymentVerifier() {
           }
 
           return {
-            id: docSnap.id,
             ...transaction,
             user,
             course,
@@ -62,7 +62,7 @@ export default function PaymentVerifier() {
         })
       );
 
-      setPendingPayments(paymentsData);
+      setPendingPayments(sortByCreatedAtDesc(paymentsData));
     } catch (error) {
       console.error('Error loading pending payments:', error);
     } finally {
@@ -207,7 +207,7 @@ export default function PaymentVerifier() {
                     На чекању
                   </div>
                   <p className="text-xs text-gray-400 mt-2">
-                    {payment.created_at && formatDate(payment.created_at)}
+                    {payment.createdAt && formatDate(payment.createdAt)}
                   </p>
                 </div>
               </div>
@@ -268,11 +268,11 @@ export default function PaymentVerifier() {
                 <div className="flex justify-between items-center">
                   <div>
                     <p className="text-sm text-gray-500 mb-1">Позив на број</p>
-                    <p className="font-mono font-bold text-lg text-[#1A1A1A]">{payment.payment_ref}</p>
+                    <p className="font-mono font-bold text-lg text-[#1A1A1A]">{payment.paymentRef}</p>
                   </div>
-                  {payment.invoice_url && (
+                  {payment.invoiceUrl && (
                     <a
-                      href={payment.invoice_url}
+                      href={payment.invoiceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium hover:bg-gray-50 flex items-center"
@@ -285,7 +285,7 @@ export default function PaymentVerifier() {
               </div>
 
               {/* Confirmation Document */}
-              {payment.confirmationUrl || payment.confirmation_url ? (
+              {payment.confirmationUrl ? (
                 <div className="bg-green-50 rounded-2xl p-4 mb-6 border border-green-100">
                   <div className="flex items-center justify-between">
                     <div>
@@ -295,7 +295,7 @@ export default function PaymentVerifier() {
                       </p>
                     </div>
                     <a
-                      href={payment.confirmationUrl || payment.confirmation_url}
+                      href={payment.confirmationUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-4 py-2 bg-white text-green-700 border border-green-200 rounded-xl text-sm font-medium hover:bg-green-50 flex items-center shadow-sm"

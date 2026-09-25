@@ -55,7 +55,7 @@ export const createCourseTransaction = onCall({ cors: true, ...APP_CHECK }, asyn
       const data = tx.data();
       return {
         transactionId: tx.id,
-        paymentReference: data.payment_ref,
+        paymentReference: data.paymentRef || data.payment_ref,
         amount: data.amount,
         courseName: data.courseName || course.title,
       };
@@ -74,8 +74,10 @@ export const createCourseTransaction = onCall({ cors: true, ...APP_CHECK }, asyn
       courseName: course.title || '',
       amount: course.price,
       status: 'pending',
-      payment_ref: paymentRef,
+      paymentRef,
+      payment_ref: paymentRef, // legacy mirror, see transactionModel.js
       userName: user.ime || '',
+      userEmail: user.email || request.auth.token.email || '',
       user_email: user.email || request.auth.token.email || '',
       createdAt: FieldValue.serverTimestamp(),
       created_at: FieldValue.serverTimestamp(),

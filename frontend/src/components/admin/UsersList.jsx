@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { collection, getDocs, query, where, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { db, functions } from '../../services/firebase';
 import { httpsCallable } from 'firebase/functions';
+import { getUserTransactionDocs } from '../../services/transactions';
 import { Users, Mail, Phone, Calendar, BookOpen, Search, Ban, Trash2, ChevronLeft, ChevronRight, UserCheck, ShieldAlert, Eye } from 'lucide-react';
 import Card, { CardBody } from '../ui/Card';
 import { showToast } from '../../utils/toast';
@@ -155,13 +156,12 @@ export default function UsersList() {
         await deleteDoc(docSnap.ref);
       }
 
-      // Obriši transactions
-      const transactionsQuery = query(
-        collection(db, 'transactions'),
-        where('userId', '==', userId)
-      );
-      const transactionsSnapshot = await getDocs(transactionsQuery);
-      for (const docSnap of transactionsSnapshot.docs) {
+      // user_courses documents are keyed by user id
+      await deleteDoc(doc(db, 'user_courses', userId));
+
+      // Obriši transactions (both `userId` and legacy `user_id` documents)
+      const transactionDocs = await getUserTransactionDocs(userId);
+      for (const docSnap of transactionDocs) {
         await deleteDoc(docSnap.ref);
       }
 

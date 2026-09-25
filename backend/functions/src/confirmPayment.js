@@ -7,6 +7,7 @@ import { onCall, HttpsError } from 'firebase-functions/v2/https';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { getTransporter } from './sendEmail.js';
 import { requireAdmin, escapeHtml, SITE_URL } from './security.js';
+import { normalizeTransaction } from './transactionModel.js';
 
 // Gmail credentials come only from the GMAIL_USER / GMAIL_PASSWORD environment
 // variables (see sendEmail.js). Never put credentials or defaults in source code.
@@ -15,7 +16,7 @@ const senderEmail = () => process.env.GMAIL_USER;
 /**
  * Confirm a pending payment and grant course access
  */
-export const confirmPayment = onCall({ region: 'europe-west1' }, async (request) => {
+export const confirmPayment = onCall(async (request) => {
   const db = getFirestore();
 
   requireAdmin(request, 'Samo admin može da potvrđuje uplate');
@@ -35,7 +36,7 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
       throw new HttpsError('not-found', 'Transakcija ne postoji');
     }
 
-    const transaction = transactionDoc.data();
+    const transaction = normalizeTransaction(transactionDoc);
 
     // ✅ IDEMPOTENCY CHECK - Proveri da li je transakcija već potvrđena
     if (transaction.status !== 'pending') {
@@ -43,8 +44,8 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
     }
 
     // ✅ VALIDATION - Proveri da li userId i courseId odgovaraju transakciji
-    const txUserId = transaction.userId || transaction.user_id;
-    const txCourseId = transaction.course_id || transaction.courseId;
+    const txUserId = transaction.userId;
+    const txCourseId = transaction.courseId;
 
     if (txUserId !== userId) {
       throw new HttpsError(
@@ -108,7 +109,7 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
         await transporter.sendMail({
           from: `"Srpski u Srcu" <${senderEmail()}>`,
           to: userData.email,
-          subject: `✅ Vaša uplata je potvrđena - ${courseData?.title || transaction.packageName || 'Kurs'}`,
+          subject: `✅ Vaša uplata je potvrđena - ${courseData?.title || transaction.packageName || transaction.courseName || 'Kurs'}`,
           html: `
             <!DOCTYPE html>
             <html>
@@ -122,7 +123,7 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
                   <p>Pozdrav <strong>${escapeHtml(userData.ime || 'Korisniče')}</strong>,</p>
                   <p>Vaša uplata je uspešno potvrđena! Sada imate pristup kursu:</p>
                   <div style="background: #F5F3EF; padding: 20px; border-radius: 12px; margin: 20px 0;">
-                    <h3 style="color: #003366; margin-top: 0;">${escapeHtml(courseData?.title || transaction.packageName || 'Kurs')}</h3>
+                    <h3 style="color: #003366; margin-top: 0;">${escapeHtml(courseData?.title || transaction.packageName || transaction.courseName || 'Kurs')}</h3>
                     <p style="color: #666; margin: 5px 0;">ID transakcije: <strong>${escapeHtml(transactionId)}</strong></p>
                   </div>
                   <p>Možete početi sa učenjem odmah! Prijavite se na platformu i pristupite kursu.</p>
@@ -162,7 +163,7 @@ export const confirmPayment = onCall({ region: 'europe-west1' }, async (request)
 /**
  * Reject a pending payment
  */
-export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) => {
+export const rejectPayment = onCall(async (request) => {
   const db = getFirestore();
 
   requireAdmin(request, 'Samo admin može da odbije uplate');
@@ -182,7 +183,7 @@ export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) 
       throw new HttpsError('not-found', 'Transakcija ne postoji');
     }
 
-    const transaction = transactionDoc.data();
+    const transaction = normalizeTransaction(transactionDoc);
 
     if (transaction.status !== 'pending') {
       throw new HttpsError('failed-precondition', `Transakcija je već ${transaction.status}`);
@@ -218,7 +219,7 @@ export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) 
 
     // Send rejection email to user
     try {
-      const userDoc = await db.collection('users').doc(transaction.user_id || transaction.userId).get();
+      const userDoc = await db.collection('users').doc(transaction.userId).get();
       const userData = userDoc.data();
 
       if (userData && userData.email) {
@@ -226,7 +227,7 @@ export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) 
         await transporter.sendMail({
           from: `"Srpski u Srcu" <${senderEmail()}>`,
           to: userData.email,
-          subject: `❌ Vaša uplata je odbijena - ${transaction.packageName || 'Kurs'}`,
+          subject: `❌ Vaša uplata je odbijena - ${transaction.packageName || transaction.courseName || 'Kurs'}`,
           html: `
             <!DOCTYPE html>
             <html>
@@ -238,7 +239,7 @@ export const rejectPayment = onCall({ region: 'europe-west1' }, async (request) 
                 </div>
                 <div style="padding: 30px 0;">
                   <p>Pozdrav <strong>${escapeHtml(userData.ime || 'Korisniče')}</strong>,</p>
-                  <p>Nažalost, vaša uplata za kurs <strong>${escapeHtml(transaction.packageName || 'Kurs')}</strong> je odbijena.</p>
+                  <p>Nažalost, vaša uplata za kurs <strong>${escapeHtml(transaction.packageName || transaction.courseName || 'Kurs')}</strong> je odbijena.</p>
                   <div style="background: #FFF3F3; padding: 20px; border-radius: 12px; margin: 20px 0; border-left: 4px solid #FF6B6B;">
                     <h4 style="color: #8B0000; margin-top: 0;">Razlog odbijanja:</h4>
                     <p style="color: #666; margin: 5px 0;">${escapeHtml(reason || 'Nevalidna uplata')}</p>

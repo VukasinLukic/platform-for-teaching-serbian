@@ -1,5 +1,6 @@
 import { collection, query, where, getCountFromServer, getDocs, doc, updateDoc, orderBy, limit, getDoc, setDoc, writeBatch } from 'firebase/firestore';
 import { db } from './firebase';
+import { normalizeTransaction, sortByCreatedAtDesc } from './transactions';
 
 /**
  * Fetches dashboard statistics for the admin panel.
@@ -36,15 +37,11 @@ export const getDashboardStats = async () => {
     const currentMonth = now.getMonth();
     const currentYear = now.getFullYear();
 
-    const monthlyRevenue = revenueSnapshot.docs.reduce((acc, doc) => {
-      const data = doc.data();
-      // Check if created_at exists and is in current month
-      if (data.created_at) {
-        // Firestore timestamp to Date
-        const date = data.created_at.toDate ? data.created_at.toDate() : new Date(data.created_at);
-        if (date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
-          return acc + (Number(data.amount) || 0);
-        }
+    const monthlyRevenue = revenueSnapshot.docs.reduce((acc, docSnap) => {
+      const tx = normalizeTransaction(docSnap);
+      const date = tx.createdAt;
+      if (date && date.getMonth() === currentMonth && date.getFullYear() === currentYear) {
+        return acc + tx.amount;
       }
       return acc;
     }, 0);
@@ -79,11 +76,11 @@ export const getPendingPayments = async (maxResults = 20) => {
     const q = query(
       collection(db, 'transactions'), 
       where('status', '==', 'pending'),
-      // orderBy('created_at', 'desc'), // Commented out to prevent potential index error on first run
       limit(maxResults)
     );
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    // Sorted client-side: legacy docs may lack `created_at`, so orderBy would drop them
+    return sortByCreatedAtDesc(snapshot.docs.map(normalizeTransaction));
   } catch (error) {
     console.error('Error fetching pending payments:', error);
     return [];
@@ -103,10 +100,10 @@ export const verifyPayment = async (transactionId, isApproved) => {
     const txSnap = await getDoc(transactionRef);
 
     if (!txSnap.exists()) throw new Error("Transaction not found");
-    const txData = txSnap.data();
+    const txData = normalizeTransaction(txSnap);
 
-    const userId = txData.userId || txData.user_id;
-    const type = txData.type || 'course';
+    const userId = txData.userId;
+    const type = txData.type;
 
     // Update transaction status in batch
     batch.update(transactionRef, {
@@ -120,7 +117,7 @@ export const verifyPayment = async (transactionId, isApproved) => {
     if (isApproved) {
       if (type === 'course') {
         // Handle course purchase
-        const courseId = txData.course_id;
+        const courseId = txData.courseId;
 
         if (userId && courseId) {
           const userCoursesRef = doc(db, 'user_courses', userId);

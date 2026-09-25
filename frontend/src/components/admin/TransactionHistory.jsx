@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, query, orderBy, limit, startAfter, getDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, getDoc, doc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
+import { normalizeTransaction, sortByCreatedAtDesc } from '../../services/transactions';
 import { formatPrice } from '../../utils/helpers';
 import { CheckCircle, XCircle, Clock, ChevronLeft, ChevronRight, Mail, User } from 'lucide-react';
 
@@ -19,28 +20,25 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
     try {
       console.log('🔵 [TransactionHistory] Loading all transactions...');
 
-      const q = query(
-        collection(db, 'transactions'),
-        orderBy('created_at', 'desc')
-      );
-
-      const snapshot = await getDocs(q);
+      // No server-side orderBy: legacy docs without `created_at` would be dropped.
+      // Normalize and sort client-side instead.
+      const snapshot = await getDocs(collection(db, 'transactions'));
       console.log('✅ [TransactionHistory] Found', snapshot.docs.length, 'transactions');
 
       // Učitaj podatke korisnika za svaku transakciju
       const txList = await Promise.all(
         snapshot.docs.map(async (txDoc) => {
-          const txData = { id: txDoc.id, ...txDoc.data() };
+          const txData = normalizeTransaction(txDoc);
 
           // Dohvati podatke korisnika iz users kolekcije
-          if (txData.userId || txData.user_id) {
-            const userId = txData.userId || txData.user_id;
+          if (txData.userId) {
+            const userId = txData.userId;
             try {
               const userDoc = await getDoc(doc(db, 'users', userId));
               if (userDoc.exists()) {
                 const userData = userDoc.data();
                 txData.userName = userData.ime || 'Непознато име';
-                txData.userEmail = userData.email || txData.user_email || 'Непознат емаил';
+                txData.userEmail = userData.email || txData.userEmail || 'Непознат емаил';
                 txData.userPhone = userData.telefon || '';
               }
             } catch (error) {
@@ -52,9 +50,10 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
         })
       );
 
-      setAllTransactions(txList);
-      setTotalPages(Math.ceil(txList.length / itemsPerPage));
-      updatePage(1, txList);
+      const sorted = sortByCreatedAtDesc(txList);
+      setAllTransactions(sorted);
+      setTotalPages(Math.ceil(sorted.length / itemsPerPage));
+      updatePage(1, sorted);
     } catch (error) {
       console.error('❌ [TransactionHistory] Error loading transactions:', error);
     } finally {
@@ -182,7 +181,7 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-600">
-                      {new Date(tx.created_at?.toDate?.() || tx.created_at).toLocaleString('sr-RS')}
+                      {tx.createdAt ? tx.createdAt.toLocaleString('sr-RS') : '—'}
                     </div>
                   </td>
                   <td className="px-6 py-4">
