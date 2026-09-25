@@ -1,35 +1,62 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import Header from '../components/ui/Header';
+import Footer from '../components/ui/Footer';
+import SEO from '../components/SEO';
 import QuizRunner from '../components/quiz/QuizRunner';
-import { loadQuiz } from '../services/quiz.service';
-import { ArrowLeft, AlertTriangle } from 'lucide-react';
+import NotFoundPage from './NotFoundPage';
+import { getAvailableQuizzes, loadQuiz } from '../services/quiz.service';
+import { findQuiz, quizMeta } from '../seo/routes';
+import { quizSeo } from '../data/quizSeo';
+import { ArrowLeft, ArrowRight, AlertTriangle } from 'lucide-react';
 
+// Public quiz page (/kvizovi/:quizId): anyone can take the quiz.
+// Quiz results are not persisted anywhere today (QuizRunner keeps score in
+// component state only), so guests and logged-in users get the same experience.
 export default function QuizRunnerPage() {
     const { quizId } = useParams();
     const navigate = useNavigate();
+    const [entry, setEntry] = useState(null);
     const [quizData, setQuizData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [notFound, setNotFound] = useState(false);
+    const [started, setStarted] = useState(false);
 
     useEffect(() => {
-        async function fetchQuiz() {
+        let cancelled = false;
+        setLoading(true);
+        setStarted(false);
+        (async () => {
             try {
-                const data = await loadQuiz(quizId);
-                setQuizData(data);
-            } catch (err) {
-                setError('Неуспешно учитавање квиза. Покушајте поново.');
+                const manifest = await getAvailableQuizzes();
+                const found = findQuiz(manifest, quizId);
+                if (!found) {
+                    if (!cancelled) setNotFound(true);
+                    return;
+                }
+                const data = await loadQuiz(found.fileName ? found.fileName.replace(/\.json$/, '') : quizId);
+                if (!cancelled) {
+                    setEntry(found);
+                    setQuizData(data);
+                }
+            } catch {
+                if (!cancelled) setError('Неуспешно учитавање квиза. Покушајте поново.');
             } finally {
-                setLoading(false);
+                if (!cancelled) setLoading(false);
             }
-        }
-        fetchQuiz();
+        })();
+        return () => { cancelled = true; };
     }, [quizId]);
 
-    const handleExitQuiz = () => {
-        // Confirm exit? For now just go back.
-        navigate('/quizzes');
-    };
+    const handleExitQuiz = () => navigate('/kvizovi');
+
+    if (notFound) return <NotFoundPage />;
+
+    const meta = entry ? quizMeta(entry) : null;
+    const seo = meta ? (
+        <SEO title={meta.title} description={meta.description} canonical={meta.path} jsonLd={meta.jsonLd} />
+    ) : null;
 
     if (loading) {
         return (
@@ -42,14 +69,15 @@ export default function QuizRunnerPage() {
     if (error) {
         return (
             <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+                <SEO title="Квиз" noindex />
                 <Header />
                 <div className="flex flex-col items-center justify-center h-[60vh] px-6 text-center">
                     <div className="bg-red-100 p-6 rounded-full mb-6">
                         <AlertTriangle className="w-12 h-12 text-[#D62828]" />
                     </div>
-                    <h2 className="text-2xl font-bold mb-4">{error}</h2>
+                    <h1 className="text-2xl font-bold mb-4">{error}</h1>
                     <button
-                        onClick={() => navigate('/quizzes')}
+                        onClick={handleExitQuiz}
                         className="flex items-center gap-2 px-6 py-3 bg-gray-100 hover:bg-gray-200 rounded-xl font-bold text-gray-700 transition"
                     >
                         <ArrowLeft className="w-5 h-5" />
@@ -60,21 +88,42 @@ export default function QuizRunnerPage() {
         );
     }
 
+    const intro = quizSeo[entry.id]?.intro || entry.description;
+
     return (
         <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+            {seo}
             <Header />
 
-            <div className="max-w-4xl mx-auto px-6 py-8 md:py-12">
-                <button
-                    onClick={handleExitQuiz}
-                    className="mb-8 flex items-center gap-2 text-gray-500 hover:text-[#D62828] font-medium transition-colors"
-                >
-                    <ArrowLeft className="w-5 h-5" />
-                    Одустани
-                </button>
+            <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12">
+                <nav aria-label="Путања" className="mb-6 text-sm text-gray-500">
+                    <Link to="/kvizovi" className="inline-flex items-center gap-2 hover:text-[#D62828] font-medium transition-colors">
+                        <ArrowLeft className="w-4 h-4" />
+                        Сви квизови
+                    </Link>
+                </nav>
 
-                <QuizRunner quiz={quizData} onExit={handleExitQuiz} />
+                <header className="mb-8">
+                    <h1 className="text-2xl md:text-4xl font-bold mb-3">{entry.title}</h1>
+                    {!started && (
+                        <>
+                            <p className="text-gray-700 text-base md:text-lg leading-relaxed mb-3">{intro}</p>
+                            <p className="text-gray-500 text-sm mb-6">
+                                {quizData.length} питања · после сваког одговора одмах видиш да ли је тачан.
+                            </p>
+                            <button
+                                onClick={() => setStarted(true)}
+                                className="px-8 py-3 rounded-xl font-bold inline-flex items-center gap-2 bg-[#D62828] text-white hover:bg-[#B91F1F] shadow-lg transition"
+                            >
+                                Започни квиз <ArrowRight className="w-5 h-5" />
+                            </button>
+                        </>
+                    )}
+                </header>
+
+                {started && <QuizRunner quiz={quizData} onExit={handleExitQuiz} />}
             </div>
+            <Footer />
         </div>
     );
 }

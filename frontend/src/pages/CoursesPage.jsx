@@ -8,6 +8,7 @@ import Footer from '../components/ui/Footer';
 import Card, { CardBody } from '../components/ui/Card';
 import Button from '../components/ui/Button';
 import SEO from '../components/SEO';
+import { coursePath } from '../seo/courseSlug';
 import { useOnboarding } from '../context/OnboardingContext';
 
 export default function CoursesPage() {
@@ -247,7 +248,7 @@ export default function CoursesPage() {
             {courses.map((course, index) => (
               <Link
                 key={course.id}
-                to={course.type === 'live' ? `/online-class/${course.id}` : `/course/${course.id}`}
+                to={coursePath(course)}
                 className="h-full block"
                 {...(index === 0 ? { 'data-tour': 'courses-first-card' } : {})}
               >

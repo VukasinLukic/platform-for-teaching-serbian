@@ -13,9 +13,8 @@ import {
 import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import SEO from '../components/SEO';
+import NotFoundPage from './NotFoundPage';
 import { inicijalniTestovi } from '../data/inicijalniTestovi';
-
-const DOMAIN = 'https://srpskiusrcu.rs';
 
 export default function InicijalniTestPage() {
   const { razred } = useParams();
@@ -33,7 +32,7 @@ export default function InicijalniTestPage() {
   }, [faza]);
 
   if (!test) {
-    return <Navigate to="/" replace />;
+    return <NotFoundPage />;
   }
 
   const canonicalPath = `/inicijalni-test/${razred}`;
@@ -42,51 +41,9 @@ export default function InicijalniTestPage() {
   const progress = ((trenutno + 1) / ukupno) * 100;
   const jePoslednje = trenutno + 1 === ukupno;
 
-  const jsonLd = [
-    {
-      '@context': 'https://schema.org',
-      '@type': 'LearningResource',
-      name: test.naziv,
-      description: `${test.naziv} из српског језика и књижевности — ${test.kratakOpis} ${ukupno} питања са тачним одговорима.`,
-      url: `${DOMAIN}${canonicalPath}`,
-      inLanguage: 'sr',
-      educationalLevel: 'MiddleSchool',
-      learningResourceType: 'Quiz',
-      teaches: test.teme.join(', '),
-      provider: {
-        '@type': 'Organization',
-        name: 'Српски у Срцу',
-        url: DOMAIN,
-      },
-    },
-    {
-      '@context': 'https://schema.org',
-      '@type': 'BreadcrumbList',
-      itemListElement: [
-        { '@type': 'ListItem', position: 1, name: 'Почетна', item: DOMAIN },
-        {
-          '@type': 'ListItem',
-          position: 2,
-          name: 'Иницијални тестови',
-          item: `${DOMAIN}/#inicijalni-testovi`,
-        },
-        {
-          '@type': 'ListItem',
-          position: 3,
-          name: test.naziv,
-          item: `${DOMAIN}${canonicalPath}`,
-        },
-      ],
-    },
-  ];
 
-  const seoProps = {
-    title: `${test.naziv} из српског — ${ukupno} питања са решењима`,
-    description: `Уради бесплатан ${test.naziv.toLowerCase()} из српског језика. ${test.kratakOpis} ${ukupno} питања, тачни одговори одмах и укупан резултат на крају.`,
-    canonical: canonicalPath,
-    keywords: `иницијални тест српски ${razred} разред, inicijalni test srpski ${razred} razred, provera znanja srpski jezik, ${test.teme.join(', ')}`,
-    jsonLd,
-  };
+
+
 
   const handleOdabir = (idx) => {
     if (odabrano !== null) return;
@@ -114,7 +71,7 @@ export default function InicijalniTestPage() {
   if (faza === 'uvod') {
     return (
       <div className="min-h-screen bg-[#fdfafc] font-sans text-[#1A1A1A]">
-        <SEO {...seoProps} />
+        <SEO />
         <Header />
 
         <div className="max-w-3xl mx-auto px-6 py-10 md:py-14">
@@ -214,7 +171,7 @@ export default function InicijalniTestPage() {
 
     return (
       <div className="min-h-screen bg-[#fdfafc] font-sans text-[#1A1A1A]">
-        <SEO {...seoProps} />
+        <SEO />
         <Header />
         <div className="max-w-2xl mx-auto px-6 py-12">
           <div className="bg-white rounded-3xl p-8 md:p-12 border border-gray-100 shadow-xl text-center">
@@ -270,7 +227,7 @@ export default function InicijalniTestPage() {
   /* ------------------------------------------------------------------- TEST */
   return (
     <div className="min-h-screen bg-[#fdfafc] font-sans text-[#1A1A1A]">
-      <SEO {...seoProps} />
+      <SEO />
       <Header />
 
       <div className="max-w-3xl mx-auto px-6 py-10">

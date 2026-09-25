@@ -25,7 +25,7 @@ export default function QuizResult({ score, totalQuestions, onRetry }) {
             </div>
 
             <div className="flex flex-col md:flex-row gap-4 justify-center">
-                <Link to="/quizzes">
+                <Link to="/kvizovi">
                     <button className="w-full md:w-auto px-8 py-4 rounded-xl border-2 border-gray-200 font-bold hover:bg-gray-50 transition-colors flex items-center justify-center gap-2">
                         <ArrowLeft className="w-5 h-5" />
                         Nazad na kvizove

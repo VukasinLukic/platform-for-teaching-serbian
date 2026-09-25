@@ -45,7 +45,7 @@ export default function QuizCard({ quiz }) {
             </p>
 
             <div className="mt-auto">
-                <Link to={`/quizzes/${quiz.fileName.replace('.json', '')}`}>
+                <Link to={`/kvizovi/${quiz.id}`}>
                     <button className="w-full bg-[#D62828] text-white py-3 rounded-2xl font-bold hover:bg-[#B91F1F] transition-all hover:scale-105 transform flex items-center justify-center gap-2">
                         Започни квиз <ArrowRight className="w-4 h-4" />
                     </button>
