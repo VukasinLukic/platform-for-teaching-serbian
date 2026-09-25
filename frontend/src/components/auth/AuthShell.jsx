@@ -14,11 +14,11 @@ export default function AuthShell({ title, subtitle, children, footer, mascot = 
           <Link to="/" className="block w-56 rounded-lg" aria-label="Српски у Срцу — почетна">
             <img src="/logoFULL.svg" alt="" className="w-full h-auto mix-blend-multiply" />
           </Link>
-          <div className="max-w-md">
-            <p className="font-display text-3xl xl:text-4xl font-semibold leading-snug text-ink">
+          <div className="max-w-xl">
+            <p className="font-display text-5xl xl:text-6xl font-semibold leading-[1.05] tracking-[-0.025em] text-ink">
               Српски језик учимо <span className="text-brand">срцем</span> — корак по корак, до мале матуре.
             </p>
-            <p className="mt-4 text-ink-600">Видео лекције, квизови и онлајн настава са наставницом Марином Лукић.</p>
+            <p className="mt-6 max-w-lg text-xl xl:text-2xl leading-relaxed text-ink-600">Видео лекције, квизови и онлајн настава са наставницом Марином Лукић.</p>
           </div>
           <img
             src={mascot}

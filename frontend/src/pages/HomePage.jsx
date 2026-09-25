@@ -697,12 +697,6 @@ export default function HomePage() {
         <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-6 pt-8 pb-12 sm:pt-12 md:pb-16 lg:pt-28 lg:pb-24 lg:min-h-[680px]">
           <div className="grid md:grid-cols-[1fr_auto] lg:block items-center gap-6">
             <div className="max-w-2xl relative z-10 text-center md:text-left">
-              {/* Mobile/tablet badge with teacher */}
-              <div className="inline-flex items-center gap-2 rounded-full bg-white border border-gray-200 shadow-sm pl-1 pr-3 py-1 mb-5 lg:mb-7">
-                <img src="/profesorkaMarina.webp" alt="" className="w-8 h-8 rounded-full object-cover object-top" width="32" height="32" />
-                <span className="text-sm font-semibold text-gray-700">Наставница Марина Лукић<span className="hidden sm:inline"> · 27 година искуства</span></span>
-              </div>
-
               <h1 className="font-bold leading-[1.1] text-ink flex flex-col gap-1 lg:gap-2">
                 <span className="text-[1.75rem] sm:text-4xl lg:text-5xl">Учите српски језик и књижевност</span>
                 <span className="text-[1.75rem] sm:text-4xl lg:text-6xl">са разумевањем</span>

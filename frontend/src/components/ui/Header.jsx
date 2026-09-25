@@ -2,14 +2,12 @@ import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useCallback, useEffect, useId, useRef, useState } from 'react';
 import { Menu, X, ChevronDown, ClipboardList, GraduationCap, ListChecks, LayoutDashboard, ShieldCheck, LogOut, Mail, CircleHelp } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
-import ScriptSwitcher from '../seo/ScriptSwitcher';
 
 // Primary navigation (Contact and FAQ live in the footer and in the mobile menu).
 const NAV_ITEMS = [
   { to: '/courses', label: 'Курсеви' },
   { to: '/online-nastava', label: 'Онлајн настава' },
   { id: 'tests', label: 'Тестови' },
-  { to: '/blog', label: 'Блог' },
   { to: '/about', label: 'О нама' },
 ];
 
@@ -191,7 +189,7 @@ function TestsDropdown({ active }) {
 }
 
 /** Full-height mobile menu dialog with focus trap, Escape, scroll lock. */
-function MobileMenu({ open, onClose, user, userProfile, onLogout, scriptSwitcher }) {
+function MobileMenu({ open, onClose, user, userProfile, onLogout }) {
   const panelRef = useRef(null);
   const titleId = useId();
 
@@ -343,8 +341,6 @@ function MobileMenu({ open, onClose, user, userProfile, onLogout, scriptSwitcher
             </li>
           </ul>
 
-          {/* INTEGRATION SLOT (mobile): ScriptSwitcher renders here when passed to <Header scriptSwitcher={...} /> */}
-          {scriptSwitcher && <div className="mt-4 px-1">{scriptSwitcher}</div>}
         </nav>
 
         <div className="flex-shrink-0 border-t border-gray-100 p-4 space-y-2">
@@ -410,14 +406,8 @@ function MobileMenu({ open, onClose, user, userProfile, onLogout, scriptSwitcher
  * Site header.
  *
  * @param {boolean} [transparent]  translucent background (kept for existing callers)
- * @param {React.ReactNode} [scriptSwitcher]
- *   INTEGRATION SLOT: the Cyrillic/Latin `ScriptSwitcher` (components/seo/ScriptSwitcher.jsx,
- *   built by the SEO agent) is mounted here. During integration either pass it from pages
- *   (`<Header scriptSwitcher={<ScriptSwitcher />} />`) or import it in this file and use it
- *   as the default value of this prop. It renders next to the auth buttons on desktop and
- *   inside the mobile menu.
  */
-export default function Header({ transparent = false, scriptSwitcher = <ScriptSwitcher /> }) {
+export default function Header({ transparent = false }) {
   const { user, logout, userProfile } = useAuthStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const scrolled = useScrolled();
@@ -488,8 +478,6 @@ export default function Header({ transparent = false, scriptSwitcher = <ScriptSw
 
           {/* Desktop actions */}
           <div className="hidden lg:flex items-center gap-2">
-            {/* INTEGRATION SLOT (desktop): ScriptSwitcher */}
-            {scriptSwitcher}
             {user ? (
               <>
                 <NavLink to="/dashboard" className={desktopLinkClass}>
@@ -564,7 +552,6 @@ export default function Header({ transparent = false, scriptSwitcher = <ScriptSw
         user={user}
         userProfile={userProfile}
         onLogout={handleLogout}
-        scriptSwitcher={scriptSwitcher}
       />
     </>
   );

@@ -6,7 +6,6 @@ import { Toaster } from 'react-hot-toast';
 import { OnboardingProvider } from './context/OnboardingContext';
 import TutorialTooltip from './components/ui/TutorialTooltip';
 import { PromoProvider, usePromo } from './context/PromoContext';
-import QuickDock from './components/ui/QuickDock';
 import CookieConsent from './components/CookieConsent';
 import { ROUTER_BASENAME } from './seo/script';
 import { LegacyQuizRedirect, LatinMirrorReload } from './seo/routeHelpers';
@@ -110,7 +109,7 @@ function whenIdle(callback, timeout = 4000) {
 }
 
 /**
- * Alano chat widget renders nothing until it is opened (from QuickDock), so its code is
+ * Alano chat widget renders nothing until it is opened from an in-page mascot prompt, so its code is
  * prefetched when the browser is idle and mounted on first open. It stays mounted
  * afterwards to keep the conversation.
  */
@@ -163,7 +162,6 @@ function AppContent() {
       <TutorialTooltip />
       <LazyPromoQuizModal />
       <LazyAssistantWidget />
-      <QuickDock />
       <CookieConsent />
       <main>
         <Suspense fallback={<PageLoader />}>
