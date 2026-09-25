@@ -137,19 +137,19 @@ export default function DashboardPage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D62828] border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent"></div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+    <div className="min-h-screen bg-white font-sans text-ink">
       <Header />
 
       <div className="max-w-7xl mx-auto px-6 py-8 md:py-16">
         {/* Welcome Section */}
         <div className="mb-10 md:mb-16" data-tour="welcome">
-          <h1 className="text-3xl md:text-5xl font-bold mb-3 text-[#1A1A1A]">
+          <h1 className="text-3xl md:text-5xl font-bold mb-3 text-ink">
             Добро дошли, {userProfile?.ime?.split(' ')[0] || 'Ученик'}!
           </h1>
           <p className="text-gray-600 text-base md:text-xl">Наставите тамо где сте стали или истражите нове курсеве</p>
@@ -166,7 +166,7 @@ export default function DashboardPage() {
 
         {transactions.some((t) => t.status === 'pending') && (
           <section id="uplate" className="mb-10 md:mb-16 scroll-mt-24">
-            <h2 className="text-xl md:text-3xl font-bold mb-2 text-[#1A1A1A]">Статус уплате</h2>
+            <h2 className="text-xl md:text-3xl font-bold mb-2 text-ink">Статус уплате</h2>
             <p className="text-gray-600 mb-6">Одобравамо уплате обично у року од 24 часа.</p>
             <PaymentStatusTimeline
               transactions={transactions.filter((t) => t.status === 'pending')}
@@ -179,25 +179,25 @@ export default function DashboardPage() {
         {availableForPurchase.length > 0 && (
           <div className="mb-10 md:mb-16" data-tour="available-courses">
             <div className="flex items-center justify-between mb-6 md:mb-8 gap-3">
-              <h2 className="text-xl md:text-3xl font-bold text-[#1A1A1A]">Доступни курсеви</h2>
-              <Link to="/courses" className="text-[#D62828] hover:text-[#B91F1F] font-medium flex items-center gap-2">
+              <h2 className="text-xl md:text-3xl font-bold text-ink">Доступни курсеви</h2>
+              <Link to="/courses" className="text-brand hover:text-brand-700 font-medium flex items-center gap-2">
                 Види све <ArrowRight className="w-4 h-4" />
               </Link>
             </div>
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {availableForPurchase.map((course) => (
-                <div key={course.id} className="group bg-gradient-to-br from-gray-50 to-white rounded-3xl p-6 border border-gray-100 hover:shadow-xl hover:border-[#D62828]/20 transition-all hover:-translate-y-1">
-                  <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] p-4 rounded-2xl w-fit mb-4 group-hover:scale-110 transition-transform">
+                <div key={course.id} className="group bg-gradient-to-br from-gray-50 to-white rounded-3xl p-6 border border-gray-100 hover:shadow-xl hover:border-brand/20 transition-all hover:-translate-y-1">
+                  <div className="bg-gradient-to-br from-brand to-brand-700 p-4 rounded-2xl w-fit mb-4 group-hover:scale-110 transition-transform">
                     <Book className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-lg font-bold mb-2 text-[#1A1A1A] group-hover:text-[#D62828] transition-colors">{course.title}</h3>
+                  <h3 className="text-lg font-bold mb-2 text-ink group-hover:text-brand transition-colors">{course.title}</h3>
                   <p className="text-sm text-gray-600 mb-4 line-clamp-2">{course.description}</p>
                   <div className="flex items-baseline gap-2 mb-4">
-                    <span className="text-3xl font-bold text-[#D62828]">{formatPrice(course.price)}</span>
+                    <span className="text-3xl font-bold text-brand">{formatPrice(course.price)}</span>
                     <span className="text-sm text-gray-500">једнократно</span>
                   </div>
                   <Link to={`/course/${course.id}`}>
-                    <button className="w-full bg-[#D62828] text-white py-3 rounded-2xl font-bold hover:bg-[#B91F1F] transition-all hover:scale-105 transform flex items-center justify-center gap-2">
+                    <button className="w-full bg-brand text-white py-3 rounded-2xl font-bold hover:bg-brand-700 transition-all hover:scale-105 transform flex items-center justify-center gap-2">
                       Погледај Курс <ArrowRight className="w-4 h-4" />
                     </button>
                   </Link>
@@ -209,7 +209,7 @@ export default function DashboardPage() {
 
         {/* My Courses Section - SECOND */}
         <div className="mb-10 md:mb-16" data-tour="my-courses">
-          <h2 className="text-xl md:text-3xl font-bold mb-6 md:mb-8 text-[#1A1A1A]">Моји курсеви</h2>
+          <h2 className="text-xl md:text-3xl font-bold mb-6 md:mb-8 text-ink">Моји курсеви</h2>
 
           {myCourses.length === 0 ? (
             <EmptyState
@@ -219,7 +219,7 @@ export default function DashboardPage() {
                 ? 'Изабери курс и почни да учиш данас. Прва лекција сваког курса је бесплатна.'
                 : 'Потврди имејл адресу да би видео купљене курсеве и могао да купујеш нове.'}
               action={
-                <Link to="/courses" className="inline-flex items-center gap-2 bg-[#D62828] text-white px-6 py-3 rounded-full font-bold hover:bg-[#B91F1F]">
+                <Link to="/courses" className="inline-flex items-center gap-2 bg-brand text-white px-6 py-3 rounded-full font-bold hover:bg-brand-700">
                   Погледај курсеве <ArrowRight className="w-5 h-5" />
                 </Link>
               }
@@ -228,9 +228,9 @@ export default function DashboardPage() {
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {myCourses.map((course) => (
                 <Link key={course.id} to={`/course/${course.id}`}>
-                  <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-xl hover:border-[#D62828]/20 transition-all hover:-translate-y-1 h-full">
+                  <div className="group relative bg-white rounded-3xl overflow-hidden border border-gray-100 hover:shadow-xl hover:border-brand/20 transition-all hover:-translate-y-1 h-full">
                     {/* Thumbnail or gradient background */}
-                    <div className="h-40 bg-gradient-to-br from-[#D62828] to-[#B91F1F] flex items-center justify-center relative overflow-hidden">
+                    <div className="h-40 bg-gradient-to-br from-brand to-brand-700 flex items-center justify-center relative overflow-hidden">
                       {course.thumbnail_url ? (
                         <img src={course.thumbnail_url} alt={course.title} className="w-full h-full object-cover" loading="lazy" />
                       ) : (
@@ -240,9 +240,9 @@ export default function DashboardPage() {
                     </div>
 
                     <div className="p-6">
-                      <h3 className="text-lg font-bold mb-3 text-[#1A1A1A] group-hover:text-[#D62828] transition-colors">{course.title}</h3>
+                      <h3 className="text-lg font-bold mb-3 text-ink group-hover:text-brand transition-colors">{course.title}</h3>
 
-                      <div className="flex items-center gap-2 text-[#D62828] font-bold text-sm mb-4">
+                      <div className="flex items-center gap-2 text-brand font-bold text-sm mb-4">
                         <PlayCircle className="w-5 h-5" />
                         <span>Настави учење</span>
                       </div>
@@ -262,8 +262,8 @@ export default function DashboardPage() {
         {/* Quiz results per topic */}
         <section className="mb-10 md:mb-16">
           <div className="flex items-center justify-between mb-6 gap-3">
-            <h2 className="text-xl md:text-3xl font-bold text-[#1A1A1A]">Резултати квизова</h2>
-            <Link to={QUIZ_BASE_PATH} className="text-[#D62828] hover:text-[#B91F1F] font-medium flex items-center gap-2">
+            <h2 className="text-xl md:text-3xl font-bold text-ink">Резултати квизова</h2>
+            <Link to={QUIZ_BASE_PATH} className="text-brand hover:text-brand-700 font-medium flex items-center gap-2">
               Сви квизови <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
@@ -273,9 +273,9 @@ export default function DashboardPage() {
         {/* Quizzes Section */}
         {myCourses.length > 0 && (
           <div className="mb-10 md:mb-16" data-tour="quizzes">
-            <div className="bg-gradient-to-br from-[#1A1A1A] to-[#2D2D2D] rounded-3xl p-6 md:p-12 text-white relative overflow-hidden group">
+            <div className="bg-gradient-to-br from-ink to-ink-800 rounded-3xl p-6 md:p-12 text-white relative overflow-hidden group">
               {/* Background Decoration */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-[#D62828] rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
+              <div className="absolute top-0 right-0 w-64 h-64 bg-brand rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
 
               <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
                 <div className="text-center md:text-left">
@@ -286,7 +286,7 @@ export default function DashboardPage() {
                 </div>
 
                 <Link to="/kvizovi" className="w-full md:w-auto">
-                  <button className="w-full md:w-auto bg-[#D62828] text-white px-8 py-4 rounded-2xl font-bold hover:bg-[#B91F1F] transition-all hover:scale-105 transform flex items-center justify-center gap-2 shadow-lg shadow-red-900/20">
+                  <button className="w-full md:w-auto bg-brand text-white px-8 py-4 rounded-2xl font-bold hover:bg-brand-700 transition-all hover:scale-105 transform flex items-center justify-center gap-2 shadow-lg shadow-red-900/20">
                     <Book className="w-5 h-5" />
                     Погледај Квизове <ArrowRight className="w-5 h-5" />
                   </button>
@@ -299,7 +299,7 @@ export default function DashboardPage() {
         {/* Transactions Section */}
         {transactions.length > 0 && (
           <div className="mb-10 md:mb-16">
-            <h2 className="text-xl md:text-3xl font-bold mb-6 md:mb-8 text-[#1A1A1A]">Историја уплата</h2>
+            <h2 className="text-xl md:text-3xl font-bold mb-6 md:mb-8 text-ink">Историја уплата</h2>
 
             {/* Desktop Table View */}
             <div className="hidden md:block bg-white rounded-3xl overflow-hidden border border-gray-100 shadow-sm">
@@ -317,8 +317,8 @@ export default function DashboardPage() {
                   <tbody className="divide-y divide-gray-100">
                     {transactions.map((transaction) => (
                       <tr key={transaction.id} className="hover:bg-gray-50 transition">
-                        <td className="px-6 py-5 font-semibold text-[#1A1A1A]">{transaction.courseName || transaction.packageName || transaction.course?.title || 'Непознат курс'}</td>
-                        <td className="px-6 py-5 font-bold text-[#D62828] text-lg">{formatPrice(transaction.amount)}</td>
+                        <td className="px-6 py-5 font-semibold text-ink">{transaction.courseName || transaction.packageName || transaction.course?.title || 'Непознат курс'}</td>
+                        <td className="px-6 py-5 font-bold text-brand text-lg">{formatPrice(transaction.amount)}</td>
                         <td className="px-6 py-5">
                           <span className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold ${transaction.status === 'confirmed' ? 'bg-green-100 text-green-800' :
                               transaction.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
@@ -333,7 +333,7 @@ export default function DashboardPage() {
                           {transaction.status === 'pending' && !transaction.confirmationUrl && (
                             <button
                               onClick={() => handleOpenUploadModal(transaction)}
-                              className="flex items-center gap-2 bg-[#D62828] text-white px-5 py-2.5 rounded-xl font-bold hover:bg-[#B91F1F] transition-all hover:scale-105 transform text-sm"
+                              className="flex items-center gap-2 bg-brand text-white px-5 py-2.5 rounded-xl font-bold hover:bg-brand-700 transition-all hover:scale-105 transform text-sm"
                             >
                               <Upload className="w-4 h-4" />
                               Отпреми потврду
@@ -357,7 +357,7 @@ export default function DashboardPage() {
                   {/* Course Name */}
                   <div className="mb-4 pb-4 border-b border-gray-100">
                     <div className="text-xs text-gray-500 font-bold uppercase mb-1">Курс</div>
-                    <div className="font-bold text-[#1A1A1A] text-base">
+                    <div className="font-bold text-ink text-base">
                       {transaction.courseName || transaction.packageName || transaction.course?.title || 'Непознат курс'}
                     </div>
                   </div>
@@ -366,7 +366,7 @@ export default function DashboardPage() {
                   <div className="grid grid-cols-2 gap-4 mb-4">
                     <div>
                       <div className="text-xs text-gray-500 font-bold uppercase mb-1">Износ</div>
-                      <div className="font-black text-[#D62828] text-xl">{formatPrice(transaction.amount)}</div>
+                      <div className="font-black text-brand text-xl">{formatPrice(transaction.amount)}</div>
                     </div>
                     <div>
                       <div className="text-xs text-gray-500 font-bold uppercase mb-1">Статус</div>
@@ -390,7 +390,7 @@ export default function DashboardPage() {
                   {transaction.status === 'pending' && !transaction.confirmationUrl && (
                     <button
                       onClick={() => handleOpenUploadModal(transaction)}
-                      className="w-full flex items-center justify-center gap-2 bg-[#D62828] text-white px-5 py-3 rounded-xl font-bold hover:bg-[#B91F1F] transition-all"
+                      className="w-full flex items-center justify-center gap-2 bg-brand text-white px-5 py-3 rounded-xl font-bold hover:bg-brand-700 transition-all"
                     >
                       <Upload className="w-4 h-4" />
                       Отпреми потврду

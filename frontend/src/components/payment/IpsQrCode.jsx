@@ -68,7 +68,7 @@ export default function IpsQrCode({ payload, fileName = 'ips-qr', size = 240 }) 
         <a
           href={dataUrl}
           download={`${fileName}.png`}
-          className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#D62828] hover:underline"
+          className="inline-flex items-center gap-1.5 text-sm font-semibold text-brand hover:underline"
         >
           <Download className="w-4 h-4" aria-hidden="true" />
           Сачувај QR код као слику

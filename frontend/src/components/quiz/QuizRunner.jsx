@@ -95,7 +95,7 @@ export default function QuizRunner({ quiz, onExit, quizId: quizIdProp }) {
                 </div>
                 <div className="h-3 bg-gray-100 rounded-full overflow-hidden">
                     <div
-                        className="h-full bg-[#D62828] transition-all duration-300 ease-out"
+                        className="h-full bg-brand transition-all duration-300 ease-out"
                         style={{ width: `${progress}%` }}
                     ></div>
                 </div>
@@ -103,7 +103,7 @@ export default function QuizRunner({ quiz, onExit, quizId: quizIdProp }) {
 
             {/* Question Card */}
             <div className="bg-white rounded-3xl p-5 md:p-8 shadow-sm border border-gray-100 mb-8">
-                <div className="text-lg md:text-xl font-normal text-[#1A1A1A] mb-8 whitespace-pre-line leading-relaxed">
+                <div className="text-lg md:text-xl font-normal text-ink mb-8 whitespace-pre-line leading-relaxed">
                     {parse(currentQuestion.question)}
                 </div>
 
@@ -121,7 +121,7 @@ export default function QuizRunner({ quiz, onExit, quizId: quizIdProp }) {
                             }
                         } else {
                             if (selectedAnswer === answer) {
-                                buttonClass += "border-[#D62828] bg-red-50 text-[#D62828]";
+                                buttonClass += "border-brand bg-red-50 text-brand";
                             } else {
                                 buttonClass += "border-gray-100 hover:border-gray-300 text-gray-700";
                             }
@@ -156,7 +156,7 @@ export default function QuizRunner({ quiz, onExit, quizId: quizIdProp }) {
                         onClick={handleSubmitAnswer}
                         disabled={!selectedAnswer}
                         className={`px-8 py-3 rounded-xl font-bold flex items-center gap-2 transition-all ${selectedAnswer
-                                ? 'bg-[#D62828] text-white hover:bg-[#B91F1F] shadow-lg hover:shadow-xl'
+                                ? 'bg-brand text-white hover:bg-brand-700 shadow-lg hover:shadow-xl'
                                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                             }`}
                     >
@@ -165,7 +165,7 @@ export default function QuizRunner({ quiz, onExit, quizId: quizIdProp }) {
                 ) : (
                     <button
                         onClick={handleNextQuestion}
-                        className="px-8 py-3 rounded-xl font-bold flex items-center gap-2 bg-[#D62828] text-white hover:bg-[#B91F1F] shadow-lg hover:shadow-xl transition-all"
+                        className="px-8 py-3 rounded-xl font-bold flex items-center gap-2 bg-brand text-white hover:bg-brand-700 shadow-lg hover:shadow-xl transition-all"
                     >
                         {isLastQuestion ? 'Заврши квиз' : 'Следеће питање'} <ArrowRight className="w-5 h-5" />
                     </button>

@@ -78,9 +78,9 @@ export default function EmailVerificationBanner({ className = '', variant = 'inl
       <button
         type="button"
         onClick={() => setCollapsed(false)}
-        className={`${floating ? 'shadow-lg' : 'w-full sm:w-auto'} inline-flex items-center gap-2 bg-[#FFF8E1] border border-[#F2C94C] text-[#1A1A1A] rounded-full px-4 py-2 text-sm font-semibold hover:bg-[#FFF1C2] transition-colors ${className}`}
+        className={`${floating ? 'shadow-lg' : 'w-full sm:w-auto'} inline-flex items-center gap-2 bg-gold-50 border border-gold text-ink rounded-full px-4 py-2 text-sm font-semibold hover:bg-gold-100 transition-colors ${className}`}
       >
-        <Mail className="w-4 h-4 text-[#B7791F]" aria-hidden="true" />
+        <Mail className="w-4 h-4 text-gold-700" aria-hidden="true" />
         Потврди имејл адресу
       </button>
     );
@@ -93,7 +93,7 @@ export default function EmailVerificationBanner({ className = '', variant = 'inl
   return wrap(
     <section
       aria-labelledby="verify-banner-title"
-      className={`relative bg-gradient-to-r from-[#FFF8E1] to-[#FFFDF5] border border-[#F2C94C] rounded-2xl p-4 sm:p-5 ${floating ? 'shadow-xl' : 'shadow-sm'} ${className}`}
+      className={`relative bg-gradient-to-r from-gold-50 to-gold-50 border border-gold rounded-2xl p-4 sm:p-5 ${floating ? 'shadow-xl' : 'shadow-sm'} ${className}`}
     >
       <button
         type="button"
@@ -105,11 +105,11 @@ export default function EmailVerificationBanner({ className = '', variant = 'inl
       </button>
       <div className="flex flex-col sm:flex-row sm:items-center gap-4 pr-6">
         <div className="flex items-start gap-3 flex-1 min-w-0">
-          <div className="w-10 h-10 rounded-full bg-[#F2C94C] flex items-center justify-center flex-shrink-0">
-            <Mail className="w-5 h-5 text-[#1A1A1A]" aria-hidden="true" />
+          <div className="w-10 h-10 rounded-full bg-gold flex items-center justify-center flex-shrink-0">
+            <Mail className="w-5 h-5 text-ink" aria-hidden="true" />
           </div>
           <div className="min-w-0">
-            <h2 id="verify-banner-title" className="font-bold text-[#1A1A1A]">
+            <h2 id="verify-banner-title" className="font-bold text-ink">
               Потврди имејл адресу
             </h2>
             <p className="text-sm text-gray-700 mt-0.5">
@@ -130,7 +130,7 @@ export default function EmailVerificationBanner({ className = '', variant = 'inl
             type="button"
             onClick={resend}
             disabled={sending || cooldown > 0}
-            className="inline-flex items-center justify-center gap-2 bg-[#1A1A1A] text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-black disabled:opacity-60 disabled:cursor-not-allowed transition-colors flex-shrink-0"
+            className="inline-flex items-center justify-center gap-2 bg-ink text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-black disabled:opacity-60 disabled:cursor-not-allowed transition-colors flex-shrink-0"
           >
             <RefreshCw className={`w-4 h-4 ${sending ? 'animate-spin' : ''}`} aria-hidden="true" />
             {buttonLabel}

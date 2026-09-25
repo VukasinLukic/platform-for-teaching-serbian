@@ -31,15 +31,15 @@ function stepsFor(tx) {
 
 const DOT = {
   done: 'bg-green-600 text-white border-green-600',
-  current: 'bg-white text-[#D62828] border-[#D62828] ring-4 ring-[#D62828]/10',
+  current: 'bg-white text-brand border-brand ring-4 ring-brand/10',
   todo: 'bg-white text-gray-300 border-gray-200',
   skipped: 'bg-gray-100 text-gray-400 border-gray-200',
   rejected: 'bg-red-600 text-white border-red-600',
 };
 
 const LABEL = {
-  done: 'text-[#1A1A1A]',
-  current: 'text-[#D62828]',
+  done: 'text-ink',
+  current: 'text-brand',
   todo: 'text-gray-400',
   skipped: 'text-gray-400',
   rejected: 'text-red-700',
@@ -99,13 +99,13 @@ export default function PaymentStatusTimeline({ transactions, onUploadProof }) {
           <li key={tx.id} className="bg-white border border-gray-100 rounded-3xl shadow-sm p-5 sm:p-6">
             <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 mb-5">
               <div className="min-w-0">
-                <h3 className="font-bold text-[#1A1A1A] text-base sm:text-lg break-words">{name}</h3>
+                <h3 className="font-bold text-ink text-base sm:text-lg break-words">{name}</h3>
                 <p className="text-sm text-gray-500">
                   {tx.createdAt instanceof Date && !Number.isNaN(tx.createdAt.getTime()) ? formatDate(tx.createdAt) : ''}
                   {ref ? ` · позив на број ${ref}` : ''}
                 </p>
               </div>
-              <div className="text-xl font-extrabold text-[#D62828] whitespace-nowrap">{formatPrice(tx.amount || 0)}</div>
+              <div className="text-xl font-extrabold text-brand whitespace-nowrap">{formatPrice(tx.amount || 0)}</div>
             </div>
 
             <Timeline tx={tx} />
@@ -116,7 +116,7 @@ export default function PaymentStatusTimeline({ transactions, onUploadProof }) {
               <div className="mt-4 flex flex-col sm:flex-row gap-2">
                 <Link
                   to={`/uplatnica?tx=${encodeURIComponent(tx.id)}`}
-                  className="inline-flex items-center justify-center gap-2 border-2 border-gray-200 text-[#1A1A1A] px-4 py-2.5 rounded-xl font-bold text-sm hover:border-[#1A1A1A] transition-colors"
+                  className="inline-flex items-center justify-center gap-2 border-2 border-gray-200 text-ink px-4 py-2.5 rounded-xl font-bold text-sm hover:border-ink transition-colors"
                 >
                   <FileText className="w-4 h-4" aria-hidden="true" />
                   Уплатница и QR код
@@ -125,7 +125,7 @@ export default function PaymentStatusTimeline({ transactions, onUploadProof }) {
                   <button
                     type="button"
                     onClick={() => onUploadProof(tx)}
-                    className="inline-flex items-center justify-center gap-2 bg-[#D62828] text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-[#B91F1F] transition-colors"
+                    className="inline-flex items-center justify-center gap-2 bg-brand text-white px-4 py-2.5 rounded-xl font-bold text-sm hover:bg-brand-700 transition-colors"
                   >
                     <Upload className="w-4 h-4" aria-hidden="true" />
                     Пошаљи доказ о уплати

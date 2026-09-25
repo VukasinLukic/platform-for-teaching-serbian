@@ -81,11 +81,11 @@ export default function PaymentConfirmationUpload({ transactionId, onSuccess }) 
         <div className="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
           <CheckCircle className="h-10 w-10 text-green-600" />
         </div>
-        <h3 className="text-xl font-bold mb-2 text-[#1A1A1A]">Потврда послата!</h3>
+        <h3 className="text-xl font-bold mb-2 text-ink">Потврда послата!</h3>
         <p className="text-gray-600 mb-4">
           Ваша потврда о уплати је успешно примљена. Верификација траје до 24 сата.
         </p>
-        <div className="bg-[#F7F7F7] rounded-2xl p-4">
+        <div className="bg-surface rounded-2xl p-4">
           <p className="text-sm text-gray-600">
             Добићете имејл када администратор потврди вашу уплату и омогући приступ курсу.
           </p>
@@ -96,7 +96,7 @@ export default function PaymentConfirmationUpload({ transactionId, onSuccess }) 
 
   return (
     <div className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100">
-      <h3 className="text-xl font-bold mb-2 text-[#1A1A1A]">Пошаљите потврду о уплати</h3>
+      <h3 className="text-xl font-bold mb-2 text-ink">Пошаљите потврду о уплати</h3>
       <p className="text-gray-600 mb-6">
         Пренесите фотографију или PDF извода банковне уплатнице
       </p>
@@ -105,11 +105,11 @@ export default function PaymentConfirmationUpload({ transactionId, onSuccess }) 
       <div className="mb-6">
         {!file ? (
           <label className="block">
-            <div className="border-2 border-dashed border-gray-200 hover:border-[#D62828] rounded-2xl p-8 text-center cursor-pointer transition-colors group">
-              <div className="bg-[#D62828]/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-[#D62828]/20 transition-colors">
-                <Upload className="h-8 w-8 text-[#D62828]" />
+            <div className="border-2 border-dashed border-gray-200 hover:border-brand rounded-2xl p-8 text-center cursor-pointer transition-colors group">
+              <div className="bg-brand/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-brand/20 transition-colors">
+                <Upload className="h-8 w-8 text-brand" />
               </div>
-              <p className="font-semibold mb-2 text-[#1A1A1A] group-hover:text-[#D62828] transition-colors">
+              <p className="font-semibold mb-2 text-ink group-hover:text-brand transition-colors">
                 Кликните за отпремање
               </p>
               <p className="text-sm text-gray-600">
@@ -137,12 +137,12 @@ export default function PaymentConfirmationUpload({ transactionId, onSuccess }) 
                     className="w-20 h-20 rounded-xl object-cover"
                   />
                 ) : (
-                  <div className="bg-[#D62828]/10 w-20 h-20 rounded-xl flex items-center justify-center">
-                    <FileImage className="h-8 w-8 text-[#D62828]" />
+                  <div className="bg-brand/10 w-20 h-20 rounded-xl flex items-center justify-center">
+                    <FileImage className="h-8 w-8 text-brand" />
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="font-semibold truncate text-[#1A1A1A]">{file.name}</p>
+                  <p className="font-semibold truncate text-ink">{file.name}</p>
                   <p className="text-sm text-gray-600">
                     {(file.size / 1024 / 1024).toFixed(2)} MB
                   </p>
@@ -150,7 +150,7 @@ export default function PaymentConfirmationUpload({ transactionId, onSuccess }) 
               </div>
               <button
                 onClick={handleRemoveFile}
-                className="p-2 hover:bg-[#F7F7F7] rounded-lg transition-colors"
+                className="p-2 hover:bg-surface rounded-lg transition-colors"
                 disabled={uploading}
               >
                 <X className="h-5 w-5 text-gray-600" />
@@ -172,7 +172,7 @@ export default function PaymentConfirmationUpload({ transactionId, onSuccess }) 
       <button
         onClick={handleUpload}
         disabled={!file || uploading}
-        className="w-full bg-[#D62828] text-white py-3 px-6 rounded-2xl font-bold hover:bg-[#B91F1F] transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+        className="w-full bg-brand text-white py-3 px-6 rounded-2xl font-bold hover:bg-brand-700 transition disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
       >
         {uploading ? (
           <>
@@ -188,7 +188,7 @@ export default function PaymentConfirmationUpload({ transactionId, onSuccess }) 
       </button>
 
       {/* Info note */}
-      <div className="bg-[#F7F7F7] rounded-2xl p-4 mt-4">
+      <div className="bg-surface rounded-2xl p-4 mt-4">
         <p className="text-xs text-gray-600">
           💡 <strong>Савет:</strong> Уверите се да су сви детаљи уплатнице јасно видљиви
           на фотографији или PDF-у.

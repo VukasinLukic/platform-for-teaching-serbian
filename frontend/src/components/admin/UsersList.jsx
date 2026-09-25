@@ -227,7 +227,7 @@ export default function UsersList() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D62828] border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent"></div>
       </div>
     );
   }
@@ -236,7 +236,7 @@ export default function UsersList() {
     return (
       <div className="text-center py-20">
         <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-        <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Нема ученика</h3>
+        <h3 className="text-xl font-bold text-ink mb-2">Нема ученика</h3>
         <p className="text-gray-600">Тренутно нема регистрованих ученика.</p>
       </div>
     );
@@ -255,7 +255,7 @@ export default function UsersList() {
       <div className="space-y-6">
         {/* Header with search */}
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-        <h2 className="text-xl md:text-2xl font-bold text-[#1A1A1A]">
+        <h2 className="text-xl md:text-2xl font-bold text-ink">
           Листа Ученика ({allUsers.length})
         </h2>
 
@@ -267,7 +267,7 @@ export default function UsersList() {
             placeholder="Претрага по имену, емаилу или телефону..."
             value={searchTerm}
             onChange={handleSearch}
-            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
           />
         </div>
       </div>
@@ -280,11 +280,11 @@ export default function UsersList() {
             className={`rounded-2xl border shadow-sm p-4 ${user.blocked ? 'bg-red-50/40 border-red-100' : 'bg-white border-gray-100'}`}
           >
             <div className="flex items-start gap-3">
-              <div className="w-11 h-11 rounded-full bg-[#D62828] flex items-center justify-center text-white font-bold flex-shrink-0">
+              <div className="w-11 h-11 rounded-full bg-brand flex items-center justify-center text-white font-bold flex-shrink-0">
                 {user.ime?.charAt(0) || user.email.charAt(0).toUpperCase()}
               </div>
               <div className="min-w-0 flex-1">
-                <div className="font-bold text-[#1A1A1A] truncate">{user.ime || 'Без имена'}</div>
+                <div className="font-bold text-ink truncate">{user.ime || 'Без имена'}</div>
                 <div className="text-sm text-gray-600 truncate">{user.email}</div>
                 {user.telefon && (
                   <div className="text-sm text-gray-600 flex items-center gap-1 mt-0.5">
@@ -305,8 +305,8 @@ export default function UsersList() {
             </div>
             <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-gray-600">
               <span className="inline-flex items-center gap-1">
-                <BookOpen className="w-3.5 h-3.5 text-[#D62828]" />
-                Курсеви: <strong className="text-[#1A1A1A]">{user.coursesCount}</strong>
+                <BookOpen className="w-3.5 h-3.5 text-brand" />
+                Курсеви: <strong className="text-ink">{user.coursesCount}</strong>
               </span>
               {user.registrovan_at && (
                 <span className="inline-flex items-center gap-1">
@@ -363,11 +363,11 @@ export default function UsersList() {
                 <tr key={user.id} className={`hover:bg-gray-50 transition-colors ${user.blocked ? 'bg-red-50/30' : ''}`}>
                   <td className="px-6 py-4">
                     <div className="flex items-center gap-3">
-                      <div className="w-12 h-12 rounded-full bg-[#D62828] flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
+                      <div className="w-12 h-12 rounded-full bg-brand flex items-center justify-center text-white font-bold text-lg flex-shrink-0">
                         {user.ime?.charAt(0) || user.email.charAt(0).toUpperCase()}
                       </div>
                       <div className="min-w-0">
-                        <div className="font-bold text-[#1A1A1A] truncate">
+                        <div className="font-bold text-ink truncate">
                           {user.ime || 'Без имена'}
                         </div>
                         <div className="text-sm text-gray-600 flex items-center gap-1 truncate">
@@ -398,9 +398,9 @@ export default function UsersList() {
                     )}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex items-center gap-2 bg-[#F7F7F7] px-3 py-1.5 rounded-lg w-fit">
-                      <BookOpen className="w-4 h-4 text-[#D62828]" />
-                      <span className="font-bold text-[#1A1A1A] text-sm">
+                    <div className="flex items-center gap-2 bg-surface px-3 py-1.5 rounded-lg w-fit">
+                      <BookOpen className="w-4 h-4 text-brand" />
+                      <span className="font-bold text-ink text-sm">
                         {user.coursesCount}
                       </span>
                     </div>

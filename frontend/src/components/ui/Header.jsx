@@ -27,8 +27,8 @@ const TEST_PATH_RE = /^(\/lat)?\/(inicijalni-test|probni-prijemni|kvizovi|quizze
 const FOCUSABLE = 'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])';
 
 const desktopLinkClass = ({ isActive }) =>
-  `relative inline-flex items-center h-10 px-3 rounded-full text-[15px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D62828]/40 ${
-    isActive ? 'text-[#D62828] bg-red-50' : 'text-[#1A1A1A] hover:text-[#D62828] hover:bg-red-50/60'
+  `relative inline-flex items-center h-10 px-3 rounded-full text-[15px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
+    isActive ? 'text-brand bg-red-50' : 'text-ink hover:text-brand hover:bg-red-50/60'
   }`;
 
 function useScrolled(threshold = 8) {
@@ -149,10 +149,10 @@ function TestsDropdown({ active }) {
                   data-menu-item
                   aria-label={t.label}
                   className={({ isActive }) =>
-                    `flex flex-col items-center justify-center rounded-xl py-2.5 border text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D62828]/40 ${
+                    `flex flex-col items-center justify-center rounded-xl py-2.5 border text-center transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
                       isActive
-                        ? 'border-[#D62828] bg-red-50 text-[#D62828]'
-                        : 'border-gray-100 hover:border-[#D62828]/40 hover:bg-red-50/60 text-[#1A1A1A]'
+                        ? 'border-brand bg-red-50 text-brand'
+                        : 'border-gray-100 hover:border-brand/40 hover:bg-red-50/60 text-ink'
                     }`
                   }
                 >
@@ -168,12 +168,12 @@ function TestsDropdown({ active }) {
                   to={t.to}
                   data-menu-item
                   className={({ isActive }) =>
-                    `flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D62828]/40 ${
-                      isActive ? 'bg-red-50 text-[#D62828]' : 'hover:bg-gray-50 text-[#1A1A1A]'
+                    `flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40 ${
+                      isActive ? 'bg-red-50 text-brand' : 'hover:bg-gray-50 text-ink'
                     }`
                   }
                 >
-                  <span className="w-9 h-9 rounded-lg bg-red-50 text-[#D62828] flex items-center justify-center flex-shrink-0">
+                  <span className="w-9 h-9 rounded-lg bg-red-50 text-brand flex items-center justify-center flex-shrink-0">
                     <t.icon className="w-5 h-5" aria-hidden="true" />
                   </span>
                   <span className="min-w-0">
@@ -237,13 +237,13 @@ function MobileMenu({ open, onClose, user, userProfile, onLogout, scriptSwitcher
 
   const rowClass = ({ isActive }) =>
     `flex items-center justify-between min-h-[48px] px-4 rounded-xl text-base font-semibold transition-colors ${
-      isActive ? 'bg-red-50 text-[#D62828]' : 'text-[#1A1A1A] hover:bg-gray-50'
+      isActive ? 'bg-red-50 text-brand' : 'text-ink hover:bg-gray-50'
     }`;
 
   return (
     <div className="fixed inset-0 z-[80] lg:hidden">
       <div
-        className="absolute inset-0 bg-[#1A1A1A]/50 motion-safe:animate-overlay-fade"
+        className="absolute inset-0 bg-ink/50 motion-safe:animate-overlay-fade"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -256,14 +256,14 @@ function MobileMenu({ open, onClose, user, userProfile, onLogout, scriptSwitcher
         style={{ paddingBottom: 'env(safe-area-inset-bottom)', paddingRight: 'env(safe-area-inset-right)' }}
       >
         <div className="flex items-center justify-between h-14 px-4 border-b border-gray-100 flex-shrink-0">
-          <h2 id={titleId} className="text-base font-bold text-[#1A1A1A]">
+          <h2 id={titleId} className="text-base font-bold text-ink">
             Мени
           </h2>
           <button
             type="button"
             data-autofocus
             onClick={onClose}
-            className="w-11 h-11 -mr-2 flex items-center justify-center rounded-full text-[#1A1A1A] hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D62828]/40"
+            className="w-11 h-11 -mr-2 flex items-center justify-center rounded-full text-ink hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
             aria-label="Затвори мени"
           >
             <X size={22} />
@@ -286,7 +286,7 @@ function MobileMenu({ open, onClose, user, userProfile, onLogout, scriptSwitcher
             ))}
           </ul>
 
-          <div className="mt-4 rounded-2xl bg-[#FFF8F8] border border-red-100 p-3">
+          <div className="mt-4 rounded-2xl bg-brand-50 border border-red-100 p-3">
             <p className="px-1 pb-2 text-xs font-bold uppercase tracking-wider text-gray-500">Тестови</p>
             <div className="grid grid-cols-4 gap-2">
               {TEST_LINKS.slice(0, 4).map((t) => (
@@ -296,7 +296,7 @@ function MobileMenu({ open, onClose, user, userProfile, onLogout, scriptSwitcher
                   aria-label={t.label}
                   className={({ isActive }) =>
                     `flex flex-col items-center justify-center min-h-[56px] rounded-xl border bg-white ${
-                      isActive ? 'border-[#D62828] text-[#D62828]' : 'border-gray-200 text-[#1A1A1A]'
+                      isActive ? 'border-brand text-brand' : 'border-gray-200 text-ink'
                     }`
                   }
                 >
@@ -310,7 +310,7 @@ function MobileMenu({ open, onClose, user, userProfile, onLogout, scriptSwitcher
                 <li key={t.to}>
                   <NavLink to={t.to} className={rowClass}>
                     <span className="flex items-center gap-3">
-                      <t.icon className="w-5 h-5 text-[#D62828]" aria-hidden="true" />
+                      <t.icon className="w-5 h-5 text-brand" aria-hidden="true" />
                       {t.label}
                     </span>
                   </NavLink>
@@ -353,14 +353,14 @@ function MobileMenu({ open, onClose, user, userProfile, onLogout, scriptSwitcher
               <div className="grid grid-cols-2 gap-2">
                 <Link
                   to="/dashboard"
-                  className="flex items-center justify-center gap-2 min-h-[48px] rounded-full bg-[#1A1A1A] text-white font-bold"
+                  className="flex items-center justify-center gap-2 min-h-[48px] rounded-full bg-ink text-white font-bold"
                 >
                   <LayoutDashboard className="w-4 h-4" aria-hidden="true" /> Мој панел
                 </Link>
                 {userProfile?.role === 'admin' ? (
                   <Link
                     to="/admin"
-                    className="flex items-center justify-center gap-2 min-h-[48px] rounded-full border-2 border-gray-200 text-[#1A1A1A] font-bold"
+                    className="flex items-center justify-center gap-2 min-h-[48px] rounded-full border-2 border-gray-200 text-ink font-bold"
                   >
                     <ShieldCheck className="w-4 h-4" aria-hidden="true" /> Админ
                   </Link>
@@ -368,7 +368,7 @@ function MobileMenu({ open, onClose, user, userProfile, onLogout, scriptSwitcher
                   <button
                     type="button"
                     onClick={onLogout}
-                    className="flex items-center justify-center gap-2 min-h-[48px] rounded-full border-2 border-gray-200 text-[#1A1A1A] font-bold"
+                    className="flex items-center justify-center gap-2 min-h-[48px] rounded-full border-2 border-gray-200 text-ink font-bold"
                   >
                     <LogOut className="w-4 h-4" aria-hidden="true" /> Одјави се
                   </button>
@@ -388,13 +388,13 @@ function MobileMenu({ open, onClose, user, userProfile, onLogout, scriptSwitcher
             <div className="grid grid-cols-2 gap-2">
               <Link
                 to="/login"
-                className="flex items-center justify-center min-h-[48px] rounded-full border-2 border-gray-200 text-[#1A1A1A] font-bold"
+                className="flex items-center justify-center min-h-[48px] rounded-full border-2 border-gray-200 text-ink font-bold"
               >
                 Пријави се
               </Link>
               <Link
                 to="/register"
-                className="flex items-center justify-center min-h-[48px] rounded-full bg-[#D62828] text-white font-bold shadow-md shadow-red-900/10"
+                className="flex items-center justify-center min-h-[48px] rounded-full bg-brand text-white font-bold shadow-md shadow-red-900/10"
               >
                 Региструј се
               </Link>
@@ -455,7 +455,7 @@ export default function Header({ transparent = false, scriptSwitcher = <ScriptSw
           {/* Logo */}
           <Link
             to="/"
-            className="flex items-center flex-shrink-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D62828]/40"
+            className="flex items-center flex-shrink-0 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
             aria-label="Српски у срцу — почетна"
           >
             <img
@@ -503,7 +503,7 @@ export default function Header({ transparent = false, scriptSwitcher = <ScriptSw
                 <button
                   type="button"
                   onClick={logout}
-                  className="inline-flex items-center h-10 px-4 rounded-full border-2 border-gray-200 text-sm font-bold text-[#1A1A1A] hover:border-[#1A1A1A] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D62828]/40"
+                  className="inline-flex items-center h-10 px-4 rounded-full border-2 border-gray-200 text-sm font-bold text-ink hover:border-ink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
                 >
                   Одјави се
                 </button>
@@ -512,13 +512,13 @@ export default function Header({ transparent = false, scriptSwitcher = <ScriptSw
               <>
                 <Link
                   to="/login"
-                  className="inline-flex items-center h-10 px-4 rounded-full text-[15px] font-semibold text-[#1A1A1A] hover:text-[#D62828] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D62828]/40"
+                  className="inline-flex items-center h-10 px-4 rounded-full text-[15px] font-semibold text-ink hover:text-brand transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
                 >
                   Пријави се
                 </Link>
                 <Link
                   to="/register"
-                  className="inline-flex items-center h-10 px-5 rounded-full bg-[#D62828] text-white text-[15px] font-bold shadow-md shadow-red-900/10 hover:bg-[#B91F1F] transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#D62828]"
+                  className="inline-flex items-center h-10 px-5 rounded-full bg-brand text-white text-[15px] font-bold shadow-md shadow-red-900/10 hover:bg-brand-700 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-brand"
                 >
                   Региструј се
                 </Link>
@@ -531,7 +531,7 @@ export default function Header({ transparent = false, scriptSwitcher = <ScriptSw
             {!user && (
               <Link
                 to="/register"
-                className="hidden min-[400px]:inline-flex items-center h-9 px-4 rounded-full bg-[#D62828] text-white text-sm font-bold"
+                className="hidden min-[400px]:inline-flex items-center h-9 px-4 rounded-full bg-brand text-white text-sm font-bold"
               >
                 Региструј се
               </Link>
@@ -539,7 +539,7 @@ export default function Header({ transparent = false, scriptSwitcher = <ScriptSw
             {user && (
               <Link
                 to="/dashboard"
-                className="inline-flex items-center h-9 px-3 rounded-full text-sm font-semibold text-[#1A1A1A] hover:bg-gray-100"
+                className="inline-flex items-center h-9 px-3 rounded-full text-sm font-semibold text-ink hover:bg-gray-100"
               >
                 Мој панел
               </Link>
@@ -547,7 +547,7 @@ export default function Header({ transparent = false, scriptSwitcher = <ScriptSw
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
-              className="w-11 h-11 -mr-2 flex items-center justify-center rounded-full text-[#1A1A1A] hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D62828]/40"
+              className="w-11 h-11 -mr-2 flex items-center justify-center rounded-full text-ink hover:bg-gray-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40"
               aria-label="Отвори мени"
               aria-expanded={mobileMenuOpen}
               aria-haspopup="dialog"

@@ -127,7 +127,7 @@ export default function UserDetailModal({ user, onClose, onUpdate }) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="sticky top-0 bg-gradient-to-r from-[#D62828] to-[#B91F1F] text-white p-4 pr-14 sm:p-6 sm:pr-16 rounded-t-2xl z-10">
+        <div className="sticky top-0 bg-gradient-to-r from-brand to-brand-700 text-white p-4 pr-14 sm:p-6 sm:pr-16 rounded-t-2xl z-10">
           <button
             onClick={onClose}
             className="absolute top-3 right-3 sm:top-4 sm:right-4 p-2 rounded-full bg-white/20 hover:bg-white/30 transition-colors"
@@ -162,19 +162,19 @@ export default function UserDetailModal({ user, onClose, onUpdate }) {
         <div className="p-4 sm:p-6">
           {/* User Info */}
           <div className="bg-gray-50 rounded-xl p-4 mb-6">
-            <h3 className="text-lg font-bold text-[#1A1A1A] mb-3">Информације о кориснику</h3>
+            <h3 className="text-lg font-bold text-ink mb-3">Информације о кориснику</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
               <div className="flex items-center gap-2">
                 <Calendar className="w-4 h-4 text-gray-500" />
                 <span className="text-gray-600">Регистрован:</span>
-                <span className="font-semibold text-[#1A1A1A]">
+                <span className="font-semibold text-ink">
                   {user.registrovan_at ? formatDate(new Date(user.registrovan_at)) : 'Непознато'}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-gray-500" />
                 <span className="text-gray-600">Број курсева:</span>
-                <span className="font-semibold text-[#1A1A1A]">
+                <span className="font-semibold text-ink">
                   {Object.keys(userCourses).length}
                 </span>
               </div>
@@ -183,11 +183,11 @@ export default function UserDetailModal({ user, onClose, onUpdate }) {
 
           {/* Courses Management */}
           <div>
-            <h3 className="text-lg font-bold text-[#1A1A1A] mb-4">Управљање курсевима</h3>
+            <h3 className="text-lg font-bold text-ink mb-4">Управљање курсевима</h3>
 
             {loading ? (
               <div className="flex justify-center items-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-[#D62828]" />
+                <Loader2 className="w-8 h-8 animate-spin text-brand" />
               </div>
             ) : courses.length === 0 ? (
               <div className="text-center py-12 text-gray-500">
@@ -223,12 +223,12 @@ export default function UserDetailModal({ user, onClose, onUpdate }) {
                           )}
 
                           <div className="flex-1 min-w-0">
-                            <h4 className="font-bold text-[#1A1A1A] mb-1">{course.title}</h4>
+                            <h4 className="font-bold text-ink mb-1">{course.title}</h4>
                             <p className="text-sm text-gray-600 line-clamp-2 mb-2">
                               {course.description}
                             </p>
                             <div className="flex items-center gap-3 text-xs">
-                              <span className="font-semibold text-[#D62828]">
+                              <span className="font-semibold text-brand">
                                 {formatPrice(course.price)}
                               </span>
                               <span className={`px-2 py-1 rounded-full ${
@@ -256,7 +256,7 @@ export default function UserDetailModal({ user, onClose, onUpdate }) {
                             className={`px-4 py-2 rounded-lg font-bold text-sm transition-all flex items-center gap-2 ${
                               hasAccess
                                 ? 'bg-red-100 text-red-700 hover:bg-red-200'
-                                : 'bg-[#D62828] text-white hover:bg-[#B91F1F]'
+                                : 'bg-brand text-white hover:bg-brand-700'
                             } disabled:opacity-50 disabled:cursor-not-allowed`}
                           >
                             {isProcessing ? (
@@ -304,7 +304,7 @@ export default function UserDetailModal({ user, onClose, onUpdate }) {
         <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 p-4 sm:rounded-b-2xl" style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}>
           <button
             onClick={onClose}
-            className="w-full bg-[#1A1A1A] text-white px-6 py-3 rounded-lg font-bold hover:bg-[#2A2A2A] transition-colors"
+            className="w-full bg-ink text-white px-6 py-3 rounded-lg font-bold hover:bg-ink-800 transition-colors"
           >
             Затвори
           </button>

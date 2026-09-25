@@ -160,7 +160,7 @@ export default function PaymentVerifier() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-[#D62828]" />
+        <Loader2 className="h-8 w-8 animate-spin text-brand" />
       </div>
     );
   }
@@ -168,10 +168,10 @@ export default function PaymentVerifier() {
   return (
     <div>
       <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
-        <h2 className="text-xl md:text-2xl font-bold text-[#1A1A1A]">Верификација уплата</h2>
+        <h2 className="text-xl md:text-2xl font-bold text-ink">Верификација уплата</h2>
         <button
           onClick={loadPendingPayments}
-          className="px-4 py-2 rounded-2xl bg-[#F7F7F7] text-[#1A1A1A] font-medium hover:bg-gray-200 transition-colors"
+          className="px-4 py-2 rounded-2xl bg-surface text-ink font-medium hover:bg-gray-200 transition-colors"
         >
           Освежи
         </button>
@@ -195,7 +195,7 @@ export default function PaymentVerifier() {
               {/* Header */}
               <div className="flex flex-wrap items-start justify-between gap-3 mb-4 md:mb-6">
                 <div className="min-w-0">
-                  <h3 className="text-xl font-bold text-[#1A1A1A] mb-1">
+                  <h3 className="text-xl font-bold text-ink mb-1">
                     {formatPrice(payment.amount)}
                   </h3>
                   <p className="text-xs sm:text-sm text-gray-500 break-all">
@@ -203,7 +203,7 @@ export default function PaymentVerifier() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <div className="bg-[#F2C94C]/20 text-[#1A1A1A] px-4 py-2 rounded-full text-sm font-bold">
+                  <div className="bg-gold/20 text-ink px-4 py-2 rounded-full text-sm font-bold">
                     На чекању
                   </div>
                   <p className="text-xs text-gray-400 mt-2">
@@ -215,10 +215,10 @@ export default function PaymentVerifier() {
               {/* User & Course Info Grid */}
               <div className="grid md:grid-cols-2 gap-3 md:gap-6 mb-4 md:mb-6">
                 {/* User Info */}
-                <div className="bg-[#F7F7F7] rounded-2xl p-4">
+                <div className="bg-surface rounded-2xl p-4">
                   <div className="flex items-center space-x-2 mb-3">
-                    <User className="h-5 w-5 text-[#D62828]" />
-                    <h4 className="font-bold text-[#1A1A1A]">Корисник</h4>
+                    <User className="h-5 w-5 text-brand" />
+                    <h4 className="font-bold text-ink">Корисник</h4>
                   </div>
                   {payment.user ? (
                     <div className="space-y-1 text-sm text-gray-600">
@@ -234,10 +234,10 @@ export default function PaymentVerifier() {
                 </div>
 
                 {/* Course/Package Info */}
-                <div className="bg-[#F7F7F7] rounded-2xl p-4">
+                <div className="bg-surface rounded-2xl p-4">
                   <div className="flex items-center space-x-2 mb-3">
-                    <BookOpen className="h-5 w-5 text-[#D62828]" />
-                    <h4 className="font-bold text-[#1A1A1A]">
+                    <BookOpen className="h-5 w-5 text-brand" />
+                    <h4 className="font-bold text-ink">
                       {payment.type === 'online_package' ? 'Online Пакет' : 'Курс'}
                     </h4>
                   </div>
@@ -268,7 +268,7 @@ export default function PaymentVerifier() {
                 <div className="flex flex-wrap justify-between items-center gap-3">
                   <div>
                     <p className="text-sm text-gray-500 mb-1">Позив на број</p>
-                    <p className="font-mono font-bold text-base sm:text-lg text-[#1A1A1A] break-all">{payment.paymentRef}</p>
+                    <p className="font-mono font-bold text-base sm:text-lg text-ink break-all">{payment.paymentRef}</p>
                   </div>
                   {payment.invoiceUrl && (
                     <a

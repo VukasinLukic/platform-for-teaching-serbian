@@ -15,7 +15,7 @@ export default function NotFoundPage() {
   return (
     <>
       <SEO title="Страница није пронађена" description="Тражена страница не постоји." noindex />
-      <div className="min-h-screen bg-white font-sans text-[#1A1A1A] flex flex-col">
+      <div className="min-h-screen bg-white font-sans text-ink flex flex-col">
         <Header />
         <section className="flex-1 px-4 sm:px-6 py-12 md:py-20">
           <div className="max-w-4xl mx-auto grid md:grid-cols-[220px_1fr] gap-8 md:gap-12 items-center">

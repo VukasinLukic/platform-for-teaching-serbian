@@ -3,7 +3,7 @@ import { X } from 'lucide-react';
 
 /**
  * Generic Modal Component
- * Design: Clean modal with backdrop blur, following Nauči Srpski design system
+ * Design: clean modal with backdrop blur, brand tokens
  * Usage: <Modal isOpen={isOpen} onClose={handleClose} title="Modal Title">Content</Modal>
  */
 const Modal = ({
@@ -61,21 +61,21 @@ const Modal = ({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm animate-fadeIn"
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-ink/60 backdrop-blur-sm animate-fadeIn"
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
       {...(title ? { 'aria-labelledby': 'modal-title' } : { 'aria-label': 'Дијалог' })}
     >
       <div
-        className={`relative w-full ${modalWidth} bg-white rounded-3xl shadow-2xl max-h-[90vh] overflow-hidden animate-slideUp`}
+        className={`relative w-full ${modalWidth} bg-white rounded-3xl shadow-lift max-h-[90vh] overflow-hidden animate-slideUp`}
       >
         {/* Header */}
-        <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 flex items-center justify-between z-10">
+        <div className="sticky top-0 bg-white border-b border-ink-100 px-6 py-4 flex items-center justify-between z-10">
           {title && (
             <h2
               id="modal-title"
-              className="text-2xl font-bold text-[#003366]"
+              className="font-display text-xl sm:text-2xl font-bold text-ink"
             >
               {title}
             </h2>
@@ -83,10 +83,10 @@ const Modal = ({
           {showCloseButton && (
             <button
               onClick={onClose}
-              className="ml-auto p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+              className="ml-auto p-2 rounded-full text-ink-600 hover:bg-ink-50 hover:text-ink transition-colors duration-200"
               aria-label="Затвори прозор"
             >
-              <X className="w-6 h-6 text-gray-600" />
+              <X className="w-6 h-6" aria-hidden="true" />
             </button>
           )}
         </div>
@@ -98,7 +98,7 @@ const Modal = ({
 
         {/* Footer */}
         {footer && (
-          <div className="sticky bottom-0 bg-gray-50 border-t border-gray-200 px-6 py-4">
+          <div className="sticky bottom-0 bg-paper-50 border-t border-ink-100 px-6 py-4">
             {footer}
           </div>
         )}
@@ -112,27 +112,27 @@ export const ConfirmModal = ({
   isOpen,
   onClose,
   onConfirm,
-  title = 'Potvrda',
+  title = 'Потврда',
   message,
-  confirmText = 'Potvrdi',
-  cancelText = 'Otkaži',
+  confirmText = 'Потврди',
+  cancelText = 'Откажи',
   variant = 'primary', // primary, danger, success
 }) => {
   const variantClasses = {
-    primary: 'bg-[#FF6B35] hover:bg-[#E55A28]',
-    danger: 'bg-red-600 hover:bg-red-700',
-    success: 'bg-[#BFECC9] hover:bg-[#9DD6AC] text-[#003366]',
+    primary: 'bg-brand hover:bg-brand-700',
+    danger: 'bg-danger hover:bg-danger-700',
+    success: 'bg-success hover:bg-success-700',
   };
 
   const buttonClass = variantClasses[variant] || variantClasses.primary;
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={title} size="sm">
-      <p className="text-gray-700 mb-6">{message}</p>
+      <p className="text-ink-700 mb-6">{message}</p>
       <div className="flex gap-3 justify-end">
         <button
           onClick={onClose}
-          className="px-6 py-2.5 border-2 border-gray-300 rounded-full font-semibold text-gray-700 hover:bg-gray-100 transition-all duration-200"
+          className="h-11 px-5 border border-ink-200 rounded-xl font-semibold text-ink hover:bg-ink-50 transition-colors duration-200"
         >
           {cancelText}
         </button>
@@ -141,7 +141,7 @@ export const ConfirmModal = ({
             onConfirm();
             onClose();
           }}
-          className={`px-6 py-2.5 rounded-full font-semibold text-white shadow-lg transition-all duration-200 ${buttonClass}`}
+          className={`h-11 px-5 rounded-xl font-semibold text-white shadow-sm transition-colors duration-200 ${buttonClass}`}
         >
           {confirmText}
         </button>

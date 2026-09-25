@@ -24,7 +24,7 @@ export default function QuizCard({ quiz }) {
     const firstLetter = quiz.title.charAt(0).toUpperCase();
 
     return (
-        <div className="bg-white rounded-3xl p-6 border border-gray-100 hover:shadow-xl hover:border-[#D62828]/20 transition-all hover:-translate-y-1 h-full flex flex-col">
+        <div className="bg-white rounded-3xl p-6 border border-gray-100 hover:shadow-xl hover:border-brand/20 transition-all hover:-translate-y-1 h-full flex flex-col">
             <div
                 className="p-4 rounded-2xl w-fit mb-4 flex items-center justify-center"
                 style={{
@@ -36,7 +36,7 @@ export default function QuizCard({ quiz }) {
                 <span className="text-white text-3xl font-bold">{firstLetter}</span>
             </div>
 
-            <h3 className="text-xl font-bold mb-2 text-[#1A1A1A] group-hover:text-[#D62828] transition-colors">
+            <h3 className="text-xl font-bold mb-2 text-ink group-hover:text-brand transition-colors">
                 {quiz.title}
             </h3>
 
@@ -46,7 +46,7 @@ export default function QuizCard({ quiz }) {
 
             <div className="mt-auto">
                 <Link to={`/kvizovi/${quiz.id}`}>
-                    <button className="w-full bg-[#D62828] text-white py-3 rounded-2xl font-bold hover:bg-[#B91F1F] transition-all hover:scale-105 transform flex items-center justify-center gap-2">
+                    <button className="w-full bg-brand text-white py-3 rounded-2xl font-bold hover:bg-brand-700 transition-all hover:scale-105 transform flex items-center justify-center gap-2">
                         Започни квиз <ArrowRight className="w-4 h-4" />
                     </button>
                 </Link>

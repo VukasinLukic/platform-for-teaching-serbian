@@ -111,7 +111,7 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D62828] border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent"></div>
       </div>
     );
   }
@@ -128,11 +128,11 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-xl md:text-2xl font-bold text-[#1A1A1A]">
+        <h3 className="text-xl md:text-2xl font-bold text-ink">
           Историја Трансакција
         </h3>
         <div className="text-sm text-gray-600">
-          Укупно: <span className="font-bold text-[#1A1A1A]">{allTransactions.length}</span> трансакција
+          Укупно: <span className="font-bold text-ink">{allTransactions.length}</span> трансакција
         </div>
       </div>
 
@@ -141,15 +141,15 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
         {transactions.map((tx) => (
           <li key={tx.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
             <div className="flex items-start gap-3">
-              <div className="w-10 h-10 rounded-full bg-[#D62828] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+              <div className="w-10 h-10 rounded-full bg-brand flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                 {tx.userName?.charAt(0) || tx.userEmail?.charAt(0).toUpperCase() || '?'}
               </div>
               <div className="min-w-0 flex-1">
-                <div className="font-semibold text-[#1A1A1A] truncate">{tx.userName || 'Непознато име'}</div>
+                <div className="font-semibold text-ink truncate">{tx.userName || 'Непознато име'}</div>
                 <div className="text-sm text-gray-600 truncate">{tx.userEmail || 'Непознат емаил'}</div>
                 {tx.userPhone && <div className="text-xs text-gray-500 mt-0.5">{tx.userPhone}</div>}
               </div>
-              <div className="font-bold text-[#D62828] text-base whitespace-nowrap">{formatPrice(tx.amount)}</div>
+              <div className="font-bold text-brand text-base whitespace-nowrap">{formatPrice(tx.amount)}</div>
             </div>
             <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2">
               {getStatusBadge(tx.status)}
@@ -180,11 +180,11 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
                 <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#D62828] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-brand flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                         {tx.userName?.charAt(0) || tx.userEmail?.charAt(0).toUpperCase() || '?'}
                       </div>
                       <div className="min-w-0">
-                        <div className="font-semibold text-[#1A1A1A] truncate">
+                        <div className="font-semibold text-ink truncate">
                           {tx.userName || 'Непознато име'}
                         </div>
                         <div className="text-sm text-gray-600 flex items-center gap-1 truncate">
@@ -201,7 +201,7 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
                     {getStatusBadge(tx.status)}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="font-bold text-[#D62828] text-lg">
+                    <div className="font-bold text-brand text-lg">
                       {formatPrice(tx.amount)}
                     </div>
                   </td>

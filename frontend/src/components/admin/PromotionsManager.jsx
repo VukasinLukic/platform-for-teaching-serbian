@@ -69,7 +69,7 @@ export default function PromotionsManager() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D62828] border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent"></div>
       </div>
     );
   }
@@ -83,7 +83,7 @@ export default function PromotionsManager() {
             <Gift className="w-6 h-6 text-purple-600" />
           </div>
           <div>
-            <h3 className="text-lg font-bold text-[#1A1A1A] mb-1">Управљање промоцијама</h3>
+            <h3 className="text-lg font-bold text-ink mb-1">Управљање промоцијама</h3>
             <p className="text-sm text-gray-600">
               Активирајте или деактивирајте промоције. Активне промоције се приказују свим посетиоцима сајта као popup прозор.
             </p>
@@ -95,10 +95,10 @@ export default function PromotionsManager() {
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
         <div className="bg-gradient-to-r from-gray-50 to-white px-6 py-4 border-b border-gray-100">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#D62828] rounded-lg">
+            <div className="p-2 bg-brand rounded-lg">
               <GraduationCap className="w-5 h-5 text-white" />
             </div>
-            <h3 className="text-xl font-bold text-[#1A1A1A]">Пробни пријемни 2025/2026</h3>
+            <h3 className="text-xl font-bold text-ink">Пробни пријемни 2025/2026</h3>
           </div>
         </div>
 
@@ -131,22 +131,22 @@ export default function PromotionsManager() {
                 onChange={() => handleTogglePromo('probniPrijemni')}
                 className="sr-only peer"
               />
-              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-[#D62828]/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-[#D62828]"></div>
+              <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-brand/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-brand"></div>
             </label>
           </div>
 
           {/* Quiz Stats Preview */}
           <div className="mt-6 grid grid-cols-3 gap-4">
             <div className="bg-gray-50 rounded-xl p-4 text-center">
-              <div className="text-2xl font-black text-[#1A1A1A]">20</div>
+              <div className="text-2xl font-black text-ink">20</div>
               <div className="text-xs text-gray-500 font-medium">Питања</div>
             </div>
             <div className="bg-gray-50 rounded-xl p-4 text-center">
-              <div className="text-2xl font-black text-[#1A1A1A]">4</div>
+              <div className="text-2xl font-black text-ink">4</div>
               <div className="text-xs text-gray-500 font-medium">Одговора по питању</div>
             </div>
             <div className="bg-gray-50 rounded-xl p-4 text-center">
-              <div className="text-2xl font-black text-[#D62828]">Бесплатно</div>
+              <div className="text-2xl font-black text-brand">Бесплатно</div>
               <div className="text-xs text-gray-500 font-medium">За све посетиоце</div>
             </div>
           </div>
@@ -157,7 +157,7 @@ export default function PromotionsManager() {
       <button
         onClick={handleSave}
         disabled={saving}
-        className="px-6 py-3 bg-[#D62828] text-white rounded-xl font-bold hover:bg-[#B91F1F] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+        className="px-6 py-3 bg-brand text-white rounded-xl font-bold hover:bg-brand-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
       >
         <Save className="w-5 h-5" />
         {saving ? 'Чување...' : 'Сачувај промоције'}

@@ -125,11 +125,11 @@ export default function CoursesPage() {
         jsonLd={[coursesJsonLd, breadcrumbJsonLd, courseSchemaJsonLd]}
         keywords="online kursevi srpskog jezika, priprema za malu maturu, video lekcije srpski, gramatika srpski jezik, knjizevnost 8 razred, zavrsni ispit srpski, kurs srpskog online"
       />
-    <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+    <div className="min-h-screen bg-white font-sans text-ink">
       <Header />
 
       {/* Hero */}
-      <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] text-white py-14 md:py-20 rounded-b-[2rem] md:rounded-b-[3rem]">
+      <div className="bg-gradient-to-br from-brand to-brand-700 text-white py-14 md:py-20 rounded-b-[2rem] md:rounded-b-[3rem]">
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h1 className="text-4xl md:text-7xl font-bold mb-4 md:mb-6">
             Наши курсеви
@@ -141,10 +141,10 @@ export default function CoursesPage() {
       </div>
 
       {/* How It Works Section */}
-      <div className="bg-gradient-to-br from-[#F7F7F7] to-white py-14 md:py-20">
+      <div className="bg-gradient-to-br from-surface to-white py-14 md:py-20">
         <div className="max-w-7xl mx-auto px-6">
           <div className="text-center mb-10 md:mb-16">
-            <h2 className="text-3xl md:text-5xl font-bold text-[#1A1A1A] mb-3 md:mb-4">
+            <h2 className="text-3xl md:text-5xl font-bold text-ink mb-3 md:mb-4">
               Како функционише?
             </h2>
             <p className="text-base md:text-xl text-gray-600">
@@ -160,10 +160,10 @@ export default function CoursesPage() {
                 visibleSteps[0] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
             >
-              <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="bg-gradient-to-br from-brand to-brand-700 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">1</span>
               </div>
-              <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">
+              <h3 className="text-2xl font-bold text-ink mb-3">
                 Изаберите курс
               </h3>
               <p className="text-gray-600 leading-relaxed">
@@ -178,10 +178,10 @@ export default function CoursesPage() {
                 visibleSteps[1] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
             >
-              <div className="bg-gradient-to-br from-[#F77F00] to-[#DC6B00] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="bg-gradient-to-br from-warning to-warning-600 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">2</span>
               </div>
-              <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">
+              <h3 className="text-2xl font-bold text-ink mb-3">
                 Извршите уплату
               </h3>
               <p className="text-gray-600 leading-relaxed">
@@ -196,10 +196,10 @@ export default function CoursesPage() {
                 visibleSteps[2] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
             >
-              <div className="bg-gradient-to-br from-[#F2C94C] to-[#D4A927] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="bg-gradient-to-br from-gold to-gold-500 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">3</span>
               </div>
-              <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">
+              <h3 className="text-2xl font-bold text-ink mb-3">
                 Потврда уплате
               </h3>
               <p className="text-gray-600 leading-relaxed">
@@ -214,10 +214,10 @@ export default function CoursesPage() {
                 visibleSteps[3] ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
             >
-              <div className="bg-gradient-to-br from-[#27AE60] to-[#1E8449] w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
+              <div className="bg-gradient-to-br from-success to-success-700 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
                 <span className="text-3xl font-bold text-white">4</span>
               </div>
-              <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">
+              <h3 className="text-2xl font-bold text-ink mb-3">
                 Почните да учите
               </h3>
               <p className="text-gray-600 leading-relaxed">
@@ -232,12 +232,12 @@ export default function CoursesPage() {
       <div className="max-w-7xl mx-auto px-6 py-14 md:py-20">
         {loading ? (
           <div className="flex justify-center py-20">
-            <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#D62828] border-t-transparent"></div>
+            <div className="animate-spin rounded-full h-16 w-16 border-4 border-brand border-t-transparent"></div>
           </div>
         ) : courses.length === 0 ? (
           <div className="text-center py-20">
             <Book className="w-20 h-20 text-gray-300 mx-auto mb-6" />
-            <h3 className="text-2xl font-bold text-[#1A1A1A] mb-4">Ускоро ће бити доступни нови курсеви</h3>
+            <h3 className="text-2xl font-bold text-ink mb-4">Ускоро ће бити доступни нови курсеви</h3>
             <p className="text-gray-600 mb-8">Радимо на изради квалитетних материјала за вас.</p>
             <Link to="/contact">
               <Button variant="primary">Контактирајте нас</Button>
@@ -254,7 +254,7 @@ export default function CoursesPage() {
               >
                 <div className="bg-white rounded-[2.5rem] shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border border-gray-100 h-full flex flex-col overflow-hidden cursor-pointer">
                   {/* Card Header Image */}
-                  <div className="h-40 md:h-48 bg-[#F7F7F7] relative overflow-hidden flex items-center justify-center">
+                  <div className="h-40 md:h-48 bg-surface relative overflow-hidden flex items-center justify-center">
                      {course.thumbnail_url ? (
                        <img
                          src={course.thumbnail_url}
@@ -263,9 +263,9 @@ export default function CoursesPage() {
                          loading="lazy"
                        />
                      ) : course.type === 'video' ? (
-                       <Video className="w-20 h-20 text-[#D62828]/20" />
+                       <Video className="w-20 h-20 text-brand/20" />
                      ) : (
-                       <Users className="w-20 h-20 text-[#D62828]/20" />
+                       <Users className="w-20 h-20 text-brand/20" />
                      )}
                      <div className="absolute top-4 right-4 bg-gray-500 text-white px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                        {course.type === 'video' ? 'Видео курс' : 'Уживо настава'}
@@ -273,24 +273,24 @@ export default function CoursesPage() {
                   </div>
 
                   <div className="p-5 md:p-8 flex flex-col flex-grow">
-                    <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">{course.title}</h3>
+                    <h3 className="text-2xl font-bold text-ink mb-3">{course.title}</h3>
                     <p className={`text-gray-600 text-sm mb-6 leading-relaxed ${expandedCards[course.id] ? '' : 'line-clamp-3'}`}>
                       {course.description}
                     </p>
 
                     <div className="space-y-4">
                       <div className="flex items-center gap-2 text-sm text-gray-500">
-                        <CheckCircle className="w-4 h-4 text-[#D62828]" />
+                        <CheckCircle className="w-4 h-4 text-brand" />
                         <span>Комплетан материјал</span>
                       </div>
 
                       {expandedCards[course.id] && (
                         <div className="space-y-3 py-4 border-t border-gray-100">
-                          <h4 className="font-bold text-[#1A1A1A] text-sm mb-3">Шта добијате уз курс:</h4>
+                          <h4 className="font-bold text-ink text-sm mb-3">Шта добијате уз курс:</h4>
                           <div className="space-y-2">
                             {['HD видео лекције', 'Материјали који прате сваку лекцију', 'Задаци за вежбање са решењима', 'Пробни пријемни и online квизови', 'Подршка наставнице', 'Трајан приступ'].map((f, i) => (
                               <div key={i} className="flex items-center gap-2 text-sm text-gray-600">
-                                <CheckCircle className="w-4 h-4 text-[#D62828] flex-shrink-0" />
+                                <CheckCircle className="w-4 h-4 text-brand flex-shrink-0" />
                                 <span>{f}</span>
                               </div>
                             ))}
@@ -304,14 +304,14 @@ export default function CoursesPage() {
                           e.stopPropagation();
                           setExpandedCards(prev => ({ ...prev, [course.id]: !prev[course.id] }));
                         }}
-                        className="text-sm text-[#D62828] font-semibold hover:underline w-full text-left py-2 -my-2"
+                        className="text-sm text-brand font-semibold hover:underline w-full text-left py-2 -my-2"
                       >
                         {expandedCards[course.id] ? 'Прикажи мање ▲' : 'Прикажи више ▼'}
                       </button>
 
                       <div className="pt-6 border-t border-gray-100 flex items-center justify-between">
                         <div>
-                          <div className="text-2xl font-black text-[#D62828]">
+                          <div className="text-2xl font-black text-brand">
                             {formatPrice(course.price)}
                           </div>
                         </div>
@@ -328,18 +328,18 @@ export default function CoursesPage() {
             {/* Coming Soon - Припрема за малу матуру 2. део */}
             <div className="relative h-full">
               <div className="bg-white rounded-[2.5rem] shadow-lg border border-gray-100 h-full flex flex-col overflow-hidden">
-                <div className="h-40 md:h-48 bg-gradient-to-br from-[#D62828]/5 to-[#F2C94C]/10 relative flex items-center justify-center">
+                <div className="h-40 md:h-48 bg-gradient-to-br from-brand/5 to-gold/10 relative flex items-center justify-center">
                   <div className="text-center">
-                    <Book className="w-14 h-14 text-[#D62828]/20 mx-auto mb-2" />
-                    <span className="text-[#D62828]/30 text-xs font-bold uppercase tracking-wider">Мала матура</span>
+                    <Book className="w-14 h-14 text-brand/20 mx-auto mb-2" />
+                    <span className="text-brand/30 text-xs font-bold uppercase tracking-wider">Мала матура</span>
                   </div>
-                  <div className="absolute top-4 right-4 bg-[#F2C94C] text-[#1A1A1A] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                  <div className="absolute top-4 right-4 bg-gold text-ink px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                     Видео курс
                   </div>
                 </div>
 
                 <div className="p-5 md:p-8 flex flex-col flex-grow">
-                  <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">Припрема за малу матуру 2. део</h3>
+                  <h3 className="text-2xl font-bold text-ink mb-3">Припрема за малу матуру 2. део</h3>
                   <p className="text-gray-600 text-sm mb-6 leading-relaxed">
                     Други део припреме за малу матуру из српског језика - напредно градиво, додатни задаци и пробни тестови.
                   </p>
@@ -347,7 +347,7 @@ export default function CoursesPage() {
                   <div className="space-y-3 mb-6">
                     {['HD видео лекције', 'Напредно градиво', 'Пробни тестови', 'Задаци за вежбање', 'Подршка наставнице', 'Трајан приступ'].map((f, i) => (
                       <div key={i} className="flex items-center gap-2 text-sm text-gray-500">
-                        <CheckCircle className="w-4 h-4 text-[#D62828]/40 flex-shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-brand/40 flex-shrink-0" />
                         <span>{f}</span>
                       </div>
                     ))}
@@ -357,26 +357,26 @@ export default function CoursesPage() {
 
               {/* Overlay */}
               <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] rounded-[2.5rem] flex flex-col items-center justify-center gap-2">
-                <h4 className="text-3xl font-black text-[#D62828]">Ускоро</h4>
-                <p className="text-[#1A1A1A] text-sm font-semibold">Курс је у изради</p>
+                <h4 className="text-3xl font-black text-brand">Ускоро</h4>
+                <p className="text-ink text-sm font-semibold">Курс је у изради</p>
               </div>
             </div>
 
             {/* Coming Soon - Потпун курс за малу матуру */}
             <div className="relative h-full">
               <div className="bg-white rounded-[2.5rem] shadow-lg border border-gray-100 h-full flex flex-col overflow-hidden">
-                <div className="h-40 md:h-48 bg-gradient-to-br from-[#1A1A1A]/5 to-[#D62828]/5 relative flex items-center justify-center">
+                <div className="h-40 md:h-48 bg-gradient-to-br from-ink/5 to-brand/5 relative flex items-center justify-center">
                   <div className="text-center">
-                    <Book className="w-14 h-14 text-[#1A1A1A]/15 mx-auto mb-2" />
-                    <span className="text-[#1A1A1A]/25 text-xs font-bold uppercase tracking-wider">Комплетан курс</span>
+                    <Book className="w-14 h-14 text-ink/15 mx-auto mb-2" />
+                    <span className="text-ink/25 text-xs font-bold uppercase tracking-wider">Комплетан курс</span>
                   </div>
-                  <div className="absolute top-4 right-4 bg-[#F2C94C] text-[#1A1A1A] px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
+                  <div className="absolute top-4 right-4 bg-gold text-ink px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider">
                     Видео курс
                   </div>
                 </div>
 
                 <div className="p-5 md:p-8 flex flex-col flex-grow">
-                  <h3 className="text-2xl font-bold text-[#1A1A1A] mb-3">Потпун курс за малу матуру</h3>
+                  <h3 className="text-2xl font-bold text-ink mb-3">Потпун курс за малу матуру</h3>
                   <p className="text-gray-600 text-sm mb-6 leading-relaxed">
                     Комплетна припрема за малу матуру из српског језика - све области, сви задаци, сви пробни тестови на једном месту.
                   </p>
@@ -384,7 +384,7 @@ export default function CoursesPage() {
                   <div className="space-y-3 mb-6">
                     {['Комплетно градиво', 'HD видео лекције', 'Пробни тестови', 'Задаци са решењима', 'Подршка наставнице', 'Трајан приступ'].map((f, i) => (
                       <div key={i} className="flex items-center gap-2 text-sm text-gray-500">
-                        <CheckCircle className="w-4 h-4 text-[#1A1A1A]/30 flex-shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-ink/30 flex-shrink-0" />
                         <span>{f}</span>
                       </div>
                     ))}
@@ -394,8 +394,8 @@ export default function CoursesPage() {
 
               {/* Overlay */}
               <div className="absolute inset-0 bg-white/70 backdrop-blur-[2px] rounded-[2.5rem] flex flex-col items-center justify-center gap-2">
-                <h4 className="text-3xl font-black text-[#1A1A1A]">Ускоро</h4>
-                <p className="text-[#1A1A1A] text-sm font-semibold">Курс је у изради</p>
+                <h4 className="text-3xl font-black text-ink">Ускоро</h4>
+                <p className="text-ink text-sm font-semibold">Курс је у изради</p>
               </div>
             </div>
           </div>

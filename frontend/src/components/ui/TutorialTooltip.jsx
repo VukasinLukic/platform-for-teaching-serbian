@@ -112,16 +112,6 @@ export default function TutorialTooltip() {
         aria-hidden="true"
       />
 
-      {/* Global highlight style */}
-      <style>{`
-        .tutorial-highlight {
-          position: relative;
-          z-index: 9999 !important;
-          box-shadow: 0 0 0 4px rgba(214, 40, 40, 0.4), 0 0 20px rgba(214, 40, 40, 0.2);
-          border-radius: 1rem;
-          transition: box-shadow 0.3s ease;
-        }
-      `}</style>
 
       {/* Tooltip */}
       <div
@@ -137,7 +127,7 @@ export default function TutorialTooltip() {
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <div className="h-2.5 w-2.5 rounded-full bg-[#D62828] motion-safe:animate-pulse" aria-hidden="true" />
+            <div className="h-2.5 w-2.5 rounded-full bg-brand motion-safe:animate-pulse" aria-hidden="true" />
             <span className="text-sm font-bold text-gray-500">
               {currentTooltipIndex + 1} / {totalTooltips}
             </span>
@@ -153,7 +143,7 @@ export default function TutorialTooltip() {
 
         {/* Content */}
         <div className="px-5 py-4">
-          <h3 id="tutorial-tooltip-title" className="font-bold text-[#1A1A1A] text-base mb-2">
+          <h3 id="tutorial-tooltip-title" className="font-bold text-ink text-base mb-2">
             {currentTooltip.title}
           </h3>
           <p className="text-sm text-gray-600 leading-relaxed">
@@ -182,7 +172,7 @@ export default function TutorialTooltip() {
             )}
             <button
               onClick={nextTooltip}
-              className="px-4 py-2 bg-[#D62828] text-white rounded-xl font-bold text-sm hover:bg-[#B91F1F] transition-colors flex items-center gap-1"
+              className="px-4 py-2 bg-brand text-white rounded-xl font-bold text-sm hover:bg-brand-700 transition-colors flex items-center gap-1"
             >
               {isLastTooltip ? 'Завршите' : 'Даље'}
               {!isLastTooltip && <ChevronRight className="h-4 w-4" />}

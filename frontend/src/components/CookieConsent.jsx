@@ -57,20 +57,20 @@ export default function CookieConsent() {
         <p className="text-sm text-gray-700 flex-1 leading-relaxed" aria-live="polite">
           Користимо колачиће за анализу посећености (Google Analytics) како бисмо побољшали сајт.
           Неопходни колачићи за пријаву раде увек. Више у{' '}
-          <Link to="/privacy" className="text-[#D62828] underline underline-offset-2">политици приватности</Link>.
+          <Link to="/privacy" className="text-brand underline underline-offset-2">политици приватности</Link>.
         </p>
         <div className="grid grid-cols-2 sm:flex gap-2 flex-shrink-0">
           <button
             type="button"
             onClick={() => save('denied')}
-            className="min-h-[44px] px-5 py-2 rounded-full border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#D62828]"
+            className="min-h-[44px] px-5 py-2 rounded-full border border-gray-300 text-sm font-semibold text-gray-700 hover:bg-gray-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-brand"
           >
             Одбиј
           </button>
           <button
             type="button"
             onClick={() => save('granted')}
-            className="min-h-[44px] px-5 py-2 rounded-full bg-[#D62828] text-white text-sm font-semibold hover:bg-[#B91F1F] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D62828]"
+            className="min-h-[44px] px-5 py-2 rounded-full bg-brand text-white text-sm font-semibold hover:bg-brand-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand"
           >
             Прихвати
           </button>

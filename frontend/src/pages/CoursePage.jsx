@@ -184,21 +184,21 @@ export default function CoursePage() {
         return (
           <div className="bg-gradient-to-br from-gray-100 to-gray-50 rounded-3xl aspect-video flex items-center justify-center relative overflow-hidden">
             {/* Blur overlay */}
-            <div className="absolute inset-0 bg-gradient-to-br from-[#D62828]/10 to-[#B91F1F]/10 backdrop-blur-md"></div>
+            <div className="absolute inset-0 bg-gradient-to-br from-brand/10 to-brand-700/10 backdrop-blur-md"></div>
 
             {/* Lock icon */}
             <div className="relative z-10 text-center px-8">
               <div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-xl">
-                <Lock className="w-12 h-12 text-[#D62828]" />
+                <Lock className="w-12 h-12 text-brand" />
               </div>
-              <h2 className="text-3xl font-bold mb-4 text-[#1A1A1A]">Откључајте све лекције</h2>
+              <h2 className="text-3xl font-bold mb-4 text-ink">Откључајте све лекције</h2>
               <p className="text-gray-600 mb-8 max-w-md mx-auto">
                 Купите курс да бисте добили приступ свим видео лекцијама, материјалима и квизовима
               </p>
               <button
                 onClick={handlePurchaseClick}
                 disabled={purchasing}
-                className="bg-[#D62828] text-white px-12 py-5 rounded-full font-bold hover:bg-[#B91F1F] transition-all shadow-xl hover:scale-105 inline-flex items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+                className="bg-brand text-white px-12 py-5 rounded-full font-bold hover:bg-brand-700 transition-all shadow-xl hover:scale-105 inline-flex items-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
                 {purchasing ? (
                   <>
@@ -221,7 +221,7 @@ export default function CoursePage() {
       return (
         <>
           {/* Secure Video Player - uses signed URLs, no direct video access */}
-          <div className="bg-[#1A1A1A] rounded-3xl overflow-hidden shadow-xl max-w-full">
+          <div className="bg-ink rounded-3xl overflow-hidden shadow-xl max-w-full">
             {selectedLesson.videoPath || selectedLesson.videoUrl || selectedLesson.video_key ? (
               user ? (
                 <VideoPlayer
@@ -238,13 +238,13 @@ export default function CoursePage() {
                     <div className="flex flex-col sm:flex-row gap-3 justify-center">
                       <Link
                         to="/login"
-                        className="bg-[#D62828] text-white px-8 py-3 rounded-full font-bold hover:bg-[#B91F1F] transition-all"
+                        className="bg-brand text-white px-8 py-3 rounded-full font-bold hover:bg-brand-700 transition-all"
                       >
                         Пријави се
                       </Link>
                       <Link
                         to="/register"
-                        className="bg-white text-[#D62828] px-8 py-3 rounded-full font-bold hover:bg-gray-50 transition-all"
+                        className="bg-white text-brand px-8 py-3 rounded-full font-bold hover:bg-gray-50 transition-all"
                       >
                         Направи налог
                       </Link>
@@ -261,7 +261,7 @@ export default function CoursePage() {
 
           {/* Lesson Details + Materials */}
           <div className="bg-white rounded-3xl p-4 sm:p-8 shadow-sm border border-gray-100 overflow-hidden">
-            <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-[#1A1A1A]">{selectedLesson.title}</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold mb-4 text-ink">{selectedLesson.title}</h2>
             {selectedLesson.description && (
               <p className="text-gray-600 text-lg mb-6">{selectedLesson.description}</p>
             )}
@@ -269,8 +269,8 @@ export default function CoursePage() {
             {/* Materials Section */}
             {selectedLesson.materials && selectedLesson.materials.length > 0 && (
               <div className="mt-8 pt-8 border-t border-gray-100">
-                <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-[#1A1A1A]">
-                  <Download className="w-5 h-5 text-[#D62828]" />
+                <h3 className="text-xl font-bold mb-4 flex items-center gap-2 text-ink">
+                  <Download className="w-5 h-5 text-brand" />
                   Материјали за преузимање
                 </h3>
                 <div className="grid gap-3">
@@ -281,17 +281,17 @@ export default function CoursePage() {
                       disabled={downloadingIdx === idx}
                       className="flex items-center gap-3 sm:gap-4 p-3 sm:p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors group text-left w-full overflow-hidden disabled:opacity-60 disabled:cursor-wait"
                     >
-                      <div className="w-12 h-12 bg-[#D62828] rounded-lg flex items-center justify-center flex-shrink-0">
+                      <div className="w-12 h-12 bg-brand rounded-lg flex items-center justify-center flex-shrink-0">
                         <FileText className="w-6 h-6 text-white" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="font-semibold text-[#1A1A1A] truncate">{material.name}</p>
+                        <p className="font-semibold text-ink truncate">{material.name}</p>
                         <p className="text-sm text-gray-500">{(material.size / 1024).toFixed(0)} KB</p>
                       </div>
                       {downloadingIdx === idx ? (
-                        <Loader2 className="w-5 h-5 text-[#D62828] animate-spin" />
+                        <Loader2 className="w-5 h-5 text-brand animate-spin" />
                       ) : (
-                        <Download className="w-5 h-5 text-gray-400 group-hover:text-[#D62828] transition-colors" />
+                        <Download className="w-5 h-5 text-gray-400 group-hover:text-brand transition-colors" />
                       )}
                     </button>
                   ))}
@@ -308,9 +308,9 @@ export default function CoursePage() {
       <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-6 md:p-16 text-center border border-gray-100 aspect-video flex items-center justify-center">
         <div>
           <div className="bg-white w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6 shadow-lg">
-            <Play className="w-12 h-12 text-[#D62828]" />
+            <Play className="w-12 h-12 text-brand" />
           </div>
-          <h3 className="text-2xl font-bold mb-3 text-[#1A1A1A]">Започните учење</h3>
+          <h3 className="text-2xl font-bold mb-3 text-ink">Започните учење</h3>
           <p className="text-gray-600 text-lg">Изаберите лекцију из менија да бисте почели</p>
         </div>
       </div>
@@ -322,15 +322,15 @@ export default function CoursePage() {
       <div className="bg-gradient-to-br from-gray-50 to-white rounded-3xl p-6 shadow-lg border border-gray-100 h-full overflow-y-auto">
         {/* Header */}
         <div className="mb-6">
-          <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Садржај курса</h3>
+          <h3 className="text-xl font-bold text-ink mb-2">Садржај курса</h3>
           <p className="text-sm text-gray-600">
             {modules.length} наслова • {
               modules.reduce((acc, m) => acc + (m.lessons?.length || 0), 0)
             } лекција
           </p>
           {!hasAccess && (
-            <div className="mt-3 p-3 bg-[#FFF5F5] border border-[#D62828]/20 rounded-xl text-sm text-gray-700">
-              <Lock className="w-4 h-4 inline mr-2 text-[#D62828]" />
+            <div className="mt-3 p-3 bg-brand-50 border border-brand/20 rounded-xl text-sm text-gray-700">
+              <Lock className="w-4 h-4 inline mr-2 text-brand" />
               Само прва лекција је доступна без плаћања
             </div>
           )}
@@ -346,12 +346,12 @@ export default function CoursePage() {
               >
                 <div className="flex items-center gap-3 flex-1 text-left">
                   <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
-                    activeModuleIndex === moduleIndex ? 'bg-[#D62828] text-white' : 'bg-gray-100 text-gray-600'
+                    activeModuleIndex === moduleIndex ? 'bg-brand text-white' : 'bg-gray-100 text-gray-600'
                   }`}>
                     <Book className="w-5 h-5" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="font-bold text-[#1A1A1A] truncate">{module.title}</p>
+                    <p className="font-bold text-ink truncate">{module.title}</p>
                     <p className="text-xs text-gray-500">{module.lessons?.length || 0} лекција</p>
                   </div>
                 </div>
@@ -371,7 +371,7 @@ export default function CoursePage() {
                           onClick={() => handleLessonSelect(lesson, moduleIndex, lessonIndex)}
                           className={`w-full flex items-center gap-3 p-3 rounded-xl text-left transition ${
                             selectedLesson?.id === lesson.id
-                              ? 'bg-[#D62828] text-white'
+                              ? 'bg-brand text-white'
                               : isLocked
                               ? 'bg-gray-50 text-gray-400 cursor-pointer opacity-60 hover:opacity-80'
                               : 'hover:bg-gray-50 text-gray-700 border border-gray-100 bg-white'
@@ -391,7 +391,7 @@ export default function CoursePage() {
                               <Play className={`w-4 h-4 ${
                                 selectedLesson?.id === lesson.id
                                   ? 'text-white fill-white'
-                                  : 'text-[#D62828] fill-[#D62828]'
+                                  : 'text-brand fill-brand'
                               }`} />
                             )}
                           </div>
@@ -417,17 +417,17 @@ export default function CoursePage() {
         {/* CTA at bottom of sidebar (only if no access) */}
         {!hasAccess && (
           <div className="mt-6 pt-6 border-t border-gray-200">
-            <div className="bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-2xl p-6 text-white text-center">
+            <div className="bg-gradient-to-br from-brand to-brand-700 rounded-2xl p-6 text-white text-center">
               <h4 className="font-bold text-lg mb-2">Откључајте све лекције</h4>
               <p className="text-sm text-white/90 mb-4">Приступите комплетном курсу</p>
               <button
                 onClick={handlePurchaseClick}
                 disabled={purchasing}
-                className="w-full bg-white text-[#D62828] px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
+                className="w-full bg-white text-brand px-6 py-3 rounded-xl font-bold hover:bg-gray-100 transition disabled:opacity-70 disabled:cursor-not-allowed inline-flex items-center justify-center gap-2"
               >
                 {purchasing ? (
                   <>
-                    <div className="w-5 h-5 border-2 border-[#D62828] border-t-transparent rounded-full animate-spin"></div>
+                    <div className="w-5 h-5 border-2 border-brand border-t-transparent rounded-full animate-spin"></div>
                     Учитавање...
                   </>
                 ) : (
@@ -444,7 +444,7 @@ export default function CoursePage() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#D62828] border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-brand border-t-transparent"></div>
       </div>
     );
   }
@@ -502,7 +502,7 @@ export default function CoursePage() {
         message={`Молимо вас да се пријавите или направите налог како бисте купили курс "${course?.title}".`}
       />
 
-    <div className="min-h-screen bg-white font-sans text-[#1A1A1A] overflow-x-hidden">
+    <div className="min-h-screen bg-white font-sans text-ink overflow-x-hidden">
       <Header />
 
       <div className="max-w-[1600px] mx-auto px-4 sm:px-6 py-8">
@@ -529,7 +529,7 @@ export default function CoursePage() {
 
             {/* Course Info */}
             <div className="space-y-4">
-              <h1 className="text-3xl md:text-5xl font-bold text-[#1A1A1A]">{course.title}</h1>
+              <h1 className="text-3xl md:text-5xl font-bold text-ink">{course.title}</h1>
               <p className="text-gray-600 text-base md:text-lg leading-relaxed">{course.description}</p>
 
               {/* Price and CTA */}
@@ -537,14 +537,14 @@ export default function CoursePage() {
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4 sm:gap-6 pt-4">
                   <div>
                     <div className="text-sm text-gray-500 mb-1">Цена курса:</div>
-                    <div className="text-3xl md:text-4xl font-black text-[#D62828]">
+                    <div className="text-3xl md:text-4xl font-black text-brand">
                       {formatPrice(course.price)}
                     </div>
                   </div>
                   <button
                     onClick={handlePurchaseClick}
                     disabled={purchasing}
-                    className="w-full sm:w-auto bg-[#D62828] text-white px-8 py-4 rounded-full font-bold hover:bg-[#B91F1F] transition-all shadow-lg hover:scale-105 inline-flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
+                    className="w-full sm:w-auto bg-brand text-white px-8 py-4 rounded-full font-bold hover:bg-brand-700 transition-all shadow-lg hover:scale-105 inline-flex items-center justify-center gap-3 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100"
                   >
                     {purchasing ? (
                       <>
@@ -564,16 +564,16 @@ export default function CoursePage() {
               {/* Course Stats */}
               <div className="flex flex-wrap items-center gap-x-6 gap-y-2 pt-4 border-t border-gray-100">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Book className="w-5 h-5 text-[#D62828]" />
+                  <Book className="w-5 h-5 text-brand" />
                   <span>{modules.length} наслова</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Play className="w-5 h-5 text-[#D62828]" />
+                  <Play className="w-5 h-5 text-brand" />
                   <span>{modules.reduce((acc, m) => acc + (m.lessons?.length || 0), 0)} лекција</span>
                 </div>
                 {!hasAccess && (
                   <div className="flex items-center gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-5 h-5 text-[#D62828]" />
+                    <CheckCircle className="w-5 h-5 text-brand" />
                     <span>Прва лекција бесплатно</span>
                   </div>
                 )}

@@ -45,7 +45,7 @@ const COLUMNS = [
 ];
 
 const linkClass =
-  'inline-block py-1 text-[15px] text-gray-600 hover:text-[#D62828] transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D62828]/40';
+  'inline-block py-1 text-[15px] text-gray-600 hover:text-brand transition-colors rounded focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40';
 
 export default function Footer() {
   // Only show a phone number when one is configured (no placeholder numbers in the UI).
@@ -53,7 +53,7 @@ export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer className="relative bg-white text-[#1A1A1A] border-t border-gray-100 overflow-hidden">
+    <footer className="relative bg-white text-ink border-t border-gray-100 overflow-hidden">
       {/* Subtle school-notebook motif: faint ruled lines + red margin line */}
       <div
         aria-hidden="true"
@@ -63,13 +63,13 @@ export default function Footer() {
             'repeating-linear-gradient(to bottom, transparent 0, transparent 31px, rgba(59,130,246,0.07) 31px, rgba(59,130,246,0.07) 32px)',
         }}
       />
-      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-4 sm:left-8 lg:left-16 w-px bg-[#D62828]/15" />
+      <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-4 sm:left-8 lg:left-16 w-px bg-brand/15" />
 
       <div className="relative max-w-7xl mx-auto px-6 sm:px-10 lg:px-20 pt-12 pb-8 md:pt-16">
         <div className="grid gap-10 lg:grid-cols-12">
           {/* Brand + contact */}
           <div className="lg:col-span-4">
-            <Link to="/" className="inline-block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D62828]/40" aria-label="Српски у срцу — почетна">
+            <Link to="/" className="inline-block rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/40" aria-label="Српски у срцу — почетна">
               <img src="/footer.webp" alt="" className="h-14 md:h-16 w-auto" width="766" height="291" loading="lazy" />
             </Link>
             <p className="mt-4 text-gray-600 max-w-sm leading-relaxed">
@@ -79,9 +79,9 @@ export default function Footer() {
               <li>
                 <a
                   href={`mailto:${CONTACT_EMAIL}`}
-                  className="inline-flex items-center gap-2 text-[#1A1A1A] font-semibold hover:text-[#D62828] transition-colors break-all"
+                  className="inline-flex items-center gap-2 text-ink font-semibold hover:text-brand transition-colors break-all"
                 >
-                  <Mail className="w-4 h-4 text-[#D62828] flex-shrink-0" aria-hidden="true" />
+                  <Mail className="w-4 h-4 text-brand flex-shrink-0" aria-hidden="true" />
                   {CONTACT_EMAIL}
                 </a>
               </li>
@@ -89,15 +89,15 @@ export default function Footer() {
                 <li>
                   <a
                     href={`tel:${contactPhone.replace(/\s+/g, '')}`}
-                    className="inline-flex items-center gap-2 text-gray-700 hover:text-[#D62828] transition-colors"
+                    className="inline-flex items-center gap-2 text-gray-700 hover:text-brand transition-colors"
                   >
-                    <Phone className="w-4 h-4 text-[#D62828]" aria-hidden="true" />
+                    <Phone className="w-4 h-4 text-brand" aria-hidden="true" />
                     {contactPhone}
                   </a>
                 </li>
               )}
               <li className="inline-flex items-center gap-2 text-gray-600">
-                <MapPin className="w-4 h-4 text-[#D62828]" aria-hidden="true" />
+                <MapPin className="w-4 h-4 text-brand" aria-hidden="true" />
                 Крушевац, Србија
               </li>
             </ul>
@@ -107,7 +107,7 @@ export default function Footer() {
           <nav aria-label="Линкови у подножју" className="lg:col-span-8 grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-8">
             {COLUMNS.map((col) => (
               <div key={col.title}>
-                <h2 className="text-sm font-bold uppercase tracking-wider text-[#D62828] mb-3">{col.title}</h2>
+                <h2 className="text-sm font-bold uppercase tracking-wider text-brand mb-3">{col.title}</h2>
                 <ul className="space-y-1">
                   {col.links.map((l) => (
                     <li key={l.to}>
@@ -127,7 +127,7 @@ export default function Footer() {
           <ScriptSwitcher />
           <p>
             Наставница: Марина Лукић ·{' '}
-            <Link to="/contact" className="hover:text-[#D62828] underline-offset-2 hover:underline">
+            <Link to="/contact" className="hover:text-brand underline-offset-2 hover:underline">
               пишите нам
             </Link>
           </p>

@@ -7,8 +7,8 @@ const WEAK_THRESHOLD = 60; // % — last result below this is highlighted as a t
 
 function barColor(percent) {
   if (percent >= 80) return 'bg-green-600';
-  if (percent >= WEAK_THRESHOLD) return 'bg-[#F2C94C]';
-  return 'bg-[#D62828]';
+  if (percent >= WEAK_THRESHOLD) return 'bg-gold';
+  return 'bg-brand';
 }
 
 /**
@@ -36,7 +36,7 @@ export default function QuizResultsCard({ results, quizTitles = {}, quizBasePath
         title="Још ниси урадио ниједан квиз"
         text="Уради први квиз и овде ћеш видети резултате по темама и шта треба још да вежбаш."
         action={
-          <Link to={quizBasePath} className="inline-flex items-center gap-2 bg-[#D62828] text-white px-5 py-2.5 rounded-full font-bold hover:bg-[#B91F1F]">
+          <Link to={quizBasePath} className="inline-flex items-center gap-2 bg-brand text-white px-5 py-2.5 rounded-full font-bold hover:bg-brand-700">
             Почни квиз <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </Link>
         }
@@ -49,9 +49,9 @@ export default function QuizResultsCard({ results, quizTitles = {}, quizBasePath
   return (
     <div className="bg-white border border-gray-100 rounded-3xl shadow-sm p-5 sm:p-7">
       {weakest.length > 0 && (
-        <div className="mb-6 bg-[#FFF5F5] border border-[#D62828]/20 rounded-2xl p-4">
-          <p className="flex items-center gap-2 font-bold text-[#1A1A1A] mb-2">
-            <AlertTriangle className="w-5 h-5 text-[#D62828]" aria-hidden="true" />
+        <div className="mb-6 bg-brand-50 border border-brand/20 rounded-2xl p-4">
+          <p className="flex items-center gap-2 font-bold text-ink mb-2">
+            <AlertTriangle className="w-5 h-5 text-brand" aria-hidden="true" />
             Теме за вежбање
           </p>
           <ul className="flex flex-wrap gap-2">
@@ -59,7 +59,7 @@ export default function QuizResultsCard({ results, quizTitles = {}, quizBasePath
               <li key={r.quizId}>
                 <Link
                   to={`${quizBasePath}/${r.quizId}`}
-                  className="inline-flex items-center gap-1.5 bg-white border border-[#D62828]/30 text-[#D62828] rounded-full px-3 py-1.5 text-sm font-semibold hover:bg-[#D62828] hover:text-white transition-colors"
+                  className="inline-flex items-center gap-1.5 bg-white border border-brand/30 text-brand rounded-full px-3 py-1.5 text-sm font-semibold hover:bg-brand hover:text-white transition-colors"
                 >
                   {r.title} · {r.lastPercent}%
                 </Link>
@@ -76,7 +76,7 @@ export default function QuizResultsCard({ results, quizTitles = {}, quizBasePath
           return (
             <li key={r.quizId} className="py-3.5 first:pt-0 last:pb-0">
               <div className="flex items-center justify-between gap-3 mb-1.5">
-                <Link to={`${quizBasePath}/${r.quizId}`} className="font-semibold text-[#1A1A1A] hover:text-[#D62828] min-w-0 truncate">
+                <Link to={`${quizBasePath}/${r.quizId}`} className="font-semibold text-ink hover:text-brand min-w-0 truncate">
                   {r.title}
                 </Link>
                 <span className="flex items-center gap-2 flex-shrink-0 text-sm">
@@ -86,7 +86,7 @@ export default function QuizResultsCard({ results, quizTitles = {}, quizBasePath
                       <span className="sr-only">Напредак</span>
                     </span>
                   )}
-                  <span className="font-bold text-[#1A1A1A]">{r.lastPercent}%</span>
+                  <span className="font-bold text-ink">{r.lastPercent}%</span>
                 </span>
               </div>
               <div className="h-2 bg-gray-100 rounded-full overflow-hidden" aria-hidden="true">

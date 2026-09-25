@@ -174,7 +174,7 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-3xl shadow-2xl max-w-5xl w-full max-h-[90vh] overflow-hidden animate-scale-in">
         {/* Header */}
-        <div className="bg-gradient-to-r from-[#D62828] to-[#F77F00] p-6 text-white relative">
+        <div className="bg-gradient-to-r from-brand to-warning p-6 text-white relative">
           <button
             onClick={onClose}
             className="absolute top-6 right-6 p-2 hover:bg-white/20 rounded-full transition"
@@ -203,7 +203,7 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
               type="email"
               value={testEmail}
               onChange={(e) => setTestEmail(e.target.value)}
-              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-[#D62828] focus:ring-4 focus:ring-[#D62828]/20 transition-all outline-none font-medium"
+              className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-brand focus:ring-4 focus:ring-brand/20 transition-all outline-none font-medium"
               placeholder="vukasin.lukic.sr@gmail.com"
             />
             <p className="text-xs text-gray-500 mt-2">
@@ -220,7 +220,7 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
               return (
                 <div
                   key={emailType.id}
-                  className="bg-white border-2 border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-[#D62828]/30 transition-all duration-300"
+                  className="bg-white border-2 border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-brand/30 transition-all duration-300"
                 >
                   <div className="flex items-start gap-4 mb-4">
                     <div className={`${emailType.color} p-3 rounded-xl text-white`}>
@@ -238,7 +238,7 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
                     className={`w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl font-bold transition-all ${
                       isLoading || sendingAll
                         ? 'bg-gray-300 cursor-not-allowed'
-                        : 'bg-gradient-to-r from-[#D62828] to-[#F77F00] hover:shadow-lg hover:scale-105 text-white'
+                        : 'bg-gradient-to-r from-brand to-warning hover:shadow-lg hover:scale-105 text-white'
                     }`}
                   >
                     {isLoading ? (
@@ -259,7 +259,7 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
           </div>
 
           {/* Send All Button */}
-          <div className="bg-gradient-to-r from-[#1A1A1A] to-[#2D2D2D] p-6 rounded-2xl">
+          <div className="bg-gradient-to-r from-ink to-ink-800 p-6 rounded-2xl">
             <h3 className="text-white font-bold text-xl mb-3 font-serif">Pošalji SVE odjednom</h3>
             <p className="text-white/70 text-sm mb-4">
               Šalje sve {emailTypes.length} test email-ova redom na unetu adresu
@@ -270,7 +270,7 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
               className={`w-full flex items-center justify-center gap-3 px-6 py-4 rounded-xl font-bold text-lg transition-all ${
                 sendingAll || Object.values(loadingStates).some(v => v)
                   ? 'bg-gray-600 cursor-not-allowed'
-                  : 'bg-gradient-to-r from-[#D62828] to-[#F77F00] hover:shadow-2xl hover:scale-105 text-white'
+                  : 'bg-gradient-to-r from-brand to-warning hover:shadow-2xl hover:scale-105 text-white'
               }`}
             >
               {sendingAll ? (

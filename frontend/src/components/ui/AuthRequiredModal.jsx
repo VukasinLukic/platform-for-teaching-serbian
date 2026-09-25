@@ -25,12 +25,12 @@ export default function AuthRequiredModal({ isOpen, onClose, message }) {
         {/* Content */}
         <div className="p-8 text-center">
           {/* Icon */}
-          <div className="w-20 h-20 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center mx-auto mb-6">
+          <div className="w-20 h-20 bg-gradient-to-br from-brand to-brand-700 rounded-full flex items-center justify-center mx-auto mb-6">
             <span className="text-4xl">🔐</span>
           </div>
 
           {/* Title */}
-          <h2 className="text-2xl font-bold text-[#1A1A1A] mb-3">
+          <h2 className="text-2xl font-bold text-ink mb-3">
             Потребна је пријава
           </h2>
 
@@ -43,13 +43,13 @@ export default function AuthRequiredModal({ isOpen, onClose, message }) {
           <div className="flex flex-col gap-3">
             <Link
               to="/login"
-              className="w-full bg-gradient-to-r from-[#D62828] to-[#B91F1F] text-white px-8 py-4 rounded-full hover:shadow-lg transition-all font-bold text-base"
+              className="w-full bg-gradient-to-r from-brand to-brand-700 text-white px-8 py-4 rounded-full hover:shadow-lg transition-all font-bold text-base"
             >
               Пријави се
             </Link>
             <Link
               to="/register"
-              className="w-full bg-white border-2 border-[#D62828] text-[#D62828] px-8 py-4 rounded-full hover:bg-gray-50 transition-all font-bold text-base"
+              className="w-full bg-white border-2 border-brand text-brand px-8 py-4 rounded-full hover:bg-gray-50 transition-all font-bold text-base"
             >
               Направи налог
             </Link>

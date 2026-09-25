@@ -49,7 +49,7 @@ export default function CopyField({ label, value, copyValue, mono = false, highl
         <dt className="text-xs font-semibold uppercase tracking-wide text-gray-500">{label}</dt>
         <dd
           className={`mt-0.5 break-words ${mono ? 'font-mono tracking-wide' : ''} ${
-            highlight ? 'text-lg font-extrabold text-[#D62828]' : 'text-base font-semibold text-[#1A1A1A]'
+            highlight ? 'text-lg font-extrabold text-brand' : 'text-base font-semibold text-ink'
           }`}
         >
           {value}
@@ -64,7 +64,7 @@ export default function CopyField({ label, value, copyValue, mono = false, highl
             ? 'bg-green-50 border-green-500 text-green-700'
             : state === 'failed'
               ? 'bg-red-50 border-red-300 text-red-700'
-              : 'bg-white border-gray-200 text-[#1A1A1A] hover:border-[#D62828] hover:text-[#D62828]'
+              : 'bg-white border-gray-200 text-ink hover:border-brand hover:text-brand'
         }`}
       >
         {state === 'copied' ? <Check className="w-4 h-4" aria-hidden="true" /> : <Copy className="w-4 h-4" aria-hidden="true" />}

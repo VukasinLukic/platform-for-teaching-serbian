@@ -10,7 +10,7 @@ export default function ContinueLearningCard({ course, lastLessonId, lastLessonT
   const hasPercent = typeof percent === 'number';
 
   return (
-    <div className="relative overflow-hidden bg-gradient-to-br from-[#D62828] to-[#9E1B1B] text-white rounded-3xl p-5 sm:p-7 h-full">
+    <div className="relative overflow-hidden bg-gradient-to-br from-brand to-brand-800 text-white rounded-3xl p-5 sm:p-7 h-full">
       <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-white/10" aria-hidden="true" />
       <p className="relative text-sm font-semibold uppercase tracking-wider text-white/80">Настави где си стао</p>
       <h2 className="relative mt-1 text-xl sm:text-2xl font-bold break-words">{course.title}</h2>
@@ -34,14 +34,14 @@ export default function ContinueLearningCard({ course, lastLessonId, lastLessonT
             aria-valuenow={percent}
             aria-label="Напредак кроз курс"
           >
-            <div className="h-full bg-[#F2C94C] rounded-full transition-all" style={{ width: `${percent}%` }} />
+            <div className="h-full bg-gold rounded-full transition-all" style={{ width: `${percent}%` }} />
           </div>
         </div>
       )}
 
       <Link
         to={href}
-        className="relative mt-5 inline-flex items-center gap-2 bg-white text-[#D62828] px-5 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors"
+        className="relative mt-5 inline-flex items-center gap-2 bg-white text-brand px-5 py-3 rounded-full font-bold hover:bg-gray-100 transition-colors"
       >
         <PlayCircle className="w-5 h-5" aria-hidden="true" />
         Настави лекцију

@@ -166,16 +166,16 @@ export default function PromoQuizModal() {
             height="80"
           />
 
-          <h2 id="promo-quiz-title" className="text-xl md:text-2xl font-bold text-[#1A1A1A] leading-snug mb-2">
+          <h2 id="promo-quiz-title" className="text-xl md:text-2xl font-bold text-ink leading-snug mb-2">
             Тестирај своје знање бесплатно
           </h2>
           <p className="text-sm text-gray-600 leading-relaxed mb-4">
             20 питања из српског језика и књижевности — провери колико си спреман за малу матуру.
           </p>
 
-          <div className="bg-gradient-to-r from-[#D62828] to-[#B91F1F] rounded-2xl px-4 py-3 mb-5 shadow-md">
+          <div className="bg-gradient-to-r from-brand to-brand-700 rounded-2xl px-4 py-3 mb-5 shadow-md">
             <div className="flex items-center justify-center gap-2">
-              <Gift className="w-5 h-5 text-[#F2C94C] flex-shrink-0" aria-hidden="true" />
+              <Gift className="w-5 h-5 text-gold flex-shrink-0" aria-hidden="true" />
               <span className="text-xl md:text-2xl font-black text-white leading-none">20% ПОПУСТ</span>
             </div>
             <p className="text-sm text-white/90 mt-1.5">на било који курс ако урадиш квиз до краја</p>
@@ -186,7 +186,7 @@ export default function PromoQuizModal() {
               ref={startBtnRef}
               type="button"
               onClick={handleStartQuiz}
-              className="flex-1 min-h-[48px] px-4 py-3 bg-[#D62828] text-white rounded-full font-bold hover:bg-[#B91F1F] transition-colors shadow-md flex items-center justify-center gap-2"
+              className="flex-1 min-h-[48px] px-4 py-3 bg-brand text-white rounded-full font-bold hover:bg-brand-700 transition-colors shadow-md flex items-center justify-center gap-2"
             >
               <GraduationCap className="w-5 h-5" aria-hidden="true" />
               Почни квиз
@@ -206,12 +206,12 @@ export default function PromoQuizModal() {
         </div>
 
         {/* Right / bottom — initial tests */}
-        <div className="relative md:w-1/2 bg-gradient-to-br from-[#D62828] to-[#B91F1F] px-6 pt-9 pb-7 md:px-8 md:py-10 text-center flex flex-col justify-center">
+        <div className="relative md:w-1/2 bg-gradient-to-br from-brand to-brand-700 px-6 pt-9 pb-7 md:px-8 md:py-10 text-center flex flex-col justify-center">
           <div
             className="absolute z-20 left-1/2 -translate-x-1/2 -top-5 md:left-0 md:top-1/2 md:-translate-y-1/2 w-11 h-11 rounded-full bg-white shadow-lg ring-4 ring-white flex items-center justify-center"
             aria-hidden="true"
           >
-            <span className="text-xs md:text-sm font-black text-[#D62828] tracking-wide">ИЛИ</span>
+            <span className="text-xs md:text-sm font-black text-brand tracking-wide">ИЛИ</span>
           </div>
 
           <div className="w-12 h-12 bg-white/15 rounded-2xl flex items-center justify-center mx-auto mb-3">
@@ -228,7 +228,7 @@ export default function PromoQuizModal() {
           <button
             type="button"
             onClick={handleGoToTests}
-            className="min-h-[48px] px-5 py-3 bg-white text-[#D62828] rounded-full font-bold hover:bg-gray-100 transition-colors shadow-md inline-flex items-center justify-center gap-2"
+            className="min-h-[48px] px-5 py-3 bg-white text-brand rounded-full font-bold hover:bg-gray-100 transition-colors shadow-md inline-flex items-center justify-center gap-2"
           >
             Погледај тестове <ArrowRight className="w-4 h-4" aria-hidden="true" />
           </button>

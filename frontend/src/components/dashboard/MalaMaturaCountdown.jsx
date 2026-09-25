@@ -32,8 +32,8 @@ export default function MalaMaturaCountdown({ date = MALA_MATURA_DATE }) {
   );
 
   return (
-    <div className="bg-[#1A1A1A] text-white rounded-3xl p-5 sm:p-6 flex items-center gap-4 sm:gap-5 h-full">
-      <div className="w-12 h-12 rounded-2xl bg-[#F2C94C] text-[#1A1A1A] flex items-center justify-center flex-shrink-0">
+    <div className="bg-ink text-white rounded-3xl p-5 sm:p-6 flex items-center gap-4 sm:gap-5 h-full">
+      <div className="w-12 h-12 rounded-2xl bg-gold text-ink flex items-center justify-center flex-shrink-0">
         <CalendarDays className="w-6 h-6" aria-hidden="true" />
       </div>
       <div className="min-w-0">

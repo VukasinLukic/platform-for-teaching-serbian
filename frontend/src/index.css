@@ -1,3 +1,6 @@
+@import '@fontsource-variable/lora/wght.css';
+@import '@fontsource-variable/manrope/wght.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -5,69 +8,69 @@
 @layer base {
   :root {
     /* Crvena srca boja kao primary (#D62828) */
-    --primary: 0 71 50; /* #D62828 u HSL */
-    --primary-foreground: 0 0 100; /* White text on red */
+    --primary: 0 69% 50%; /* #D62828 u HSL */
+    --primary-foreground: 0 0% 100%; /* White text on red */
 
     /* Tamno siva kao secondary (#1A1A1A) */
-    --secondary: 0 0 10; /* #1A1A1A u HSL */
-    --secondary-foreground: 0 0 100; /* White text */
+    --secondary: 0 0% 10%; /* #1A1A1A u HSL */
+    --secondary-foreground: 0 0% 100%; /* White text */
 
     /* Background - čista bela (#FFFFFF) */
-    --background: 0 0 100; /* White */
-    --foreground: 0 0 10; /* Dark gray text (#1A1A1A) */
+    --background: 0 0% 100%; /* White */
+    --foreground: 0 0% 10%; /* Dark gray text (#1A1A1A) */
 
     /* Card - svetlo siva (#F7F7F7) */
-    --card: 0 0 97;
-    --card-foreground: 0 0 10;
+    --card: 0 0% 97%;
+    --card-foreground: 0 0% 10%;
 
-    --popover: 0 0 100;
-    --popover-foreground: 0 0 10;
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
 
-    --muted: 0 0 97; /* #F7F7F7 */
-    --muted-foreground: 0 0 45;
+    --muted: 0 0% 97%; /* #F7F7F7 */
+    --muted-foreground: 0 0% 38%;
 
     /* Zlatna akcent boja (#F2C94C) */
-    --accent: 45 87 62; /* #F2C94C u HSL */
-    --accent-foreground: 0 0 10; /* Dark text on gold */
+    --accent: 45 86% 62%; /* #F2C94C u HSL */
+    --accent-foreground: 0 0% 10%; /* Dark text on gold */
 
-    --destructive: 0 71 50; /* Red za errors */
-    --destructive-foreground: 0 0 100;
+    --destructive: 0 71% 42%; /* Red za errors */
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0 90;
-    --input: 0 0 90;
-    --ring: 0 71 50; /* Primary red za focus */
+    --border: 0 0% 90%;
+    --input: 0 0% 90%;
+    --ring: 0 69% 50%; /* Primary red za focus */
 
     --radius: 1rem;
   }
 
   .dark {
-    --background: 0 0 10; /* #1A1A1A */
-    --foreground: 0 0 100; /* Pure White */
+    --background: 0 0% 10%; /* #1A1A1A */
+    --foreground: 0 0% 100%; /* Pure White */
 
-    --card: 0 0 15; /* Slightly lighter dark for cards */
-    --card-foreground: 0 0 100;
+    --card: 0 0% 15%; /* Slightly lighter dark for cards */
+    --card-foreground: 0 0% 100%;
 
-    --popover: 0 0 15;
-    --popover-foreground: 0 0 100;
+    --popover: 0 0% 15%;
+    --popover-foreground: 0 0% 100%;
 
-    --primary: 0 71 50; /* #D62828 */
-    --primary-foreground: 0 0 100;
+    --primary: 0 69% 50%; /* #D62828 */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0 20; /* Lighter gray */
-    --secondary-foreground: 0 0 100;
+    --secondary: 0 0% 20%; /* Lighter gray */
+    --secondary-foreground: 0 0% 100%;
 
-    --muted: 0 0 20;
-    --muted-foreground: 0 0 64;
+    --muted: 0 0% 20%;
+    --muted-foreground: 0 0% 64%;
 
-    --accent: 45 87 62; /* #F2C94C */
-    --accent-foreground: 0 0 10;
+    --accent: 45 86% 62%; /* #F2C94C */
+    --accent-foreground: 0 0% 10%;
 
-    --destructive: 0 71 50;
-    --destructive-foreground: 0 0 100;
+    --destructive: 0 71% 42%;
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 0 0 25;
-    --input: 0 0 25;
-    --ring: 0 71 50;
+    --border: 0 0% 25%;
+    --input: 0 0% 25%;
+    --ring: 0 69% 50%;
   }
 }
 
@@ -78,11 +81,26 @@
 
   body {
     @apply bg-background text-foreground;
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-      'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+    @apply font-sans;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    /* "locl" activates Serbian glyph forms (б г д п т) when lang="sr-Cyrl". */
+    font-feature-settings: 'locl';
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Global keyboard focus ring (brand red) for every interactive element. */
+  :focus-visible {
+    outline: 2px solid #D62828;
+    outline-offset: 2px;
+  }
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+
+  ::selection {
+    background: #F7CBCB;
+    color: #1A1A1A;
   }
 
   /* Smooth scroll for the entire page */
@@ -90,16 +108,38 @@
     scroll-behavior: smooth;
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+
+  h1, h2, h3 {
+    text-wrap: balance;
+    font-feature-settings: 'locl';
+  }
+
   h1 {
-    @apply text-6xl sm:text-7xl lg:text-8xl font-black;
+    @apply font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight;
   }
 
   h2 {
-    @apply text-4xl sm:text-5xl lg:text-6xl font-extrabold;
+    @apply font-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight;
   }
 
   h3 {
-    @apply text-2xl sm:text-3xl lg:text-4xl font-bold;
+    @apply text-xl sm:text-2xl font-bold;
+  }
+
+  p {
+    text-wrap: pretty;
   }
 
   /* Osiguraj da strong tagovi budu podebljani */
@@ -226,25 +266,17 @@
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #b01f1f;
+  background: #B91F1F;
 }
 
-/* Fade In Animation */
-.fade-in {
-  animation: fadeIn 1s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+/* Fade In */
+@keyframes ui-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 /* Slide Up Animation (for modals) */
-@keyframes slideUp {
+@keyframes ui-slide-up {
   from {
     transform: translateY(20px);
     opacity: 0;
@@ -256,11 +288,11 @@
 }
 
 .animate-slideUp {
-  animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: ui-slide-up 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Slide In from Right (for toasts) */
-@keyframes slideInRight {
+@keyframes ui-slide-in-right {
   from {
     transform: translateX(100%);
     opacity: 0;
@@ -272,21 +304,11 @@
 }
 
 .animate-slideInRight {
-  animation: slideInRight 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Fade In (for modal backdrop) */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
+  animation: ui-slide-in-right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .animate-fadeIn {
-  animation: fadeIn 0.2s ease-out;
+  animation: ui-fade 0.2s ease-out;
 }
 
 /* Gradient Background */
@@ -299,7 +321,7 @@
 }
 
 /* Scale In Animation (for modals) */
-@keyframes scaleIn {
+@keyframes ui-scale-in {
   from {
     transform: scale(0.9);
     opacity: 0;
@@ -311,10 +333,83 @@
 }
 
 .animate-scale-in {
-  animation: scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: ui-scale-in 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Fade In Animation (for general use) */
 .animate-fade-in {
-  animation: fadeIn 0.3s ease-out;
+  animation: ui-fade 0.3s ease-out;
+}
+
+/* Entrance helpers (formerly inline <style> in auth pages) */
+@keyframes ui-fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: ui-fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* Tutorial highlight (formerly inline <style> in TutorialTooltip) */
+.tutorial-highlight {
+  position: relative;
+  z-index: 9999 !important;
+  box-shadow: 0 0 0 4px rgba(214, 40, 40, 0.4), 0 0 20px rgba(214, 40, 40, 0.2);
+  border-radius: 1rem;
+  transition: box-shadow 0.3s ease;
+}
+
+/* Alano mascot motion (formerly inline <style> in Alano.jsx) */
+@keyframes alano-breathe-kf {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-3px) scale(1.015); }
+}
+@keyframes alano-wave-kf {
+  0%, 100% { transform: rotate(0deg); }
+  20% { transform: rotate(-6deg); }
+  40% { transform: rotate(5deg); }
+  60% { transform: rotate(-4deg); }
+  80% { transform: rotate(3deg); }
+}
+@keyframes alano-jump-kf {
+  0%, 100% { transform: translateY(0) scale(1, 1); }
+  25% { transform: translateY(-16px) scale(1.06, 0.94); }
+  50% { transform: translateY(-20px) scale(0.95, 1.06); }
+  75% { transform: translateY(-6px) scale(1.03, 0.97); }
+}
+@keyframes alano-heart-kf {
+  0% { opacity: 0; transform: translate(0, 0) scale(0.4); }
+  15% { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--dx, 0px), -60px) scale(1.1); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .alano-breathe { animation: alano-breathe-kf 3.2s ease-in-out infinite; transform-origin: bottom center; }
+  .alano-wave-anim { animation: alano-wave-kf 1.8s ease-in-out 1; transform-origin: bottom center; }
+  .alano-jump-anim { animation: alano-jump-kf 1.6s cubic-bezier(.34,1.56,.64,1) 1; transform-origin: bottom center; }
+}
+.alano-heart {
+  position: absolute;
+  font-size: 14px;
+  animation: alano-heart-kf 1.4s ease-out 1 backwards;
+}
+
+/* Notebook motif — the brand signature (ruled paper with a red margin line). Use sparingly. */
+.bg-notebook {
+  background-color: #FFFDF9;
+  background-image:
+    linear-gradient(90deg, transparent 2.75rem, rgba(214, 40, 40, 0.22) 2.75rem, rgba(214, 40, 40, 0.22) calc(2.75rem + 1px), transparent calc(2.75rem + 1px)),
+    repeating-linear-gradient(0deg, transparent 0, transparent 31px, rgba(63, 115, 148, 0.12) 31px, rgba(63, 115, 148, 0.12) 32px);
+}
+
+/* Payment slip print layout (formerly inline <style> in PaymentSlipPage) */
+@media print {
+  body * { visibility: hidden !important; }
+  [data-uplatnica], [data-uplatnica] * { visibility: visible !important; }
+  [data-uplatnica] {
+    position: absolute !important; top: 0 !important; left: 0 !important;
+    width: 780px !important; margin: 0 !important; padding: 0 !important;
+    border: 1px solid #999 !important;
+  }
+  body { background: white !important; margin: 0 !important; padding: 0 !important; }
+  @page { size: landscape; margin: 10mm; }
 }

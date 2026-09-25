@@ -61,19 +61,19 @@ export default function QuizRunnerPage() {
     if (loading) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-white">
-                <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D62828] border-t-transparent"></div>
+                <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent"></div>
             </div>
         );
     }
 
     if (error) {
         return (
-            <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+            <div className="min-h-screen bg-white font-sans text-ink">
                 <SEO title="Квиз" noindex />
                 <Header />
                 <div className="flex flex-col items-center justify-center h-[60vh] px-6 text-center">
                     <div className="bg-red-100 p-6 rounded-full mb-6">
-                        <AlertTriangle className="w-12 h-12 text-[#D62828]" />
+                        <AlertTriangle className="w-12 h-12 text-brand" />
                     </div>
                     <h1 className="text-2xl font-bold mb-4">{error}</h1>
                     <button
@@ -91,13 +91,13 @@ export default function QuizRunnerPage() {
     const intro = quizSeo[entry.id]?.intro || entry.description;
 
     return (
-        <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+        <div className="min-h-screen bg-white font-sans text-ink">
             {seo}
             <Header />
 
             <div className="max-w-4xl mx-auto px-4 sm:px-6 py-8 md:py-12">
                 <nav aria-label="Путања" className="mb-6 text-sm text-gray-500">
-                    <Link to="/kvizovi" className="inline-flex items-center gap-2 hover:text-[#D62828] font-medium transition-colors">
+                    <Link to="/kvizovi" className="inline-flex items-center gap-2 hover:text-brand font-medium transition-colors">
                         <ArrowLeft className="w-4 h-4" />
                         Сви квизови
                     </Link>
@@ -113,7 +113,7 @@ export default function QuizRunnerPage() {
                             </p>
                             <button
                                 onClick={() => setStarted(true)}
-                                className="px-8 py-3 rounded-xl font-bold inline-flex items-center gap-2 bg-[#D62828] text-white hover:bg-[#B91F1F] shadow-lg transition"
+                                className="px-8 py-3 rounded-xl font-bold inline-flex items-center gap-2 bg-brand text-white hover:bg-brand-700 shadow-lg transition"
                             >
                                 Започни квиз <ArrowRight className="w-5 h-5" />
                             </button>

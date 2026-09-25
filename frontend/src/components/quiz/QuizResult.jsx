@@ -17,10 +17,10 @@ export default function QuizResult({ score, totalQuestions, onRetry }) {
                 <Trophy className="w-12 h-12 text-yellow-600" />
             </div>
 
-            <h2 className="text-2xl md:text-3xl font-bold mb-2 text-[#1A1A1A]">{message}</h2>
+            <h2 className="text-2xl md:text-3xl font-bold mb-2 text-ink">{message}</h2>
             <p className="text-gray-600 mb-8">Ваш резултат:</p>
 
-            <div className="text-5xl md:text-6xl font-black text-[#D62828] mb-8">
+            <div className="text-5xl md:text-6xl font-black text-brand mb-8">
                 {score} <span className="text-2xl text-gray-400 font-medium">/ {totalQuestions}</span>
             </div>
 
@@ -33,7 +33,7 @@ export default function QuizResult({ score, totalQuestions, onRetry }) {
                 </Link>
                 <button
                     onClick={onRetry}
-                    className="w-full md:w-auto px-8 py-4 rounded-xl bg-[#D62828] text-white font-bold hover:bg-[#B91F1F] transition-all flex items-center justify-center gap-2"
+                    className="w-full md:w-auto px-8 py-4 rounded-xl bg-brand text-white font-bold hover:bg-brand-700 transition-all flex items-center justify-center gap-2"
                 >
                     <RefreshCw className="w-5 h-5" />
                     Probaj ponovo

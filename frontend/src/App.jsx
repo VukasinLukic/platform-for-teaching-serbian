@@ -57,11 +57,10 @@ const PromoQuizModal = lazyWithRetry(() => import('./components/promo/PromoQuizM
 function PageLoader({ text = 'Учитава се...' }) {
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4" role="status" aria-live="polite">
-      <div className="flex flex-col items-center gap-4 opacity-0 animate-[fadeIn_0.3s_ease-out_0.15s_forwards]">
-        <div className="w-12 h-12 rounded-full border-4 border-[#D62828]/15 border-t-[#D62828] animate-spin" />
+      <div className="flex flex-col items-center gap-4 opacity-0 animate-[ui-fade_0.3s_ease-out_0.15s_forwards]">
+        <div className="w-12 h-12 rounded-full border-4 border-brand/15 border-t-brand animate-spin" />
         <p className="text-sm font-medium text-gray-500">{text}</p>
       </div>
-      <style>{'@keyframes fadeIn{from{opacity:0}to{opacity:1}}'}</style>
     </div>
   );
 }

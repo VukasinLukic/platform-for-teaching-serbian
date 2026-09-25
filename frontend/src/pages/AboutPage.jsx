@@ -93,15 +93,15 @@ export default function AboutPage() {
         jsonLd={[aboutJsonLd, aboutBreadcrumbJsonLd]}
         keywords="Marina Lukic nastavnica, profesorka srpskog jezika, nastavnica sa iskustvom, republicke nagrade srpski jezik, filoloska fakultet Beograd"
       />
-      <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+      <div className="min-h-screen bg-white font-sans text-ink">
         <Header />
 
         {/* HERO SECTION */}
-        <section className="pt-12 pb-16 md:pt-16 md:pb-24 px-6 bg-gradient-to-b from-white to-[#F7F7F7]">
+        <section className="pt-12 pb-16 md:pt-16 md:pb-24 px-6 bg-gradient-to-b from-white to-surface">
           <div className="max-w-7xl mx-auto text-center">
             <h1 className="text-4xl md:text-7xl font-bold mb-5 md:mb-8 leading-tight">
               Више од наставе, <br />
-              <span className="text-[#D62828]">пут ка успеху.</span>
+              <span className="text-brand">пут ка успеху.</span>
             </h1>
             <p className="text-base md:text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mb-8 md:mb-12">
               СРПСКИ У СРЦУ је платформа која помаже ученицима да се припреме за малу матуру
@@ -112,7 +112,7 @@ export default function AboutPage() {
             <div ref={statsRef} className="bg-white rounded-[2rem] md:rounded-[3rem] p-6 md:p-8 shadow-xl max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
               {stats.map((stat, index) => (
                 <div key={index} className="text-center pb-6 md:pb-0 border-b md:border-b-0 md:border-r last:border-b-0 last:border-r-0 border-gray-100">
-                  <div className="text-4xl font-black text-[#D62828] mb-1">
+                  <div className="text-4xl font-black text-brand mb-1">
                     {counters[stat.key]}{stat.suffix}
                   </div>
                   <div className="text-sm text-gray-500 font-bold uppercase tracking-wider">{stat.label}</div>
@@ -138,7 +138,7 @@ export default function AboutPage() {
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent p-6 rounded-b-3xl">
                   <h2 className="text-3xl md:text-4xl font-bold leading-tight text-white">
                     Упознајте наставницу <br />
-                    <span className="text-[#F2C94C] relative">
+                    <span className="text-gold relative">
                       Марину Лукић
                     </span>
                   </h2>
@@ -159,7 +159,7 @@ export default function AboutPage() {
                   </p>
                   <p>
                     Од првог радног дана припрема децу за завршни испит (малу матуру) као и за пријемне испите
-                    за упис на факултете. <strong className="text-[#D62828]">Сви њени ученици су успешно урадили тест и уписали жељене
+                    за упис на факултете. <strong className="text-brand">Сви њени ученици су успешно урадили тест и уписали жељене
                       школе и факултете.</strong>
                   </p>
                   <p>
@@ -175,9 +175,9 @@ export default function AboutPage() {
                     'Рецензент уџбеника',
                     'Стручна усавршавања'
                   ].map((item, i) => (
-                    <div key={i} className="flex items-center gap-3 bg-gradient-to-r from-[#FFF5F5] to-white p-4 rounded-xl shadow-sm border border-[#D62828]/20">
-                      <CheckCircle className="text-[#D62828] flex-shrink-0" size={20} />
-                      <span className="font-semibold text-[#1A1A1A]">{item}</span>
+                    <div key={i} className="flex items-center gap-3 bg-gradient-to-r from-brand-50 to-white p-4 rounded-xl shadow-sm border border-brand/20">
+                      <CheckCircle className="text-brand flex-shrink-0" size={20} />
+                      <span className="font-semibold text-ink">{item}</span>
                     </div>
                   ))}
                 </div>
@@ -200,9 +200,9 @@ export default function AboutPage() {
               <div className="space-y-8">
                 <h2 className="text-4xl md:text-5xl font-bold leading-tight">
                   Упознајте наставницу <br />
-                  <span className="text-[#D62828] relative">
+                  <span className="text-brand relative">
                     Марину Лукић
-                    <div className="absolute -bottom-2 left-0 w-full h-1 bg-[#F2C94C]"></div>
+                    <div className="absolute -bottom-2 left-0 w-full h-1 bg-gold"></div>
                   </span>
                 </h2>
 
@@ -235,7 +235,7 @@ export default function AboutPage() {
                     'Стручна усавршавања'
                   ].map((item, i) => (
                     <div key={i} className="flex items-center gap-3 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
-                      <CheckCircle className="text-[#D62828]" size={20} />
+                      <CheckCircle className="text-brand" size={20} />
                       <span className="font-medium">{item}</span>
                     </div>
                   ))}
@@ -247,7 +247,7 @@ export default function AboutPage() {
 
         {/* CTA SECTION */}
         <section className="py-14 md:py-20 px-6 bg-white">
-          <div className="max-w-5xl mx-auto bg-[#D62828] rounded-[2rem] md:rounded-[3rem] p-8 md:p-20 text-center relative overflow-hidden">
+          <div className="max-w-5xl mx-auto bg-brand rounded-[2rem] md:rounded-[3rem] p-8 md:p-20 text-center relative overflow-hidden">
             {/* Decorative Circles */}
             <div className="absolute top-0 left-0 w-64 h-64 bg-white opacity-5 rounded-full -translate-x-1/2 -translate-y-1/2"></div>
             <div className="absolute bottom-0 right-0 w-96 h-96 bg-white opacity-5 rounded-full translate-x-1/3 translate-y-1/3"></div>
@@ -262,17 +262,17 @@ export default function AboutPage() {
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <Link to="/courses" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto bg-white text-[#D62828] px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition shadow-lg">
+                  <button className="w-full sm:w-auto bg-white text-brand px-10 py-4 rounded-full font-bold text-lg hover:bg-gray-100 transition shadow-lg">
                     Погледајте курсеве
                   </button>
                 </Link>
                 <Link to="/online-nastava" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto bg-[#F2C94C] text-[#1A1A1A] px-10 py-4 rounded-full font-bold text-lg hover:bg-[#D4A843] transition shadow-lg">
+                  <button className="w-full sm:w-auto bg-gold text-ink px-10 py-4 rounded-full font-bold text-lg hover:bg-gold-500 transition shadow-lg">
                     Online настава
                   </button>
                 </Link>
                 <Link to="/contact" className="w-full sm:w-auto">
-                  <button className="w-full sm:w-auto bg-transparent border-2 border-white text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-[#D62828] transition">
+                  <button className="w-full sm:w-auto bg-transparent border-2 border-white text-white px-10 py-4 rounded-full font-bold text-lg hover:bg-white hover:text-brand transition">
                     Контактирајте нас
                   </button>
                 </Link>

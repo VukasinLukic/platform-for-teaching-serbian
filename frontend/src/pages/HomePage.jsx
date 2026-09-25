@@ -112,17 +112,17 @@ function VideoPreviewCard({ catalog, className = '' }) {
   return (
     <Link
       to={courseHref(featured)}
-      className={`group relative block overflow-hidden rounded-3xl bg-[#1A1A1A] shadow-xl ring-1 ring-black/5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#D62828]/40 ${className}`}
+      className={`group relative block overflow-hidden rounded-3xl bg-ink shadow-xl ring-1 ring-black/5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/40 ${className}`}
       aria-label={featured?.title ? `Погледај курс: ${featured.title}` : 'Погледај курсеве'}
     >
       <div className="aspect-video relative">
         {featured?.thumbnail_url ? (
           <img src={featured.thumbnail_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-70" loading="lazy" />
         ) : (
-          <div className="absolute inset-0 bg-gradient-to-br from-[#2a2a2a] via-[#1A1A1A] to-[#3a1414]" />
+          <div className="absolute inset-0 bg-gradient-to-br from-ink-800 via-ink to-brand-950" />
         )}
         <div className="absolute inset-0 flex items-center justify-center">
-          <span className="w-16 h-16 bg-[#D62828] rounded-full flex items-center justify-center shadow-2xl motion-safe:transition-transform motion-safe:group-hover:scale-110">
+          <span className="w-16 h-16 bg-brand rounded-full flex items-center justify-center shadow-2xl motion-safe:transition-transform motion-safe:group-hover:scale-110">
             <Play className="w-7 h-7 text-white ml-1" fill="white" aria-hidden="true" />
           </span>
         </div>
@@ -130,7 +130,7 @@ function VideoPreviewCard({ catalog, className = '' }) {
           <Video className="w-3.5 h-3.5" aria-hidden="true" /> Погледај како функционише
         </span>
       </div>
-      <div className="px-4 py-3 bg-[#1A1A1A] text-white">
+      <div className="px-4 py-3 bg-ink text-white">
         {loading ? (
           <span className="block h-4 w-2/3 rounded bg-white/20 motion-safe:animate-pulse" aria-hidden="true" />
         ) : (
@@ -149,15 +149,15 @@ function VideoPreviewCard({ catalog, className = '' }) {
 function TestimonialCard({ t, className = '' }) {
   return (
     <figure className={`flex flex-col bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm ${className}`}>
-      <blockquote className="text-[#1A1A1A] text-base leading-relaxed flex-1">
+      <blockquote className="text-ink text-base leading-relaxed flex-1">
         <p>{t.text}</p>
       </blockquote>
       <figcaption className="flex items-center gap-3 mt-6">
-        <span className="w-11 h-11 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center text-white font-bold text-lg" aria-hidden="true">
+        <span className="w-11 h-11 bg-gradient-to-br from-brand to-brand-700 rounded-full flex items-center justify-center text-white font-bold text-lg" aria-hidden="true">
           {t.author.charAt(0)}
         </span>
         <span>
-          <span className="block font-bold text-[#1A1A1A]">{t.author}</span>
+          <span className="block font-bold text-ink">{t.author}</span>
           <span className="block text-sm text-gray-500">{t.role}</span>
         </span>
       </figcaption>
@@ -264,7 +264,7 @@ function Testimonials({ items }) {
                 aria-current={active === i ? 'true' : undefined}
                 className="p-1.5"
               >
-                <span className={`block h-2 rounded-full motion-safe:transition-all ${active === i ? 'w-6 bg-[#D62828]' : 'w-2 bg-gray-300'}`} />
+                <span className={`block h-2 rounded-full motion-safe:transition-all ${active === i ? 'w-6 bg-brand' : 'w-2 bg-gray-300'}`} />
               </button>
             ))}
           </div>
@@ -412,7 +412,7 @@ function FeaturedCourseCard() {
         <div className="grid md:grid-cols-5">
           {/* Left Panel - main info */}
           <div
-            className={`md:col-span-2 bg-gradient-to-br from-[#D62828] to-[#B91F1F] p-8 md:p-12 text-white flex flex-col justify-center transition-all duration-700 ${
+            className={`md:col-span-2 bg-gradient-to-br from-brand to-brand-700 p-8 md:p-12 text-white flex flex-col justify-center transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
             }`}
           >
@@ -427,7 +427,7 @@ function FeaturedCourseCard() {
             </p>
             <Link
               to="/courses"
-              className="self-start bg-white text-[#D62828] px-8 py-3.5 rounded-full font-bold hover:bg-gray-100 transition-colors inline-flex items-center gap-2 shadow-lg"
+              className="self-start bg-white text-brand px-8 py-3.5 rounded-full font-bold hover:bg-gray-100 transition-colors inline-flex items-center gap-2 shadow-lg"
             >
               Погледај курсеве <ArrowRight className="w-5 h-5" aria-hidden="true" />
             </Link>
@@ -442,7 +442,7 @@ function FeaturedCourseCard() {
             }`}
           >
             <h4
-              className={`text-lg font-bold text-[#1A1A1A] mb-6 transition-all duration-500 delay-500 ${
+              className={`text-lg font-bold text-ink mb-6 transition-all duration-500 delay-500 ${
                 isVisible ? 'opacity-100' : 'opacity-0'
               }`}
             >
@@ -460,10 +460,10 @@ function FeaturedCourseCard() {
                     style={{ transitionDelay: `${700 + i * 100}ms` }}
                   >
                     <div className="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-red-100 transition-all group-hover:scale-110 transform duration-300">
-                      <Icon className="w-5 h-5 text-[#D62828]" />
+                      <Icon className="w-5 h-5 text-brand" />
                     </div>
                     <div>
-                      <h5 className="font-bold text-[#1A1A1A] text-sm">{f.text}</h5>
+                      <h5 className="font-bold text-ink text-sm">{f.text}</h5>
                       <p className="text-gray-600 text-sm mt-0.5 leading-relaxed">{f.desc}</p>
                     </div>
                   </div>
@@ -653,7 +653,7 @@ export default function HomePage() {
         jsonLd={homeJsonLd}
         keywords="mala matura srpski jezik, priprema za malu maturu, online kursevi srpskog, video lekcije srpski jezik, zavrsni ispit 8 razred, srpski jezik online nastava, kurs srpskog za malu maturu"
       />
-    <div className="min-h-screen bg-[#fdfafc] font-sans text-[#1A1A1A]">
+    <div className="min-h-screen bg-paper font-sans text-ink">
       <Header />
 
       {/* 1. HERO SECTION */}
@@ -664,7 +664,7 @@ export default function HomePage() {
           className="pointer-events-none absolute inset-0 opacity-70"
           style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent 0, transparent 35px, rgba(59,130,246,0.06) 35px, rgba(59,130,246,0.06) 36px)' }}
         />
-        <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-2.5 sm:left-4 w-px bg-[#D62828]/15 lg:hidden" />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-2.5 sm:left-4 w-px bg-brand/15 lg:hidden" />
 
         {/* Desktop illustration with monitor (>=1024px) */}
         <div className="absolute right-0 bottom-0 hidden lg:block w-[55%]">
@@ -672,7 +672,7 @@ export default function HomePage() {
             <img src="/pozadinaHeroSekcija.webp" alt="" className="w-full h-auto" draggable={false} width="1122" height="779" />
             <Link
               to={courseHref(catalog.featured)}
-              className="group absolute overflow-hidden bg-black rounded-[0.5%] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#D62828]/50"
+              className="group absolute overflow-hidden bg-black rounded-[0.5%] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/50"
               style={{ top: '15%', left: '37%', width: '52%', height: '45%' }}
               aria-label={catalog.featured?.title ? `Погледај курс: ${catalog.featured.title}` : 'Погледај курсеве'}
             >
@@ -680,7 +680,7 @@ export default function HomePage() {
                 <Video className="w-3.5 h-3.5" aria-hidden="true" /> Погледај како функционише
               </span>
               <span className="absolute inset-0 flex items-center justify-center pb-[8%]">
-                <span className="w-20 h-20 bg-[#D62828] rounded-full flex items-center justify-center shadow-2xl motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-110">
+                <span className="w-20 h-20 bg-brand rounded-full flex items-center justify-center shadow-2xl motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-110">
                   <Play className="w-9 h-9 text-white ml-1" fill="white" aria-hidden="true" />
                 </span>
               </span>
@@ -702,12 +702,12 @@ export default function HomePage() {
                 <span className="text-sm font-semibold text-gray-700">Наставница Марина Лукић<span className="hidden sm:inline"> · 27 година искуства</span></span>
               </div>
 
-              <h1 className="font-bold leading-[1.1] text-[#1A1A1A] flex flex-col gap-1 lg:gap-2">
+              <h1 className="font-bold leading-[1.1] text-ink flex flex-col gap-1 lg:gap-2">
                 <span className="text-[1.75rem] sm:text-4xl lg:text-5xl">Учите српски језик и књижевност</span>
                 <span className="text-[1.75rem] sm:text-4xl lg:text-6xl">са разумевањем</span>
                 <span className="text-[2.6rem] sm:text-6xl lg:text-8xl relative inline-block self-center md:self-start mt-1">
                   и љубављу.
-                  <svg aria-hidden="true" className="absolute w-full h-3 lg:h-4 -bottom-1 lg:-bottom-2 left-0 text-[#D62828]" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  <svg aria-hidden="true" className="absolute w-full h-3 lg:h-4 -bottom-1 lg:-bottom-2 left-0 text-brand" viewBox="0 0 100 10" preserveAspectRatio="none">
                     <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="6" fill="none" />
                   </svg>
                 </span>
@@ -720,7 +720,7 @@ export default function HomePage() {
               <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2 justify-center md:justify-start">
                 {['Видео лекције 24/7', 'Припрема за малу матуру', 'Онлајн часови уживо'].map((t) => (
                   <li key={t} className="flex items-center gap-2">
-                    <CheckCircle className="w-5 h-5 text-[#D62828]" aria-hidden="true" />
+                    <CheckCircle className="w-5 h-5 text-brand" aria-hidden="true" />
                     <span className="text-sm sm:text-base font-medium text-gray-700">{t}</span>
                   </li>
                 ))}
@@ -730,7 +730,7 @@ export default function HomePage() {
                 <Link
                   to="/courses"
                   data-tour="home-hero-cta"
-                  className="inline-flex items-center justify-center gap-2 min-h-[52px] bg-[#D62828] text-white px-8 py-3.5 rounded-full hover:bg-[#B91F1F] transition-colors shadow-xl shadow-red-900/10 text-lg font-bold"
+                  className="inline-flex items-center justify-center gap-2 min-h-[52px] bg-brand text-white px-8 py-3.5 rounded-full hover:bg-brand-700 transition-colors shadow-xl shadow-red-900/10 text-lg font-bold"
                 >
                   Приступи курсевима <ArrowRight className="w-5 h-5" aria-hidden="true" />
                 </Link>
@@ -740,7 +740,7 @@ export default function HomePage() {
                     e.preventDefault();
                     document.getElementById('kako-funkcionise')?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' });
                   }}
-                  className="inline-flex items-center justify-center min-h-[52px] px-8 py-3.5 rounded-full border-2 border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white transition-colors text-lg font-bold"
+                  className="inline-flex items-center justify-center min-h-[52px] px-8 py-3.5 rounded-full border-2 border-ink text-ink hover:bg-ink hover:text-white transition-colors text-lg font-bold"
                 >
                   Како функционише?
                 </a>
@@ -751,7 +751,7 @@ export default function HomePage() {
                 {stats.map((st) => (
                   <div key={st.label} className="px-2 py-3 text-center flex flex-col-reverse">
                     <dt className="text-xs sm:text-sm text-gray-500 font-medium">{st.label}</dt>
-                    <dd className="text-2xl sm:text-3xl font-black text-[#1A1A1A] leading-tight">{st.number}</dd>
+                    <dd className="text-2xl sm:text-3xl font-black text-ink leading-tight">{st.number}</dd>
                   </div>
                 ))}
               </dl>
@@ -785,18 +785,18 @@ export default function HomePage() {
       {/* 1.5 INICIJALNI TESTOVI SECTION — full screen */}
       <section
         id="inicijalni-testovi"
-        className="md:min-h-screen flex flex-col justify-center py-14 md:py-20 bg-gradient-to-b from-[#fdfafc] via-white to-[#fdfafc] relative overflow-hidden scroll-mt-24"
+        className="md:min-h-screen flex flex-col justify-center py-14 md:py-20 bg-gradient-to-b from-paper via-white to-paper relative overflow-hidden scroll-mt-24"
       >
 
         <div className="max-w-6xl mx-auto px-6 relative z-10 w-full">
           <FadeInSection>
             <div className="text-center mb-4">
-              <span className="inline-flex items-center gap-2 bg-red-50 text-[#D62828] text-sm font-bold px-4 py-1.5 rounded-full">
+              <span className="inline-flex items-center gap-2 bg-red-50 text-brand text-sm font-bold px-4 py-1.5 rounded-full">
                 <Sparkles className="w-4 h-4" />
                 Бесплатно · без регистрације
               </span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-[#1A1A1A] text-center mb-4">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-ink text-center mb-4">
               Припреми се за иницијалне тестове
             </h2>
             <p className="text-gray-600 text-lg md:text-xl text-center max-w-2xl mx-auto mb-14">
@@ -810,16 +810,16 @@ export default function HomePage() {
               <FadeInSection key={test.razred} delay={i * 120}>
                 <Link
                   to={`/inicijalni-test/${test.razred}`}
-                  className="group flex flex-col h-full bg-white rounded-3xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-2xl hover:border-[#D62828]/40 hover:-translate-y-1.5 transition-all duration-300"
+                  className="group flex flex-col h-full bg-white rounded-3xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-2xl hover:border-brand/40 hover:-translate-y-1.5 transition-all duration-300"
                 >
                   <div className="flex items-center justify-between mb-5">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#D62828] to-[#B91F1F] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand to-brand-700 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
                       <span className="text-2xl font-black text-white">{test.razred}</span>
                     </div>
-                    <ClipboardList className="w-6 h-6 text-gray-300 group-hover:text-[#D62828] transition-colors" />
+                    <ClipboardList className="w-6 h-6 text-gray-300 group-hover:text-brand transition-colors" />
                   </div>
 
-                  <h3 className="text-xl font-bold text-[#1A1A1A] mb-1">
+                  <h3 className="text-xl font-bold text-ink mb-1">
                     {test.razred}. разред
                   </h3>
                   <p className="text-sm text-gray-500 leading-relaxed mb-4 flex-1">
@@ -832,7 +832,7 @@ export default function HomePage() {
                     <span>~5 мин</span>
                   </div>
 
-                  <span className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-full bg-[#1A1A1A] text-white text-sm font-bold group-hover:bg-[#D62828] transition-colors">
+                  <span className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-full bg-ink text-white text-sm font-bold group-hover:bg-brand transition-colors">
                     Уради тест
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </span>
@@ -853,13 +853,13 @@ export default function HomePage() {
       <section
         id="kako-funkcionise"
         ref={howItWorksRef}
-        className={`pt-16 pb-12 md:pt-32 md:pb-24 bg-[#fdfafc] relative overflow-hidden scroll-mt-20 motion-safe:transition-all motion-safe:duration-700 ${howItWorksVisible || reducedMotion ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
+        className={`pt-16 pb-12 md:pt-32 md:pb-24 bg-paper relative overflow-hidden scroll-mt-20 motion-safe:transition-all motion-safe:duration-700 ${howItWorksVisible || reducedMotion ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
       >
 
         <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-[#1A1A1A] mb-4">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-ink mb-4">
               Како функционише?
             </h2>
           </div>
@@ -883,15 +883,15 @@ export default function HomePage() {
               {/* Step 1 - Left */}
               <div className="flex items-center gap-4 md:gap-8">
                 <div className="relative flex-shrink-0">
-                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-[#D62828] relative z-10">
-                    <BookOpen className="w-8 h-8 md:w-12 md:h-12 text-[#D62828]" />
+                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-brand relative z-10">
+                    <BookOpen className="w-8 h-8 md:w-12 md:h-12 text-brand" />
                   </div>
-                  <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center shadow-lg z-20">
+                  <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-brand to-brand-700 rounded-full flex items-center justify-center shadow-lg z-20">
                     <span className="text-xl font-black text-white">1</span>
                   </div>
                 </div>
                 <div className="flex-1 bg-white p-5 md:p-6 rounded-2xl shadow-lg">
-                  <h3 className="text-xl md:text-2xl font-bold text-[#1A1A1A] mb-2">
+                  <h3 className="text-xl md:text-2xl font-bold text-ink mb-2">
                     Изаберите курс
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-sm md:text-base">
@@ -903,17 +903,17 @@ export default function HomePage() {
               {/* Step 2 - Right */}
               <div className="flex items-center gap-4 md:gap-8 flex-row-reverse">
                 <div className="relative flex-shrink-0">
-                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-[#D62828] relative z-10">
-                    <svg className="w-8 h-8 md:w-12 md:h-12 text-[#D62828]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-brand relative z-10">
+                    <svg className="w-8 h-8 md:w-12 md:h-12 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                     </svg>
                   </div>
-                  <div className="absolute -top-2 -left-2 w-12 h-12 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center shadow-lg z-20">
+                  <div className="absolute -top-2 -left-2 w-12 h-12 bg-gradient-to-br from-brand to-brand-700 rounded-full flex items-center justify-center shadow-lg z-20">
                     <span className="text-xl font-black text-white">2</span>
                   </div>
                 </div>
                 <div className="flex-1 bg-white p-5 md:p-6 rounded-2xl shadow-lg">
-                  <h3 className="text-xl md:text-2xl font-bold text-[#1A1A1A] mb-2">
+                  <h3 className="text-xl md:text-2xl font-bold text-ink mb-2">
                     Извршите уплату
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-sm md:text-base">
@@ -925,17 +925,17 @@ export default function HomePage() {
               {/* Step 3 - Left */}
               <div className="flex items-center gap-4 md:gap-8">
                 <div className="relative flex-shrink-0">
-                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-[#D62828] relative z-10">
-                    <svg className="w-8 h-8 md:w-12 md:h-12 text-[#D62828]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-brand relative z-10">
+                    <svg className="w-8 h-8 md:w-12 md:h-12 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
-                  <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center shadow-lg z-20">
+                  <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-brand to-brand-700 rounded-full flex items-center justify-center shadow-lg z-20">
                     <span className="text-xl font-black text-white">3</span>
                   </div>
                 </div>
                 <div className="flex-1 bg-white p-5 md:p-6 rounded-2xl shadow-lg">
-                  <h3 className="text-xl md:text-2xl font-bold text-[#1A1A1A] mb-2">
+                  <h3 className="text-xl md:text-2xl font-bold text-ink mb-2">
                     Потврда уплате
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-sm md:text-base">
@@ -947,15 +947,15 @@ export default function HomePage() {
               {/* Step 4 - Right */}
               <div className="flex items-center gap-4 md:gap-8 flex-row-reverse">
                 <div className="relative flex-shrink-0">
-                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-[#D62828] relative z-10">
-                    <Video className="w-8 h-8 md:w-12 md:h-12 text-[#D62828]" />
+                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-brand relative z-10">
+                    <Video className="w-8 h-8 md:w-12 md:h-12 text-brand" />
                   </div>
-                  <div className="absolute -top-2 -left-2 w-12 h-12 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center shadow-lg z-20">
+                  <div className="absolute -top-2 -left-2 w-12 h-12 bg-gradient-to-br from-brand to-brand-700 rounded-full flex items-center justify-center shadow-lg z-20">
                     <span className="text-xl font-black text-white">4</span>
                   </div>
                 </div>
                 <div className="flex-1 bg-white p-5 md:p-6 rounded-2xl shadow-lg">
-                  <h3 className="text-xl md:text-2xl font-bold text-[#1A1A1A] mb-2">
+                  <h3 className="text-xl md:text-2xl font-bold text-ink mb-2">
                     Почните да учите
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-sm md:text-base">
@@ -969,11 +969,11 @@ export default function HomePage() {
       </section>
 
       {/* 3. COURSES SECTION */}
-      <section className="py-14 md:py-20 bg-[#fdfafc] overflow-hidden">
+      <section className="py-14 md:py-20 bg-paper overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
           <FadeInSection>
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4">
                 Наши курсеви
               </h2>
               <p className="text-gray-600 text-lg max-w-3xl mx-auto">
@@ -987,11 +987,11 @@ export default function HomePage() {
       </section>
 
       {/* 4. STATS SECTION */}
-      <section className="py-14 md:py-20 bg-[#fdfafc] relative overflow-hidden">
+      <section className="py-14 md:py-20 bg-paper relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <FadeInSection>
             <div className="text-center mb-14">
-              <h2 className="text-3xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
+              <h2 className="text-3xl md:text-5xl font-bold text-ink mb-4">
                 Наш успех у бројкама
               </h2>
               <p className="text-gray-600 text-xl">
@@ -1004,9 +1004,9 @@ export default function HomePage() {
             {/* Stat 1 */}
             <FadeInSection delay={0}>
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-3xl blur-xl opacity-10"></div>
-                <div className="relative bg-white border-2 border-[#D62828]/30 rounded-3xl p-6 md:p-10 text-center hover:border-[#D62828] transition-all hover:shadow-2xl">
-                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-[#D62828] to-[#B91F1F] bg-clip-text text-transparent mb-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-brand to-brand-700 rounded-3xl blur-xl opacity-10"></div>
+                <div className="relative bg-white border-2 border-brand/30 rounded-3xl p-6 md:p-10 text-center hover:border-brand transition-all hover:shadow-2xl">
+                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-brand to-brand-700 bg-clip-text text-transparent mb-2">
                     <AnimatedCounter end="700" suffix="+" />
                   </div>
                   <div className="text-base font-bold uppercase tracking-wider text-gray-600">Ученика</div>
@@ -1017,9 +1017,9 @@ export default function HomePage() {
             {/* Stat 2 */}
             <FadeInSection delay={150}>
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#1A1A1A] to-gray-700 rounded-3xl blur-xl opacity-10"></div>
-                <div className="relative bg-white border-2 border-gray-300 rounded-3xl p-6 md:p-10 text-center hover:border-[#1A1A1A] transition-all hover:shadow-2xl">
-                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-[#1A1A1A] to-gray-700 bg-clip-text text-transparent mb-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-ink to-gray-700 rounded-3xl blur-xl opacity-10"></div>
+                <div className="relative bg-white border-2 border-gray-300 rounded-3xl p-6 md:p-10 text-center hover:border-ink transition-all hover:shadow-2xl">
+                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-ink to-gray-700 bg-clip-text text-transparent mb-2">
                     <AnimatedCounter end="98" suffix="%" />
                   </div>
                   <div className="text-base font-bold uppercase tracking-wider text-gray-600">Успешност</div>
@@ -1030,9 +1030,9 @@ export default function HomePage() {
             {/* Stat 3 */}
             <FadeInSection delay={300}>
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-3xl blur-xl opacity-10"></div>
-                <div className="relative bg-white border-2 border-[#D62828]/30 rounded-3xl p-6 md:p-10 text-center hover:border-[#D62828] transition-all hover:shadow-2xl">
-                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-[#D62828] to-[#B91F1F] bg-clip-text text-transparent mb-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-brand to-brand-700 rounded-3xl blur-xl opacity-10"></div>
+                <div className="relative bg-white border-2 border-brand/30 rounded-3xl p-6 md:p-10 text-center hover:border-brand transition-all hover:shadow-2xl">
+                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-brand to-brand-700 bg-clip-text text-transparent mb-2">
                     <AnimatedCounter end="27" />
                   </div>
                   <div className="text-base font-bold uppercase tracking-wider text-gray-600">Година искуства</div>
@@ -1046,10 +1046,10 @@ export default function HomePage() {
       {/* 5. TESTIMONIALS SECTION */}
       {/* TODO(content): with written parental permission, add real first name + initial,
           school and final exam score to each testimonial to make them verifiable. */}
-      <section className="py-14 md:py-20 bg-[#fdfafc] overflow-hidden" aria-labelledby="testimonials-title">
+      <section className="py-14 md:py-20 bg-paper overflow-hidden" aria-labelledby="testimonials-title">
         <FadeInSection>
           <div className="mb-10 md:mb-12 text-center px-6">
-            <h2 id="testimonials-title" className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4">Речи наших ученика</h2>
+            <h2 id="testimonials-title" className="text-3xl md:text-4xl font-bold text-ink mb-4">Речи наших ученика</h2>
             <p className="text-gray-600 text-lg">Искуства родитеља и ученика</p>
           </div>
         </FadeInSection>
@@ -1057,13 +1057,13 @@ export default function HomePage() {
       </section>
 
       {/* 6. CTA SECTION */}
-      <section className="py-16 md:py-24 bg-[#fdfafc] relative overflow-hidden">
+      <section className="py-16 md:py-24 bg-paper relative overflow-hidden">
 
         <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
           <FadeInSection>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-[#1A1A1A]">
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-ink">
               Немојте чекати, <br />
-              <span className="text-[#D62828]">почните данас.</span>
+              <span className="text-brand">почните данас.</span>
             </h2>
 
             <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto mb-8 md:mb-12 leading-relaxed">
@@ -1075,13 +1075,13 @@ export default function HomePage() {
             <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-stretch sm:items-center">
               <Link
                 to="/register"
-                className="w-full sm:w-auto bg-[#D62828] text-white px-8 md:px-14 py-4 md:py-5 rounded-full hover:bg-[#B91F1F] transition-colors shadow-xl text-lg md:text-xl font-bold flex items-center justify-center gap-3"
+                className="w-full sm:w-auto bg-brand text-white px-8 md:px-14 py-4 md:py-5 rounded-full hover:bg-brand-700 transition-colors shadow-xl text-lg md:text-xl font-bold flex items-center justify-center gap-3"
               >
                 Направи налог <ArrowRight className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" />
               </Link>
               <Link
                 to="/courses"
-                className="w-full sm:w-auto border-2 border-[#1A1A1A] text-[#1A1A1A] px-8 md:px-14 py-4 md:py-5 rounded-full hover:bg-[#1A1A1A] hover:text-white transition-colors text-lg md:text-xl font-bold text-center"
+                className="w-full sm:w-auto border-2 border-ink text-ink px-8 md:px-14 py-4 md:py-5 rounded-full hover:bg-ink hover:text-white transition-colors text-lg md:text-xl font-bold text-center"
               >
                 Истражи курсеве
               </Link>

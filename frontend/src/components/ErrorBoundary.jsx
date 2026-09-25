@@ -40,7 +40,7 @@ class ErrorBoundary extends Component {
     const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'profesorka.marinalukic@gmail.com';
 
     return (
-      <div className="min-h-screen bg-gradient-to-b from-[#FFF8F0] to-white flex items-center justify-center px-4 py-10">
+      <div className="min-h-screen bg-gradient-to-b from-paper-100 to-white flex items-center justify-center px-4 py-10">
         <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-10 max-w-lg w-full text-center">
           <img
             src="/mascot/alano-reading.webp"
@@ -50,7 +50,7 @@ class ErrorBoundary extends Component {
             className="w-32 h-32 sm:w-40 sm:h-40 object-contain mx-auto mb-4"
           />
 
-          <h1 className="text-2xl sm:text-3xl font-bold text-[#1A1A1A] mb-3">
+          <h1 className="text-2xl sm:text-3xl font-bold text-ink mb-3">
             {isUpdate ? 'Сајт је управо ажуриран' : 'Упс, нешто је пошло наопако'}
           </h1>
 
@@ -72,7 +72,7 @@ class ErrorBoundary extends Component {
             <button
               type="button"
               onClick={this.handleReload}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-[#D62828] text-white rounded-full font-bold shadow-md hover:bg-[#B91F1F] focus:outline-none focus-visible:ring-4 focus-visible:ring-[#D62828]/30 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-brand text-white rounded-full font-bold shadow-md hover:bg-brand-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand/30 transition-colors"
             >
               <RefreshCw className="w-5 h-5" aria-hidden="true" />
               Освежи страницу
@@ -80,7 +80,7 @@ class ErrorBoundary extends Component {
             <button
               type="button"
               onClick={this.handleGoHome}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-200 text-[#1A1A1A] rounded-full font-bold hover:border-[#1A1A1A] focus:outline-none focus-visible:ring-4 focus-visible:ring-gray-300 transition-colors"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-200 text-ink rounded-full font-bold hover:border-ink focus:outline-none focus-visible:ring-4 focus-visible:ring-gray-300 transition-colors"
             >
               <Home className="w-5 h-5" aria-hidden="true" />
               Почетна страница
@@ -89,7 +89,7 @@ class ErrorBoundary extends Component {
 
           <p className="mt-8 pt-6 border-t border-gray-100 text-sm text-gray-500">
             Ако се проблем понавља, пиши нам на{' '}
-            <a href={`mailto:${contactEmail}`} className="text-[#D62828] font-semibold hover:underline break-all">
+            <a href={`mailto:${contactEmail}`} className="text-brand font-semibold hover:underline break-all">
               {contactEmail}
             </a>
           </p>

@@ -152,7 +152,7 @@ export default function VideoPlayer({ lessonId, courseId: courseIdProp, onProgre
   return (
     <div className="glass-card rounded-2xl overflow-hidden">
       {lessonTitle && (
-        <div className="px-6 py-4 bg-[#1A1A1A]">
+        <div className="px-6 py-4 bg-ink">
           <h3 className="text-lg font-bold text-white flex items-center">
             <Play className="h-5 w-5 text-white mr-2" />
             {lessonTitle}

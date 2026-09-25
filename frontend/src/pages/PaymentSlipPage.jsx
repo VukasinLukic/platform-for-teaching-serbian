@@ -73,7 +73,7 @@ function CenteredMessage({ title, children }) {
       <Header />
       <div className="max-w-lg mx-auto px-4 py-16 text-center">
         <img src="/mascot/alano-reading.webp" alt="" width="140" height="140" className="w-32 h-32 object-contain mx-auto mb-4" />
-        <h1 className="text-2xl font-bold text-[#1A1A1A] mb-3">{title}</h1>
+        <h1 className="text-2xl font-bold text-ink mb-3">{title}</h1>
         <div className="text-gray-600 space-y-4">{children}</div>
       </div>
       <Footer />
@@ -164,7 +164,7 @@ export default function PaymentSlipPage() {
   if (status === 'loading') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white" role="status">
-        <div className="w-12 h-12 rounded-full border-4 border-[#D62828]/15 border-t-[#D62828] animate-spin" />
+        <div className="w-12 h-12 rounded-full border-4 border-brand/15 border-t-brand animate-spin" />
         <span className="sr-only">Учитава се уплатница...</span>
       </div>
     );
@@ -185,7 +185,7 @@ export default function PaymentSlipPage() {
         <button
           type="button"
           onClick={goToLogin}
-          className="inline-flex items-center gap-2 bg-[#D62828] text-white px-6 py-3 rounded-full font-bold hover:bg-[#B91F1F]"
+          className="inline-flex items-center gap-2 bg-brand text-white px-6 py-3 rounded-full font-bold hover:bg-brand-700"
         >
           Пријави се
         </button>
@@ -198,10 +198,10 @@ export default function PaymentSlipPage() {
       <CenteredMessage title="Уплатница није пронађена">
         <p>Отвори уплатницу са свог панела (одељак „Уплате“) или изабери курс поново.</p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link to="/dashboard" className="inline-flex justify-center items-center gap-2 bg-[#D62828] text-white px-6 py-3 rounded-full font-bold hover:bg-[#B91F1F]">
+          <Link to="/dashboard" className="inline-flex justify-center items-center gap-2 bg-brand text-white px-6 py-3 rounded-full font-bold hover:bg-brand-700">
             Мој панел
           </Link>
-          <Link to="/courses" className="inline-flex justify-center items-center gap-2 border-2 border-gray-200 px-6 py-3 rounded-full font-bold hover:border-[#1A1A1A]">
+          <Link to="/courses" className="inline-flex justify-center items-center gap-2 border-2 border-gray-200 px-6 py-3 rounded-full font-bold hover:border-ink">
             Курсеви
           </Link>
         </div>
@@ -251,17 +251,17 @@ export default function PaymentSlipPage() {
           <button
             type="button"
             onClick={() => (window.history.length > 1 ? navigate(-1) : navigate('/dashboard'))}
-            className="mb-6 inline-flex items-center gap-2 text-gray-600 hover:text-[#D62828] transition-colors no-print"
+            className="mb-6 inline-flex items-center gap-2 text-gray-600 hover:text-brand transition-colors no-print"
           >
             <ArrowLeft size={20} aria-hidden="true" />
             <span>Назад</span>
           </button>
 
           <header className="mb-6 md:mb-8 no-print">
-            <p className="text-sm font-semibold text-[#D62828] uppercase tracking-wider mb-1">Уплата</p>
-            <h1 className="text-2xl sm:text-4xl font-bold text-[#1A1A1A]">{purposeText}</h1>
+            <p className="text-sm font-semibold text-brand uppercase tracking-wider mb-1">Уплата</p>
+            <h1 className="text-2xl sm:text-4xl font-bold text-ink">{purposeText}</h1>
             <p className="mt-2 text-gray-600">
-              Износ: <span className="font-extrabold text-[#D62828]">{formatAmount(amount)} RSD</span>
+              Износ: <span className="font-extrabold text-brand">{formatAmount(amount)} RSD</span>
               <span className="mx-2 text-gray-300">•</span>
               Позив на број: <span className="font-mono font-bold">{paymentReference}</span>
             </p>
@@ -285,24 +285,24 @@ export default function PaymentSlipPage() {
                     <IpsQrCode payload={ipsPayload} fileName={`ips-qr-${paymentReference || 'uplata'}`} size={220} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="inline-flex items-center gap-2 bg-[#D62828]/10 text-[#D62828] rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider mb-3">
+                    <div className="inline-flex items-center gap-2 bg-brand/10 text-brand rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider mb-3">
                       <ScanLine className="w-4 h-4" aria-hidden="true" />
                       IPS QR · тренутна уплата
                     </div>
-                    <h2 id="ips-title" className="text-xl sm:text-2xl font-bold text-[#1A1A1A] mb-4">
+                    <h2 id="ips-title" className="text-xl sm:text-2xl font-bold text-ink mb-4">
                       Скенирај у апликацији банке
                     </h2>
                     <ol className="space-y-3 text-gray-700">
                       <li className="flex gap-3">
-                        <span className="w-7 h-7 rounded-full bg-[#1A1A1A] text-white text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
+                        <span className="w-7 h-7 rounded-full bg-ink text-white text-sm font-bold flex items-center justify-center flex-shrink-0">1</span>
                         <span>Отвори мобилно банкарство било које банке у Србији.</span>
                       </li>
                       <li className="flex gap-3">
-                        <span className="w-7 h-7 rounded-full bg-[#1A1A1A] text-white text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
+                        <span className="w-7 h-7 rounded-full bg-ink text-white text-sm font-bold flex items-center justify-center flex-shrink-0">2</span>
                         <span>Изабери „IPS скенирај“ (или „Плаћање QR кодом“) и скенирај код.</span>
                       </li>
                       <li className="flex gap-3">
-                        <span className="w-7 h-7 rounded-full bg-[#1A1A1A] text-white text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
+                        <span className="w-7 h-7 rounded-full bg-ink text-white text-sm font-bold flex items-center justify-center flex-shrink-0">3</span>
                         <span>Сви подаци се попуњавају сами — провери износ и потврди уплату.</span>
                       </li>
                     </ol>
@@ -316,14 +316,14 @@ export default function PaymentSlipPage() {
 
               {/* Mobile: clear list of fields with copy buttons */}
               <section aria-labelledby="fields-title" className="order-1 md:hidden bg-white rounded-3xl shadow-xl border border-gray-100 p-5 no-print">
-                <h2 id="fields-title" className="text-lg font-bold text-[#1A1A1A] mb-1">Подаци за уплату</h2>
+                <h2 id="fields-title" className="text-lg font-bold text-ink mb-1">Подаци за уплату</h2>
                 <p className="text-sm text-gray-500 mb-2">Копирај сваки податак у апликацију своје банке.</p>
                 {slipFields}
                 <button
                   type="button"
                   onClick={() => setShowSlipMobile((v) => !v)}
                   aria-expanded={showSlipMobile}
-                  className="mt-4 w-full inline-flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 border-2 border-gray-200 rounded-xl py-3 hover:border-[#1A1A1A]"
+                  className="mt-4 w-full inline-flex items-center justify-center gap-2 text-sm font-semibold text-gray-700 border-2 border-gray-200 rounded-xl py-3 hover:border-ink"
                 >
                   <FileText className="w-4 h-4" aria-hidden="true" />
                   {showSlipMobile ? 'Сакриј класичну уплатницу' : 'Прикажи класичну уплатницу'}
@@ -336,7 +336,7 @@ export default function PaymentSlipPage() {
                 aria-label="Налог за уплату"
                 className={`order-3 bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden ${showSlipMobile ? 'block' : 'hidden md:block'}`}
               >
-                <div className="bg-gradient-to-r from-[#D62828] to-[#B91F1F] text-white py-4 px-5 sm:px-6 flex items-center justify-between flex-wrap gap-3">
+                <div className="bg-gradient-to-r from-brand to-brand-700 text-white py-4 px-5 sm:px-6 flex items-center justify-between flex-wrap gap-3">
                   <h2 className="text-xl sm:text-2xl font-bold uppercase tracking-wider">Налог за уплату</h2>
                   <div className="flex gap-2 no-print">
                     <button
@@ -350,7 +350,7 @@ export default function PaymentSlipPage() {
                     <button
                       type="button"
                       onClick={handleDownload}
-                      className="flex items-center gap-1.5 bg-white text-[#D62828] hover:bg-gray-100 px-4 py-2 rounded-full text-sm font-bold transition-all"
+                      className="flex items-center gap-1.5 bg-white text-brand hover:bg-gray-100 px-4 py-2 rounded-full text-sm font-bold transition-all"
                     >
                       <Download size={16} aria-hidden="true" />
                       Преузми
@@ -376,28 +376,28 @@ export default function PaymentSlipPage() {
             {/* Sidebar — what happens next */}
             <aside className="space-y-4 no-print">
               <div className="bg-white rounded-2xl shadow-lg p-5 sm:p-6 border border-gray-100">
-                <h2 className="text-lg font-bold text-[#1A1A1A] mb-4">Шта следи</h2>
+                <h2 className="text-lg font-bold text-ink mb-4">Шта следи</h2>
                 <ol className="relative border-l-2 border-gray-100 ml-3 space-y-6">
                   <li className="pl-6 relative">
-                    <span className="absolute -left-[13px] top-0 w-6 h-6 rounded-full bg-[#F2C94C] flex items-center justify-center text-xs font-black">1</span>
-                    <p className="font-bold text-[#1A1A1A]">Уплати</p>
+                    <span className="absolute -left-[13px] top-0 w-6 h-6 rounded-full bg-gold flex items-center justify-center text-xs font-black">1</span>
+                    <p className="font-bold text-ink">Уплати</p>
                     <p className="text-sm text-gray-600">QR кодом, е-банкарством или у банци/пошти.</p>
                   </li>
                   <li className="pl-6 relative">
-                    <span className="absolute -left-[13px] top-0 w-6 h-6 rounded-full bg-[#F2C94C] flex items-center justify-center text-xs font-black">2</span>
-                    <p className="font-bold text-[#1A1A1A]">Пошаљи доказ о уплати</p>
+                    <span className="absolute -left-[13px] top-0 w-6 h-6 rounded-full bg-gold flex items-center justify-center text-xs font-black">2</span>
+                    <p className="font-bold text-ink">Пошаљи доказ о уплати</p>
                     <p className="text-sm text-gray-600 mb-3">Слика или PDF потврде убрзава проверу.</p>
                     <Link
                       to={dashboardPaymentsLink}
-                      className="inline-flex items-center gap-2 bg-[#D62828] text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-[#B91F1F] transition-colors"
+                      className="inline-flex items-center gap-2 bg-brand text-white px-4 py-2 rounded-lg font-bold text-sm hover:bg-brand-700 transition-colors"
                     >
                       <Upload className="w-4 h-4" aria-hidden="true" />
                       Отвори мој панел
                     </Link>
                   </li>
                   <li className="pl-6 relative">
-                    <span className="absolute -left-[13px] top-0 w-6 h-6 rounded-full bg-[#F2C94C] flex items-center justify-center text-xs font-black">3</span>
-                    <p className="font-bold text-[#1A1A1A]">
+                    <span className="absolute -left-[13px] top-0 w-6 h-6 rounded-full bg-gold flex items-center justify-center text-xs font-black">3</span>
+                    <p className="font-bold text-ink">
                       {courseName ? 'Курс се откључава' : 'Часови се активирају'}
                     </p>
                     <p className="text-sm text-gray-600">Након провере уплате — обично у року од 24 часа.</p>
@@ -405,13 +405,13 @@ export default function PaymentSlipPage() {
                 </ol>
               </div>
 
-              <div className="bg-gradient-to-br from-[#FFF5F5] to-white rounded-2xl shadow-lg p-5 sm:p-6 border border-[#D62828]/20">
+              <div className="bg-gradient-to-br from-brand-50 to-white rounded-2xl shadow-lg p-5 sm:p-6 border border-brand/20">
                 <div className="flex items-start gap-3">
-                  <Mail className="w-5 h-5 text-[#D62828] flex-shrink-0 mt-0.5" aria-hidden="true" />
+                  <Mail className="w-5 h-5 text-brand flex-shrink-0 mt-0.5" aria-hidden="true" />
                   <div className="min-w-0">
-                    <h3 className="text-base font-bold text-[#1A1A1A] mb-1">Хитно ти треба приступ?</h3>
+                    <h3 className="text-base font-bold text-ink mb-1">Хитно ти треба приступ?</h3>
                     <p className="text-sm text-gray-600 mb-3">Проследи доказ о уплати на имејл:</p>
-                    <a href={`mailto:${SUPPORT_EMAIL}`} className="text-sm font-bold text-[#D62828] hover:underline break-all">
+                    <a href={`mailto:${SUPPORT_EMAIL}`} className="text-sm font-bold text-brand hover:underline break-all">
                       {SUPPORT_EMAIL}
                     </a>
                   </div>
@@ -424,19 +424,6 @@ export default function PaymentSlipPage() {
 
       <Footer />
 
-      <style>{`
-        @media print {
-          body * { visibility: hidden !important; }
-          [data-uplatnica], [data-uplatnica] * { visibility: visible !important; }
-          [data-uplatnica] {
-            position: absolute !important; top: 0 !important; left: 0 !important;
-            width: 780px !important; margin: 0 !important; padding: 0 !important;
-            border: 1px solid #999 !important;
-          }
-          body { background: white !important; margin: 0 !important; padding: 0 !important; }
-          @page { size: landscape; margin: 10mm; }
-        }
-      `}</style>
     </div>
   );
 }
