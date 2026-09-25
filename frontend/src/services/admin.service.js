@@ -1,4 +1,4 @@
-import { collection, query, where, getCountFromServer, getDocs, doc, updateDoc, orderBy, limit, getDoc, setDoc, writeBatch } from 'firebase/firestore';
+import { collection, query, where, getCountFromServer, getDocs, doc, limit, getDoc, writeBatch } from 'firebase/firestore';
 import { db } from './firebase';
 import { normalizeTransaction, sortByCreatedAtDesc } from './transactions';
 

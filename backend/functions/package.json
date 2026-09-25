@@ -8,7 +8,9 @@
     "serve": "firebase emulators:start --only functions",
     "shell": "firebase functions:shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log"
+    "logs": "firebase functions:log",
+    "lint": "eslint .",
+    "check": "node -e \"process.env.GCLOUD_PROJECT ||= 'naucisprski'; import('./src/index.js').then(() => console.log('functions load OK'))\""
   },
   "engines": {
     "node": "22"
@@ -22,7 +24,10 @@
     "pdfkit": "^0.15.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.5",
     "dotenv": "^17.4.2",
-    "firebase-functions-test": "^3.1.0"
+    "eslint": "^9.39.5",
+    "firebase-functions-test": "^3.1.0",
+    "globals": "^17.12.0"
   }
 }

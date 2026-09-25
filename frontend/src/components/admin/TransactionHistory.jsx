@@ -3,7 +3,7 @@ import { collection, getDocs, getDoc, doc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { normalizeTransaction, sortByCreatedAtDesc } from '../../services/transactions';
 import { formatPrice } from '../../utils/helpers';
-import { CheckCircle, XCircle, Clock, ChevronLeft, ChevronRight, Mail, User } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, ChevronLeft, ChevronRight, Mail } from 'lucide-react';
 
 export default function TransactionHistory({ itemsPerPage = 10 }) {
   const [transactions, setTransactions] = useState([]);

@@ -3,8 +3,7 @@ import { collection, getDocs, query, where, doc, updateDoc, deleteDoc } from 'fi
 import { db, functions } from '../../services/firebase';
 import { httpsCallable } from 'firebase/functions';
 import { getUserTransactionDocs } from '../../services/transactions';
-import { Users, Mail, Phone, Calendar, BookOpen, Search, Ban, Trash2, ChevronLeft, ChevronRight, UserCheck, ShieldAlert, Eye } from 'lucide-react';
-import Card, { CardBody } from '../ui/Card';
+import { Users, Mail, Phone, Calendar, BookOpen, Search, Ban, Trash2, ChevronLeft, ChevronRight, UserCheck, Eye } from 'lucide-react';
 import { showToast } from '../../utils/toast';
 import { useConfirm } from '../../hooks/useConfirm';
 import UserDetailModal from './UserDetailModal';

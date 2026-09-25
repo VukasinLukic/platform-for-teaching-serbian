@@ -70,7 +70,7 @@ class ErrorBoundary extends Component {
             </p>
 
             {/* Error Details (only in development) */}
-            {process.env.NODE_ENV === 'development' && this.state.error && (
+            {import.meta.env.DEV && this.state.error && (
               <details className="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-xl">
                 <summary className="cursor-pointer font-semibold text-red-900 mb-2">
                   Detalji greške (samo u dev modu)
