@@ -2,6 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { writeFileSync } from 'fs'
 import { resolve } from 'path'
+import { writeSeoFiles } from './scripts/seo-build.mjs'
 
 function versionPlugin() {
   return {
@@ -19,9 +20,25 @@ function versionPlugin() {
   }
 }
 
+// Writes per-route static HTML shells (meta tags for crawlers that do not run JS),
+// the /lat mirror shells and sitemap.xml into dist/ — see scripts/seo-build.mjs.
+function seoShellsPlugin() {
+  let outDir = 'dist'
+  return {
+    name: 'seo-static-shells',
+    apply: 'build',
+    configResolved(config) {
+      outDir = resolve(config.root, config.build.outDir)
+    },
+    async closeBundle() {
+      await writeSeoFiles({ distDir: outDir, publicDir: resolve(__dirname, 'public') })
+    },
+  }
+}
+
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), versionPlugin()],
+  plugins: [react(), versionPlugin(), seoShellsPlugin()],
   define: {
     __APP_VERSION__: JSON.stringify(new Date().toISOString()),
   },

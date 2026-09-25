@@ -5,13 +5,9 @@
 
 // Must stay the first import: initializes Firebase Admin before other modules load
 import './initAdmin.js';
-import { setGlobalOptions } from 'firebase-functions/v2';
-
-// Set global options
-setGlobalOptions({
-  region: 'us-central1',
-  maxInstances: 10,
-});
+// Must stay second: sets region (europe-west1) and maxInstances before any
+// function is defined (see globalOptions.js)
+import './globalOptions.js';
 
 // Import functions
 export { getVideoUrl, getMaterialUrl } from './generateSignedUrl.js';

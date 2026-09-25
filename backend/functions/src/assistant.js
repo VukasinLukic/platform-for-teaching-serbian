@@ -87,6 +87,7 @@ function transliteratePreservingLinks(text) {
     return `\u0000${placeholders.length - 1}\u0000`;
   });
   const translit = transliterateLatinToCyrillic(masked);
+  // eslint-disable-next-line no-control-regex -- \u0000 is the intentional placeholder delimiter
   return translit.replace(/\u0000(\d+)\u0000/g, (_, idx) => placeholders[Number(idx)]);
 }
 

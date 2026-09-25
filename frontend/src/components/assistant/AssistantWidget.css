@@ -75,7 +75,7 @@
 .alano-brand-mark img { width: 37px; height: 37px; object-fit: cover; border-radius: 12px; }
 .alano-brand-copy { min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .alano-brand-copy strong { overflow: hidden; color: var(--alano-ink); font-size: 17px; line-height: 1.15; white-space: nowrap; text-overflow: ellipsis; }
-.alano-brand-copy small { display: flex; align-items: center; gap: 4px; color: #e43f60; font-size: 10px; font-weight: 750; letter-spacing: 0.075em; text-transform: uppercase; }
+.alano-brand-copy small { display: flex; align-items: center; gap: 4px; color: #e43f60; font-size: 12px; font-weight: 750; letter-spacing: 0.04em; text-transform: uppercase; }
 
 .alano-header-actions { display: flex; align-items: center; gap: 8px; }
 .alano-header-actions button {
@@ -166,16 +166,16 @@
   border-radius: 999px;
   color: #d62f50;
   background: rgba(255, 240, 244, 0.9);
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 750;
   cursor: pointer;
   transition: background 180ms ease, transform 180ms ease, border-color 180ms ease;
 }
 
 .alano-chips button:hover { background: #ffe1e8; border-color: #ffc5d1; transform: translateY(-1px); }
-.alano-helpful { display: inline-flex; align-items: center; gap: 5px; margin: 8px -4px -3px; padding: 4px; border: 0; border-radius: 7px; color: #9aa4b8; background: transparent; font-size: 10px; cursor: pointer; }
+.alano-helpful { display: inline-flex; align-items: center; gap: 5px; margin: 8px -4px -3px; padding: 4px; border: 0; border-radius: 7px; color: #6b7280; background: transparent; font-size: 12px; cursor: pointer; }
 .alano-helpful:hover { color: #df3153; }
-.alano-thanks { margin-top: 7px; color: #20a16f; font-size: 10px; font-weight: 750; }
+.alano-thanks { margin-top: 7px; color: #20a16f; font-size: 12px; font-weight: 750; }
 
 .alano-typing-bubble { padding: 15px 17px; }
 .alano-thinking { display: inline-flex; align-items: baseline; min-width: 92px; color: #b3538a; font-size: 12.5px; font-style: italic; font-weight: 650; }
@@ -222,7 +222,7 @@
 
 .alano-action-copy { min-width: 0; display: flex; flex-direction: column; gap: 2px; }
 .alano-action-copy strong { color: var(--action-color); font-size: 13px; line-height: 1.2; }
-.alano-action-copy small { overflow: hidden; color: #7f8ba4; font-size: 10.5px; line-height: 1.25; white-space: nowrap; text-overflow: ellipsis; }
+.alano-action-copy small { overflow: hidden; color: #6b7280; font-size: 12px; line-height: 1.25; white-space: nowrap; text-overflow: ellipsis; }
 .alano-action-arrow { justify-self: end; color: var(--action-color); transition: transform 180ms ease; }
 .alano-action-card:hover .alano-action-arrow { transform: translateX(3px); }
 
@@ -303,7 +303,7 @@
 .alano-composer button:active:not(:disabled) { transform: scale(0.93); }
 .alano-composer button:disabled { cursor: not-allowed; filter: grayscale(0.7); opacity: 0.36; box-shadow: none; }
 .alano-composer button:focus-visible { outline: 3px solid rgba(235, 63, 96, 0.23); outline-offset: 3px; }
-.alano-composer-wrap > p { margin: 7px 0 0; color: #a2aabc; font-size: 8.5px; line-height: 1.2; text-align: center; }
+.alano-composer-wrap > p { margin: 7px 0 0; color: #6b7280; font-size: 12px; line-height: 1.35; text-align: center; }
 
 @keyframes alano-cursor-blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
 @keyframes alano-message-in { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: translateY(0); } }
@@ -315,7 +315,7 @@
   .alano-brand-mark { width: 42px; height: 42px; border-radius: 14px; }
   .alano-brand-mark img { width: 35px; height: 35px; }
   .alano-brand-copy strong { font-size: 15px; }
-  .alano-brand-copy small { font-size: 9px; }
+  .alano-brand-copy small { font-size: 12px; }
   .alano-header-actions { gap: 5px; }
   .alano-header-actions button { width: 38px; height: 38px; }
   .alano-conversation-inner { padding: 17px 15px 14px; }

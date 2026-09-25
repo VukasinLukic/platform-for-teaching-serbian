@@ -5,84 +5,22 @@ import { HelpCircle, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Button from '../components/ui/Button';
 import SEO from '../components/SEO';
+import { faqs } from '../data/faqs';
 
 export default function FAQPage() {
-  const faqs = [
-    {
-      title: 'Како функционише онлајн настава?',
-      content: 'Настава се одвија преко наше платформе. Добијате приступ видео лекцијама које можете гледати када год пожелите. Поред тога, организујемо редовне уживо консултације преко Google Meet-а где можете поставити питања професорки.'
-    },
-    {
-      title: 'Колико дуго имам приступ курсу?',
-      content: 'Након куповине курса, приступ материјалима је доживотан. Можете се враћати лекцијама колико год пута желите, чак и након завршетка припреме.'
-    },
-    {
-      title: 'Да ли могу да пратим курс преко телефона?',
-      content: 'Да! Наша платформа је потпуно прилагођена за мобилне уређаје. Можете учити преко телефона, таблета или рачунара.'
-    },
-    {
-      title: 'Шта ако нисам задовољан/на курсом?',
-      content: 'Нудимо повраћај новца у року од 7 дана од куповине уколико нисте задовољни садржајем курса. Ваше задовољство нам је на првом месту.'
-    },
-    {
-      title: 'Како да платим курс?',
-      content: 'Плаћање се врши уплатом на рачун (уплатница у пошти/банци или е-banking). Након пријаве добићете инструкције за плаћање на е-пошту.'
-    },
-    {
-      title: 'Да ли видео материјали покривају цео план и програм?',
-      content: 'Да! Наши видео материјали покривају комплетан наставни план и програм за српски језик. Свака лекција је усклађена са градивом и захтевима завршног испита.'
-    },
-    {
-      title: 'Колико траје припрема?',
-      content: 'Препоручујемо минимум 3 месеца припреме, али можете приступити материјалима у било које време. Сваки ученик ради својим темпом.'
-    },
-    {
-      title: 'Да ли постоји подршка током курса?',
-      content: 'Апсолутно! Можете поставити питања професорки преко чета, е-поште или на недељним уживо часовима. Ту смо да вам помогнемо на сваком кораку.'
-    }
-  ];
-
-  const faqBreadcrumbJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "BreadcrumbList",
-    "itemListElement": [
-      { "@type": "ListItem", "position": 1, "name": "Почетна", "item": "https://srpskiusrcu.rs/" },
-      { "@type": "ListItem", "position": 2, "name": "Честа питања", "item": "https://srpskiusrcu.rs/faq" }
-    ]
-  };
-
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    "mainEntity": faqs.map(faq => ({
-      "@type": "Question",
-      "name": faq.title,
-      "acceptedAnswer": {
-        "@type": "Answer",
-        "text": faq.content
-      }
-    }))
-  };
-
   return (
     <>
-      <SEO
-        title="ЧЕСТА ПИТАЊА О ОНЛАЈН КУРСЕВИМА СРПСКОГ | FAQ"
-        description="Одговори на честа питања о online курсевима за малу матуру: начин рада, плаћање, приступ материјалима, трајање курса, подршка."
-        canonical="/faq"
-        jsonLd={[faqJsonLd, faqBreadcrumbJsonLd]}
-        keywords="cesta pitanja online kursevi, kako funkcionise online nastava, placanje kursa srpski, pristup video lekcijama, podrska tokom kursa"
-      />
-    <div className="min-h-screen bg-white font-sans text-[#1A1A1A]">
+      <SEO />
+    <div className="min-h-screen bg-white font-sans text-ink">
       <Header />
 
       {/* Hero */}
-      <section className="pt-12 pb-10 md:pt-20 md:pb-16 px-6 text-center bg-gradient-to-b from-white to-[#F7F7F7]">
+      <section className="pt-12 pb-10 md:pt-20 md:pb-16 px-6 text-center bg-gradient-to-b from-white to-surface">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-[#D62828]/10 w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center mx-auto mb-5 md:mb-6 transform rotate-3 hover:rotate-0 transition-transform">
-            <HelpCircle className="w-8 h-8 md:w-10 md:h-10 text-[#D62828]" />
+          <div className="bg-brand-50 w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center mx-auto mb-5 md:mb-6 transform rotate-3 hover:rotate-0 transition-transform">
+            <HelpCircle className="w-8 h-8 md:w-10 md:h-10 text-brand" />
           </div>
-          <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 text-[#1A1A1A]">
+          <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 text-ink">
             Често постављана питања
           </h1>
           <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto leading-relaxed">
@@ -98,20 +36,18 @@ export default function FAQPage() {
 
           {/* Contact CTA */}
           <div className="mt-10 md:mt-16 text-center">
-             <div className="bg-[#F7F7F7] p-6 md:p-10 rounded-[2rem] md:rounded-[3rem] shadow-xl border-2 border-gray-100">
+             <div className="bg-surface p-6 md:p-10 rounded-3xl md:rounded-3xl shadow-xl border-2 border-gray-100">
                <div className="flex flex-col md:flex-row items-center gap-5 md:gap-6">
-                 <div className="bg-[#D62828]/10 p-4 md:p-5 rounded-2xl">
-                   <MessageCircle className="w-8 h-8 md:w-10 md:h-10 text-[#D62828]" />
+                 <div className="bg-brand-50 p-4 md:p-5 rounded-2xl">
+                   <MessageCircle className="w-8 h-8 md:w-10 md:h-10 text-brand" />
                  </div>
                  <div className="text-center md:text-left">
-                   <h3 className="text-xl md:text-2xl font-bold mb-2 text-[#1A1A1A]">Нисте пронашли одговор?</h3>
+                   <h3 className="text-xl md:text-2xl font-bold mb-2 text-ink">Нисте пронашли одговор?</h3>
                    <p className="text-gray-600 text-sm md:text-base">Ту смо да помогнемо. Јавите нам се директно.</p>
                  </div>
-                 <Link to="/contact" className="w-full md:w-auto">
-                   <Button variant="primary" size="lg" className="w-full md:w-auto">
+                 <Button as={Link} to="/contact" variant="primary" size="lg" className="w-full md:w-auto">
                      Контактирајте нас
-                   </Button>
-                 </Link>
+                 </Button>
                </div>
              </div>
           </div>

@@ -1,9 +1,15 @@
+/**
+ * Card surface. Use by role: `default` for content blocks, `elevated` for
+ * featured items, `muted` for secondary info, `outline` for lists/forms.
+ */
 const cardVariants = {
-  default: 'bg-white border-2 border-gray-100 shadow-xl',
-  elevated: 'bg-white border-2 border-gray-100 shadow-2xl',
-  bordered: 'bg-white border-2 border-[#BFECC9]/30',
-  gradient: 'bg-gradient-to-br from-[#BFECC9]/10 to-white border-2 border-[#BFECC9]/20',
-  glass: 'bg-white/80 backdrop-blur-xl border-2 border-white/40 shadow-xl',
+  default: 'bg-white border border-ink-100 shadow-card',
+  elevated: 'bg-white border border-ink-100 shadow-lift',
+  bordered: 'bg-white border border-ink-100',
+  outline: 'bg-white border border-ink-100',
+  muted: 'bg-paper-100 border border-paper-300/60',
+  gradient: 'bg-gradient-to-br from-paper-50 to-white border border-ink-100 shadow-card',
+  glass: 'bg-white/85 backdrop-blur-xl border border-white/60 shadow-card',
 };
 
 export default function Card({
@@ -15,12 +21,9 @@ export default function Card({
 }) {
   return (
     <div
-      className={`
-        rounded-3xl overflow-hidden
-        ${cardVariants[variant]}
-        ${hover ? 'hover:shadow-2xl hover:-translate-y-2 transition-all duration-300' : ''}
-        ${className}
-      `}
+      className={`rounded-2xl overflow-hidden ${cardVariants[variant] || cardVariants.default} ${
+        hover ? 'transition-[box-shadow,transform] duration-300 hover:shadow-lift motion-safe:hover:-translate-y-1' : ''
+      } ${className}`}
       {...props}
     >
       {children}
@@ -30,7 +33,7 @@ export default function Card({
 
 export function CardHeader({ children, className = '', ...props }) {
   return (
-    <div className={`p-6 border-b-2 border-gray-100 ${className}`} {...props}>
+    <div className={`p-6 border-b border-ink-100 ${className}`} {...props}>
       {children}
     </div>
   );
@@ -38,7 +41,7 @@ export function CardHeader({ children, className = '', ...props }) {
 
 export function CardBody({ children, className = '', ...props }) {
   return (
-    <div className={`p-6 ${className}`} {...props}>
+    <div className={`p-6 sm:p-8 ${className}`} {...props}>
       {children}
     </div>
   );
@@ -46,7 +49,7 @@ export function CardBody({ children, className = '', ...props }) {
 
 export function CardFooter({ children, className = '', ...props }) {
   return (
-    <div className={`p-6 border-t-2 border-gray-100 ${className}`} {...props}>
+    <div className={`p-6 border-t border-ink-100 ${className}`} {...props}>
       {children}
     </div>
   );

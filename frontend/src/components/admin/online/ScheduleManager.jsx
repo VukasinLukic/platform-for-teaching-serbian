@@ -99,7 +99,7 @@ export default function ScheduleManager() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D62828] border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent"></div>
       </div>
     );
   }
@@ -108,28 +108,30 @@ export default function ScheduleManager() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <h3 className="text-2xl font-bold text-[#1A1A1A]">
+        <h3 className="text-2xl font-bold text-ink">
           Недељни Распоред
         </h3>
         <div className="flex items-center gap-3">
           <button
             onClick={handleToday}
-            className="px-4 py-2 bg-gray-100 text-[#1A1A1A] rounded-lg hover:bg-gray-200 transition-colors font-medium"
+            className="px-4 py-2 bg-gray-100 text-ink rounded-lg hover:bg-gray-200 transition-colors font-medium"
           >
             Данас
           </button>
           <button
             onClick={handlePrevWeek}
+            aria-label="Претходна недеља"
             className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
-          <span className="font-semibold text-[#1A1A1A] min-w-[200px] text-center">
+          <span className="font-semibold text-ink min-w-[200px] text-center">
             {weekDays[0].toLocaleDateString('sr-RS', { day: 'numeric', month: 'long' })} -{' '}
             {weekDays[6].toLocaleDateString('sr-RS', { day: 'numeric', month: 'long', year: 'numeric' })}
           </span>
           <button
             onClick={handleNextWeek}
+            aria-label="Следећа недеља"
             className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
           >
             <ChevronRight className="w-5 h-5" />
@@ -147,11 +149,11 @@ export default function ScheduleManager() {
               <div
                 key={index}
                 className={`p-4 text-center border-r border-gray-100 last:border-r-0 ${
-                  isToday ? 'bg-[#D62828]/10' : 'bg-gray-50'
+                  isToday ? 'bg-brand-50' : 'bg-gray-50'
                 }`}
               >
                 <div className="text-sm font-bold text-gray-600">{dayNames[index]}</div>
-                <div className={`text-2xl font-black mt-1 ${isToday ? 'text-[#D62828]' : 'text-[#1A1A1A]'}`}>
+                <div className={`text-2xl font-black mt-1 ${isToday ? 'text-brand' : 'text-ink'}`}>
                   {day.getDate()}
                 </div>
               </div>
@@ -169,24 +171,24 @@ export default function ScheduleManager() {
               <div
                 key={index}
                 className={`border-r border-gray-100 last:border-r-0 p-3 ${
-                  isToday ? 'bg-[#D62828]/5' : ''
+                  isToday ? 'bg-brand/5' : ''
                 }`}
               >
                 <div className="space-y-2">
                   {daySessions.length === 0 ? (
-                    <div className="text-center py-8 text-gray-400 text-sm">
+                    <div className="text-center py-8 text-gray-500 text-sm">
                       Нема часова
                     </div>
                   ) : (
                     daySessions.map((session) => (
                       <div
                         key={session.id}
-                        className="bg-white border-2 border-[#D62828] rounded-lg p-3 hover:shadow-md transition-all"
+                        className="bg-white border-2 border-brand rounded-lg p-3 hover:shadow-md transition-all"
                       >
                         <div className="flex items-start gap-2 mb-2">
-                          <Clock className="w-4 h-4 text-[#D62828] flex-shrink-0 mt-0.5" />
+                          <Clock className="w-4 h-4 text-brand flex-shrink-0 mt-0.5" />
                           <div className="flex-1 min-w-0">
-                            <div className="font-bold text-[#1A1A1A] text-sm">
+                            <div className="font-bold text-ink text-sm">
                               {session.scheduledTime}
                             </div>
                             <div className="text-xs text-gray-600">
@@ -196,8 +198,8 @@ export default function ScheduleManager() {
                         </div>
 
                         <div className="flex items-start gap-2 mb-2">
-                          <Users className="w-4 h-4 text-[#D62828] flex-shrink-0 mt-0.5" />
-                          <div className="text-sm font-semibold text-[#1A1A1A] truncate">
+                          <Users className="w-4 h-4 text-brand flex-shrink-0 mt-0.5" />
+                          <div className="text-sm font-semibold text-ink truncate">
                             {session.group?.name || 'Непозната група'}
                           </div>
                         </div>
@@ -233,10 +235,10 @@ export default function ScheduleManager() {
       <div className="grid grid-cols-3 gap-6">
         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
           <div className="flex items-center gap-3 mb-2">
-            <Calendar className="w-6 h-6 text-[#D62828]" />
+            <Calendar className="w-6 h-6 text-brand" />
             <h4 className="font-bold text-gray-700">Ова недеља</h4>
           </div>
-          <div className="text-3xl font-black text-[#1A1A1A]">
+          <div className="text-3xl font-black text-ink">
             {sessions.filter(s => {
               const sessionDate = s.scheduledDate.toDate ? s.scheduledDate.toDate() : new Date(s.scheduledDate);
               return sessionDate >= weekDays[0] && sessionDate <= weekDays[6];
@@ -247,10 +249,10 @@ export default function ScheduleManager() {
 
         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
           <div className="flex items-center gap-3 mb-2">
-            <Users className="w-6 h-6 text-[#D62828]" />
+            <Users className="w-6 h-6 text-brand" />
             <h4 className="font-bold text-gray-700">Активне групе</h4>
           </div>
-          <div className="text-3xl font-black text-[#1A1A1A]">
+          <div className="text-3xl font-black text-ink">
             {groups.filter(g => g.isActive).length}
           </div>
           <div className="text-sm text-gray-600">у раду</div>
@@ -258,10 +260,10 @@ export default function ScheduleManager() {
 
         <div className="bg-white rounded-2xl p-6 border border-gray-100 shadow-sm">
           <div className="flex items-center gap-3 mb-2">
-            <Clock className="w-6 h-6 text-[#D62828]" />
+            <Clock className="w-6 h-6 text-brand" />
             <h4 className="font-bold text-gray-700">Укупно часова</h4>
           </div>
-          <div className="text-3xl font-black text-[#1A1A1A]">
+          <div className="text-3xl font-black text-ink">
             {sessions.length}
           </div>
           <div className="text-sm text-gray-600">заказано</div>

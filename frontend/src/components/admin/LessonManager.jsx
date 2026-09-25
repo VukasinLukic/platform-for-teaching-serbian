@@ -438,22 +438,22 @@ export default function LessonManager() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-[#D62828]" />
+        <Loader2 className="h-8 w-8 animate-spin text-brand" />
       </div>
     );
   }
 
   return (
     <div className="space-y-6">
-      <h2 className="text-3xl font-bold text-[#1A1A1A]">Управљање лекцијама</h2>
+      <h2 className="text-3xl font-bold text-ink">Управљање лекцијама</h2>
 
       {/* Course Selector */}
       <div className="bg-white rounded-3xl p-6 border border-gray-100">
-        <label className="block text-sm font-bold mb-3 text-[#1A1A1A]">Одабери курс</label>
+        <label className="block text-sm font-bold mb-3 text-ink">Одабери курс</label>
         <select
           value={selectedCourse}
           onChange={(e) => setSelectedCourse(e.target.value)}
-          className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-[#D62828] focus:outline-none transition-colors text-[#1A1A1A] font-medium"
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-brand focus:outline-none transition-colors text-ink font-medium"
         >
           <option value="">-- Изабери курс --</option>
           {courses.map((course) => (
@@ -466,20 +466,20 @@ export default function LessonManager() {
 
       {selectedCourse && modules.length > 0 && (
         <div className="bg-white rounded-3xl p-6 border border-gray-100">
-          <h3 className="text-xl font-bold mb-4 text-[#1A1A1A]">Области ({modules.length})</h3>
+          <h3 className="text-xl font-bold mb-4 text-ink">Области ({modules.length})</h3>
           <div className="space-y-3">
             {modules.map((module, index) => (
               <div key={module.id} className="border-2 border-gray-200 rounded-2xl overflow-hidden">
                 <button
                   onClick={() => setSelectedModule(selectedModule?.id === module.id ? null : module)}
-                  className="w-full p-4 flex items-center justify-between hover:bg-[#F7F7F7] transition-colors"
+                  className="w-full p-4 flex items-center justify-between hover:bg-surface transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="bg-[#D62828]/10 p-3 rounded-xl">
-                      <Book className="w-5 h-5 text-[#D62828]" />
+                    <div className="bg-brand-50 p-3 rounded-xl">
+                      <Book className="w-5 h-5 text-brand" />
                     </div>
                     <div className="text-left">
-                      <p className="font-bold text-[#1A1A1A]">{module.title}</p>
+                      <p className="font-bold text-ink">{module.title}</p>
                       <p className="text-sm text-gray-600">{module.lessonCount || 0} лекција</p>
                     </div>
                   </div>
@@ -491,7 +491,7 @@ export default function LessonManager() {
                 </button>
 
                 {selectedModule?.id === module.id && (
-                  <div className="p-6 bg-[#F7F7F7] border-t-2 border-gray-200">
+                  <div className="p-6 bg-surface border-t-2 border-gray-200">
                     {/* Add Lesson Button */}
                     {!showForm && (
                       <button
@@ -500,7 +500,7 @@ export default function LessonManager() {
                           setFormData({ title: '', description: '', order: lessons.length + 1, videoFile: null, materials: [] });
                           setShowForm(true);
                         }}
-                        className="bg-[#D62828] text-white px-6 py-3 rounded-2xl font-bold hover:bg-[#B91F1F] transition-colors flex items-center gap-2 mb-6"
+                        className="bg-brand text-white px-6 py-3 rounded-2xl font-bold hover:bg-brand-700 transition-colors flex items-center gap-2 mb-6"
                       >
                         <Plus className="w-5 h-5" />
                         Додај лекцију
@@ -510,7 +510,7 @@ export default function LessonManager() {
                     {/* Lesson Form */}
                     {showForm && (
                       <div className="bg-white rounded-2xl p-6 mb-6 border border-gray-200">
-                        <h4 className="text-lg font-bold mb-4 text-[#1A1A1A]">
+                        <h4 className="text-lg font-bold mb-4 text-ink">
                           {editingLesson ? 'Измени лекцију' : 'Нова лекција'}
                         </h4>
 
@@ -522,7 +522,7 @@ export default function LessonManager() {
                                 type="text"
                                 value={formData.title}
                                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                                className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-[#D62828] focus:outline-none transition-colors"
+                                className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-brand focus:outline-none transition-colors"
                                 placeholder="нпр. Лекција 1: Увод у граматику"
                                 required
                                 disabled={uploading}
@@ -534,7 +534,7 @@ export default function LessonManager() {
                                 type="number"
                                 value={formData.order}
                                 onChange={(e) => setFormData({ ...formData, order: Number(e.target.value) })}
-                                className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-[#D62828] focus:outline-none transition-colors text-center font-bold"
+                                className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-brand focus:outline-none transition-colors text-center font-bold"
                                 min="1"
                                 required
                                 disabled={uploading}
@@ -547,7 +547,7 @@ export default function LessonManager() {
                             <textarea
                               value={formData.description}
                               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                              className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-[#D62828] focus:outline-none transition-colors"
+                              className="w-full px-4 py-3 border-2 border-gray-200 rounded-2xl focus:border-brand focus:outline-none transition-colors"
                               rows={3}
                               placeholder="Кратак опис лекције..."
                               disabled={uploading}
@@ -570,15 +570,15 @@ export default function LessonManager() {
                               htmlFor="videoFile"
                               className={`border-2 border-dashed rounded-2xl p-6 text-center cursor-pointer block transition-all ${
                                 formData.videoFile
-                                  ? 'border-[#D62828] bg-[#D62828]/5'
-                                  : 'border-gray-300 hover:border-[#D62828] hover:bg-gray-50'
+                                  ? 'border-brand bg-brand/5'
+                                  : 'border-gray-300 hover:border-brand hover:bg-gray-50'
                               }`}
                             >
                               {formData.videoFile ? (
                                 <div className="flex items-center justify-center gap-4">
-                                  <FileVideo className="w-8 h-8 text-[#D62828]" />
+                                  <FileVideo className="w-8 h-8 text-brand" />
                                   <div className="text-left">
-                                    <p className="font-bold text-[#1A1A1A]">{formData.videoFile.name}</p>
+                                    <p className="font-bold text-ink">{formData.videoFile.name}</p>
                                     <p className="text-sm text-gray-500">
                                       {(formData.videoFile.size / 1024 / 1024).toFixed(2)} MB
                                     </p>
@@ -586,13 +586,13 @@ export default function LessonManager() {
                                 </div>
                               ) : editingLesson ? (
                                 <div>
-                                  <FileVideo className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                                  <FileVideo className="w-12 h-12 text-gray-500 mx-auto mb-2" />
                                   <p className="font-medium text-gray-700">Кликните да промените видео</p>
                                   <p className="text-xs text-gray-500">Тренутни видео ће бити задржан ако не отпремите нови</p>
                                 </div>
                               ) : (
                                 <div>
-                                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-2" />
+                                  <Upload className="w-12 h-12 text-gray-500 mx-auto mb-2" />
                                   <p className="font-medium text-gray-700">Кликните да отпремите видео</p>
                                   <p className="text-xs text-gray-500">MP4, MOV (макс 500MB)</p>
                                 </div>
@@ -617,9 +617,9 @@ export default function LessonManager() {
                             />
                             <label
                               htmlFor="materialsFile"
-                              className="border-2 border-dashed border-gray-300 rounded-2xl p-4 text-center cursor-pointer block hover:border-[#D62828] hover:bg-gray-50 transition-all"
+                              className="border-2 border-dashed border-gray-300 rounded-2xl p-4 text-center cursor-pointer block hover:border-brand hover:bg-gray-50 transition-all"
                             >
-                              <Paperclip className="w-8 h-8 text-gray-400 mx-auto mb-2" />
+                              <Paperclip className="w-8 h-8 text-gray-500 mx-auto mb-2" />
                               <p className="font-medium text-gray-700">Кликните да додате материјале</p>
                               <p className="text-xs text-gray-500">PDF, DOC, PPT, XLS, ZIP (макс 50MB по фајлу)</p>
                             </label>
@@ -633,11 +633,11 @@ export default function LessonManager() {
                                     className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200"
                                   >
                                     <div className="flex items-center gap-3">
-                                      <div className="w-10 h-10 bg-[#D62828]/10 rounded-lg flex items-center justify-center">
-                                        <FileText className="w-5 h-5 text-[#D62828]" />
+                                      <div className="w-10 h-10 bg-brand-50 rounded-lg flex items-center justify-center">
+                                        <FileText className="w-5 h-5 text-brand" />
                                       </div>
                                       <div>
-                                        <p className="font-medium text-[#1A1A1A] text-sm">{material.name}</p>
+                                        <p className="font-medium text-ink text-sm">{material.name}</p>
                                         <p className="text-xs text-gray-500">
                                           {(material.size / 1024).toFixed(0)} KB
                                         </p>
@@ -661,11 +661,11 @@ export default function LessonManager() {
                             <div className="space-y-2">
                               <div className="flex justify-between text-sm">
                                 <span className="font-medium text-gray-700">Upload у току...</span>
-                                <span className="font-bold text-[#D62828]">{uploadProgress}%</span>
+                                <span className="font-bold text-brand">{uploadProgress}%</span>
                               </div>
                               <div className="w-full bg-gray-200 rounded-full h-2">
                                 <div
-                                  className="bg-[#D62828] h-full rounded-full transition-all"
+                                  className="bg-brand h-full rounded-full transition-all"
                                   style={{ width: `${uploadProgress}%` }}
                                 />
                               </div>
@@ -676,7 +676,7 @@ export default function LessonManager() {
                             <button
                               type="submit"
                               disabled={uploading || (!editingLesson && !formData.videoFile)}
-                              className="flex-1 bg-[#D62828] text-white py-3 rounded-2xl font-bold hover:bg-[#B91F1F] transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                              className="flex-1 bg-brand text-white py-3 rounded-2xl font-bold hover:bg-brand-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                             >
                               {uploading ? (
                                 <>
@@ -709,7 +709,7 @@ export default function LessonManager() {
 
                     {/* Lessons List */}
                     <div className="space-y-3">
-                      <h4 className="font-bold text-[#1A1A1A]">Лекције ({lessons.length})</h4>
+                      <h4 className="font-bold text-ink">Лекције ({lessons.length})</h4>
                       {lessons.length === 0 ? (
                         <p className="text-gray-500 text-center py-8">Нема лекција за овај модул</p>
                       ) : (
@@ -719,11 +719,11 @@ export default function LessonManager() {
                             className="bg-white rounded-2xl p-4 flex items-center justify-between border border-gray-200"
                           >
                             <div className="flex items-center gap-3">
-                              <div className="bg-[#F2C94C]/20 w-10 h-10 rounded-full flex items-center justify-center">
-                                <span className="font-bold text-[#1A1A1A]">{lesson.order || idx + 1}</span>
+                              <div className="bg-gold/20 w-10 h-10 rounded-full flex items-center justify-center">
+                                <span className="font-bold text-ink">{lesson.order || idx + 1}</span>
                               </div>
                               <div>
-                                <p className="font-bold text-[#1A1A1A]">{lesson.title}</p>
+                                <p className="font-bold text-ink">{lesson.title}</p>
                                 {lesson.description && (
                                   <p className="text-sm text-gray-600">{lesson.description}</p>
                                 )}
@@ -759,14 +759,14 @@ export default function LessonManager() {
 
       {selectedCourse && modules.length === 0 && (
         <div className="bg-white rounded-3xl p-12 text-center border border-gray-100">
-          <Video className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <Video className="w-16 h-16 text-gray-500 mx-auto mb-4" />
           <p className="text-gray-500">Нема модула за овај курс. Прво креирајте модуле у менаџеру курсева.</p>
         </div>
       )}
 
       {!selectedCourse && (
         <div className="bg-white rounded-3xl p-12 text-center border border-gray-100">
-          <Video className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <Video className="w-16 h-16 text-gray-500 mx-auto mb-4" />
           <p className="text-gray-500">Одаберите курс да бисте управљали лекцијама</p>
         </div>
       )}

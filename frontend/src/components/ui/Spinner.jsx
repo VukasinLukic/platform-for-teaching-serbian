@@ -2,13 +2,13 @@ import React from 'react';
 
 /**
  * Spinner/Loader Component
- * Design: Mint green spinner following the Nauči Srpski brand
+ * Design: brand-red spinner
  * Usage: <Spinner size="sm|md|lg" text="Loading..." />
  */
-const Spinner = ({ size = 'md', text = 'Učitavanje...', className = '' }) => {
+const Spinner = ({ size = 'md', text = 'Учитава се...', className = '' }) => {
   const sizeClasses = {
     sm: 'w-8 h-8 border-2',
-    md: 'w-12 h-12 border-3',
+    md: 'w-12 h-12 border-4',
     lg: 'w-16 h-16 border-4',
   };
 
@@ -17,22 +17,22 @@ const Spinner = ({ size = 'md', text = 'Učitavanje...', className = '' }) => {
   return (
     <div className={`flex flex-col items-center justify-center gap-4 ${className}`}>
       <div
-        className={`${spinnerClass} border-[#BFECC9] border-t-[#003366] rounded-full animate-spin`}
+        className={`${spinnerClass} border-brand/15 border-t-brand rounded-full animate-spin`}
         role="status"
-        aria-label="Loading"
+        aria-label={text || 'Учитава се'}
       />
       {text && (
-        <p className="text-gray-600 text-sm font-medium animate-pulse">{text}</p>
+        <p className="text-ink-600 text-sm font-medium">{text}</p>
       )}
     </div>
   );
 };
 
 // Fullscreen Spinner Variant
-export const FullScreenSpinner = ({ text = 'Učitavanje...' }) => {
+export const FullScreenSpinner = ({ text = 'Учитава се...' }) => {
   return (
-    <div className="fixed inset-0 bg-[#F5F3EF]/80 backdrop-blur-sm flex items-center justify-center z-50">
-      <div className="bg-white rounded-3xl shadow-2xl p-8">
+    <div className="fixed inset-0 bg-paper/80 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="bg-white rounded-3xl shadow-lift p-8">
         <Spinner size="lg" text={text} />
       </div>
     </div>
@@ -45,7 +45,7 @@ export const InlineSpinner = ({ className = '' }) => {
     <div
       className={`w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin ${className}`}
       role="status"
-      aria-label="Loading"
+      aria-label="Учитава се"
     />
   );
 };

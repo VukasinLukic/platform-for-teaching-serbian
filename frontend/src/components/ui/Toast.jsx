@@ -1,150 +1,50 @@
-import React, { createContext, useContext, useState, useCallback } from 'react';
-import { CheckCircle, XCircle, AlertCircle, Info, X } from 'lucide-react';
+import { useCallback, useMemo } from 'react';
 import { useNotificationStore } from '../../store/notificationStore';
+import { showToast as appToast } from '../../utils/toast';
 
 /**
- * Toast Notification System
- * Design: Clean toast notifications with Srpski u Srcu brand colors
- * Usage:
- *   1. Wrap app with <ToastProvider>
- *   2. Use const { showToast } = useToast() in components
- *   3. Call showToast({ type: 'success', message: 'Uspesno!' })
+ * Compatibility adapter over the app's single toast system (utils/toast.js,
+ * react-hot-toast; <Toaster /> lives in App.jsx).
  *
- * Sve notifikacije se automatski cuvaju u notificationStore za istoriju
+ * Usage (unchanged for existing callers):
+ *   const { showToast } = useToast();
+ *   showToast({ type: 'success', message: 'Успешно!' });
+ *
+ * Toasts shown this way are also saved to notificationStore (admin
+ * notification history), as before. New code can import `showToast` from
+ * utils/toast directly.
  */
 
-const ToastContext = createContext(null);
+const TYPES = ['success', 'error', 'warning', 'info'];
 
 export const useToast = () => {
-  const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToast must be used within ToastProvider');
-  }
-  return context;
-};
-
-export const ToastProvider = ({ children }) => {
-  const [toasts, setToasts] = useState([]);
   const addNotification = useNotificationStore((state) => state.addNotification);
 
   const showToast = useCallback(
-    ({ type = 'info', message, duration = 4000, title = null, saveToHistory = true }) => {
-      const id = Date.now() + Math.random();
-      const newToast = { id, type, message, title };
-
-      setToasts((prev) => [...prev, newToast]);
-
-      // Sacuvaj u istoriju notifikacija (osim ako je eksplicitno iskljuceno)
+    ({ type = 'info', message, title = null, saveToHistory = true }) => {
+      const kind = TYPES.includes(type) ? type : 'info';
+      const text = title ? `${title}: ${message}` : message;
       if (saveToHistory) {
-        addNotification({ type, message, title });
+        addNotification({ type: kind, message, title });
       }
-
-      if (duration > 0) {
-        setTimeout(() => {
-          removeToast(id);
-        }, duration);
-      }
-
-      return id;
+      return appToast[kind](text);
     },
     [addNotification]
   );
 
-  const removeToast = useCallback((id) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
-  }, []);
+  const removeToast = useCallback((id) => appToast.dismiss(id), []);
 
-  return (
-    <ToastContext.Provider value={{ showToast, removeToast }}>
-      {children}
-      <ToastContainer toasts={toasts} removeToast={removeToast} />
-    </ToastContext.Provider>
-  );
+  return useMemo(() => ({ showToast, removeToast }), [showToast, removeToast]);
 };
 
-const ToastContainer = ({ toasts, removeToast }) => {
-  return (
-    <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-3 max-w-md">
-      {toasts.map((toast) => (
-        <Toast key={toast.id} {...toast} onClose={() => removeToast(toast.id)} />
-      ))}
-    </div>
-  );
-};
+// Kept for backwards compatibility: rendering happens in the global <Toaster />.
+export const ToastProvider = ({ children }) => children;
 
-const Toast = ({ id, type, message, title, onClose }) => {
-  const config = {
-    success: {
-      icon: CheckCircle,
-      bgColor: 'bg-[#BFECC9]',
-      textColor: 'text-[#003366]',
-      iconColor: 'text-[#003366]',
-      borderColor: 'border-[#9DD6AC]',
-    },
-    error: {
-      icon: XCircle,
-      bgColor: 'bg-red-50',
-      textColor: 'text-red-900',
-      iconColor: 'text-red-600',
-      borderColor: 'border-red-200',
-    },
-    warning: {
-      icon: AlertCircle,
-      bgColor: 'bg-yellow-50',
-      textColor: 'text-yellow-900',
-      iconColor: 'text-yellow-600',
-      borderColor: 'border-yellow-200',
-    },
-    info: {
-      icon: Info,
-      bgColor: 'bg-[#42A5F5]/10',
-      textColor: 'text-[#003366]',
-      iconColor: 'text-[#42A5F5]',
-      borderColor: 'border-[#42A5F5]/30',
-    },
-  };
-
-  const { icon: Icon, bgColor, textColor, iconColor, borderColor } =
-    config[type] || config.info;
-
-  return (
-    <div
-      className={`${bgColor} ${borderColor} border-2 rounded-2xl shadow-2xl p-4 flex items-start gap-3 min-w-[320px] animate-slideInRight`}
-      role="alert"
-    >
-      <Icon className={`w-6 h-6 ${iconColor} flex-shrink-0 mt-0.5`} />
-      <div className="flex-1">
-        {title && (
-          <p className={`font-bold ${textColor} mb-1`}>{title}</p>
-        )}
-        <p className={`${textColor} text-sm`}>{message}</p>
-      </div>
-      <button
-        onClick={onClose}
-        className={`${textColor} hover:opacity-70 transition-opacity p-1 rounded-full`}
-        aria-label="Close notification"
-      >
-        <X className="w-5 h-5" />
-      </button>
-    </div>
-  );
-};
-
-// Convenience functions for direct usage
 export const toast = {
-  success: (message, options = {}) => {
-    // This will be used with useToast hook
-    console.log('Toast success:', message);
-  },
-  error: (message, options = {}) => {
-    console.log('Toast error:', message);
-  },
-  warning: (message, options = {}) => {
-    console.log('Toast warning:', message);
-  },
-  info: (message, options = {}) => {
-    console.log('Toast info:', message);
-  },
+  success: (message) => appToast.success(message),
+  error: (message) => appToast.error(message),
+  warning: (message) => appToast.warning(message),
+  info: (message) => appToast.info(message),
 };
 
-export default Toast;
+export default ToastProvider;

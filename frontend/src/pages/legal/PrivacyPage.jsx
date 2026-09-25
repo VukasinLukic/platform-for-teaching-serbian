@@ -4,7 +4,7 @@ import SEO from '../../components/SEO';
 
 // NOTE: Pre objavljivanja proveriti sa pravnikom podatke o rukovaocu (ime/naziv, adresa, PIB).
 const H2 = ({ children }) => (
-  <h2 className="text-2xl font-bold text-[#1A1A1A] mt-8 mb-4">{children}</h2>
+  <h2 className="text-2xl font-bold text-ink mt-8 mb-4">{children}</h2>
 );
 
 export default function PrivacyPage() {
@@ -18,13 +18,13 @@ export default function PrivacyPage() {
         description="Како платформа Српски у Срцу прикупља, користи и чува податке о личности ученика и родитеља."
         canonical="/privacy"
       />
-    <div className="min-h-screen bg-[#F7F7F7]">
+    <div className="min-h-screen bg-surface">
       <Header />
 
       <div className="max-w-4xl mx-auto px-4 sm:px-6 py-10 sm:py-16">
         <Card variant="elevated">
           <CardBody className="p-6 sm:p-12">
-            <h1 className="text-3xl sm:text-4xl font-serif font-bold text-[#1A1A1A] mb-8">
+            <h1 className="text-3xl sm:text-4xl font-serif font-bold text-ink mb-8">
               Политика приватности
             </h1>
 

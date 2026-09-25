@@ -25,8 +25,8 @@ export default function OnlineClassManager() {
             onClick={() => setActiveTab(tab.id)}
             className={`px-6 py-3 font-bold flex items-center gap-2 border-b-2 transition-colors whitespace-nowrap ${
               activeTab === tab.id
-                ? 'border-[#D62828] text-[#D62828]'
-                : 'border-transparent text-gray-500 hover:text-[#1A1A1A]'
+                ? 'border-brand text-brand'
+                : 'border-transparent text-gray-500 hover:text-ink'
             }`}
           >
             <tab.icon className="w-5 h-5" />

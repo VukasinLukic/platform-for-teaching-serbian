@@ -31,16 +31,18 @@ export default function TutorialTooltip() {
       const tooltipElement = tooltipRef.current;
 
       if (!targetElement || !tooltipElement) {
+        const w = tooltipElement ? tooltipElement.offsetWidth : Math.min(320, window.innerWidth - 32);
         setPosition({
           top: window.innerHeight / 2 - 100,
-          left: window.innerWidth / 2 - 160,
+          left: Math.max(16, window.innerWidth / 2 - w / 2),
         });
         setIsVisible(true);
         return;
       }
 
       // Scroll target into view
-      targetElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      const reduceMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches;
+      targetElement.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'center' });
 
       // Wait for scroll, then position
       setTimeout(() => {
@@ -72,7 +74,9 @@ export default function TutorialTooltip() {
 
         // Keep within viewport
         const vp = 16;
-        top = Math.max(vp, Math.min(top, window.innerHeight - tooltipRect.height - vp));
+        // Keep clear of the bottom dock on small screens.
+        const dockOffset = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--dock-offset'), 10) || 0;
+        top = Math.max(vp, Math.min(top, window.innerHeight - tooltipRect.height - vp - dockOffset));
         left = Math.max(vp, Math.min(left, window.innerWidth - tooltipRect.width - vp));
 
         setPosition({ top, left });
@@ -105,23 +109,17 @@ export default function TutorialTooltip() {
       <div
         className="fixed inset-0 bg-black/50 z-[9998] transition-opacity duration-300"
         onClick={skipTutorial}
+        aria-hidden="true"
       />
 
-      {/* Global highlight style */}
-      <style>{`
-        .tutorial-highlight {
-          position: relative;
-          z-index: 9999 !important;
-          box-shadow: 0 0 0 4px rgba(214, 40, 40, 0.4), 0 0 20px rgba(214, 40, 40, 0.2);
-          border-radius: 1rem;
-          transition: box-shadow 0.3s ease;
-        }
-      `}</style>
 
       {/* Tooltip */}
       <div
         ref={tooltipRef}
-        className={`fixed z-[10000] w-80 bg-white rounded-2xl shadow-2xl border border-gray-100 transition-all duration-300 ${
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby="tutorial-tooltip-title"
+        className={`fixed z-[10000] w-[min(20rem,calc(100vw-2rem))] bg-white rounded-2xl shadow-2xl border border-gray-100 motion-safe:transition-all motion-safe:duration-300 ${
           isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         }`}
         style={{ top: position.top, left: position.left }}
@@ -129,14 +127,15 @@ export default function TutorialTooltip() {
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-3 border-b border-gray-100">
           <div className="flex items-center gap-2">
-            <div className="h-2.5 w-2.5 rounded-full bg-[#D62828] animate-pulse" />
+            <div className="h-2.5 w-2.5 rounded-full bg-brand motion-safe:animate-pulse" aria-hidden="true" />
             <span className="text-sm font-bold text-gray-500">
               {currentTooltipIndex + 1} / {totalTooltips}
             </span>
           </div>
           <button
             onClick={skipTutorial}
-            className="text-gray-400 hover:text-gray-700 transition-colors p-1"
+            className="text-gray-500 hover:text-gray-700 transition-colors p-2 -mr-2 rounded-lg"
+            aria-label="Затвори водич"
           >
             <X className="h-4 w-4" />
           </button>
@@ -144,7 +143,7 @@ export default function TutorialTooltip() {
 
         {/* Content */}
         <div className="px-5 py-4">
-          <h3 className="font-bold text-[#1A1A1A] text-base mb-2">
+          <h3 id="tutorial-tooltip-title" className="font-bold text-ink text-base mb-2">
             {currentTooltip.title}
           </h3>
           <p className="text-sm text-gray-600 leading-relaxed">
@@ -166,13 +165,14 @@ export default function TutorialTooltip() {
               <button
                 onClick={prevTooltip}
                 className="p-2 rounded-xl border border-gray-200 hover:bg-gray-100 transition-colors"
+                aria-label="Претходни корак"
               >
                 <ChevronLeft className="h-4 w-4 text-gray-600" />
               </button>
             )}
             <button
               onClick={nextTooltip}
-              className="px-4 py-2 bg-[#D62828] text-white rounded-xl font-bold text-sm hover:bg-[#B91F1F] transition-colors flex items-center gap-1"
+              className="px-4 py-2 bg-brand text-white rounded-xl font-bold text-sm hover:bg-brand-700 transition-colors flex items-center gap-1"
             >
               {isLastTooltip ? 'Завршите' : 'Даље'}
               {!isLastTooltip && <ChevronRight className="h-4 w-4" />}

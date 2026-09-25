@@ -1,125 +1,101 @@
-import React, { Component } from 'react';
-import { AlertTriangle, RefreshCw, Home } from 'lucide-react';
+import { Component } from 'react';
+import { RefreshCw, Home } from 'lucide-react';
+import { clearChunkRetryFlags, isChunkLoadError } from '../lazyWithRetry';
 
 /**
- * Error Boundary Component
- * Catches JavaScript errors anywhere in the child component tree
- * and displays a fallback UI instead of crashing the whole app
+ * Error Boundary
+ * Catches render errors in the tree below and shows a friendly screen instead of a
+ * white page. Chunk load errors (stale tab after a deploy) get a dedicated message.
  */
 class ErrorBoundary extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      hasError: false,
-      error: null,
-      errorInfo: null,
-    };
+    this.state = { error: null, componentStack: '' };
   }
 
   static getDerivedStateFromError(error) {
-    // Update state so the next render will show the fallback UI
-    return { hasError: true };
+    return { error };
   }
 
   componentDidCatch(error, errorInfo) {
-    // Log error to console (in production, send to error tracking service)
     console.error('ErrorBoundary caught an error:', error, errorInfo);
-
-    this.setState({
-      error,
-      errorInfo,
-    });
-
-    // TODO: Send error to error tracking service (e.g., Sentry)
-    // logErrorToService(error, errorInfo);
+    this.setState({ componentStack: errorInfo?.componentStack || '' });
   }
 
-  handleReset = () => {
-    this.setState({
-      hasError: false,
-      error: null,
-      errorInfo: null,
-    });
+  handleReload = () => {
+    clearChunkRetryFlags();
+    window.location.reload();
   };
 
   handleGoHome = () => {
-    window.location.href = '/';
+    clearChunkRetryFlags();
+    window.location.assign('/');
   };
 
   render() {
-    if (this.state.hasError) {
-      return (
-        <div className="min-h-screen bg-[#F5F3EF] flex items-center justify-center p-4">
-          <div className="bg-white rounded-3xl shadow-2xl p-8 max-w-2xl w-full">
-            {/* Icon */}
-            <div className="flex justify-center mb-6">
-              <div className="bg-red-100 rounded-full p-4">
-                <AlertTriangle className="w-16 h-16 text-red-600" />
-              </div>
-            </div>
+    const { error, componentStack } = this.state;
+    if (!error) return this.props.children;
 
-            {/* Title */}
-            <h1 className="text-3xl font-bold text-[#003366] text-center mb-4">
-              Ups! Nešto je pošlo naopako
-            </h1>
+    const isUpdate = isChunkLoadError(error);
+    const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || 'profesorka.marinalukic@gmail.com';
 
-            {/* Message */}
-            <p className="text-gray-600 text-center mb-6">
-              Došlo je do neočekivane greške. Ne brinite, vaši podaci su bezbedni.
-              Možete pokušati ponovo ili se vratiti na početnu stranicu.
-            </p>
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-paper-100 to-white flex items-center justify-center px-4 py-10">
+        <div className="bg-white rounded-3xl shadow-xl border border-gray-100 p-6 sm:p-10 max-w-lg w-full text-center">
+          <img
+            src="/mascot/alano-reading.webp"
+            alt=""
+            width="160"
+            height="160"
+            className="w-32 h-32 sm:w-40 sm:h-40 object-contain mx-auto mb-4"
+          />
 
-            {/* Error Details (only in development) */}
-            {process.env.NODE_ENV === 'development' && this.state.error && (
-              <details className="mb-6 p-4 bg-red-50 border-2 border-red-200 rounded-xl">
-                <summary className="cursor-pointer font-semibold text-red-900 mb-2">
-                  Detalji greške (samo u dev modu)
-                </summary>
-                <div className="text-sm text-red-800 font-mono overflow-auto">
-                  <p className="font-bold mb-2">{this.state.error.toString()}</p>
-                  <pre className="text-xs whitespace-pre-wrap">
-                    {this.state.errorInfo?.componentStack}
-                  </pre>
-                </div>
-              </details>
-            )}
+          <h1 className="text-2xl sm:text-3xl font-bold text-ink mb-3">
+            {isUpdate ? 'Сајт је управо ажуриран' : 'Упс, нешто је пошло наопако'}
+          </h1>
 
-            {/* Actions */}
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <button
-                onClick={this.handleReset}
-                className="flex items-center justify-center gap-2 px-6 py-3 bg-[#FF6B35] text-white rounded-full font-semibold shadow-lg hover:bg-[#E55A28] transition-all duration-200"
-              >
-                <RefreshCw className="w-5 h-5" />
-                Pokušaj ponovo
-              </button>
-              <button
-                onClick={this.handleGoHome}
-                className="flex items-center justify-center gap-2 px-6 py-3 border-2 border-[#003366] text-[#003366] rounded-full font-semibold hover:bg-[#003366] hover:text-white transition-all duration-200"
-              >
-                <Home className="w-5 h-5" />
-                Početna stranica
-              </button>
-            </div>
+          <p className="text-gray-600 mb-8 leading-relaxed">
+            {isUpdate
+              ? 'Објавили смо нову верзију платформе. Освежи страницу да би учитао најновију верзију — твој налог и напредак су сачувани.'
+              : 'Дошло је до неочекиване грешке. Твоји подаци су безбедни. Покушај да освежиш страницу или се врати на почетну.'}
+          </p>
 
-            {/* Support Info */}
-            <div className="mt-8 pt-6 border-t border-gray-200 text-center">
-              <p className="text-sm text-gray-600">
-                Ako problem i dalje postoji, kontaktirajte nas na:{' '}
-                <a
-                  href={`mailto:${import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@srpskiusrcu.com'}`}
-                  className="text-[#FF6B35] hover:underline font-semibold"
-                >
-                  {import.meta.env.VITE_CONTACT_EMAIL || 'kontakt@srpskiusrcu.com'}
-                </a>
-              </p>
-            </div>
+          {import.meta.env.DEV && (
+            <details className="mb-6 text-left p-4 bg-red-50 border border-red-200 rounded-xl">
+              <summary className="cursor-pointer font-semibold text-red-900">Детаљи грешке (само у развоју)</summary>
+              <p className="mt-2 text-sm font-mono text-red-800 break-words">{String(error)}</p>
+              <pre className="mt-2 text-xs whitespace-pre-wrap text-red-800">{componentStack}</pre>
+            </details>
+          )}
+
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <button
+              type="button"
+              onClick={this.handleReload}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-brand text-white rounded-full font-bold shadow-md hover:bg-brand-700 focus:outline-none focus-visible:ring-4 focus-visible:ring-brand/30 transition-colors"
+            >
+              <RefreshCw className="w-5 h-5" aria-hidden="true" />
+              Освежи страницу
+            </button>
+            <button
+              type="button"
+              onClick={this.handleGoHome}
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 border-2 border-gray-200 text-ink rounded-full font-bold hover:border-ink focus:outline-none focus-visible:ring-4 focus-visible:ring-gray-300 transition-colors"
+            >
+              <Home className="w-5 h-5" aria-hidden="true" />
+              Почетна страница
+            </button>
           </div>
-        </div>
-      );
-    }
 
-    return this.props.children;
+          <p className="mt-8 pt-6 border-t border-gray-100 text-sm text-gray-500">
+            Ако се проблем понавља, пиши нам на{' '}
+            <a href={`mailto:${contactEmail}`} className="text-brand font-semibold hover:underline break-all">
+              {contactEmail}
+            </a>
+          </p>
+        </div>
+      </div>
+    );
   }
 }
 

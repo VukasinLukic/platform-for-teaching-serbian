@@ -27,6 +27,30 @@
       "**/.*",
       "**/node_modules/**"
     ],
+    "cleanUrls": true,
+    "trailingSlash": false,
+    "redirects": [
+      {
+        "source": "/quizzes",
+        "destination": "/kvizovi",
+        "type": 301
+      },
+      {
+        "source": "/quizzes/:quizId",
+        "destination": "/kvizovi/:quizId",
+        "type": 301
+      },
+      {
+        "source": "/lat/quizzes",
+        "destination": "/lat/kvizovi",
+        "type": 301
+      },
+      {
+        "source": "/lat/quizzes/:quizId",
+        "destination": "/lat/kvizovi/:quizId",
+        "type": 301
+      }
+    ],
     "rewrites": [
       {
         "source": "**",
@@ -68,25 +92,34 @@
         ]
       },
       {
-        "source": "**/*.@(js|css|woff2)",
+        "source": "**/*.@(png|jpg|jpeg|webp|avif|svg|gif|ico)",
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "max-age=31536000, immutable"
+            "value": "public, max-age=604800, stale-while-revalidate=86400"
           }
         ]
       },
       {
-        "source": "**/*.@(png|jpg|jpeg|webp|svg|gif|ico)",
+        "source": "**/*.@(woff|woff2|ttf|otf)",
         "headers": [
           {
             "key": "Cache-Control",
-            "value": "max-age=86400"
+            "value": "public, max-age=31536000, immutable"
           }
         ]
       },
       {
-        "source": "index.html",
+        "source": "/assets/**",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "public, max-age=31536000, immutable"
+          }
+        ]
+      },
+      {
+        "source": "**/index.html",
         "headers": [
           {
             "key": "Cache-Control",
@@ -95,7 +128,16 @@
         ]
       },
       {
-        "source": "version.json",
+        "source": "**/!(*.*)",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
+      {
+        "source": "**/version.json",
         "headers": [
           {
             "key": "Cache-Control",
@@ -109,6 +151,15 @@
           {
             "key": "Cache-Control",
             "value": "no-cache, no-store, must-revalidate"
+          }
+        ]
+      },
+      {
+        "regex": "^/(?:[^.]*|.*\\.html)$",
+        "headers": [
+          {
+            "key": "Cache-Control",
+            "value": "no-cache"
           }
         ]
       }

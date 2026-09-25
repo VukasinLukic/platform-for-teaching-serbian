@@ -176,7 +176,7 @@ export default function GroupsManager() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D62828] border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent"></div>
       </div>
     );
   }
@@ -187,12 +187,12 @@ export default function GroupsManager() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-        <h3 className="text-2xl font-bold text-[#1A1A1A]">
+        <h3 className="text-2xl font-bold text-ink">
           Групе ({groups.length})
         </h3>
         <button
           onClick={() => handleOpenModal()}
-          className="bg-[#D62828] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#B91F1F] transition-all flex items-center gap-2"
+          className="bg-brand text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-700 transition-all flex items-center gap-2"
         >
           <Plus className="w-5 h-5" />
           Креирај Групу
@@ -202,12 +202,12 @@ export default function GroupsManager() {
       {/* Groups Grid */}
       {groups.length === 0 ? (
         <div className="text-center py-20 bg-gray-50 rounded-2xl">
-          <Users className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Нема група</h3>
+          <Users className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-ink mb-2">Нема група</h3>
           <p className="text-gray-600 mb-6">Креирајте своју прву групу за онлајн часове</p>
           <button
             onClick={() => handleOpenModal()}
-            className="bg-[#D62828] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#B91F1F] transition-all inline-flex items-center gap-2"
+            className="bg-brand text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-700 transition-all inline-flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />
             Креирај Групу
@@ -225,7 +225,7 @@ export default function GroupsManager() {
               {/* Header */}
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
-                  <h4 className="text-lg font-bold text-[#1A1A1A] mb-1">{group.name}</h4>
+                  <h4 className="text-lg font-bold text-ink mb-1">{group.name}</h4>
                   <span className="inline-block px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
                     {getLevelName(group.level)}
                   </span>
@@ -238,13 +238,13 @@ export default function GroupsManager() {
               </div>
 
               {/* Stats */}
-              <div className="bg-gradient-to-r from-[#D62828]/10 to-[#F2C94C]/10 rounded-xl p-4 mb-4">
+              <div className="bg-gradient-to-r from-brand/10 to-gold/10 rounded-xl p-4 mb-4">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <Users className="w-5 h-5 text-[#D62828]" />
+                    <Users className="w-5 h-5 text-brand" />
                     <span className="text-sm text-gray-600">Ученика:</span>
                   </div>
-                  <span className="text-xl font-black text-[#1A1A1A]">
+                  <span className="text-xl font-black text-ink">
                     {group.currentStudents || 0}/{group.maxStudents}
                   </span>
                 </div>
@@ -253,11 +253,11 @@ export default function GroupsManager() {
               {/* Schedule */}
               <div className="space-y-2 mb-4">
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Calendar className="w-4 h-4 text-[#D62828]" />
+                  <Calendar className="w-4 h-4 text-brand" />
                   <span>{getDayName(group.schedule?.dayOfWeek)}</span>
                 </div>
                 <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Clock className="w-4 h-4 text-[#D62828]" />
+                  <Clock className="w-4 h-4 text-brand" />
                   <span>{group.schedule?.time} ({group.schedule?.duration} мин)</span>
                 </div>
               </div>
@@ -265,7 +265,7 @@ export default function GroupsManager() {
               {/* Teacher */}
               <div className="pt-4 border-t border-gray-100 mb-4">
                 <div className="text-xs text-gray-500 mb-1">Наставник</div>
-                <div className="font-semibold text-[#1A1A1A]">{group.teacherName}</div>
+                <div className="font-semibold text-ink">{group.teacherName}</div>
               </div>
 
               {/* Actions */}
@@ -296,7 +296,7 @@ export default function GroupsManager() {
             <div className="p-6">
               {/* Modal Header */}
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-[#1A1A1A]">
+                <h3 className="text-2xl font-bold text-ink">
                   {editingGroup ? 'Измени Групу' : 'Креирај Групу'}
                 </h3>
                 <button
@@ -317,7 +317,7 @@ export default function GroupsManager() {
                     type="text"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                     placeholder="нпр. Група А - Почетни ниво"
                   />
                 </div>
@@ -330,7 +330,7 @@ export default function GroupsManager() {
                     <select
                       value={formData.level}
                       onChange={(e) => setFormData({ ...formData, level: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                     >
                       <option value="beginner">Почетни</option>
                       <option value="intermediate">Средњи</option>
@@ -346,7 +346,7 @@ export default function GroupsManager() {
                       type="number"
                       value={formData.maxStudents}
                       onChange={(e) => setFormData({ ...formData, maxStudents: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                       min="1"
                       max="20"
                     />
@@ -361,13 +361,13 @@ export default function GroupsManager() {
                     type="text"
                     value={formData.teacherName}
                     onChange={(e) => setFormData({ ...formData, teacherName: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                     placeholder="Име наставника"
                   />
                 </div>
 
                 <div className="border-t border-gray-200 pt-4">
-                  <h4 className="font-bold text-[#1A1A1A] mb-4">Распоред</h4>
+                  <h4 className="font-bold text-ink mb-4">Распоред</h4>
 
                   <div className="grid grid-cols-3 gap-4">
                     <div>
@@ -377,7 +377,7 @@ export default function GroupsManager() {
                       <select
                         value={formData.dayOfWeek}
                         onChange={(e) => setFormData({ ...formData, dayOfWeek: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                       >
                         <option value="0">Недеља</option>
                         <option value="1">Понедељак</option>
@@ -397,7 +397,7 @@ export default function GroupsManager() {
                         type="time"
                         value={formData.time}
                         onChange={(e) => setFormData({ ...formData, time: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                       />
                     </div>
 
@@ -409,7 +409,7 @@ export default function GroupsManager() {
                         type="number"
                         value={formData.duration}
                         onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+                        className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                         min="30"
                         step="15"
                       />
@@ -423,7 +423,7 @@ export default function GroupsManager() {
                     id="isActive"
                     checked={formData.isActive}
                     onChange={(e) => setFormData({ ...formData, isActive: e.target.checked })}
-                    className="w-5 h-5 text-[#D62828] border-gray-300 rounded focus:ring-[#D62828]"
+                    className="w-5 h-5 text-brand border-gray-300 rounded focus:ring-brand"
                   />
                   <label htmlFor="isActive" className="text-sm font-semibold text-gray-700">
                     Група је активна
@@ -436,14 +436,14 @@ export default function GroupsManager() {
                 <button
                   onClick={handleSaveGroup}
                   disabled={!formData.name || !formData.teacherName}
-                  className="flex-1 bg-[#D62828] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#B91F1F] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 bg-brand text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <Save className="w-5 h-5" />
                   {editingGroup ? 'Сачувај Измене' : 'Креирај Групу'}
                 </button>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="bg-gray-100 text-[#1A1A1A] px-6 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all"
+                  className="bg-gray-100 text-ink px-6 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all"
                 >
                   Откажи
                 </button>

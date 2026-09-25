@@ -1,5 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
+import { collection, getDocs, query, where, getCountFromServer } from 'firebase/firestore';
+import { db } from '../services/firebase';
+import usePrefersReducedMotion from '../hooks/usePrefersReducedMotion';
 import {
   Heart,
   Video,
@@ -16,7 +19,10 @@ import {
   Clock,
   Play,
   Sparkles,
-  ClipboardList
+  ClipboardList,
+  ChevronLeft,
+  ChevronRight,
+  Pause
 } from 'lucide-react';
 import { useAuthStore } from '../store/authStore';
 import { inicijalniTestoviList } from '../data/inicijalniTestovi';
@@ -25,13 +31,265 @@ import Header from '../components/ui/Header';
 import Footer from '../components/ui/Footer';
 import SEO from '../components/SEO';
 
+
+// Link to a course: slug route when available, legacy id route otherwise.
+export function courseHref(course) {
+  if (!course) return '/courses';
+  return course.slug ? `/kurs/${course.slug}` : `/course/${course.id}`;
+}
+
+/**
+ * Loads the featured course and live counts (active courses, lessons) from Firestore.
+ * Returns { loading, featured, coursesCount, lessonsCount }. Counts stay null on error,
+ * so the UI shows neutral labels instead of invented numbers.
+ */
+function useHomeCatalog() {
+  const [state, setState] = useState({ loading: true, featured: null, coursesCount: null, lessonsCount: null });
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const snap = await getDocs(query(collection(db, 'courses'), where('status', '==', 'active')));
+        const courses = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+        // Featured: explicit `featured` flag first, then lowest `order`, then first found.
+        const featured =
+          courses.find((c) => c.featured === true) ||
+          [...courses].sort((a, b) => (a.order ?? 999) - (b.order ?? 999))[0] ||
+          null;
+        let lessonsCount = null;
+        try {
+          const ids = courses.map((c) => c.id);
+          if (ids.length) {
+            const counts = await Promise.all(
+              ids.map((id) =>
+                getCountFromServer(query(collection(db, 'lessons'), where('courseId', '==', id))).then((r) => r.data().count)
+              )
+            );
+            lessonsCount = counts.reduce((a, b) => a + b, 0);
+          } else {
+            lessonsCount = 0;
+          }
+        } catch {
+          lessonsCount = null;
+        }
+        if (!cancelled) setState({ loading: false, featured, coursesCount: courses.length, lessonsCount });
+      } catch {
+        if (!cancelled) setState({ loading: false, featured: null, coursesCount: null, lessonsCount: null });
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  return state;
+}
+
+function StatChip({ loading, value, label }) {
+  if (loading) return <span className="inline-block h-4 w-24 rounded bg-white/25 motion-safe:animate-pulse" aria-hidden="true" />;
+  if (value == null || value === 0) return null;
+  return (
+    <span>
+      {value} {label}
+    </span>
+  );
+}
+
+function pluralLessons(n) {
+  const m10 = n % 10, m100 = n % 100;
+  if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 'видео лекције';
+  return 'видео лекција';
+}
+function pluralCourses(n) {
+  const m10 = n % 10, m100 = n % 100;
+  if (m10 === 1 && m100 !== 11) return 'курс';
+  if (m10 >= 2 && m10 <= 4 && (m100 < 12 || m100 > 14)) return 'курса';
+  return 'курсева';
+}
+
+/** Video preview card: links to the featured course (skeleton while loading). */
+function VideoPreviewCard({ catalog, className = '' }) {
+  const { loading, featured, coursesCount, lessonsCount } = catalog;
+  return (
+    <Link
+      to={courseHref(featured)}
+      className={`group relative block overflow-hidden rounded-3xl bg-ink shadow-xl ring-1 ring-black/5 focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/40 ${className}`}
+      aria-label={featured?.title ? `Погледај курс: ${featured.title}` : 'Погледај курсеве'}
+    >
+      <div className="aspect-video relative">
+        {featured?.thumbnail_url ? (
+          <img src={featured.thumbnail_url} alt="" className="absolute inset-0 w-full h-full object-cover opacity-70" loading="lazy" />
+        ) : (
+          <div className="absolute inset-0 bg-gradient-to-br from-ink-800 via-ink to-brand-950" />
+        )}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <span className="w-16 h-16 bg-brand rounded-full flex items-center justify-center shadow-2xl motion-safe:transition-transform motion-safe:group-hover:scale-110">
+            <Play className="w-7 h-7 text-white ml-1" fill="white" aria-hidden="true" />
+          </span>
+        </div>
+        <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-black/40 backdrop-blur px-3 py-1 text-xs font-semibold text-white">
+          <Video className="w-3.5 h-3.5" aria-hidden="true" /> Погледај како функционише
+        </span>
+      </div>
+      <div className="px-4 py-3 bg-ink text-white">
+        {loading ? (
+          <span className="block h-4 w-2/3 rounded bg-white/20 motion-safe:animate-pulse" aria-hidden="true" />
+        ) : (
+          <span className="block text-sm font-bold truncate">{featured?.title || 'Видео курсеви за малу матуру'}</span>
+        )}
+        <span className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-white/75">
+          <StatChip loading={loading} value={lessonsCount} label={pluralLessons(lessonsCount || 0)} />
+          <StatChip loading={loading} value={coursesCount} label={pluralCourses(coursesCount || 0)} />
+          <span>Часови уживо</span>
+        </span>
+      </div>
+    </Link>
+  );
+}
+
+function TestimonialCard({ t, className = '' }) {
+  return (
+    <figure className={`flex flex-col bg-white p-6 md:p-8 rounded-2xl border border-gray-100 shadow-sm ${className}`}>
+      <blockquote className="text-ink text-base leading-relaxed flex-1">
+        <p>{t.text}</p>
+      </blockquote>
+      <figcaption className="flex items-center gap-3 mt-6">
+        <span className="w-11 h-11 bg-gradient-to-br from-brand to-brand-700 rounded-full flex items-center justify-center text-white font-bold text-lg" aria-hidden="true">
+          {t.author.charAt(0)}
+        </span>
+        <span>
+          <span className="block font-bold text-ink">{t.author}</span>
+          <span className="block text-sm text-gray-500">{t.role}</span>
+        </span>
+      </figcaption>
+    </figure>
+  );
+}
+
+/**
+ * Desktop (>=768px, motion allowed): slow marquee; the duplicated copy is aria-hidden,
+ * pauses on hover/focus and via an explicit button. Reduced motion: static grid.
+ * Mobile: scroll-snap carousel with peek of the next card, dots and "1 / N".
+ */
+function Testimonials({ items }) {
+  const reduced = usePrefersReducedMotion();
+  const [paused, setPaused] = useState(false);
+  const [active, setActive] = useState(0);
+  const trackRef = useRef(null);
+
+  const onScroll = () => {
+    const el = trackRef.current;
+    const card = el?.firstElementChild;
+    if (!card) return;
+    const step = card.getBoundingClientRect().width + 16;
+    setActive(Math.max(0, Math.min(items.length - 1, Math.round(el.scrollLeft / step))));
+  };
+  const goTo = (i) => {
+    const el = trackRef.current;
+    const card = el?.children[i];
+    if (card) el.scrollTo({ left: card.offsetLeft - 20, behavior: reduced ? 'auto' : 'smooth' });
+  };
+
+  return (
+    <>
+      {/* Desktop */}
+      <div className="hidden md:block">
+        {reduced ? (
+          <ul className="max-w-6xl mx-auto px-6 grid grid-cols-3 gap-6">
+            {items.map((t) => (
+              <li key={t.author} className="flex">
+                <TestimonialCard t={t} className="w-full" />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <div>
+            <div
+              className="flex w-max gap-6 animate-testimonial-marquee hover:[animation-play-state:paused] focus-within:[animation-play-state:paused]"
+              style={paused ? { animationPlayState: 'paused' } : undefined}
+            >
+              {[0, 1].map((copy) => (
+                <ul key={copy} className="flex gap-6" aria-hidden={copy === 1 ? 'true' : undefined}>
+                  {[...items, ...items].map((t, i) => (
+                    <li key={i} className="w-[min(380px,40vw)] flex" aria-hidden={i >= items.length ? 'true' : undefined}>
+                      <TestimonialCard t={t} className="w-full" />
+                    </li>
+                  ))}
+                </ul>
+              ))}
+            </div>
+            <div className="mt-6 flex justify-center">
+              <button
+                type="button"
+                onClick={() => setPaused((p) => !p)}
+                aria-pressed={paused}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-200 bg-white text-sm font-semibold text-gray-700 hover:border-gray-300"
+              >
+                {paused ? <Play className="w-4 h-4" aria-hidden="true" /> : <Pause className="w-4 h-4" aria-hidden="true" />}
+                {paused ? 'Настави померање' : 'Заустави померање'}
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Mobile carousel */}
+      <div className="md:hidden" role="region" aria-roledescription="carousel" aria-label="Искуства">
+        <ul
+          ref={trackRef}
+          onScroll={onScroll}
+          className="relative flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-px-5 px-5 pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+        >
+          {items.map((t, i) => (
+            <li
+              key={t.author}
+              className="snap-start shrink-0 w-[84%] flex"
+              aria-roledescription="slide"
+              aria-label={`${i + 1} од ${items.length}`}
+            >
+              <TestimonialCard t={t} className="w-full" />
+            </li>
+          ))}
+        </ul>
+        <div className="mt-4 flex items-center justify-center gap-3">
+          <button type="button" onClick={() => goTo(Math.max(0, active - 1))} disabled={active === 0} className="w-11 h-11 rounded-full border border-gray-200 bg-white flex items-center justify-center disabled:opacity-40" aria-label="Претходно искуство">
+            <ChevronLeft className="w-5 h-5" />
+          </button>
+          <div className="flex items-center">
+            {items.map((_, i) => (
+              <button
+                key={i}
+                type="button"
+                onClick={() => goTo(i)}
+                aria-label={`Искуство ${i + 1}`}
+                aria-current={active === i ? 'true' : undefined}
+                className="p-1.5"
+              >
+                <span className={`block h-2 rounded-full motion-safe:transition-all ${active === i ? 'w-6 bg-brand' : 'w-2 bg-gray-300'}`} />
+              </button>
+            ))}
+          </div>
+          <span className="text-sm font-semibold text-gray-600 tabular-nums" aria-live="polite">{active + 1} / {items.length}</span>
+          <button type="button" onClick={() => goTo(Math.min(items.length - 1, active + 1))} disabled={active === items.length - 1} className="w-11 h-11 rounded-full border border-gray-200 bg-white flex items-center justify-center disabled:opacity-40" aria-label="Следеће искуство">
+            <ChevronRight className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+    </>
+  );
+}
+
 // Counter Animation Component
 function AnimatedCounter({ end, duration = 2000, suffix = '' }) {
   const [count, setCount] = useState(0);
   const countRef = useRef(null);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const reduced = usePrefersReducedMotion();
 
   useEffect(() => {
+    if (reduced) {
+      setCount(parseInt(end, 10));
+      return undefined;
+    }
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !hasAnimated) {
@@ -65,7 +323,7 @@ function AnimatedCounter({ end, duration = 2000, suffix = '' }) {
     }
 
     return () => observer.disconnect();
-  }, [end, duration, hasAnimated]);
+  }, [end, duration, hasAnimated, reduced]);
 
   return (
     <span ref={countRef}>
@@ -77,9 +335,14 @@ function AnimatedCounter({ end, duration = 2000, suffix = '' }) {
 // Scroll Fade-In Wrapper
 function FadeInSection({ children, className = '', delay = 0 }) {
   const ref = useRef(null);
+  const reduced = usePrefersReducedMotion();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    if (reduced || typeof IntersectionObserver === 'undefined') {
+      setIsVisible(true);
+      return undefined;
+    }
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -91,12 +354,12 @@ function FadeInSection({ children, className = '', delay = 0 }) {
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
-  }, []);
+  }, [reduced]);
 
   return (
     <div
       ref={ref}
-      className={`transition-all duration-1000 ease-out ${
+      className={`motion-safe:transition-all motion-safe:duration-700 ease-out ${
         isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
       } ${className}`}
       style={{ transitionDelay: `${delay}ms` }}
@@ -109,9 +372,14 @@ function FadeInSection({ children, className = '', delay = 0 }) {
 // Featured Course Showcase Card with expand-right animation
 function FeaturedCourseCard() {
   const ref = useRef(null);
+  const reduced = usePrefersReducedMotion();
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
+    if (reduced) {
+      setIsVisible(true);
+      return undefined;
+    }
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
@@ -123,7 +391,7 @@ function FeaturedCourseCard() {
     );
     if (ref.current) observer.observe(ref.current);
     return () => observer.disconnect();
-  }, []);
+  }, [reduced]);
 
   const features = [
     { icon: Video, text: 'HD видео лекције', desc: 'Квалитетни снимци за свако градиво' },
@@ -144,7 +412,7 @@ function FeaturedCourseCard() {
         <div className="grid md:grid-cols-5">
           {/* Left Panel - main info */}
           <div
-            className={`md:col-span-2 bg-gradient-to-br from-[#D62828] to-[#B91F1F] p-8 md:p-12 text-white flex flex-col justify-center transition-all duration-700 ${
+            className={`md:col-span-2 bg-gradient-to-br from-brand to-brand-700 p-8 md:p-12 text-white flex flex-col justify-center transition-all duration-700 ${
               isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-8'
             }`}
           >
@@ -154,13 +422,14 @@ function FeaturedCourseCard() {
             <h3 className="text-2xl md:text-3xl font-bold mb-4 leading-tight">
               Шта добијате уз наше курсеве?
             </h3>
-            <p className="text-white/80 leading-relaxed mb-8">
+            <p className="text-white leading-relaxed mb-8">
               Све што вам је потребно за успешну припрему мале матуре — на једном месту.
             </p>
-            <Link to="/courses">
-              <button className="bg-white text-[#D62828] px-8 py-3.5 rounded-full font-bold hover:bg-gray-100 transition-all inline-flex items-center gap-2 shadow-lg hover:shadow-xl hover:scale-105 transform">
-                Погледај курсеве <ArrowRight className="w-5 h-5" />
-              </button>
+            <Link
+              to="/courses"
+              className="self-start bg-white text-brand px-8 py-3.5 rounded-full font-bold hover:bg-gray-100 transition-colors inline-flex items-center gap-2 shadow-lg"
+            >
+              Погледај курсеве <ArrowRight className="w-5 h-5" aria-hidden="true" />
             </Link>
           </div>
 
@@ -173,7 +442,7 @@ function FeaturedCourseCard() {
             }`}
           >
             <h4
-              className={`text-lg font-bold text-[#1A1A1A] mb-6 transition-all duration-500 delay-500 ${
+              className={`text-lg font-bold text-ink mb-6 transition-all duration-500 delay-500 ${
                 isVisible ? 'opacity-100' : 'opacity-0'
               }`}
             >
@@ -190,12 +459,12 @@ function FeaturedCourseCard() {
                     }`}
                     style={{ transitionDelay: `${700 + i * 100}ms` }}
                   >
-                    <div className="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-red-100 transition-all group-hover:scale-110 transform duration-300">
-                      <Icon className="w-5 h-5 text-[#D62828]" />
+                    <div className="w-11 h-11 bg-red-50 rounded-xl flex items-center justify-center flex-shrink-0 group-hover:bg-red-100 transition-all motion-safe:group-hover:scale-110 transform duration-300">
+                      <Icon className="w-5 h-5 text-brand" />
                     </div>
                     <div>
-                      <h5 className="font-bold text-[#1A1A1A] text-sm">{f.text}</h5>
-                      <p className="text-gray-500 text-xs mt-0.5 leading-relaxed">{f.desc}</p>
+                      <h5 className="font-bold text-ink text-sm">{f.text}</h5>
+                      <p className="text-gray-600 text-sm mt-0.5 leading-relaxed">{f.desc}</p>
                     </div>
                   </div>
                 );
@@ -211,6 +480,8 @@ function FeaturedCourseCard() {
 export default function HomePage() {
   const { user } = useAuthStore();
   const { checkAndStartTutorial } = useOnboarding();
+  const catalog = useHomeCatalog();
+  const reducedMotion = usePrefersReducedMotion();
   const [howItWorksVisible, setHowItWorksVisible] = useState(false);
   const howItWorksRef = useRef(null);
 
@@ -248,7 +519,7 @@ export default function HomePage() {
       grade: '6. разред',
       title: 'Проширивање знања',
       description: 'Сложени падежи, сложене реченице, правопис. Надоградите своје вештине.',
-      features: ['Online часови', 'Материјали', 'Подршка']
+      features: ['Онлајн часови', 'Материјали', 'Подршка']
     },
     {
       icon: Trophy,
@@ -382,135 +653,131 @@ export default function HomePage() {
         jsonLd={homeJsonLd}
         keywords="mala matura srpski jezik, priprema za malu maturu, online kursevi srpskog, video lekcije srpski jezik, zavrsni ispit 8 razred, srpski jezik online nastava, kurs srpskog za malu maturu"
       />
-    <div className="min-h-screen bg-[#fdfafc] font-sans text-[#1A1A1A]">
+    <div className="min-h-screen bg-paper font-sans text-ink">
       <Header />
 
       {/* 1. HERO SECTION */}
-      <section className="relative pb-16 md:pb-24 flex items-start pt-20 md:pt-32 overflow-hidden md:min-h-[700px]">
-        {/* Background image as positioned element (full size, right-bottom) */}
-        <div className="absolute right-0 bottom-0 hidden lg:block group" style={{ width: '55%' }}>
+      <section className="relative overflow-hidden">
+        {/* Subtle notebook motif: ruled lines + red margin (static, decorative) */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-0 opacity-70"
+          style={{ backgroundImage: 'repeating-linear-gradient(to bottom, transparent 0, transparent 35px, rgba(59,130,246,0.06) 35px, rgba(59,130,246,0.06) 36px)' }}
+        />
+        <div aria-hidden="true" className="pointer-events-none absolute inset-y-0 left-2.5 sm:left-4 w-px bg-brand/15 lg:hidden" />
+
+        {/* Desktop illustration with monitor (>=1024px) */}
+        <div className="absolute right-0 bottom-0 hidden lg:block w-[55%]">
           <div className="relative">
-            <img
-              src="/pozadinaHeroSekcija.webp"
-              alt=""
-              className="w-full h-auto"
-              draggable={false}
-            />
-
-            {/* Badge top-left (outside overflow-hidden) */}
-            <div className="absolute z-10 flex items-center gap-1.5 bg-white/10 backdrop-blur-md rounded-full px-3 py-1.5 border border-white/20" style={{ top: '13%', left: '38%' }}>
-              <Video className="w-3 h-3 text-white" />
-              <span className="text-white text-[10px] lg:text-xs font-medium">Погледај како функционише</span>
-            </div>
-
-            {/* Video overlay on monitor screen */}
-            <div
-              className="absolute overflow-hidden"
-              style={{ top: '15%', left: '37%', width: '52%', height: '45%', borderRadius: '0.5%', backgroundColor: 'black' }}
+            <img src="/pozadinaHeroSekcija.webp" alt="" className="w-full h-auto" draggable={false} width="1122" height="779" />
+            <Link
+              to={courseHref(catalog.featured)}
+              className="group absolute overflow-hidden bg-black rounded-[0.5%] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-brand/50"
+              style={{ top: '15%', left: '37%', width: '52%', height: '45%' }}
+              aria-label={catalog.featured?.title ? `Погледај курс: ${catalog.featured.title}` : 'Погледај курсеве'}
             >
-
-              {/* Play Button Center */}
-              <Link to="/course/BuaFnF8uh6azrPmvioJt" className="absolute inset-0 flex items-center justify-center pb-[8%]">
-                <div className="w-16 h-16 lg:w-20 lg:h-20 bg-[#D62828] rounded-full flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform duration-300">
-                  <Play className="w-7 h-7 lg:w-9 lg:h-9 text-white ml-1" fill="white" />
-                </div>
-              </Link>
-
-              {/* Info Bar Bottom */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-3 py-2 lg:px-4 lg:py-3">
-                <div className="flex items-center justify-center gap-2 lg:gap-4 text-white/90 text-[9px] lg:text-xs font-medium">
-                  <span>120+ видео лекција</span>
-                  <span className="w-1 h-1 bg-white/50 rounded-full"></span>
-                  <span>6 курсева</span>
-                  <span className="w-1 h-1 bg-white/50 rounded-full"></span>
-                  <span>Часови уживо</span>
-                </div>
-              </div>
-            </div>
+              <span className="absolute top-3 left-3 inline-flex items-center gap-1.5 bg-white/10 backdrop-blur-md rounded-full px-3 py-1.5 border border-white/20 text-white text-xs font-medium">
+                <Video className="w-3.5 h-3.5" aria-hidden="true" /> Погледај како функционише
+              </span>
+              <span className="absolute inset-0 flex items-center justify-center pb-[8%]">
+                <span className="w-20 h-20 bg-brand rounded-full flex items-center justify-center shadow-2xl motion-safe:transition-transform motion-safe:duration-300 motion-safe:group-hover:scale-110">
+                  <Play className="w-9 h-9 text-white ml-1" fill="white" aria-hidden="true" />
+                </span>
+              </span>
+              <span className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent px-4 py-3 flex items-center justify-center gap-4 text-white text-xs font-medium">
+                <StatChip loading={catalog.loading} value={catalog.lessonsCount} label={pluralLessons(catalog.lessonsCount || 0)} />
+                <StatChip loading={catalog.loading} value={catalog.coursesCount} label={pluralCourses(catalog.coursesCount || 0)} />
+                <span>Часови уживо</span>
+              </span>
+            </Link>
           </div>
         </div>
 
-        {/* Text content */}
-        <div className="max-w-7xl mx-auto px-6 w-full">
-          <div className="max-w-2xl">
-            <div className="relative z-10 space-y-7 text-center lg:text-left">
-              <h1 className="font-bold leading-tight text-[#1A1A1A] flex flex-col gap-2">
-                <span className="text-4xl lg:text-5xl text-[#1A1A1A] block">Учите српски језик и књижевност</span>
-                <span className="text-4xl lg:text-6xl block">са разумевањем</span>
-                <span className="text-5xl lg:text-8xl block relative inline-block mt-2">
+        <div className="relative max-w-7xl mx-auto px-5 sm:px-8 lg:px-6 pt-8 pb-12 sm:pt-12 md:pb-16 lg:pt-28 lg:pb-24 lg:min-h-[680px]">
+          <div className="grid md:grid-cols-[1fr_auto] lg:block items-center gap-6">
+            <div className="max-w-2xl relative z-10 text-center md:text-left">
+              {/* Mobile/tablet badge with teacher */}
+              <div className="inline-flex items-center gap-2 rounded-full bg-white border border-gray-200 shadow-sm pl-1 pr-3 py-1 mb-5 lg:mb-7">
+                <img src="/profesorkaMarina.webp" alt="" className="w-8 h-8 rounded-full object-cover object-top" width="32" height="32" />
+                <span className="text-sm font-semibold text-gray-700">Наставница Марина Лукић<span className="hidden sm:inline"> · 27 година искуства</span></span>
+              </div>
+
+              <h1 className="font-bold leading-[1.1] text-ink flex flex-col gap-1 lg:gap-2">
+                <span className="text-[1.75rem] sm:text-4xl lg:text-5xl">Учите српски језик и књижевност</span>
+                <span className="text-[1.75rem] sm:text-4xl lg:text-6xl">са разумевањем</span>
+                <span className="text-[2.6rem] sm:text-6xl lg:text-8xl relative inline-block self-center md:self-start mt-1">
                   и љубављу.
-                  <svg className="absolute w-full h-4 -bottom-2 left-0 text-[#D62828]" viewBox="0 0 100 10" preserveAspectRatio="none">
+                  <svg aria-hidden="true" className="absolute w-full h-3 lg:h-4 -bottom-1 lg:-bottom-2 left-0 text-brand" viewBox="0 0 100 10" preserveAspectRatio="none">
                     <path d="M0 5 Q 50 10 100 5" stroke="currentColor" strokeWidth="6" fill="none" />
                   </svg>
                 </span>
               </h1>
 
-              <p className="text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-xl mx-auto lg:mx-0">
-                Платформа која гради трајно знање кроз видео материјале и online часове.
+              <p className="mt-5 lg:mt-7 text-lg sm:text-xl lg:text-2xl text-gray-600 leading-relaxed max-w-xl mx-auto md:mx-0">
+                Платформа која гради трајно знање кроз видео материјале и онлајн часове.
               </p>
 
-              {/* Trust Elements */}
-              <div className="flex flex-wrap gap-x-6 gap-y-3 justify-center lg:justify-start">
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-[#D62828]" />
-                  <span className="text-sm font-medium text-gray-700">Видео лекције 24/7</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-[#D62828]" />
-                  <span className="text-sm font-medium text-gray-700">Припрема за малу матуру</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-[#D62828]" />
-                  <span className="text-sm font-medium text-gray-700">Online часови уживо</span>
-                </div>
-              </div>
+              <ul className="mt-5 flex flex-wrap gap-x-5 gap-y-2 justify-center md:justify-start">
+                {['Видео лекције 24/7', 'Припрема за малу матуру', 'Онлајн часови уживо'].map((t) => (
+                  <li key={t} className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5 text-brand" aria-hidden="true" />
+                    <span className="text-sm sm:text-base font-medium text-gray-700">{t}</span>
+                  </li>
+                ))}
+              </ul>
 
-              {/* CTA Buttons */}
-              <div className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start pt-2">
-                <Link to="/courses" data-tour="home-hero-cta">
-                  <button className="bg-[#D62828] text-white px-10 py-4 rounded-full hover:bg-[#B91F1F] transition-all transform hover:scale-105 shadow-xl text-lg font-bold">
-                    Приступи курсевима
-                  </button>
+              <div className="mt-7 flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center md:justify-start">
+                <Link
+                  to="/courses"
+                  data-tour="home-hero-cta"
+                  className="inline-flex items-center justify-center gap-2 min-h-[52px] bg-brand text-white px-8 py-3.5 rounded-full hover:bg-brand-700 transition-colors shadow-xl shadow-red-900/10 text-lg font-bold"
+                >
+                  Приступи курсевима <ArrowRight className="w-5 h-5" aria-hidden="true" />
                 </Link>
-                <button
-                  onClick={() => document.getElementById('kako-funkcionise')?.scrollIntoView({ behavior: 'smooth' })}
-                  className="px-10 py-4 rounded-full border-2 border-[#1A1A1A] text-[#1A1A1A] hover:bg-[#1A1A1A] hover:text-white transition-all text-lg font-bold"
+                <a
+                  href="#kako-funkcionise"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    document.getElementById('kako-funkcionise')?.scrollIntoView({ behavior: reducedMotion ? 'auto' : 'smooth' });
+                  }}
+                  className="inline-flex items-center justify-center min-h-[52px] px-8 py-3.5 rounded-full border-2 border-ink text-ink hover:bg-ink hover:text-white transition-colors text-lg font-bold"
                 >
                   Како функционише?
-                </button>
+                </a>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
-      {/* STATS BAR - hidden on mobile */}
-      <section className="hidden sm:block py-8 bg-white/60 border-y border-gray-100">
-        <div className="max-w-4xl mx-auto px-6">
-          <div className="flex flex-col sm:flex-row items-center justify-around gap-6 sm:gap-4">
-            <div className="flex items-center gap-3">
-              <Users className="w-6 h-6 text-[#D62828]" />
-              <div>
-                <div className="text-2xl font-black text-[#1A1A1A]">700+</div>
-                <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">Ученика</div>
-              </div>
+              {/* Compact trust row — visible on every width */}
+              <dl className="mt-8 grid grid-cols-3 max-w-md mx-auto md:mx-0 rounded-2xl bg-white/80 border border-gray-100 shadow-sm divide-x divide-gray-100">
+                {stats.map((st) => (
+                  <div key={st.label} className="px-2 py-3 text-center flex flex-col-reverse">
+                    <dt className="text-xs sm:text-sm text-gray-500 font-medium">{st.label}</dt>
+                    <dd className="text-2xl sm:text-3xl font-black text-ink leading-tight">{st.number}</dd>
+                  </div>
+                ))}
+              </dl>
             </div>
-            <div className="hidden sm:block w-px h-12 bg-gray-200"></div>
-            <div className="flex items-center gap-3">
-              <Award className="w-6 h-6 text-[#D62828]" />
-              <div>
-                <div className="text-2xl font-black text-[#1A1A1A]">98%</div>
-                <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">Успешности</div>
-              </div>
-            </div>
-            <div className="hidden sm:block w-px h-12 bg-gray-200"></div>
-            <div className="flex items-center gap-3">
-              <Star className="w-6 h-6 text-[#F2C94C]" fill="#F2C94C" />
-              <div>
-                <div className="text-2xl font-black text-[#1A1A1A]">27</div>
-                <div className="text-xs text-gray-500 font-medium uppercase tracking-wide">Година искуства</div>
-              </div>
-            </div>
+
+            {/* Tablet: mascot next to text */}
+            <img
+              src="/mascot/alano-wave.webp"
+              alt="Алано, маскота платформе, маше"
+              className="hidden md:block lg:hidden w-56 h-auto drop-shadow-xl"
+              width="394"
+              height="596"
+            />
+          </div>
+
+          {/* Phone + tablet: video preview card under the CTA, with Alano peeking */}
+          <div className="lg:hidden relative mt-10 max-w-xl mx-auto md:mx-0">
+            <img
+              src="/mascot/alano-hero.webp"
+              alt=""
+              aria-hidden="true"
+              className="md:hidden absolute -top-16 right-2 w-24 h-auto z-10 drop-shadow-lg"
+              width="375"
+              height="592"
+            />
+            <VideoPreviewCard catalog={catalog} />
           </div>
         </div>
       </section>
@@ -518,30 +785,18 @@ export default function HomePage() {
       {/* 1.5 INICIJALNI TESTOVI SECTION — full screen */}
       <section
         id="inicijalni-testovi"
-        className="md:min-h-screen flex flex-col justify-center py-14 md:py-20 bg-gradient-to-b from-[#fdfafc] via-white to-[#fdfafc] relative overflow-hidden scroll-mt-24"
+        className="md:min-h-screen flex flex-col justify-center py-14 md:py-20 bg-gradient-to-b from-paper via-white to-paper relative overflow-hidden scroll-mt-24"
       >
-        {/* Playful background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-25">
-          <div className="absolute top-16 left-8 w-40 h-40 bg-[#D62828] rounded-full blur-3xl animate-pulse"></div>
-          <div
-            className="absolute top-1/3 right-10 w-28 h-28 bg-yellow-300 rounded-full blur-2xl animate-pulse"
-            style={{ animationDelay: '1s' }}
-          ></div>
-          <div
-            className="absolute bottom-16 left-1/3 w-52 h-52 bg-blue-300 rounded-full blur-3xl animate-pulse"
-            style={{ animationDelay: '2s' }}
-          ></div>
-        </div>
 
         <div className="max-w-6xl mx-auto px-6 relative z-10 w-full">
           <FadeInSection>
             <div className="text-center mb-4">
-              <span className="inline-flex items-center gap-2 bg-red-50 text-[#D62828] text-sm font-bold px-4 py-1.5 rounded-full">
+              <span className="inline-flex items-center gap-2 bg-red-50 text-brand text-sm font-bold px-4 py-1.5 rounded-full">
                 <Sparkles className="w-4 h-4" />
                 Бесплатно · без регистрације
               </span>
             </div>
-            <h2 className="text-3xl md:text-5xl font-extrabold text-[#1A1A1A] text-center mb-4">
+            <h2 className="text-3xl md:text-5xl font-extrabold text-ink text-center mb-4">
               Припреми се за иницијалне тестове
             </h2>
             <p className="text-gray-600 text-lg md:text-xl text-center max-w-2xl mx-auto mb-14">
@@ -555,29 +810,29 @@ export default function HomePage() {
               <FadeInSection key={test.razred} delay={i * 120}>
                 <Link
                   to={`/inicijalni-test/${test.razred}`}
-                  className="group flex flex-col h-full bg-white rounded-3xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-2xl hover:border-[#D62828]/40 hover:-translate-y-1.5 transition-all duration-300"
+                  className="group flex flex-col h-full bg-white rounded-3xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-2xl hover:border-brand/40 motion-safe:hover:-translate-y-1.5 transition-all duration-300"
                 >
                   <div className="flex items-center justify-between mb-5">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#D62828] to-[#B91F1F] flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-brand to-brand-700 flex items-center justify-center shadow-lg motion-safe:group-hover:scale-110 transition-transform duration-300">
                       <span className="text-2xl font-black text-white">{test.razred}</span>
                     </div>
-                    <ClipboardList className="w-6 h-6 text-gray-300 group-hover:text-[#D62828] transition-colors" />
+                    <ClipboardList className="w-6 h-6 text-gray-300 group-hover:text-brand transition-colors" />
                   </div>
 
-                  <h3 className="text-xl font-bold text-[#1A1A1A] mb-1">
+                  <h3 className="text-xl font-bold text-ink mb-1">
                     {test.razred}. разред
                   </h3>
                   <p className="text-sm text-gray-500 leading-relaxed mb-4 flex-1">
                     {test.kratakOpis}
                   </p>
 
-                  <div className="flex items-center gap-2 text-[11px] font-bold uppercase tracking-wide text-gray-400 mb-5">
+                  <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wide text-gray-500 mb-5">
                     <span>{test.pitanja.length} питања</span>
                     <span className="w-1 h-1 rounded-full bg-gray-300"></span>
                     <span>~5 мин</span>
                   </div>
 
-                  <span className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-full bg-[#1A1A1A] text-white text-sm font-bold group-hover:bg-[#D62828] transition-colors">
+                  <span className="inline-flex items-center justify-center gap-2 w-full py-3 rounded-full bg-ink text-white text-sm font-bold group-hover:bg-brand transition-colors">
                     Уради тест
                     <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                   </span>
@@ -587,7 +842,7 @@ export default function HomePage() {
           </div>
 
           <FadeInSection delay={200}>
-            <p className="text-center text-sm text-gray-400 mt-10">
+            <p className="text-center text-sm text-gray-500 mt-10">
               Тестови за 5, 6, 7. и 8. разред — граматика, правопис и књижевност.
             </p>
           </FadeInSection>
@@ -598,19 +853,13 @@ export default function HomePage() {
       <section
         id="kako-funkcionise"
         ref={howItWorksRef}
-        className={`pt-16 pb-12 md:pt-32 md:pb-24 bg-[#fdfafc] relative overflow-hidden transition-all duration-1000 ${howItWorksVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-20'
+        className={`pt-16 pb-12 md:pt-32 md:pb-24 bg-paper relative overflow-hidden scroll-mt-20 motion-safe:transition-all motion-safe:duration-700 ${howItWorksVisible || reducedMotion ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
           }`}
       >
-        {/* Playful Background */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none opacity-20">
-          <div className="absolute top-10 left-10 w-32 h-32 bg-yellow-300 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute top-40 right-20 w-24 h-24 bg-blue-300 rounded-full blur-2xl animate-pulse" style={{ animationDelay: '1s' }}></div>
-          <div className="absolute bottom-20 left-1/4 w-40 h-40 bg-pink-300 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
-        </div>
 
         <div className="max-w-5xl mx-auto px-6 relative z-10">
           <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-extrabold text-[#1A1A1A] mb-4">
+            <h2 className="text-3xl md:text-4xl font-extrabold text-ink mb-4">
               Како функционише?
             </h2>
           </div>
@@ -634,19 +883,19 @@ export default function HomePage() {
               {/* Step 1 - Left */}
               <div className="flex items-center gap-4 md:gap-8">
                 <div className="relative flex-shrink-0">
-                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-[#D62828] relative z-10">
-                    <BookOpen className="w-8 h-8 md:w-12 md:h-12 text-[#D62828]" />
+                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-brand relative z-10">
+                    <BookOpen className="w-8 h-8 md:w-12 md:h-12 text-brand" />
                   </div>
-                  <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center shadow-lg z-20">
+                  <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-brand to-brand-700 rounded-full flex items-center justify-center shadow-lg z-20">
                     <span className="text-xl font-black text-white">1</span>
                   </div>
                 </div>
                 <div className="flex-1 bg-white p-5 md:p-6 rounded-2xl shadow-lg">
-                  <h3 className="text-xl md:text-2xl font-bold text-[#1A1A1A] mb-2">
+                  <h3 className="text-xl md:text-2xl font-bold text-ink mb-2">
                     Изаберите курс
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-sm md:text-base">
-                    Прегледајте наше курсеве или пакете online наставе и изаберите онај који вам одговара.
+                    Прегледајте наше курсеве или пакете онлајн наставе и изаберите онај који вам одговара.
                   </p>
                 </div>
               </div>
@@ -654,17 +903,17 @@ export default function HomePage() {
               {/* Step 2 - Right */}
               <div className="flex items-center gap-4 md:gap-8 flex-row-reverse">
                 <div className="relative flex-shrink-0">
-                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-[#D62828] relative z-10">
-                    <svg className="w-8 h-8 md:w-12 md:h-12 text-[#D62828]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-brand relative z-10">
+                    <svg className="w-8 h-8 md:w-12 md:h-12 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                     </svg>
                   </div>
-                  <div className="absolute -top-2 -left-2 w-12 h-12 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center shadow-lg z-20">
+                  <div className="absolute -top-2 -left-2 w-12 h-12 bg-gradient-to-br from-brand to-brand-700 rounded-full flex items-center justify-center shadow-lg z-20">
                     <span className="text-xl font-black text-white">2</span>
                   </div>
                 </div>
                 <div className="flex-1 bg-white p-5 md:p-6 rounded-2xl shadow-lg">
-                  <h3 className="text-xl md:text-2xl font-bold text-[#1A1A1A] mb-2">
+                  <h3 className="text-xl md:text-2xl font-bold text-ink mb-2">
                     Извршите уплату
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-sm md:text-base">
@@ -676,17 +925,17 @@ export default function HomePage() {
               {/* Step 3 - Left */}
               <div className="flex items-center gap-4 md:gap-8">
                 <div className="relative flex-shrink-0">
-                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-[#D62828] relative z-10">
-                    <svg className="w-8 h-8 md:w-12 md:h-12 text-[#D62828]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-brand relative z-10">
+                    <svg className="w-8 h-8 md:w-12 md:h-12 text-brand" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                   </div>
-                  <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center shadow-lg z-20">
+                  <div className="absolute -top-2 -right-2 w-12 h-12 bg-gradient-to-br from-brand to-brand-700 rounded-full flex items-center justify-center shadow-lg z-20">
                     <span className="text-xl font-black text-white">3</span>
                   </div>
                 </div>
                 <div className="flex-1 bg-white p-5 md:p-6 rounded-2xl shadow-lg">
-                  <h3 className="text-xl md:text-2xl font-bold text-[#1A1A1A] mb-2">
+                  <h3 className="text-xl md:text-2xl font-bold text-ink mb-2">
                     Потврда уплате
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-sm md:text-base">
@@ -698,15 +947,15 @@ export default function HomePage() {
               {/* Step 4 - Right */}
               <div className="flex items-center gap-4 md:gap-8 flex-row-reverse">
                 <div className="relative flex-shrink-0">
-                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-[#D62828] relative z-10">
-                    <Video className="w-8 h-8 md:w-12 md:h-12 text-[#D62828]" />
+                  <div className="w-20 h-20 md:w-28 md:h-28 bg-white rounded-full flex items-center justify-center shadow-xl border-[6px] border-brand relative z-10">
+                    <Video className="w-8 h-8 md:w-12 md:h-12 text-brand" />
                   </div>
-                  <div className="absolute -top-2 -left-2 w-12 h-12 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center shadow-lg z-20">
+                  <div className="absolute -top-2 -left-2 w-12 h-12 bg-gradient-to-br from-brand to-brand-700 rounded-full flex items-center justify-center shadow-lg z-20">
                     <span className="text-xl font-black text-white">4</span>
                   </div>
                 </div>
                 <div className="flex-1 bg-white p-5 md:p-6 rounded-2xl shadow-lg">
-                  <h3 className="text-xl md:text-2xl font-bold text-[#1A1A1A] mb-2">
+                  <h3 className="text-xl md:text-2xl font-bold text-ink mb-2">
                     Почните да учите
                   </h3>
                   <p className="text-gray-600 leading-relaxed text-sm md:text-base">
@@ -720,11 +969,11 @@ export default function HomePage() {
       </section>
 
       {/* 3. COURSES SECTION */}
-      <section className="py-14 md:py-20 bg-[#fdfafc] overflow-hidden">
+      <section className="py-14 md:py-20 bg-paper overflow-hidden">
         <div className="max-w-7xl mx-auto px-6">
           <FadeInSection>
             <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4">
+              <h2 className="text-3xl md:text-4xl font-bold text-ink mb-4">
                 Наши курсеви
               </h2>
               <p className="text-gray-600 text-lg max-w-3xl mx-auto">
@@ -738,11 +987,11 @@ export default function HomePage() {
       </section>
 
       {/* 4. STATS SECTION */}
-      <section className="py-14 md:py-20 bg-[#fdfafc] relative overflow-hidden">
+      <section className="py-14 md:py-20 bg-paper relative overflow-hidden">
         <div className="max-w-6xl mx-auto px-6 relative z-10">
           <FadeInSection>
             <div className="text-center mb-14">
-              <h2 className="text-3xl md:text-5xl font-bold text-[#1A1A1A] mb-4">
+              <h2 className="text-3xl md:text-5xl font-bold text-ink mb-4">
                 Наш успех у бројкама
               </h2>
               <p className="text-gray-600 text-xl">
@@ -755,9 +1004,9 @@ export default function HomePage() {
             {/* Stat 1 */}
             <FadeInSection delay={0}>
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                <div className="relative bg-white border-2 border-[#D62828]/30 rounded-3xl p-6 md:p-10 text-center hover:border-[#D62828] transition-all hover:shadow-2xl">
-                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-[#D62828] to-[#B91F1F] bg-clip-text text-transparent mb-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-brand to-brand-700 rounded-3xl blur-xl opacity-10"></div>
+                <div className="relative bg-white border-2 border-brand/30 rounded-3xl p-6 md:p-10 text-center hover:border-brand transition-all hover:shadow-2xl">
+                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-brand to-brand-700 bg-clip-text text-transparent mb-2">
                     <AnimatedCounter end="700" suffix="+" />
                   </div>
                   <div className="text-base font-bold uppercase tracking-wider text-gray-600">Ученика</div>
@@ -768,9 +1017,9 @@ export default function HomePage() {
             {/* Stat 2 */}
             <FadeInSection delay={150}>
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#1A1A1A] to-gray-700 rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                <div className="relative bg-white border-2 border-gray-300 rounded-3xl p-6 md:p-10 text-center hover:border-[#1A1A1A] transition-all hover:shadow-2xl">
-                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-[#1A1A1A] to-gray-700 bg-clip-text text-transparent mb-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-ink to-gray-700 rounded-3xl blur-xl opacity-10"></div>
+                <div className="relative bg-white border-2 border-gray-300 rounded-3xl p-6 md:p-10 text-center hover:border-ink transition-all hover:shadow-2xl">
+                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-ink to-gray-700 bg-clip-text text-transparent mb-2">
                     <AnimatedCounter end="98" suffix="%" />
                   </div>
                   <div className="text-base font-bold uppercase tracking-wider text-gray-600">Успешност</div>
@@ -781,9 +1030,9 @@ export default function HomePage() {
             {/* Stat 3 */}
             <FadeInSection delay={300}>
               <div className="relative group">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-3xl blur-xl opacity-30 group-hover:opacity-50 transition-opacity"></div>
-                <div className="relative bg-white border-2 border-[#D62828]/30 rounded-3xl p-6 md:p-10 text-center hover:border-[#D62828] transition-all hover:shadow-2xl">
-                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-[#D62828] to-[#B91F1F] bg-clip-text text-transparent mb-2">
+                <div className="absolute inset-0 bg-gradient-to-br from-brand to-brand-700 rounded-3xl blur-xl opacity-10"></div>
+                <div className="relative bg-white border-2 border-brand/30 rounded-3xl p-6 md:p-10 text-center hover:border-brand transition-all hover:shadow-2xl">
+                  <div className="text-5xl md:text-6xl font-black bg-gradient-to-br from-brand to-brand-700 bg-clip-text text-transparent mb-2">
                     <AnimatedCounter end="27" />
                   </div>
                   <div className="text-base font-bold uppercase tracking-wider text-gray-600">Година искуства</div>
@@ -795,110 +1044,26 @@ export default function HomePage() {
       </section>
 
       {/* 5. TESTIMONIALS SECTION */}
-      <section className="py-14 md:py-20 bg-[#fdfafc] overflow-hidden">
+      {/* TODO(content): with written parental permission, add real first name + initial,
+          school and final exam score to each testimonial to make them verifiable. */}
+      <section className="py-14 md:py-20 bg-paper overflow-hidden" aria-labelledby="testimonials-title">
         <FadeInSection>
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl md:text-4xl font-bold text-[#1A1A1A] mb-4">Речи наших ученика</h2>
-            <p className="text-gray-600 text-lg">Успеси који говоре за нас</p>
+          <div className="mb-10 md:mb-12 text-center px-6">
+            <h2 id="testimonials-title" className="text-3xl md:text-4xl font-bold text-ink mb-4">Речи наших ученика</h2>
+            <p className="text-gray-600 text-lg">Искуства родитеља и ученика</p>
           </div>
         </FadeInSection>
-
-        {/* Desktop: Infinite Horizontal Scroll */}
-        <div className="relative hidden md:block">
-          <style>{`
-            @keyframes scroll-left {
-              0% { transform: translateX(0); }
-              100% { transform: translateX(-50%); }
-            }
-            .animate-scroll {
-              animation: scroll-left 40s linear infinite;
-            }
-            .animate-scroll:hover {
-              animation-play-state: paused;
-            }
-          `}</style>
-
-          <div className="flex gap-6 animate-scroll">
-            {/* Duplicate testimonials for infinite effect */}
-            {[...testimonials, ...testimonials, ...testimonials].map((t, i) => (
-              <div
-                key={i}
-                className="flex-shrink-0 w-[380px] bg-white p-8 rounded-xl hover:shadow-xl transition-all border-2 border-gray-100"
-              >
-                {/* Quote Content */}
-                <p className="text-[#1A1A1A] text-base italic mb-6 leading-relaxed min-h-[100px]">
-                  {t.text}
-                </p>
-
-                {/* Author Info */}
-                <div className="flex items-center gap-3 mt-auto">
-                  <div className="w-12 h-12 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                    {t.author.charAt(0)}
-                  </div>
-                  <div>
-                    <div className="font-bold text-[#1A1A1A] text-base">{t.author}</div>
-                    <div className="text-xs text-gray-500 uppercase font-bold tracking-wide">{t.role}</div>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Mobile: Manual Horizontal Scroll */}
-        <div className="md:hidden">
-          <div className="overflow-x-auto snap-x snap-mandatory scrollbar-hide pb-4 px-6">
-            <div className="flex gap-4">
-              {testimonials.map((t, i) => (
-                <div
-                  key={i}
-                  className="flex-shrink-0 w-[85vw] bg-white p-6 rounded-xl shadow-lg border-2 border-gray-100 snap-center"
-                >
-                  {/* Quote Content */}
-                  <p className="text-[#1A1A1A] text-sm italic mb-4 leading-relaxed">
-                    {t.text}
-                  </p>
-
-                  {/* Author Info */}
-                  <div className="flex items-center gap-3 mt-auto">
-                    <div className="w-10 h-10 bg-gradient-to-br from-[#D62828] to-[#B91F1F] rounded-full flex items-center justify-center text-white font-bold text-base shadow-lg">
-                      {t.author.charAt(0)}
-                    </div>
-                    <div>
-                      <div className="font-bold text-[#1A1A1A] text-sm">{t.author}</div>
-                      <div className="text-xs text-gray-500 uppercase font-bold tracking-wide">{t.role}</div>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-        </div>
-
-        <style>{`
-          .scrollbar-hide::-webkit-scrollbar {
-            display: none;
-          }
-          .scrollbar-hide {
-            -ms-overflow-style: none;
-            scrollbar-width: none;
-          }
-        `}</style>
+        <Testimonials items={testimonials} />
       </section>
 
       {/* 6. CTA SECTION */}
-      <section className="py-16 md:py-24 bg-[#fdfafc] relative overflow-hidden">
-        <div className="absolute top-0 left-0 w-full h-full opacity-5">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-[#D62828] rounded-full blur-3xl"></div>
-          <div className="absolute bottom-0 left-0 w-96 h-96 bg-[#F2C94C] rounded-full blur-3xl"></div>
-        </div>
+      <section className="py-16 md:py-24 bg-paper relative overflow-hidden">
 
         <div className="max-w-5xl mx-auto px-6 text-center relative z-10">
           <FadeInSection>
-            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-[#1A1A1A]">
+            <h2 className="text-3xl md:text-5xl lg:text-6xl font-bold mb-4 md:mb-6 leading-tight text-ink">
               Немојте чекати, <br />
-              <span className="text-[#D62828]">почните данас.</span>
+              <span className="text-brand">почните данас.</span>
             </h2>
 
             <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto mb-8 md:mb-12 leading-relaxed">
@@ -908,15 +1073,17 @@ export default function HomePage() {
 
           <FadeInSection delay={200}>
             <div className="flex flex-col sm:flex-row gap-4 md:gap-6 justify-center items-stretch sm:items-center">
-              <Link to="/register" className="w-full sm:w-auto">
-                <button className="w-full sm:w-auto bg-[#D62828] text-white px-8 md:px-16 py-4 md:py-6 rounded-full hover:bg-[#B91F1F] transition-all transform hover:scale-105 shadow-xl text-lg md:text-2xl font-bold flex items-center justify-center gap-3">
-                  Направи налог <ArrowRight className="w-5 h-5 md:w-7 md:h-7" />
-                </button>
+              <Link
+                to="/register"
+                className="w-full sm:w-auto bg-brand text-white px-8 md:px-14 py-4 md:py-5 rounded-full hover:bg-brand-700 transition-colors shadow-xl text-lg md:text-xl font-bold flex items-center justify-center gap-3"
+              >
+                Направи налог <ArrowRight className="w-5 h-5 md:w-6 md:h-6" aria-hidden="true" />
               </Link>
-              <Link to="/courses" className="w-full sm:w-auto">
-                <button className="w-full sm:w-auto bg-transparent border-2 border-[#1A1A1A] text-[#1A1A1A] px-8 md:px-16 py-4 md:py-6 rounded-full hover:bg-[#1A1A1A] hover:text-white transition-all text-lg md:text-2xl font-bold">
-                  Истражи курсеве
-                </button>
+              <Link
+                to="/courses"
+                className="w-full sm:w-auto border-2 border-ink text-ink px-8 md:px-14 py-4 md:py-5 rounded-full hover:bg-ink hover:text-white transition-colors text-lg md:text-xl font-bold text-center"
+              >
+                Истражи курсеве
               </Link>
             </div>
           </FadeInSection>

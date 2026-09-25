@@ -62,7 +62,7 @@ export default function OnlineClassesSection() {
     return (
       <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
         <div className="flex justify-center items-center py-12">
-          <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D62828] border-t-transparent"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent"></div>
         </div>
       </div>
     );
@@ -74,18 +74,18 @@ export default function OnlineClassesSection() {
 
   return (
     <div className="bg-white rounded-3xl shadow-sm border border-gray-100 p-8">
-      <h2 className="text-2xl font-bold text-[#1A1A1A] mb-6 flex items-center gap-3">
-        <Video className="w-8 h-8 text-[#D62828]" />
+      <h2 className="text-2xl font-bold text-ink mb-6 flex items-center gap-3">
+        <Video className="w-8 h-8 text-brand" />
         Ваши Часови
       </h2>
 
       {/* Active Package Info */}
-      <div className="bg-gradient-to-r from-[#D62828]/10 to-[#F2C94C]/10 rounded-2xl p-6 mb-6">
+      <div className="bg-gradient-to-r from-brand/10 to-gold/10 rounded-2xl p-6 mb-6">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-sm text-gray-600 mb-1">Активан пакет</div>
-            <div className="text-xl font-bold text-[#1A1A1A]">
-              {packageData?.name || 'Online настава'}
+            <div className="text-xl font-bold text-ink">
+              {packageData?.name || 'Онлајн настава'}
             </div>
             <div className="text-sm text-gray-500 mt-1">
               Важи до: {enrollment.endDate ? new Date(enrollment.endDate.toDate ? enrollment.endDate.toDate() : enrollment.endDate).toLocaleDateString('sr-RS') : '-'}
@@ -93,7 +93,7 @@ export default function OnlineClassesSection() {
           </div>
           <div className="text-right">
             <div className="text-sm text-gray-600 mb-1">Преостало часова</div>
-            <div className="text-3xl font-black text-[#D62828]">
+            <div className="text-3xl font-black text-brand">
               {enrollment.remainingClasses || 0}
             </div>
           </div>
@@ -102,11 +102,11 @@ export default function OnlineClassesSection() {
 
       {/* Next Session Card */}
       {nextSession ? (
-        <div className="border-2 border-[#D62828] rounded-2xl p-6 mb-6">
+        <div className="border-2 border-brand rounded-2xl p-6 mb-6">
           <div className="flex items-start justify-between mb-4">
             <div>
               <div className="text-sm text-gray-600 mb-1">Следећи час</div>
-              <div className="text-lg font-bold text-[#1A1A1A] mb-1">
+              <div className="text-lg font-bold text-ink mb-1">
                 {nextSession.notes || 'Online час'}
               </div>
               <div className="flex items-center gap-4 text-sm text-gray-600 mt-2">
@@ -130,7 +130,7 @@ export default function OnlineClassesSection() {
               href={nextSession.meetLink}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full bg-[#D62828] text-white py-3 rounded-xl font-bold hover:bg-[#B91F1F] transition-all flex items-center justify-center gap-2"
+              className="w-full bg-brand text-white py-3 rounded-xl font-bold hover:bg-brand-700 transition-all flex items-center justify-center gap-2"
             >
               <Video className="w-5 h-5" />
               Придружи се часу
@@ -139,7 +139,7 @@ export default function OnlineClassesSection() {
         </div>
       ) : (
         <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-2xl mb-6">
-          <Clock className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+          <Clock className="w-12 h-12 mx-auto mb-3 text-gray-500" />
           <p className="font-medium">Тренутно нема заказаних часова</p>
           {!groupData && (
             <p className="text-sm mt-2">
@@ -155,11 +155,11 @@ export default function OnlineClassesSection() {
           <div className="text-sm text-gray-600 mb-2">Ваша група</div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#D62828]/10 rounded-lg">
-                <Users className="w-5 h-5 text-[#D62828]" />
+              <div className="p-2 bg-brand-50 rounded-lg">
+                <Users className="w-5 h-5 text-brand" />
               </div>
               <div>
-                <div className="font-bold text-[#1A1A1A]">{groupData.name}</div>
+                <div className="font-bold text-ink">{groupData.name}</div>
                 <div className="text-sm text-gray-600">
                   Наставник: {groupData.teacherName}
                 </div>
@@ -170,7 +170,7 @@ export default function OnlineClassesSection() {
                 <div>
                   {['Недеља', 'Понедељак', 'Уторак', 'Среда', 'Четвртак', 'Петак', 'Субота'][groupData.schedule.dayOfWeek || 0]}
                 </div>
-                <div className="font-bold text-[#1A1A1A]">
+                <div className="font-bold text-ink">
                   {groupData.schedule.time}
                 </div>
               </div>

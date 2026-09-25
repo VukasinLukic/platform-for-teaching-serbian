@@ -27,6 +27,19 @@ export const createCourseTransaction = onCall({ cors: true, ...APP_CHECK }, asyn
   try {
     const db = getFirestore();
 
+    // Purchases require a verified email. The ID token claim is the primary check; the
+    // users document flag (writable only by the server/admin, see firestore.rules) covers
+    // a token issued moments before verification.
+    if (request.auth.token.email_verified !== true) {
+      const profile = await db.collection('users').doc(userId).get();
+      if (!profile.exists || profile.data().emailVerified !== true) {
+        throw new HttpsError(
+          'failed-precondition',
+          'Пре куповине потврдите имејл адресу. Линк за потврду смо послали на ваш имејл (проверите и Spam/Промоције).'
+        );
+      }
+    }
+
     const courseDoc = await db.collection('courses').doc(courseId).get();
     if (!courseDoc.exists) {
       throw new HttpsError('not-found', 'Kurs ne postoji');
@@ -55,7 +68,7 @@ export const createCourseTransaction = onCall({ cors: true, ...APP_CHECK }, asyn
       const data = tx.data();
       return {
         transactionId: tx.id,
-        paymentReference: data.payment_ref,
+        paymentReference: data.paymentRef || data.payment_ref,
         amount: data.amount,
         courseName: data.courseName || course.title,
       };
@@ -74,8 +87,10 @@ export const createCourseTransaction = onCall({ cors: true, ...APP_CHECK }, asyn
       courseName: course.title || '',
       amount: course.price,
       status: 'pending',
-      payment_ref: paymentRef,
+      paymentRef,
+      payment_ref: paymentRef, // legacy mirror, see transactionModel.js
       userName: user.ime || '',
+      userEmail: user.email || request.auth.token.email || '',
       user_email: user.email || request.auth.token.email || '',
       createdAt: FieldValue.serverTimestamp(),
       created_at: FieldValue.serverTimestamp(),

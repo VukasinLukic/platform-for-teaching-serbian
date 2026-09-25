@@ -24,7 +24,6 @@ export const setUserRole = onCall({
     'https://srpskiusrcu.rs',
     'https://www.srpskiusrcu.rs'
   ],
-  region: 'us-central1',
   invoker: 'public'
 }, async (request) => {
   console.log('🔵 setUserRole called');

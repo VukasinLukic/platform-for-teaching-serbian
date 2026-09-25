@@ -16,12 +16,23 @@ export const formatPrice = (amount) => {
 };
 
 /**
+ * Coerce string / millis / Date / Firestore Timestamp into a Date.
+ * @param {*} date
+ * @returns {Date}
+ */
+const coerceDate = (date) => {
+  if (date && typeof date.toDate === 'function') return date.toDate();
+  if (date instanceof Date) return date;
+  return new Date(date);
+};
+
+/**
  * Format date to Serbian locale
- * @param {string|Date} date
+ * @param {string|Date|import('firebase/firestore').Timestamp} date
  * @returns {string}
  */
 export const formatDate = (date) => {
-  const d = typeof date === 'string' ? new Date(date) : date;
+  const d = coerceDate(date);
   return new Intl.DateTimeFormat('sr-RS', {
     year: 'numeric',
     month: 'long',
@@ -35,7 +46,7 @@ export const formatDate = (date) => {
  * @returns {string}
  */
 export const formatDateTime = (date) => {
-  const d = typeof date === 'string' ? new Date(date) : date;
+  const d = coerceDate(date);
   return new Intl.DateTimeFormat('sr-RS', {
     year: 'numeric',
     month: 'long',

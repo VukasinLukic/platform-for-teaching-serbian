@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, query, orderBy, limit, startAfter, getDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, getDoc, doc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
+import { normalizeTransaction, sortByCreatedAtDesc } from '../../services/transactions';
 import { formatPrice } from '../../utils/helpers';
-import { CheckCircle, XCircle, Clock, ChevronLeft, ChevronRight, Mail, User } from 'lucide-react';
+import { CheckCircle, XCircle, Clock, ChevronLeft, ChevronRight, Mail } from 'lucide-react';
 
 export default function TransactionHistory({ itemsPerPage = 10 }) {
   const [transactions, setTransactions] = useState([]);
@@ -19,28 +20,25 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
     try {
       console.log('🔵 [TransactionHistory] Loading all transactions...');
 
-      const q = query(
-        collection(db, 'transactions'),
-        orderBy('created_at', 'desc')
-      );
-
-      const snapshot = await getDocs(q);
+      // No server-side orderBy: legacy docs without `created_at` would be dropped.
+      // Normalize and sort client-side instead.
+      const snapshot = await getDocs(collection(db, 'transactions'));
       console.log('✅ [TransactionHistory] Found', snapshot.docs.length, 'transactions');
 
       // Učitaj podatke korisnika za svaku transakciju
       const txList = await Promise.all(
         snapshot.docs.map(async (txDoc) => {
-          const txData = { id: txDoc.id, ...txDoc.data() };
+          const txData = normalizeTransaction(txDoc);
 
           // Dohvati podatke korisnika iz users kolekcije
-          if (txData.userId || txData.user_id) {
-            const userId = txData.userId || txData.user_id;
+          if (txData.userId) {
+            const userId = txData.userId;
             try {
               const userDoc = await getDoc(doc(db, 'users', userId));
               if (userDoc.exists()) {
                 const userData = userDoc.data();
                 txData.userName = userData.ime || 'Непознато име';
-                txData.userEmail = userData.email || txData.user_email || 'Непознат емаил';
+                txData.userEmail = userData.email || txData.userEmail || 'Непознат емаил';
                 txData.userPhone = userData.telefon || '';
               }
             } catch (error) {
@@ -52,9 +50,10 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
         })
       );
 
-      setAllTransactions(txList);
-      setTotalPages(Math.ceil(txList.length / itemsPerPage));
-      updatePage(1, txList);
+      const sorted = sortByCreatedAtDesc(txList);
+      setAllTransactions(sorted);
+      setTotalPages(Math.ceil(sorted.length / itemsPerPage));
+      updatePage(1, sorted);
     } catch (error) {
       console.error('❌ [TransactionHistory] Error loading transactions:', error);
     } finally {
@@ -112,7 +111,7 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D62828] border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent"></div>
       </div>
     );
   }
@@ -120,7 +119,7 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
   if (allTransactions.length === 0) {
     return (
       <div className="text-center py-12 text-gray-600">
-        <Clock className="w-12 h-12 mx-auto mb-3 text-gray-400" />
+        <Clock className="w-12 h-12 mx-auto mb-3 text-gray-500" />
         <p className="font-medium">Нема трансакција за приказ</p>
       </div>
     );
@@ -128,17 +127,43 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <h3 className="text-2xl font-bold text-[#1A1A1A]">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <h3 className="text-xl md:text-2xl font-bold text-ink">
           Историја Трансакција
         </h3>
         <div className="text-sm text-gray-600">
-          Укупно: <span className="font-bold text-[#1A1A1A]">{allTransactions.length}</span> трансакција
+          Укупно: <span className="font-bold text-ink">{allTransactions.length}</span> трансакција
         </div>
       </div>
 
-      {/* Table */}
-      <div className="bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
+      {/* Mobile: card list (below md) */}
+      <ul className="md:hidden space-y-3" aria-label="Трансакције">
+        {transactions.map((tx) => (
+          <li key={tx.id} className="bg-white rounded-2xl border border-gray-100 shadow-sm p-4">
+            <div className="flex items-start gap-3">
+              <div className="w-10 h-10 rounded-full bg-brand flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                {tx.userName?.charAt(0) || tx.userEmail?.charAt(0).toUpperCase() || '?'}
+              </div>
+              <div className="min-w-0 flex-1">
+                <div className="font-semibold text-ink truncate">{tx.userName || 'Непознато име'}</div>
+                <div className="text-sm text-gray-600 truncate">{tx.userEmail || 'Непознат емаил'}</div>
+                {tx.userPhone && <div className="text-xs text-gray-500 mt-0.5">{tx.userPhone}</div>}
+              </div>
+              <div className="font-bold text-brand text-base whitespace-nowrap">{formatPrice(tx.amount)}</div>
+            </div>
+            <div className="mt-3 pt-3 border-t border-gray-100 flex flex-wrap items-center justify-between gap-2">
+              {getStatusBadge(tx.status)}
+              <span className="text-xs text-gray-500">
+                {new Date(tx.created_at?.toDate?.() || tx.created_at).toLocaleString('sr-RS')}
+              </span>
+            </div>
+            <div className="mt-1 text-xs text-gray-500 font-mono">ID: {tx.id.substring(0, 8)}…</div>
+          </li>
+        ))}
+      </ul>
+
+      {/* Table (md and up) */}
+      <div className="hidden md:block bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
@@ -155,11 +180,11 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
                 <tr key={tx.id} className="hover:bg-gray-50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#D62828] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+                      <div className="w-10 h-10 rounded-full bg-brand flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
                         {tx.userName?.charAt(0) || tx.userEmail?.charAt(0).toUpperCase() || '?'}
                       </div>
                       <div className="min-w-0">
-                        <div className="font-semibold text-[#1A1A1A] truncate">
+                        <div className="font-semibold text-ink truncate">
                           {tx.userName || 'Непознато име'}
                         </div>
                         <div className="text-sm text-gray-600 flex items-center gap-1 truncate">
@@ -176,13 +201,13 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
                     {getStatusBadge(tx.status)}
                   </td>
                   <td className="px-6 py-4">
-                    <div className="font-bold text-[#D62828] text-lg">
+                    <div className="font-bold text-brand text-lg">
                       {formatPrice(tx.amount)}
                     </div>
                   </td>
                   <td className="px-6 py-4">
                     <div className="text-sm text-gray-600">
-                      {new Date(tx.created_at?.toDate?.() || tx.created_at).toLocaleString('sr-RS')}
+                      {tx.createdAt ? tx.createdAt.toLocaleString('sr-RS') : '—'}
                     </div>
                   </td>
                   <td className="px-6 py-4">
@@ -199,7 +224,7 @@ export default function TransactionHistory({ itemsPerPage = 10 }) {
 
       {/* Pagination */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between">
+        <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="text-sm text-gray-600">
             Страна {currentPage} од {totalPages}
           </div>

@@ -36,21 +36,21 @@ export default function EmailVerificationGate() {
       }
     } catch (error) {
       console.error('Error resending verification email:', error);
-      alert('Greška prilikom slanja email-a. Pokušajte ponovo.');
+      alert('Грешка приликом слања имејла. Покушајте поново.');
     } finally {
       setResending(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F3EF] flex items-center justify-center px-4 py-8">
+    <div className="min-h-screen bg-paper-200 flex items-center justify-center px-4 py-8">
       <div className="max-w-lg w-full">
         <div className="bg-white rounded-2xl shadow-lg overflow-hidden border border-gray-200">
           {/* Header - minimalist */}
-          <div className="bg-[#D62828] p-6 text-center">
+          <div className="bg-brand p-6 text-center">
             <Mail className="w-12 h-12 text-white mx-auto mb-3" />
             <h1 className="text-2xl font-bold text-white mb-1">Верификујте Email</h1>
-            <p className="text-white/90 text-sm">Проверите ваш inbox</p>
+            <p className="text-white text-sm">Проверите ваш inbox</p>
           </div>
 
           {/* Content */}
@@ -59,7 +59,7 @@ export default function EmailVerificationGate() {
               <p className="text-gray-600 text-sm mb-2">
                 Email послат на:
               </p>
-              <p className="text-lg font-bold text-[#D62828] mb-4">
+              <p className="text-lg font-bold text-brand mb-4">
                 {userProfile?.email || user?.email}
               </p>
 
@@ -77,22 +77,22 @@ export default function EmailVerificationGate() {
                 <p className="text-sm text-gray-700 mb-2 font-medium">Шта да урадите:</p>
                 <ol className="text-left text-gray-600 text-xs space-y-1.5 max-w-xs mx-auto">
                   <li className="flex gap-2">
-                    <span className="text-[#D62828] font-bold">1.</span>
+                    <span className="text-brand font-bold">1.</span>
                     <span>Отворите email inbox</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="text-[#D62828] font-bold">2.</span>
+                    <span className="text-brand font-bold">2.</span>
                     <span>Кликните на верификациони линк</span>
                   </li>
                   <li className="flex gap-2">
-                    <span className="text-[#D62828] font-bold">3.</span>
+                    <span className="text-brand font-bold">3.</span>
                     <span>Аутоматски улазак на платформу</span>
                   </li>
                 </ol>
               </div>
 
               <p className="text-xs text-gray-500 mb-4">
-                Нисте добили email? Проверите спам фолдер.
+                Нисте добили имејл? Проверите и Spam/Промоције. Линк важи 24 часа.
               </p>
             </div>
 
@@ -102,7 +102,7 @@ export default function EmailVerificationGate() {
               <button
                 onClick={handleResendEmail}
                 disabled={resending || emailResent}
-                className="w-full bg-white border border-[#D62828] text-[#D62828] py-2.5 rounded-lg font-semibold text-sm hover:bg-[#D62828] hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-white border border-brand text-brand py-2.5 rounded-lg font-semibold text-sm hover:bg-brand hover:text-white transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {resending ? (
                   <>
@@ -137,7 +137,7 @@ export default function EmailVerificationGate() {
         <div className="text-center mt-4">
           <p className="text-xs text-gray-500">
             Проблеми?{' '}
-            <a href="mailto:kontakt@srpskiusrcu.com" className="text-[#D62828] hover:underline font-medium">
+            <a href="mailto:kontakt@srpskiusrcu.com" className="text-brand hover:underline font-medium">
               kontakt@srpskiusrcu.com
             </a>
           </p>

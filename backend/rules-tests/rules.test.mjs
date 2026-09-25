@@ -13,6 +13,9 @@ await env.withSecurityRulesDisabled(async (c) => {
   await setDoc(doc(db,'users','bob'), { ime:'Bob', email:'b@x.rs', role:'korisnik', emailVerified:true });
   await setDoc(doc(db,'transactions','tx1'), { userId:'alice', user_id:'alice', courseId:'cheap', course_id:'cheap', amount:1000, status:'pending' });
   await setDoc(doc(db,'transactions','tx2'), { userId:'bob', courseId:'c', amount:1000, status:'pending' });
+  // K-01: legacy snake_case-only doc and canonical camelCase-only doc
+  await setDoc(doc(db,'transactions','txLegacy'), { user_id:'alice', course_id:'c', payment_ref:'97-1', created_at:'2024-01-01T00:00:00.000Z', amount:1000, status:'pending' });
+  await setDoc(doc(db,'transactions','txCamel'), { type:'course', userId:'alice', courseId:'c', paymentRef:'97-2', createdAt:new Date(), amount:1000, status:'pending' });
   await uploadBytes(ref(c.storage(), 'course-materials/c/l/f.pdf'), new Uint8Array([1]));
   await setDoc(doc(db,'online_sessions','s1'), { groupId:'g1', meetLink:'https://meet.google.com/x', status:'scheduled' });
   await setDoc(doc(db,'online_groups','g1'), { name:'G' });
@@ -43,6 +46,14 @@ await t('user can attach confirmation', assertSucceeds(updateDoc(doc(adb,'transa
 await t('user queries own tx', assertSucceeds(getDocs(query(collection(adb,'transactions'), where('userId','==','alice')))));
 await t('user cannot read others tx', assertFails(getDoc(doc(adb,'transactions','tx2'))));
 await t('admin updates tx', assertSucceeds(updateDoc(doc(admin.firestore(),'transactions','tx2'), { status:'confirmed' })));
+// K-01: transaction shape compatibility
+await t('owner reads legacy user_id tx', assertSucceeds(getDoc(doc(adb,'transactions','txLegacy'))));
+await t('owner reads camelCase-only tx', assertSucceeds(getDoc(doc(adb,'transactions','txCamel'))));
+await t('user queries own tx by legacy user_id', assertSucceeds(getDocs(query(collection(adb,'transactions'), where('user_id','==','alice')))));
+await t('owner attaches confirmation to camelCase tx', assertSucceeds(updateDoc(doc(adb,'transactions','txCamel'), { confirmationUrl:'u', confirmationUploadedAt:'t', status:'pending' })));
+await t('owner cannot change paymentRef', assertFails(updateDoc(doc(adb,'transactions','txCamel'), { paymentRef:'x' })));
+await t('owner cannot add userId to legacy tx', assertFails(updateDoc(doc(adb,'transactions','txLegacy'), { userId:'alice' })));
+await t('other user cannot query by user_id', assertFails(getDocs(query(collection(env.authenticatedContext('bob').firestore(),'transactions'), where('user_id','==','alice')))));
 // Storage
 await t('owner uploads confirmation', assertSucceeds(uploadBytes(ref(alice.storage(),'payment-confirmations/tx1'), new Uint8Array([1]), { contentType:'image/png' })));
 await t('other user cannot upload to tx1', assertFails(uploadBytes(ref(env.authenticatedContext('bob').storage(),'payment-confirmations/tx1'), new Uint8Array([1]), { contentType:'image/png' })));

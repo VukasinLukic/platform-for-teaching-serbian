@@ -214,7 +214,7 @@ export default function SessionsManager() {
   if (loading) {
     return (
       <div className="flex justify-center items-center py-20">
-        <div className="animate-spin rounded-full h-12 w-12 border-4 border-[#D62828] border-t-transparent"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-4 border-brand border-t-transparent"></div>
       </div>
     );
   }
@@ -225,12 +225,12 @@ export default function SessionsManager() {
       <div className="space-y-6">
         {/* Header */}
         <div className="flex items-center justify-between">
-        <h3 className="text-2xl font-bold text-[#1A1A1A]">
+        <h3 className="text-2xl font-bold text-ink">
           Часови ({sessions.length})
         </h3>
         <button
           onClick={() => handleOpenModal()}
-          className="bg-[#D62828] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#B91F1F] transition-all flex items-center gap-2"
+          className="bg-brand text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-700 transition-all flex items-center gap-2"
         >
           <Plus className="w-5 h-5" />
           Закажи Час
@@ -240,12 +240,12 @@ export default function SessionsManager() {
       {/* Sessions List */}
       {sessions.length === 0 ? (
         <div className="text-center py-20 bg-gray-50 rounded-2xl">
-          <Calendar className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-[#1A1A1A] mb-2">Нема заказаних часова</h3>
+          <Calendar className="w-16 h-16 text-gray-500 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-ink mb-2">Нема заказаних часова</h3>
           <p className="text-gray-600 mb-6">Закажите први час за групу</p>
           <button
             onClick={() => handleOpenModal()}
-            className="bg-[#D62828] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#B91F1F] transition-all inline-flex items-center gap-2"
+            className="bg-brand text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-700 transition-all inline-flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />
             Закажи Час
@@ -265,7 +265,7 @@ export default function SessionsManager() {
                   <div className="flex-1">
                     {/* Group & Date */}
                     <div className="flex items-center gap-4 mb-3">
-                      <h4 className="text-lg font-bold text-[#1A1A1A]">
+                      <h4 className="text-lg font-bold text-ink">
                         {session.group?.name || 'Непозната група'}
                       </h4>
                       {getStatusBadge(session.status)}
@@ -283,7 +283,7 @@ export default function SessionsManager() {
                           <Calendar className="w-4 h-4" />
                           Датум
                         </div>
-                        <div className="font-semibold text-[#1A1A1A]">
+                        <div className="font-semibold text-ink">
                           {sessionDate.toLocaleDateString('sr-RS')}
                         </div>
                       </div>
@@ -293,7 +293,7 @@ export default function SessionsManager() {
                           <Clock className="w-4 h-4" />
                           Време
                         </div>
-                        <div className="font-semibold text-[#1A1A1A]">
+                        <div className="font-semibold text-ink">
                           {session.scheduledTime}
                         </div>
                       </div>
@@ -303,7 +303,7 @@ export default function SessionsManager() {
                           <Clock className="w-4 h-4" />
                           Трајање
                         </div>
-                        <div className="font-semibold text-[#1A1A1A]">
+                        <div className="font-semibold text-ink">
                           {session.duration} мин
                         </div>
                       </div>
@@ -313,7 +313,7 @@ export default function SessionsManager() {
                           <Users className="w-4 h-4" />
                           Наставник
                         </div>
-                        <div className="font-semibold text-[#1A1A1A]">
+                        <div className="font-semibold text-ink">
                           {session.group?.teacherName || '-'}
                         </div>
                       </div>
@@ -366,7 +366,7 @@ export default function SessionsManager() {
             <div className="p-6">
               {/* Modal Header */}
               <div className="flex items-center justify-between mb-6">
-                <h3 className="text-2xl font-bold text-[#1A1A1A]">
+                <h3 className="text-2xl font-bold text-ink">
                   {editingSession ? 'Измени Час' : 'Закажи Час'}
                 </h3>
                 <button
@@ -386,7 +386,7 @@ export default function SessionsManager() {
                   <select
                     value={formData.groupId}
                     onChange={(e) => setFormData({ ...formData, groupId: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                   >
                     <option value="">Изаберите групу</option>
                     {groups.filter(g => g.isActive).map(group => (
@@ -404,7 +404,7 @@ export default function SessionsManager() {
                       type="date"
                       value={formData.scheduledDate}
                       onChange={(e) => setFormData({ ...formData, scheduledDate: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                     />
                   </div>
 
@@ -416,7 +416,7 @@ export default function SessionsManager() {
                       type="time"
                       value={formData.scheduledTime}
                       onChange={(e) => setFormData({ ...formData, scheduledTime: e.target.value })}
-                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+                      className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -429,7 +429,7 @@ export default function SessionsManager() {
                     type="number"
                     value={formData.duration}
                     onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                     min="30"
                     step="15"
                   />
@@ -443,7 +443,7 @@ export default function SessionsManager() {
                     type="url"
                     value={formData.meetLink}
                     onChange={(e) => setFormData({ ...formData, meetLink: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                     placeholder="https://meet.google.com/..."
                   />
                 </div>
@@ -455,7 +455,7 @@ export default function SessionsManager() {
                   <textarea
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                     rows="3"
                     placeholder="нпр. Тема: Основе српског језика"
                   ></textarea>
@@ -468,7 +468,7 @@ export default function SessionsManager() {
                   <select
                     value={formData.status}
                     onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#D62828] focus:border-transparent"
+                    className="w-full px-4 py-3 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand focus:border-transparent"
                   >
                     <option value="scheduled">Заказано</option>
                     <option value="ongoing">У току</option>
@@ -483,14 +483,14 @@ export default function SessionsManager() {
                 <button
                   onClick={handleSaveSession}
                   disabled={!formData.groupId || !formData.scheduledDate || !formData.scheduledTime}
-                  className="flex-1 bg-[#D62828] text-white px-6 py-3 rounded-xl font-bold hover:bg-[#B91F1F] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  className="flex-1 bg-brand text-white px-6 py-3 rounded-xl font-bold hover:bg-brand-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                 >
                   <Save className="w-5 h-5" />
                   {editingSession ? 'Сачувај Измене' : 'Закажи Час'}
                 </button>
                 <button
                   onClick={() => setShowModal(false)}
-                  className="bg-gray-100 text-[#1A1A1A] px-6 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all"
+                  className="bg-gray-100 text-ink px-6 py-3 rounded-xl font-bold hover:bg-gray-200 transition-all"
                 >
                   Откажи
                 </button>

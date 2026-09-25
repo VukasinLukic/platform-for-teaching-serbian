@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
 import { db } from '../../services/firebase';
 import { verifyPayment } from '../../services/admin.service';
+import { normalizeTransaction, sortByCreatedAtDesc } from '../../services/transactions';
 import { CheckCircle, XCircle, Loader2, ExternalLink, User, BookOpen } from 'lucide-react';
 import { formatPrice, formatDate } from '../../utils/helpers';
 import { sendPaymentConfirmationEmail, sendPaymentRejectionEmail } from '../../services/email.service';
@@ -26,11 +27,11 @@ export default function PaymentVerifier() {
       // Load additional data for each transaction
       const paymentsData = await Promise.all(
         snapshot.docs.map(async (docSnap) => {
-          const transaction = docSnap.data();
+          const transaction = normalizeTransaction(docSnap);
 
           // Load user data
           let user = null;
-          const userId = transaction.userId || transaction.user_id;
+          const userId = transaction.userId;
           if (userId) {
             const userDoc = await getDoc(doc(db, 'users', userId));
             user = userDoc.exists() ? userDoc.data() : null;
@@ -39,10 +40,10 @@ export default function PaymentVerifier() {
           // Load course or package data based on type
           let course = null;
           let package_data = null;
-          const type = transaction.type || 'course';
+          const type = transaction.type;
 
-          if (type === 'course' && transaction.course_id) {
-            const courseDoc = await getDoc(doc(db, 'courses', transaction.course_id));
+          if (type === 'course' && transaction.courseId) {
+            const courseDoc = await getDoc(doc(db, 'courses', transaction.courseId));
             course = courseDoc.exists() ? courseDoc.data() : null;
           } else if (type === 'online_package') {
             // For online packages, create package_data from transaction fields
@@ -53,7 +54,6 @@ export default function PaymentVerifier() {
           }
 
           return {
-            id: docSnap.id,
             ...transaction,
             user,
             course,
@@ -62,7 +62,7 @@ export default function PaymentVerifier() {
         })
       );
 
-      setPendingPayments(paymentsData);
+      setPendingPayments(sortByCreatedAtDesc(paymentsData));
     } catch (error) {
       console.error('Error loading pending payments:', error);
     } finally {
@@ -160,28 +160,28 @@ export default function PaymentVerifier() {
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Loader2 className="h-8 w-8 animate-spin text-[#D62828]" />
+        <Loader2 className="h-8 w-8 animate-spin text-brand" />
       </div>
     );
   }
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-[#1A1A1A]">Верификација уплата</h2>
+      <div className="flex flex-wrap justify-between items-center gap-3 mb-6">
+        <h2 className="text-xl md:text-2xl font-bold text-ink">Верификација уплата</h2>
         <button
           onClick={loadPendingPayments}
-          className="px-4 py-2 rounded-2xl bg-[#F7F7F7] text-[#1A1A1A] font-medium hover:bg-gray-200 transition-colors"
+          className="px-4 py-2 rounded-2xl bg-surface text-ink font-medium hover:bg-gray-200 transition-colors"
         >
           Освежи
         </button>
       </div>
 
       {pendingPayments.length === 0 ? (
-        <div className="bg-white rounded-3xl p-12 text-center shadow-sm border border-gray-100">
+        <div className="bg-white rounded-3xl p-8 md:p-12 text-center shadow-sm border border-gray-100">
           <CheckCircle className="h-16 w-16 text-green-500 mx-auto mb-4" />
           <p className="text-gray-600 text-lg">Нема уплата на чекању</p>
-          <p className="text-sm text-gray-400 mt-2">
+          <p className="text-sm text-gray-500 mt-2">
             Све уплате су верификоване
           </p>
         </div>
@@ -190,40 +190,40 @@ export default function PaymentVerifier() {
           {pendingPayments.map((payment) => (
             <div
               key={payment.id}
-              className="bg-white rounded-3xl p-8 shadow-sm border border-gray-100"
+              className="bg-white rounded-2xl md:rounded-3xl p-4 sm:p-6 md:p-8 shadow-sm border border-gray-100"
             >
               {/* Header */}
-              <div className="flex items-start justify-between mb-6">
-                <div>
-                  <h3 className="text-xl font-bold text-[#1A1A1A] mb-1">
+              <div className="flex flex-wrap items-start justify-between gap-3 mb-4 md:mb-6">
+                <div className="min-w-0">
+                  <h3 className="text-xl font-bold text-ink mb-1">
                     {formatPrice(payment.amount)}
                   </h3>
-                  <p className="text-sm text-gray-500">
+                  <p className="text-xs sm:text-sm text-gray-500 break-all">
                     ID: {payment.id}
                   </p>
                 </div>
                 <div className="text-right">
-                  <div className="bg-[#F2C94C]/20 text-[#1A1A1A] px-4 py-2 rounded-full text-sm font-bold">
+                  <div className="bg-gold/20 text-ink px-4 py-2 rounded-full text-sm font-bold">
                     На чекању
                   </div>
-                  <p className="text-xs text-gray-400 mt-2">
-                    {payment.created_at && formatDate(payment.created_at)}
+                  <p className="text-xs text-gray-500 mt-2">
+                    {payment.createdAt && formatDate(payment.createdAt)}
                   </p>
                 </div>
               </div>
 
               {/* User & Course Info Grid */}
-              <div className="grid md:grid-cols-2 gap-6 mb-6">
+              <div className="grid md:grid-cols-2 gap-3 md:gap-6 mb-4 md:mb-6">
                 {/* User Info */}
-                <div className="bg-[#F7F7F7] rounded-2xl p-4">
+                <div className="bg-surface rounded-2xl p-4">
                   <div className="flex items-center space-x-2 mb-3">
-                    <User className="h-5 w-5 text-[#D62828]" />
-                    <h4 className="font-bold text-[#1A1A1A]">Корисник</h4>
+                    <User className="h-5 w-5 text-brand" />
+                    <h4 className="font-bold text-ink">Корисник</h4>
                   </div>
                   {payment.user ? (
                     <div className="space-y-1 text-sm text-gray-600">
                       <p className="font-semibold">{payment.user.ime}</p>
-                      <p className="text-gray-500">{payment.user.email}</p>
+                      <p className="text-gray-500 break-all">{payment.user.email}</p>
                       {payment.user.telefon && (
                         <p className="text-gray-500">{payment.user.telefon}</p>
                       )}
@@ -234,10 +234,10 @@ export default function PaymentVerifier() {
                 </div>
 
                 {/* Course/Package Info */}
-                <div className="bg-[#F7F7F7] rounded-2xl p-4">
+                <div className="bg-surface rounded-2xl p-4">
                   <div className="flex items-center space-x-2 mb-3">
-                    <BookOpen className="h-5 w-5 text-[#D62828]" />
-                    <h4 className="font-bold text-[#1A1A1A]">
+                    <BookOpen className="h-5 w-5 text-brand" />
+                    <h4 className="font-bold text-ink">
                       {payment.type === 'online_package' ? 'Online Пакет' : 'Курс'}
                     </h4>
                   </div>
@@ -264,15 +264,15 @@ export default function PaymentVerifier() {
               </div>
 
               {/* Payment Reference */}
-              <div className="bg-blue-50/50 rounded-2xl p-4 mb-6">
-                <div className="flex justify-between items-center">
+              <div className="bg-blue-50/50 rounded-2xl p-4 mb-4 md:mb-6">
+                <div className="flex flex-wrap justify-between items-center gap-3">
                   <div>
                     <p className="text-sm text-gray-500 mb-1">Позив на број</p>
-                    <p className="font-mono font-bold text-lg text-[#1A1A1A]">{payment.payment_ref}</p>
+                    <p className="font-mono font-bold text-base sm:text-lg text-ink break-all">{payment.paymentRef}</p>
                   </div>
-                  {payment.invoice_url && (
+                  {payment.invoiceUrl && (
                     <a
-                      href={payment.invoice_url}
+                      href={payment.invoiceUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium hover:bg-gray-50 flex items-center"
@@ -285,9 +285,9 @@ export default function PaymentVerifier() {
               </div>
 
               {/* Confirmation Document */}
-              {payment.confirmationUrl || payment.confirmation_url ? (
-                <div className="bg-green-50 rounded-2xl p-4 mb-6 border border-green-100">
-                  <div className="flex items-center justify-between">
+              {payment.confirmationUrl ? (
+                <div className="bg-green-50 rounded-2xl p-4 mb-4 md:mb-6 border border-green-100">
+                  <div className="flex flex-wrap items-center justify-between gap-3">
                     <div>
                       <p className="font-semibold text-green-800 mb-1">✓ Потврда о уплати примљена</p>
                       <p className="text-sm text-green-600">
@@ -295,7 +295,7 @@ export default function PaymentVerifier() {
                       </p>
                     </div>
                     <a
-                      href={payment.confirmationUrl || payment.confirmation_url}
+                      href={payment.confirmationUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-4 py-2 bg-white text-green-700 border border-green-200 rounded-xl text-sm font-medium hover:bg-green-50 flex items-center shadow-sm"
@@ -306,7 +306,7 @@ export default function PaymentVerifier() {
                   </div>
                 </div>
               ) : (
-                <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mb-6">
+                <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mb-4 md:mb-6">
                   <p className="text-sm text-yellow-800">
                     ⚠️ Корисник још није отпремио потврду о уплати
                   </p>
@@ -314,11 +314,11 @@ export default function PaymentVerifier() {
               )}
 
               {/* Action Buttons */}
-              <div className="flex space-x-4">
+              <div className="flex flex-col sm:flex-row gap-3 sm:gap-4">
                 <button
                   onClick={() => confirmPayment(payment)}
                   disabled={processingId === payment.id}
-                  className="flex-1 bg-green-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-green-700 disabled:opacity-50 flex items-center justify-center transition-colors"
+                  className="flex-1 bg-green-600 text-white px-4 sm:px-6 py-3 rounded-2xl font-bold hover:bg-green-700 disabled:opacity-50 flex items-center justify-center transition-colors"
                 >
                   {processingId === payment.id ? (
                     <>
@@ -335,7 +335,7 @@ export default function PaymentVerifier() {
                 <button
                   onClick={() => rejectPayment(payment)}
                   disabled={processingId === payment.id}
-                  className="flex-1 bg-red-100 text-red-700 px-6 py-3 rounded-2xl font-bold hover:bg-red-200 disabled:opacity-50 flex items-center justify-center transition-colors"
+                  className="flex-1 bg-red-100 text-red-700 px-4 sm:px-6 py-3 rounded-2xl font-bold hover:bg-red-200 disabled:opacity-50 flex items-center justify-center transition-colors"
                 >
                   {processingId === payment.id ? (
                     <>

@@ -99,41 +99,6 @@ export default function Alano({ pose = 'idle', size = 72, className = '', onPose
         </div>
       )}
 
-      <style>{`
-        @keyframes alano-breathe-kf {
-          0%, 100% { transform: translateY(0) scale(1); }
-          50% { transform: translateY(-3px) scale(1.015); }
-        }
-        .alano-breathe { animation: alano-breathe-kf 3.2s ease-in-out infinite; transform-origin: bottom center; }
-
-        @keyframes alano-wave-kf {
-          0%, 100% { transform: rotate(0deg); }
-          20% { transform: rotate(-6deg); }
-          40% { transform: rotate(5deg); }
-          60% { transform: rotate(-4deg); }
-          80% { transform: rotate(3deg); }
-        }
-        .alano-wave-anim { animation: alano-wave-kf 1.8s ease-in-out 1; transform-origin: bottom center; }
-
-        @keyframes alano-jump-kf {
-          0%, 100% { transform: translateY(0) scale(1, 1); }
-          25% { transform: translateY(-16px) scale(1.06, 0.94); }
-          50% { transform: translateY(-20px) scale(0.95, 1.06); }
-          75% { transform: translateY(-6px) scale(1.03, 0.97); }
-        }
-        .alano-jump-anim { animation: alano-jump-kf 1.6s cubic-bezier(.34,1.56,.64,1) 1; transform-origin: bottom center; }
-
-        @keyframes alano-heart-kf {
-          0% { opacity: 0; transform: translate(0, 0) scale(0.4); }
-          15% { opacity: 1; }
-          100% { opacity: 0; transform: translate(var(--dx, 0px), -60px) scale(1.1); }
-        }
-        .alano-heart {
-          position: absolute;
-          font-size: 14px;
-          animation: alano-heart-kf 1.4s ease-out 1 backwards;
-        }
-      `}</style>
     </div>
   );
 }

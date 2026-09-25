@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { useFloatingLayers } from './floatingLayers';
 
 const PAGE_TUTORIALS = {
   home: {
@@ -92,10 +93,29 @@ const OnboardingContext = createContext(null);
 const STORAGE_KEY = 'srpskiusrcu_completed_tutorials';
 
 export function OnboardingProvider({ children }) {
-  const [completedTutorials, setCompletedTutorials] = useState(new Set());
+  // Read synchronously so pages asking for a tutorial on mount see the saved state.
+  const [completedTutorials, setCompletedTutorials] = useState(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      return new Set(stored ? JSON.parse(stored) : []);
+    } catch {
+      return new Set();
+    }
+  });
   const [currentTutorial, setCurrentTutorial] = useState(null);
   const [currentTooltipIndex, setCurrentTooltipIndex] = useState(0);
   const [isShowingTutorial, setIsShowingTutorial] = useState(false);
+  // Tutorial requested while another layer (cookie banner, promo modal) was on screen.
+  const [pendingTutorial, setPendingTutorial] = useState(null);
+  const cookieBannerVisible = useFloatingLayers((st) => st.cookieBannerVisible);
+  const promoOpen = useFloatingLayers((st) => st.promoOpen);
+  const setTutorialActive = useFloatingLayers((st) => st.setTutorialActive);
+  const layerBlocked = cookieBannerVisible || promoOpen;
+
+  // Publish tutorial state so the promo modal never opens on top of it.
+  useEffect(() => {
+    setTutorialActive(isShowingTutorial);
+  }, [isShowingTutorial, setTutorialActive]);
 
   useEffect(() => {
     try {
@@ -137,9 +157,25 @@ export function OnboardingProvider({ children }) {
 
   const checkAndStartTutorial = useCallback((pageKey) => {
     if (!completedTutorials.has(pageKey) && PAGE_TUTORIALS[pageKey]) {
-      setTimeout(() => startTutorial(pageKey), 800);
+      // Always queue; the effect below starts it once no other layer is on screen.
+      setPendingTutorial(pageKey);
     }
-  }, [completedTutorials, startTutorial]);
+  }, [completedTutorials]);
+
+  useEffect(() => {
+    if (!pendingTutorial || layerBlocked) return undefined;
+    if (completedTutorials.has(pendingTutorial)) {
+      setPendingTutorial(null);
+      return undefined;
+    }
+    const key = pendingTutorial;
+    const timer = setTimeout(() => {
+      setPendingTutorial(null);
+      // startTutorial ignores steps whose targets are gone (visitor left the page).
+      startTutorial(key);
+    }, 800);
+    return () => clearTimeout(timer);
+  }, [pendingTutorial, layerBlocked, startTutorial, completedTutorials]);
 
   const completeTutorial = useCallback(() => {
     if (currentTutorial) {
