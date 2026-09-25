@@ -187,7 +187,7 @@ export default function EmailTestingPanel({ isOpen, onClose }) {
             </div>
             <div>
               <h2 className="text-3xl font-bold font-serif">Email Testing Panel</h2>
-              <p className="text-white/80 mt-1">Тестирај све имејл функције одједном</p>
+              <p className="text-white mt-1">Тестирај све имејл функције одједном</p>
             </div>
           </div>
         </div>

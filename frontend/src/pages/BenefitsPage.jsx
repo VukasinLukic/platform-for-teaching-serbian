@@ -12,7 +12,7 @@ export default function BenefitsPage() {
       title: '100+ Видео лекција',
       description: 'Приступ свим видео лекцијама 24/7 са неограниченим понављањем и HD квалитетом.',
       color: 'text-brand',
-      bg: 'bg-brand/10'
+      bg: 'bg-brand-50'
     },
     {
       icon: Users,
@@ -33,7 +33,7 @@ export default function BenefitsPage() {
       title: 'Сертификат по завршетку',
       description: 'Добијате званични сертификат након успешног завршетка курса као доказ о знању.',
       color: 'text-brand',
-      bg: 'bg-brand/10'
+      bg: 'bg-brand-50'
     },
     {
       icon: Clock,
@@ -54,7 +54,7 @@ export default function BenefitsPage() {
       title: 'Подршка професорке',
       description: 'Директна комуникација са професорком током целе припреме путем емаила или чата.',
       color: 'text-brand',
-      bg: 'bg-brand/10'
+      bg: 'bg-brand-50'
     },
     {
       icon: TrendingUp,
@@ -169,7 +169,7 @@ export default function BenefitsPage() {
                 <div className="grid sm:grid-cols-2 gap-y-4 gap-x-8">
                   {includedFeatures.map((feature, index) => (
                     <div key={index} className="flex items-start gap-3">
-                      <div className="bg-brand/10 rounded-full p-1 mt-0.5">
+                      <div className="bg-brand-50 rounded-full p-1 mt-0.5">
                         <CheckCircle className="w-4 h-4 text-brand" />
                       </div>
                       <span className="font-medium text-gray-700 text-sm">{feature}</span>
@@ -190,7 +190,7 @@ export default function BenefitsPage() {
                     </div>
                     <h3 className="text-2xl font-bold">Гаранција Квалитета</h3>
                   </div>
-                  <p className="text-white/90 mb-8 leading-relaxed">
+                  <p className="text-white mb-8 leading-relaxed">
                     Ако нисте задовољни у првих 7 дана, враћамо вам новац. Без питања.
                     Верујемо у квалитет наше наставе.
                   </p>
@@ -206,7 +206,6 @@ export default function BenefitsPage() {
                   </div>
                 </div>
                 {/* Decoration */}
-                <div className="absolute -right-10 -bottom-10 w-64 h-64 bg-white opacity-5 rounded-full blur-3xl"></div>
               </div>
 
               {/* Simple CTA Card */}

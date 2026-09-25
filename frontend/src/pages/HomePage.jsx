@@ -422,7 +422,7 @@ function FeaturedCourseCard() {
             <h3 className="text-2xl md:text-3xl font-bold mb-4 leading-tight">
               Шта добијате уз наше курсеве?
             </h3>
-            <p className="text-white/80 leading-relaxed mb-8">
+            <p className="text-white leading-relaxed mb-8">
               Све што вам је потребно за успешну припрему мале матуре — на једном месту.
             </p>
             <Link
@@ -684,7 +684,7 @@ export default function HomePage() {
                   <Play className="w-9 h-9 text-white ml-1" fill="white" aria-hidden="true" />
                 </span>
               </span>
-              <span className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent px-4 py-3 flex items-center justify-center gap-4 text-white/90 text-xs font-medium">
+              <span className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent px-4 py-3 flex items-center justify-center gap-4 text-white text-xs font-medium">
                 <StatChip loading={catalog.loading} value={catalog.lessonsCount} label={pluralLessons(catalog.lessonsCount || 0)} />
                 <StatChip loading={catalog.loading} value={catalog.coursesCount} label={pluralCourses(catalog.coursesCount || 0)} />
                 <span>Часови уживо</span>

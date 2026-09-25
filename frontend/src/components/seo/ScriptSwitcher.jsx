@@ -24,7 +24,7 @@ export default function ScriptSwitcher({ className = '', tone = 'light' }) {
     'px-2.5 py-1 rounded-full text-xs font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-primary';
   const active = tone === 'dark' ? 'bg-white text-ink' : 'bg-ink text-white';
   const idle =
-    tone === 'dark' ? 'text-white/80 hover:text-white' : 'text-gray-600 hover:text-brand';
+    tone === 'dark' ? 'text-white hover:text-white' : 'text-gray-600 hover:text-brand';
 
   return (
     <nav

@@ -285,7 +285,7 @@ export default function PaymentSlipPage() {
                     <IpsQrCode payload={ipsPayload} fileName={`ips-qr-${paymentReference || 'uplata'}`} size={220} />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="inline-flex items-center gap-2 bg-brand/10 text-brand rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider mb-3">
+                    <div className="inline-flex items-center gap-2 bg-brand-50 text-brand rounded-full px-3 py-1 text-xs font-bold uppercase tracking-wider mb-3">
                       <ScanLine className="w-4 h-4" aria-hidden="true" />
                       IPS QR · тренутна уплата
                     </div>

@@ -8,7 +8,7 @@ export default function ResetPasswordPage() {
         {/* Contact Support Card */}
         <div className="bg-white rounded-3xl shadow-xl p-8 border border-gray-100">
           <div className="text-center mb-8">
-            <div className="bg-brand/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="bg-brand-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
               <Mail className="w-10 h-10 text-brand" />
             </div>
             <h2 className="text-3xl font-bold text-ink mb-2">Промена Лозинке</h2>
@@ -29,7 +29,7 @@ export default function ResetPasswordPage() {
               </div>
               <a
                 href="mailto:profesorka.marinalukic@gmail.com"
-                className="text-brand hover:text-brand-700 font-semibold transition text-lg"
+                className="text-brand hover:text-brand-700 font-semibold transition text-base sm:text-lg break-all"
               >
                 profesorka.marinalukic@gmail.com
               </a>
@@ -45,7 +45,7 @@ export default function ResetPasswordPage() {
               </div>
               <a
                 href="tel:+381604933680"
-                className="text-brand hover:text-brand-700 font-semibold transition text-lg"
+                className="text-brand hover:text-brand-700 font-semibold transition text-base sm:text-lg break-all"
               >
                 0604933680
               </a>

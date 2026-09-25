@@ -273,8 +273,6 @@ export default function DashboardPage() {
         {myCourses.length > 0 && (
           <div className="mb-10 md:mb-16" data-tour="quizzes">
             <div className="bg-gradient-to-br from-ink to-ink-800 rounded-3xl p-6 md:p-12 text-white relative overflow-hidden group">
-              {/* Background Decoration */}
-              <div className="absolute top-0 right-0 w-64 h-64 bg-brand rounded-full blur-3xl opacity-10 group-hover:opacity-20 transition-opacity"></div>
 
               <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6 md:gap-8">
                 <div className="text-center md:text-left">

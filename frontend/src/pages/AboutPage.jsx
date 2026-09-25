@@ -257,7 +257,7 @@ export default function AboutPage() {
               <h2 className="text-2xl md:text-5xl font-bold text-white mb-4 md:mb-6">
                 Придружите се успешним ученицима
               </h2>
-              <p className="text-base md:text-xl text-white/90 mb-8 md:mb-10 max-w-2xl mx-auto">
+              <p className="text-base md:text-xl text-white mb-8 md:mb-10 max-w-2xl mx-auto">
                 Започните наставу данас и остварите најбоље резултате на малој матури.
                 Упис је у току!
               </p>

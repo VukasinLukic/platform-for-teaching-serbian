@@ -178,7 +178,7 @@ export default function PromoQuizModal() {
               <Gift className="w-5 h-5 text-gold flex-shrink-0" aria-hidden="true" />
               <span className="text-xl md:text-2xl font-black text-white leading-none">20% ПОПУСТ</span>
             </div>
-            <p className="text-sm text-white/90 mt-1.5">на било који курс ако урадиш квиз до краја</p>
+            <p className="text-sm text-white mt-1.5">на било који курс ако урадиш квиз до краја</p>
           </div>
 
           <div className="flex flex-col sm:flex-row gap-2">
@@ -221,7 +221,7 @@ export default function PromoQuizModal() {
           <h3 className="text-xl md:text-2xl font-extrabold text-white leading-snug mb-2">
             Испробај иницијалне тестове
           </h3>
-          <p className="text-sm text-white/90 leading-relaxed mb-5">
+          <p className="text-sm text-white leading-relaxed mb-5">
             Тестови за 5, 6, 7. и 8. разред. Бесплатно, без пријаве, са тачним одговорима.
           </p>
 

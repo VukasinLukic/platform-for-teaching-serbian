@@ -419,7 +419,7 @@ export default function CoursePage() {
           <div className="mt-6 pt-6 border-t border-gray-200">
             <div className="bg-gradient-to-br from-brand to-brand-700 rounded-2xl p-6 text-white text-center">
               <h4 className="font-bold text-lg mb-2">Откључајте све лекције</h4>
-              <p className="text-sm text-white/90 mb-4">Приступите комплетном курсу</p>
+              <p className="text-sm text-white mb-4">Приступите комплетном курсу</p>
               <button
                 onClick={handlePurchaseClick}
                 disabled={purchasing}

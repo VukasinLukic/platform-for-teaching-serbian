@@ -155,7 +155,7 @@ export default function OnlineClassesSection() {
           <div className="text-sm text-gray-600 mb-2">Ваша група</div>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2 bg-brand/10 rounded-lg">
+              <div className="p-2 bg-brand-50 rounded-lg">
                 <Users className="w-5 h-5 text-brand" />
               </div>
               <div>

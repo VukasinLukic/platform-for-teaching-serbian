@@ -106,7 +106,7 @@ export default function PaymentConfirmationUpload({ transactionId, onSuccess }) 
         {!file ? (
           <label className="block">
             <div className="border-2 border-dashed border-gray-200 hover:border-brand rounded-2xl p-8 text-center cursor-pointer transition-colors group">
-              <div className="bg-brand/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-brand/20 transition-colors">
+              <div className="bg-brand-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-brand/20 transition-colors">
                 <Upload className="h-8 w-8 text-brand" />
               </div>
               <p className="font-semibold mb-2 text-ink group-hover:text-brand transition-colors">
@@ -137,7 +137,7 @@ export default function PaymentConfirmationUpload({ transactionId, onSuccess }) 
                     className="w-20 h-20 rounded-xl object-cover"
                   />
                 ) : (
-                  <div className="bg-brand/10 w-20 h-20 rounded-xl flex items-center justify-center">
+                  <div className="bg-brand-50 w-20 h-20 rounded-xl flex items-center justify-center">
                     <FileImage className="h-8 w-8 text-brand" />
                   </div>
                 )}

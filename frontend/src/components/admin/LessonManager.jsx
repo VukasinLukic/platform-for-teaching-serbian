@@ -475,7 +475,7 @@ export default function LessonManager() {
                   className="w-full p-4 flex items-center justify-between hover:bg-surface transition-colors"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="bg-brand/10 p-3 rounded-xl">
+                    <div className="bg-brand-50 p-3 rounded-xl">
                       <Book className="w-5 h-5 text-brand" />
                     </div>
                     <div className="text-left">
@@ -633,7 +633,7 @@ export default function LessonManager() {
                                     className="flex items-center justify-between p-3 bg-gray-50 rounded-xl border border-gray-200"
                                   >
                                     <div className="flex items-center gap-3">
-                                      <div className="w-10 h-10 bg-brand/10 rounded-lg flex items-center justify-center">
+                                      <div className="w-10 h-10 bg-brand-50 rounded-lg flex items-center justify-center">
                                         <FileText className="w-5 h-5 text-brand" />
                                       </div>
                                       <div>

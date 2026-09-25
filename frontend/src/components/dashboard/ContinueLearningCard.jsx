@@ -12,10 +12,10 @@ export default function ContinueLearningCard({ course, lastLessonId, lastLessonT
   return (
     <div className="relative overflow-hidden bg-gradient-to-br from-brand to-brand-800 text-white rounded-3xl p-5 sm:p-7 h-full">
       <div className="absolute -right-10 -top-10 w-44 h-44 rounded-full bg-white/10" aria-hidden="true" />
-      <p className="relative text-sm font-semibold uppercase tracking-wider text-white/80">Настави где си стао</p>
+      <p className="relative text-sm font-semibold uppercase tracking-wider text-white">Настави где си стао</p>
       <h2 className="relative mt-1 text-xl sm:text-2xl font-bold break-words">{course.title}</h2>
       {lastLessonTitle && (
-        <p className="relative mt-1 text-white/90 text-sm sm:text-base break-words">
+        <p className="relative mt-1 text-white text-sm sm:text-base break-words">
           Последња лекција: <span className="font-semibold">{lastLessonTitle}</span>
         </p>
       )}

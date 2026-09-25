@@ -120,6 +120,7 @@ export default function ScheduleManager() {
           </button>
           <button
             onClick={handlePrevWeek}
+            aria-label="Претходна недеља"
             className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
           >
             <ChevronLeft className="w-5 h-5" />
@@ -130,6 +131,7 @@ export default function ScheduleManager() {
           </span>
           <button
             onClick={handleNextWeek}
+            aria-label="Следећа недеља"
             className="p-2 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors"
           >
             <ChevronRight className="w-5 h-5" />
@@ -147,7 +149,7 @@ export default function ScheduleManager() {
               <div
                 key={index}
                 className={`p-4 text-center border-r border-gray-100 last:border-r-0 ${
-                  isToday ? 'bg-brand/10' : 'bg-gray-50'
+                  isToday ? 'bg-brand-50' : 'bg-gray-50'
                 }`}
               >
                 <div className="text-sm font-bold text-gray-600">{dayNames[index]}</div>

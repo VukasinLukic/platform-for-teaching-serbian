@@ -122,7 +122,8 @@ export default function NotificationDropdown() {
                 <button
                   onClick={clearAll}
                   className="text-xs text-gray-500 hover:text-red-400 transition flex items-center gap-1"
-                  title="Обриси све"
+                  title="Обриши све"
+                  aria-label="Обриши сва обавештења"
                 >
                   <Trash2 size={14} />
                 </button>

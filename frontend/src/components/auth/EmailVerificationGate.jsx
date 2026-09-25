@@ -50,7 +50,7 @@ export default function EmailVerificationGate() {
           <div className="bg-brand p-6 text-center">
             <Mail className="w-12 h-12 text-white mx-auto mb-3" />
             <h1 className="text-2xl font-bold text-white mb-1">Верификујте Email</h1>
-            <p className="text-white/90 text-sm">Проверите ваш inbox</p>
+            <p className="text-white text-sm">Проверите ваш inbox</p>
           </div>
 
           {/* Content */}

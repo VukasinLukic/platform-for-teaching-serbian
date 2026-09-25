@@ -101,7 +101,7 @@ export default function ContactPage() {
             <div className="bg-white rounded-3xl md:rounded-3xl p-6 md:p-12 shadow-xl relative z-10 border border-gray-100">
                {success ? (
                   <div className="text-center py-12 md:py-20">
-                    <div className="bg-brand/10 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <div className="bg-brand-50 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                       <CheckCircle className="w-10 h-10 text-brand" />
                     </div>
                     <h3 className="text-2xl font-bold mb-4">Порука послата!</h3>
@@ -214,7 +214,7 @@ export default function ContactPage() {
             {/* FAQ Promo */}
             <div className="bg-brand text-white p-8 rounded-3xl text-center mt-8">
                <h3 className="text-xl font-bold mb-2">Често постављана питања</h3>
-               <p className="text-white/90 text-sm mb-6">
+               <p className="text-white text-sm mb-6">
                  Пре него што нас контактирате, проверите да ли сте пронашли одговор у нашем FAQ одељку.
                </p>
                <Button as={Link} to="/faq" variant="subtle" size="md" className="w-full">

@@ -17,7 +17,7 @@ export default function FAQPage() {
       {/* Hero */}
       <section className="pt-12 pb-10 md:pt-20 md:pb-16 px-6 text-center bg-gradient-to-b from-white to-surface">
         <div className="max-w-4xl mx-auto">
-          <div className="bg-brand/10 w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center mx-auto mb-5 md:mb-6 transform rotate-3 hover:rotate-0 transition-transform">
+          <div className="bg-brand-50 w-16 h-16 md:w-20 md:h-20 rounded-2xl flex items-center justify-center mx-auto mb-5 md:mb-6 transform rotate-3 hover:rotate-0 transition-transform">
             <HelpCircle className="w-8 h-8 md:w-10 md:h-10 text-brand" />
           </div>
           <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6 text-ink">
@@ -38,7 +38,7 @@ export default function FAQPage() {
           <div className="mt-10 md:mt-16 text-center">
              <div className="bg-surface p-6 md:p-10 rounded-3xl md:rounded-3xl shadow-xl border-2 border-gray-100">
                <div className="flex flex-col md:flex-row items-center gap-5 md:gap-6">
-                 <div className="bg-brand/10 p-4 md:p-5 rounded-2xl">
+                 <div className="bg-brand-50 p-4 md:p-5 rounded-2xl">
                    <MessageCircle className="w-8 h-8 md:w-10 md:h-10 text-brand" />
                  </div>
                  <div className="text-center md:text-left">

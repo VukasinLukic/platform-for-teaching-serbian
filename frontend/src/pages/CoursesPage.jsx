@@ -134,7 +134,7 @@ export default function CoursesPage() {
           <h1 className="text-4xl md:text-7xl font-bold mb-4 md:mb-6">
             Наши курсеви
           </h1>
-          <p className="text-base md:text-2xl text-white/90 max-w-3xl mx-auto">
+          <p className="text-base md:text-2xl text-white max-w-3xl mx-auto">
             Изаберите програм који вам највише одговара и започните припрему за малу матуру на време.
           </p>
         </div>

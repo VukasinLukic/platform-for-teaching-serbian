@@ -207,12 +207,12 @@ const VerifyEmailPage = () => {
   const resendDisabled = cooldown > 0 || attempts >= MAX_RESEND_ATTEMPTS;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-neutral-50 to-accent-light flex items-center justify-center p-6">
-      <div className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-10">
+    <div className="min-h-screen bg-notebook flex items-center justify-center p-4 sm:p-6">
+      <div className="bg-white rounded-3xl shadow-lift border border-ink-100 max-w-md w-full p-6 sm:p-10">
         {/* Status Icon */}
         <div className="text-center mb-6">
           {status === 'waiting' && (
-            <div className="text-7xl mb-4 animate-pulse">📧</div>
+            <img src="/mascot/alano-reading.webp" alt="" width="128" height="128" className="mx-auto mb-4 w-32 h-auto" />
           )}
           {status === 'verifying' && (
             <div className="inline-block">
@@ -220,16 +220,16 @@ const VerifyEmailPage = () => {
             </div>
           )}
           {status === 'success' && (
-            <div className="text-7xl mb-4 animate-bounce">✅</div>
+            <img src="/mascot/alano-celebrating.webp" alt="" width="128" height="128" className="mx-auto mb-4 w-32 h-auto" />
           )}
           {status === 'error' && (
-            <div className="text-7xl mb-4">❌</div>
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-brand-50 text-3xl font-bold text-brand" aria-hidden="true">!</div>
           )}
         </div>
 
         {/* Title */}
-        <h1 className="text-3xl font-bold text-center mb-4 text-primary">
-          {status === 'waiting' && 'Проверите Ваш Email'}
+        <h1 className="font-display text-3xl font-bold text-center mb-4 text-ink">
+          {status === 'waiting' && 'Проверите имејл'}
           {status === 'verifying' && 'Верификација у току...'}
           {status === 'success' && 'Налог активиран!'}
           {status === 'error' && 'Грешка'}
@@ -251,7 +251,7 @@ const VerifyEmailPage = () => {
             </p>
             <button
               onClick={() => navigate('/login')}
-              className="w-full bg-primary text-white py-4 rounded-2xl font-semibold hover:bg-primary-dark transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="w-full bg-primary text-white min-h-[3.25rem] rounded-xl font-semibold hover:bg-brand-700 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               Пријавите се
             </button>
@@ -290,29 +290,29 @@ const VerifyEmailPage = () => {
               )}
 
               {attempts >= MAX_RESEND_ATTEMPTS ? (
-                <div className="w-full bg-red-50 text-red-600 py-4 rounded-2xl font-semibold text-center text-sm">
+                <div className="w-full bg-red-50 text-red-600 min-h-[3.25rem] rounded-xl font-semibold text-center text-sm">
                   Достигнут максималан број покушаја слања. Проверите spam фолдер или контактирајте подршку.
                 </div>
               ) : (
                 <button
                   onClick={handleResendEmail}
                   disabled={resendDisabled}
-                  className={`w-full py-4 rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl ${
+                  className={`w-full min-h-[3.25rem] rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl ${
                     resendDisabled
                       ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                      : 'bg-accent text-primary hover:bg-accent-dark'
+                      : 'bg-gold text-ink hover:bg-gold-500'
                   }`}
                 >
                   {cooldown > 0
                     ? `Пошаљи поново (${cooldown}с)`
-                    : `Пошаљи поново email${attempts > 0 ? ` (${attempts}/${MAX_RESEND_ATTEMPTS})` : ''}`
+                    : `Пошаљи имејл поново${attempts > 0 ? ` (${attempts}/${MAX_RESEND_ATTEMPTS})` : ''}`
                   }
                 </button>
               )}
 
               <button
                 onClick={() => navigate('/login')}
-                className="w-full bg-gray-200 text-gray-700 py-4 rounded-2xl font-semibold hover:bg-gray-300 transition-all duration-300"
+                className="w-full bg-gray-200 text-gray-700 min-h-[3.25rem] rounded-xl font-semibold hover:bg-gray-300 transition-all duration-300"
               >
                 Назад на Пријаву
               </button>
@@ -322,7 +322,7 @@ const VerifyEmailPage = () => {
           {status === 'success' && (
             <button
               onClick={() => navigate(getRedirectPath())}
-              className="w-full bg-primary text-white py-4 rounded-2xl font-semibold hover:bg-primary-dark transition-all duration-300 shadow-lg hover:shadow-xl"
+              className="w-full bg-primary text-white min-h-[3.25rem] rounded-xl font-semibold hover:bg-brand-700 transition-all duration-300 shadow-lg hover:shadow-xl"
             >
               Иди на Ваш Панел
             </button>
@@ -347,17 +347,17 @@ const VerifyEmailPage = () => {
               )}
 
               {attempts >= MAX_RESEND_ATTEMPTS ? (
-                <div className="w-full bg-red-50 text-red-600 py-4 rounded-2xl font-semibold text-center text-sm">
+                <div className="w-full bg-red-50 text-red-600 min-h-[3.25rem] rounded-xl font-semibold text-center text-sm">
                   Достигнут максималан број покушаја. Контактирајте подршку.
                 </div>
               ) : (
                 <button
                   onClick={handleResendEmail}
                   disabled={resendDisabled}
-                  className={`w-full py-4 rounded-2xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl ${
+                  className={`w-full min-h-[3.25rem] rounded-xl font-semibold transition-all duration-300 shadow-lg hover:shadow-xl ${
                     resendDisabled
                       ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
-                      : 'bg-accent text-primary hover:bg-accent-dark'
+                      : 'bg-gold text-ink hover:bg-gold-500'
                   }`}
                 >
                   {cooldown > 0
@@ -369,7 +369,7 @@ const VerifyEmailPage = () => {
 
               <button
                 onClick={() => navigate('/login')}
-                className="w-full bg-gray-200 text-gray-700 py-4 rounded-2xl font-semibold hover:bg-gray-300 transition-all duration-300"
+                className="w-full bg-gray-200 text-gray-700 min-h-[3.25rem] rounded-xl font-semibold hover:bg-gray-300 transition-all duration-300"
               >
                 Назад на Пријаву
               </button>

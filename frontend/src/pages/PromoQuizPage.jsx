@@ -187,7 +187,7 @@ export default function PromoQuizPage() {
                 <Gift className="w-7 h-7 text-gold" />
                 <span className="text-2xl md:text-3xl font-black text-white">20% ПОПУСТ</span>
               </div>
-              <p className="text-white/90 text-sm">
+              <p className="text-white text-sm">
                 Честитамо! Остварили сте попуст од 20% на било коју куповину.
               </p>
             </div>

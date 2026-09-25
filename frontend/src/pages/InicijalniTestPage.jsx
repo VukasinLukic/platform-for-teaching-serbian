@@ -94,7 +94,7 @@ export default function InicijalniTestPage() {
                 <span className="text-3xl font-black">{test.razred}</span>
               </div>
               <h1 className="text-2xl md:text-3xl font-extrabold mb-2">{test.naziv}</h1>
-              <p className="text-white/85 leading-relaxed">{test.kratakOpis}</p>
+              <p className="text-white leading-relaxed">{test.kratakOpis}</p>
             </div>
 
             <div className="p-8 md:p-10">

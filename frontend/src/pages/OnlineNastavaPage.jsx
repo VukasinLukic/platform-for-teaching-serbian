@@ -205,7 +205,7 @@ export default function OnlineNastavaPage() {
           <h1 className="text-3xl md:text-6xl font-bold mb-4 md:mb-6">
             Интерактивни часови<br />са наставницом
           </h1>
-          <p className="text-base md:text-xl text-white/90 max-w-3xl mx-auto">
+          <p className="text-base md:text-xl text-white max-w-3xl mx-auto">
             Придружите се нашим online групним часовима уживо преко Google Meet. Учите у интерактивној атмосфери где сваки ученик добија пажњу и подршку коју заслужује.
           </p>
         </div>
@@ -311,28 +311,28 @@ export default function OnlineNastavaPage() {
                     <Calendar className="w-6 h-6 text-gold flex-shrink-0 mt-1" />
                     <div>
                       <h3 className="font-bold text-lg mb-1">Групни часови</h3>
-                      <p className="text-white/80">4 часа месечно (по 1 сат)</p>
+                      <p className="text-white">4 часа месечно (по 1 сат)</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
                     <Calendar className="w-6 h-6 text-success flex-shrink-0 mt-1" />
                     <div>
                       <h3 className="font-bold text-lg mb-1">Индивидуални часови</h3>
-                      <p className="text-white/80">Уторком (по договору) - 4 часа месечно (по 1 сат)</p>
+                      <p className="text-white">Уторком (по договору) - 4 часа месечно (по 1 сат)</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
                     <Video className="w-6 h-6 text-gold flex-shrink-0 mt-1" />
                     <div>
                       <h3 className="font-bold text-lg mb-1">Платформа</h3>
-                      <p className="text-white/80">Google Meet - лако приступ са било ког уређаја</p>
+                      <p className="text-white">Google Meet - лако приступ са било ког уређаја</p>
                     </div>
                   </div>
                   <div className="flex items-start gap-4">
                     <Users className="w-6 h-6 text-gold flex-shrink-0 mt-1" />
                     <div>
                       <h3 className="font-bold text-lg mb-1">Величина групе</h3>
-                      <p className="text-white/80">Групни: макс. 8 ученика | Индивидуални: 1-на-1</p>
+                      <p className="text-white">Групни: макс. 8 ученика | Индивидуални: 1-на-1</p>
                     </div>
                   </div>
                 </div>
@@ -392,8 +392,8 @@ export default function OnlineNastavaPage() {
               if (!pkg) return null;
               return (
                 <div className="relative bg-white rounded-2xl shadow-md hover:shadow-lg transition-all duration-300 hover:-translate-y-1 overflow-hidden border border-info-400/30 flex flex-col">
-                  <div className="bg-info-400/10 p-6">
-                    <h3 className="text-lg font-bold mb-1 text-info-400">Индивидуални часови</h3>
+                  <div className="bg-info-600/10 p-6">
+                    <h3 className="text-lg font-bold mb-1 text-info-600">Индивидуални часови</h3>
                     <p className="text-info-600 text-sm mb-4">Индивидуална настава 1-на-1</p>
                     <div className="flex items-baseline gap-2">
                       <span className="text-3xl font-black text-info-600">{formatPrice(pkg.price)}</span>
@@ -412,7 +412,7 @@ export default function OnlineNastavaPage() {
                     <div className="space-y-3 mb-6 flex-1">
                       {pkg.features.map((feature, idx) => (
                         <div key={idx} className="flex items-start gap-2">
-                          <CheckCircle className="w-4 h-4 text-info-400 flex-shrink-0 mt-0.5" />
+                          <CheckCircle className="w-4 h-4 text-info-600 flex-shrink-0 mt-0.5" />
                           <span className="text-gray-600 text-sm">{feature}</span>
                         </div>
                       ))}
@@ -421,7 +421,7 @@ export default function OnlineNastavaPage() {
                     <button
                       onClick={() => handlePurchase(pkg)}
                       disabled={purchasingId === pkg.id}
-                      className="w-full bg-info-400 hover:bg-info-500 text-white px-6 py-3 rounded-full hover:shadow-md transition-all font-bold text-sm transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center justify-center gap-2 mt-auto"
+                      className="w-full bg-info-600 hover:bg-info-500 text-white px-6 py-3 rounded-full hover:shadow-md transition-all font-bold text-sm transform hover:scale-105 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:scale-100 inline-flex items-center justify-center gap-2 mt-auto"
                     >
                       {purchasingId === pkg.id ? (
                         <>
@@ -448,15 +448,15 @@ export default function OnlineNastavaPage() {
                     Најпопуларније
                   </div>
 
-                  <div className="bg-brand/10 p-6">
+                  <div className="bg-brand-50 p-6">
                     <h3 className="text-lg font-bold mb-1 text-brand">Групни часови</h3>
-                    <p className="text-brand/70 text-xs mb-3">Групна настава уживо</p>
+                    <p className="text-brand-800 text-xs mb-3">Групна настава уживо</p>
                     <div className="flex items-baseline gap-2">
-                      <span className="text-base line-through text-brand/50">{formatPrice(pkg.price)}</span>
+                      <span className="text-base line-through text-brand-800">{formatPrice(pkg.price)}</span>
                       <span className="text-3xl font-black text-brand-800 whitespace-nowrap">2.500 дин</span>
                     </div>
-                    <p className="text-brand/80 text-xs mt-1 font-medium">1 месец</p>
-                    <p className="text-brand/70 text-xs mt-0.5">Остали месеци: {formatPrice(pkg.price)}</p>
+                    <p className="text-brand-800 text-xs mt-1 font-medium">1 месец</p>
+                    <p className="text-brand-800 text-xs mt-0.5">Остали месеци: {formatPrice(pkg.price)}</p>
                   </div>
 
                   <div className="p-6 flex flex-col flex-1">
@@ -614,7 +614,7 @@ export default function OnlineNastavaPage() {
           <h2 className="text-2xl md:text-5xl font-bold mb-4 md:mb-6">
             Спремни за успех?
           </h2>
-          <p className="text-base md:text-xl text-white/90 mb-8">
+          <p className="text-base md:text-xl text-white mb-8">
             Придружите се стотинама задовољних ученика који су постигли одличне резултате
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">

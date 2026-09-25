@@ -41,7 +41,7 @@ export default function MalaMaturaCountdown({ date = MALA_MATURA_DATE }) {
         <p className="text-3xl sm:text-4xl font-extrabold leading-tight">
           {days === 0 ? 'Данас!' : (
             <>
-              {days} <span className="text-lg font-bold text-white/80">{daysLabel(days)}</span>
+              {days} <span className="text-lg font-bold text-white">{daysLabel(days)}</span>
             </>
           )}
         </p>

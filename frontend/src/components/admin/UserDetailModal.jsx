@@ -142,7 +142,7 @@ export default function UserDetailModal({ user, onClose, onUpdate }) {
             </div>
             <div className="min-w-0">
               <h2 className="text-xl sm:text-2xl font-bold truncate">{user.ime || 'Без имена'}</h2>
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-white/90 text-sm">
+              <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-1 text-white text-sm">
                 <span className="flex items-center gap-1 break-all">
                   <Mail size={14} />
                   {user.email}
