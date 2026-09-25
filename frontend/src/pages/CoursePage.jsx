@@ -4,13 +4,12 @@ import {
   Play, Book, CheckCircle, Lock, ChevronDown,
   Video, ArrowRight, FileText, Download, Loader2
 } from 'lucide-react';
-import { collection, addDoc, query, where, getDocs } from 'firebase/firestore';
 import { httpsCallable } from 'firebase/functions';
 import { getCourseById, checkUserAccess, getCourseModulesWithLessons } from '../services/course.service';
 import { useAuthStore } from '../store/authStore';
 import SEO from '../components/SEO';
 import { formatPrice } from '../utils/helpers';
-import { db, functions } from '../services/firebase';
+import { functions, functionsEU } from '../services/firebase';
 import Header from '../components/ui/Header';
 import AuthRequiredModal from '../components/ui/AuthRequiredModal';
 import VideoPlayer from '../components/course/VideoPlayer';
@@ -30,22 +29,22 @@ export default function CoursePage() {
   const [downloadingIdx, setDownloadingIdx] = useState(null);
 
   const handleDownloadMaterial = async (material, idx) => {
+    if (!user) {
+      setShowAuthModal(true);
+      return;
+    }
+
     setDownloadingIdx(idx);
     try {
-      const response = await fetch(material.url);
-      if (!response.ok) throw new Error('Download failed');
-      const blob = await response.blob();
-      const blobUrl = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = blobUrl;
-      a.download = material.name;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      window.URL.revokeObjectURL(blobUrl);
+      // Materials are served through short-lived links after an access check
+      const getMaterialUrl = httpsCallable(functionsEU, 'getMaterialUrl');
+      const result = await getMaterialUrl({ lessonId: selectedLesson.id, index: idx });
+      window.location.assign(result.data.url);
     } catch (error) {
       console.error('Download error:', error);
-      window.open(material.url, '_blank');
+      alert(error.code === 'functions/permission-denied'
+        ? 'Материјали су доступни након куповине курса.'
+        : 'Грешка при преузимању материјала. Покушајте поново.');
     } finally {
       setDownloadingIdx(null);
     }
@@ -89,48 +88,18 @@ export default function CoursePage() {
 
     setPurchasing(true);
     try {
-      // Check if user already has a pending transaction for this course
-      const q = query(
-        collection(db, 'transactions'),
-        where('userId', '==', user.uid),
-        where('courseId', '==', id),
-        where('status', '==', 'pending')
-      );
-      const existingTransactions = await getDocs(q);
-
-      let paymentRef;
-
-      if (!existingTransactions.empty) {
-        // Use existing payment reference
-        const existingTransaction = existingTransactions.docs[0].data();
-        paymentRef = existingTransaction.payment_ref;
-      } else {
-        // Generate new payment reference using Cloud Function
-        const generatePaymentRefFunction = httpsCallable(functions, 'generatePaymentReference');
-        const result = await generatePaymentRefFunction();
-        paymentRef = result.data.paymentReference;
-
-        // Create new transaction
-        await addDoc(collection(db, 'transactions'), {
-          userId: user.uid,
-          user_id: user.uid,
-          courseId: id,
-          course_id: id,
-          courseName: course.title,
-          amount: course.price,
-          status: 'pending',
-          payment_ref: paymentRef,
-          createdAt: new Date().toISOString(),
-          created_at: new Date().toISOString(),
-        });
-      }
+      // The transaction (amount, course) is created on the server; an existing
+      // pending transaction for this course is reused.
+      const createCourseTransaction = httpsCallable(functions, 'createCourseTransaction');
+      const result = await createCourseTransaction({ courseId: id });
+      const paymentRef = result.data.paymentReference;
 
       // Navigate to payment slip page with payment data
       navigate('/uplatnica', {
         state: {
           paymentData: {
-            amount: course.price,
-            courseName: course.title,
+            amount: result.data.amount,
+            courseName: result.data.courseName || course.title,
             paymentReference: paymentRef,
             userName: userProfile?.ime || '',
           }
@@ -216,7 +185,7 @@ export default function CoursePage() {
         <>
           {/* Secure Video Player - uses signed URLs, no direct video access */}
           <div className="bg-[#1A1A1A] rounded-3xl overflow-hidden shadow-xl max-w-full">
-            {selectedLesson.videoUrl || selectedLesson.video_key ? (
+            {selectedLesson.videoPath || selectedLesson.videoUrl || selectedLesson.video_key ? (
               user ? (
                 <VideoPlayer
                   key={selectedLesson.id}

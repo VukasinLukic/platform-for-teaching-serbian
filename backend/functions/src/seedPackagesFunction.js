@@ -1,3 +1,6 @@
+// DISABLED: intentionally NOT exported from index.js — anyone could call it.
+// Kept only for reference. Do not re-export. Use scripts/setAdminClaim.js instead.
+
 /**
  * Cloud Function to seed online packages
  * Deploy with: firebase deploy --only functions:seedOnlinePackages

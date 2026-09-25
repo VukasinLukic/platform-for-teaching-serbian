@@ -1,11 +1,17 @@
 import { useState, useEffect } from 'react';
-import { collection, addDoc, getDocs, query, where, deleteDoc, doc, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
+import { collection, addDoc, getDocs, query, where, deleteDoc, doc, updateDoc, deleteField } from 'firebase/firestore';
+import { ref, uploadBytesResumable } from 'firebase/storage';
 import { db, storage } from '../../services/firebase';
 import { uploadVideoToR2, deleteVideoFromR2 } from '../../services/cloudflare.service';
 import { Plus, Trash2, Loader2, Upload, Video, FileVideo, CheckCircle, ChevronDown, ChevronRight, Tag, FileText, Book, Edit, Paperclip, X } from 'lucide-react';
 import { useToast } from '../ui/Toast';
 import ConfirmModal from '../ui/ConfirmModal';
+
+// Recovers the storage path from an older Firebase download URL (.../o/<encoded path>?...)
+const getStoragePathFromUrl = (url) => {
+  const match = typeof url === 'string' && url.match(/\/o\/([^?]+)/);
+  return match ? decodeURIComponent(match[1]) : null;
+};
 
 export default function LessonManager() {
   const [courses, setCourses] = useState([]);
@@ -194,12 +200,12 @@ export default function LessonManager() {
           const metadata = {
             contentDisposition: `attachment; filename="${material.name}"`,
           };
-          const uploadTask = await uploadBytesResumable(storageRef, material.file, metadata);
-          const downloadURL = await getDownloadURL(uploadTask.ref);
+          await uploadBytesResumable(storageRef, material.file, metadata);
 
+          // Store only the storage path; students get a short-lived link from getMaterialUrl
           uploadedMaterials.push({
             name: material.name,
-            url: downloadURL,
+            path: fileName,
             type: material.type,
             size: material.size
           });
@@ -208,14 +214,17 @@ export default function LessonManager() {
           console.error('❌ [LessonManager] Error uploading material:', material.name, error);
           showToast({ type: 'warning', message: `Грешка при upload-у: ${material.name}` });
         }
-      } else if (material.url) {
-        // Existing material
-        uploadedMaterials.push({
-          name: material.name,
-          url: material.url,
-          type: material.type,
-          size: material.size
-        });
+      } else if (material.path || material.url) {
+        // Existing material (older ones only have a download URL; convert it to a path)
+        const path = material.path || getStoragePathFromUrl(material.url);
+        if (path) {
+          uploadedMaterials.push({
+            name: material.name,
+            path,
+            type: material.type,
+            size: material.size
+          });
+        }
       }
     }
 
@@ -244,7 +253,6 @@ export default function LessonManager() {
       try {
         console.log('🔵 [LessonManager] Updating lesson:', editingLesson.id);
 
-        let videoUrl = editingLesson.videoUrl;
         let videoPath = editingLesson.videoPath;
 
         // If new video file is provided, upload it
@@ -268,10 +276,9 @@ export default function LessonManager() {
             }
           );
 
-          videoUrl = result.url;
           videoPath = result.path;
 
-          console.log('✅ [LessonManager] Video uploaded:', videoUrl);
+          console.log('✅ [LessonManager] Video uploaded:', videoPath);
         }
 
         // Upload materials
@@ -283,7 +290,7 @@ export default function LessonManager() {
           title: formData.title,
           description: formData.description,
           order: formData.order,
-          videoUrl: videoUrl,
+          videoUrl: deleteField(), // never store public video links
           videoPath: videoPath,
           materials: uploadedMaterials,
           updatedAt: new Date().toISOString(),
@@ -344,7 +351,6 @@ export default function LessonManager() {
           moduleId: selectedModule.id,
           title: formData.title,
           description: formData.description,
-          videoUrl: result.url,
           videoPath: result.path,
           order: formData.order,
           duration: 0,
